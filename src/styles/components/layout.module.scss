@@ -1,0 +1,99 @@
+.HeaderContent{
+  background-color: white;
+  width: 100%;
+  transition: 0.4s;
+  position: fixed;
+  .LogoContainer{
+    transition: 0.4s;
+    padding: 38px 0;
+    &:hover{
+      img{
+        filter: brightness(1.1);
+      }
+    }
+    img{
+      width: 82px;
+    }
+    .BrandContent{
+      width: 100%;
+      a{
+        color:#000000;
+        text-decoration: none;
+      }
+      p{
+        margin-top: 0px;
+        margin-bottom: 5px;
+        font-size: 36px;
+        font-style: normal;
+        font-weight: 600;
+        line-height: normal;
+      }
+      .InfoNavContainer{
+        width: 100%;
+        small{
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: normal;
+        }
+        a{
+          cursor: pointer;
+          &:hover{
+            color: silver
+          }
+        }
+      }
+    }
+  }
+  &.scrolled{
+    position: fixed;
+    background-color: #ffffffe3;
+    transition:  0.3s ;
+    &:hover{
+      background-color: white;
+    }
+    .SubNav{
+      display: none;
+    }
+    .LogoContainer{
+      padding: 15px 0px;
+      img{
+        width: 55px;
+      }
+      .BrandContent{
+        .InfoNavContainer{
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+.SubNav{
+  background-color: #F3F3F2;
+  padding: 16px;
+  nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    a{
+        text-align: center;
+        font-family: Roboto;
+        padding-right: 8px;
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        color: #000000;
+        border-right: solid #000000 1px;
+        cursor: pointer;
+        &:hover{
+          color: silver
+        }
+    }
+    a:last-child{
+      border-right: none;
+      padding-right: none;
+    }
+  }
+}
