@@ -1,13 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
+
 import { Container, Flex } from "@mantine/core";
+import { IconMenu2, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 import styles from "../../styles/components/layout.module.scss";
 
 export const HeaderLayout = () => {
   const logoSource = "/local/svg/logo.svg";
-
   const [isScrolled, setIsScrolled] = useState(false);
+  const [opened, setOpened] = useState(false);
+
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > 0) {
@@ -24,7 +27,9 @@ export const HeaderLayout = () => {
 
   return (
     <div
-      className={`${styles.HeaderContent} ${isScrolled ? styles.scrolled : ""}`}
+      className={`${styles.HeaderContent} ${
+        isScrolled ? styles.scrolled : ""
+      } ${opened ? styles.Opened : ""}`}
     >
       <Container size={"xl"}>
         <Flex
@@ -33,22 +38,40 @@ export const HeaderLayout = () => {
           align={"center"}
           className={styles.LogoContainer}
         >
-          <Flex>
+          <Flex direction={"column"}>
             <a href={"/"}>
               <img src={logoSource} alt="brand-logo" id={"BrandLogo"} />
             </a>
-            <a></a>
           </Flex>
           <Flex
             direction={"column"}
             justify={"center"}
             className={styles.BrandContent}
           >
-            <a href={"/"}>
-              <p>TMGL</p>
-            </a>
+            <Flex
+              direction={"row"}
+              justify={"space-between"}
+              align={"center"}
+              className={styles.SuperiorFlex}
+            >
+              <a href={"/"}>
+                <p>TMGL</p>
+              </a>
+              {isScrolled ? (
+                <a onClick={() => setOpened(opened ? false : true)}>
+                  {opened ? <IconX /> : <IconMenu2 />}
+                </a>
+              ) : (
+                <></>
+              )}
+            </Flex>
 
-            <Flex className={styles.InfoNavContainer} justify={"space-between"}>
+            <Flex
+              className={`${styles.InfoNavContainer} ${
+                opened ? styles.Opened : ""
+              }`}
+              justify={"space-between"}
+            >
               <a href={"/"}>
                 <small>The WHO Traditional Medicine Global Library</small>
               </a>
@@ -61,14 +84,17 @@ export const HeaderLayout = () => {
           </Flex>
         </Flex>
       </Container>
-      <SubNav />
+      <SubNav opened={opened} />
     </div>
   );
 };
 
-export const SubNav = () => {
+export interface SubNavProps {
+  opened: boolean;
+}
+export const SubNav = ({ opened }: SubNavProps) => {
   return (
-    <div className={styles.SubNav}>
+    <div className={`${styles.SubNav} ${opened ? styles.Opened : ""}`}>
       <Container size={"xl"}>
         <nav>
           <a>Health & Well-being</a>

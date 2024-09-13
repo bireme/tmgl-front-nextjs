@@ -46,6 +46,9 @@
     }
   }
   &.scrolled{
+    &.Opened{
+      background-color: white;
+    }
     position: fixed;
     background-color: #ffffffe3;
     transition:  0.3s ;
@@ -53,6 +56,9 @@
       background-color: white;
     }
     .SubNav{
+      &.Opened{
+        display: flex;
+      }
       display: none;
     }
     .LogoContainer{
@@ -62,6 +68,9 @@
       }
       .BrandContent{
         .InfoNavContainer{
+          &.Opened{
+            display: flex;
+          }
           display: none;
         }
       }
@@ -95,5 +104,12 @@
       border-right: none;
       padding-right: none;
     }
+  }
+}
+
+.SuperiorFlex{
+  width: 100%;
+  a{
+    cursor: pointer;
   }
 }
