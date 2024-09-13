@@ -37,6 +37,7 @@ export const HeaderLayout = () => {
             <a href={"/"}>
               <img src={logoSource} alt="brand-logo" id={"BrandLogo"} />
             </a>
+            <a></a>
           </Flex>
           <Flex
             direction={"column"}
