@@ -27,3 +27,24 @@
   background-size: cover;
   height: 350px;
 }
+
+
+.TrandingSliderContainer{
+  overflow-x: hidden;
+  width: 65%;
+  max-width: 1150px;
+  height: 100%;
+  right: 0;
+  position: absolute;
+}
+.TrandingSlider{
+  position: absolute;
+  right: -20px;
+  .SliderItemContainer{
+    overflow: visible;
+    padding: 15px;
+  }
+  .Controlls{
+    width: 85%;
+  }
+}

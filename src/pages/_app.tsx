@@ -3,6 +3,7 @@
 
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
+import "@mantine/carousel/styles.css";
 
 import { FooterLayout, HeaderLayout } from "@/components/layout";
 

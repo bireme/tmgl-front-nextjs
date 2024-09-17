@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mantine/carousel": "^7.12.2",
     "@mantine/core": "^7.11.1",
     "@mantine/dates": "^7.11.1",
     "@mantine/hooks": "^7.11.1",
@@ -16,16 +17,20 @@
     "@tabler/icons": "^3.16.0",
     "@tabler/icons-react": "^3.16.0",
     "dayjs": "^1.11.10",
+    "embla-carousel-react": "^7.1.0",
     "next": "14.2.4",
     "react": "^18",
     "react-background-slider": "^4.0.0-next.3",
     "react-dom": "^18",
-    "react-slideshow-image": "^4.3.1"
+    "react-slick": "^0.30.2",
+    "react-slideshow-image": "^4.3.1",
+    "slick-carousel": "^1.8.1"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-slick": "^0.23.13",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
     "postcss": "^8.4.39",
