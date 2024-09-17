@@ -61,11 +61,14 @@
 }
 
 .TrandingAndFeatured{
-  background-image: url('/local/png/home-gradient.png');
-  background-color: white;
+  background: linear-gradient(15deg, rgba(255, 255, 255, 1) 2%, rgba(255, 218, 185, 1) 33%, rgba(173, 216, 230, 1) 61%, rgba(95, 144, 195, 1) 100%);;
   min-height: 100vh;
-  background-size: cover;
   background-position: center center;
+  float: left;
+  width: 100%;
+}
+
+.NewsContainer{
   float: left;
   width: 100%;
 }

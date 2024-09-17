@@ -8,6 +8,9 @@ export const mantineTheme = createTheme({
   headings: {
     fontFamily: elMessiriFont.style.fontFamily,
   },
+  primaryShade: 5,
+  primaryColor: "tmgl-blue",
+  defaultRadius: "md",
   colors: {
     "tmgl-blue": [
       "#E0F5FF",

@@ -1,7 +1,11 @@
 import { Container, Flex, Grid, Text } from "@mantine/core";
 
+import { EventsSection } from "@/components/sections/events";
 import { HeroSlider } from "@/components/slider";
+import { NewsItem } from "@/components/sections/news";
+import { NewsletterSection } from "@/components/sections/newsletter";
 import { SearchForm } from "@/components/forms/search";
+import { StoriesSection } from "@/components/sections/stories";
 import { TraditionalSectionCard } from "@/components/sections";
 import { TrendingSlider } from "@/components/slider/trending";
 import { VideoSection } from "@/components/video";
@@ -121,7 +125,7 @@ export default function Home() {
         </Container>
       </VideoSection>
       <div className={styles.TrandingAndFeatured}>
-        <Container size={"xl"} my={80}>
+        <Container size={"xl"} mt={80} style={{ minHeight: "600px" }}>
           <h2 className={styles.TitleWithIcon}>
             <img src={"/local/svg/simbol.svg"} /> Trending Topics
           </h2>
@@ -133,8 +137,72 @@ export default function Home() {
           </div>
           <TrendingSlider />
         </Container>
+        <Container size={"xl"}>
+          <h2 className={styles.TitleWithIcon}>
+            <img src={"/local/svg/simbol.svg"} /> Featured Stories
+          </h2>
+          <Grid my={50}>
+            <Grid.Col span={{ md: 8 }}>
+              <StoriesSection
+                main
+                imagePath="/local/png/ancient.png"
+                title="Ancient Wisdom: Modern Applications of Traditional Medicine"
+                excerpt="Explore how ancient healing practices are being integrated into modern healthcare systems worldwide. This story delves into case studies, expert opinions, and recent research findings."
+              />
+            </Grid.Col>
+            <Grid.Col span={{ md: 4 }}>
+              <StoriesSection
+                imagePath="/local/png/montanha.png"
+                title="Ancient Wisdom: Modern Applications of Traditional Medicine"
+                excerpt="Explore how ancient healing practices are being integrated into modern healthcare systems worldwide. This story delves into case studies, expert opinions, and recent research findings."
+              />
+              <StoriesSection
+                imagePath="/local/png/gana.png"
+                title="Ancient Wisdom: Modern Applications of Traditional Medicine"
+                excerpt="Explore how ancient healing practices are being integrated into modern healthcare systems worldwide. This story delves into case studies, expert opinions, and recent research findings."
+              />
+            </Grid.Col>
+          </Grid>
+          <h2 className={styles.TitleWithIcon}>
+            <img src={"/local/svg/simbol.svg"} /> Events
+          </h2>
+        </Container>
       </div>
-      <div style={{ height: "4000px", background: "black" }}></div>
+      <EventsSection />
+      <div className={styles.NewsContainer}>
+        <Container size={"xl"} py={80}>
+          <h2 className={styles.TitleWithIcon}>
+            <img src={"/local/svg/simbol.svg"} /> News
+          </h2>
+          <Flex gap={30}>
+            <NewsItem
+              title="Charting an evidence-based roadmap for WHO Global Traditional Medicine Centre collaborations"
+              date={new Date()}
+              imagePath="/local/png/news1.png"
+              category="Departmental update"
+            />
+            <NewsItem
+              title="Charting an evidence-based roadmap for WHO Global Traditional Medicine Centre collaborations"
+              date={new Date()}
+              imagePath="/local/png/news1.png"
+              category="Departmental update"
+            />
+            <NewsItem
+              title="Charting an evidence-based roadmap for WHO Global Traditional Medicine Centre collaborations"
+              date={new Date()}
+              imagePath="/local/png/news1.png"
+              category="Departmental update"
+            />
+            <NewsItem
+              title="Charting an evidence-based roadmap for WHO Global Traditional Medicine Centre collaborations"
+              date={new Date()}
+              imagePath="/local/png/news1.png"
+              category="Departmental update"
+            />
+          </Flex>
+        </Container>
+        <NewsletterSection />
+      </div>
     </>
   );
 }
