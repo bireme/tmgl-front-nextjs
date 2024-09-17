@@ -1,0 +1,32 @@
+.VideoSection{
+  position:relative;
+  width: 100%;
+  min-height: 95vh;
+  padding: 0px;
+  overflow: hidden;
+  
+  .Video{
+    z-index: 1;
+    width: 200%;
+    height: auto;
+    position: absolute;
+    left: 0;
+    top:0;
+    pointer-events: none;
+  }
+  &::after{
+    left: 0;
+    top: 0;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    content: "";
+    background-color: #0a2936b6;
+  }
+}
+
+.Content{
+  z-index: 2;
+  position: relative;
+}

@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { Container, Flex } from "@mantine/core";
+import { Center, Container, Flex } from "@mantine/core";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
@@ -106,6 +106,36 @@ export const SubNav = ({ opened }: SubNavProps) => {
           <a>Rights, Equity & Ethics</a>
           <a>TM for Daily Life</a>
         </nav>
+      </Container>
+    </div>
+  );
+};
+
+export const FooterLayout = () => {
+  return (
+    <div className={styles.FooterLayout}>
+      <Container size={"xl"}>
+        <Flex>
+          <Flex
+            justify={"center"}
+            align={"center"}
+            direction={"column"}
+            gap={40}
+            px={"15px"}
+          >
+            <img src={"/local/png/who.png"} width={"50%"} />
+            <img src={"/local/png/who-medicine-center.png"} width={"50%"} />
+            <img src={"/local/png/footer-tmgl.png"} />
+          </Flex>
+          <Flex className={styles.FooterMap} px={"15px"}>
+            <div></div>
+          </Flex>
+        </Flex>
+        <Flex py={40} direction={"column"} justify={"center"} align={"center"}>
+          <img src={"/local/png/powered-by-bireme.png"} width={"160px"} />
+
+          <p className={styles.Copy}>© All rights reserved</p>
+        </Flex>
       </Container>
     </div>
   );

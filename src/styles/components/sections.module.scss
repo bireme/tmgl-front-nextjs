@@ -1,0 +1,28 @@
+.TraditionalSection{
+  fill: rgba(217, 217, 217, 0.20);
+  stroke-width: 2px;
+  stroke: rgba(255, 255, 255, 0.40);
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  background-color: rgba(217, 217, 217, 0.20);
+  border: solid #7bb4ce 2px;
+  border-radius: 20px;
+  min-width: 240px;
+  transition: 0.5s;
+  &:hover{
+    backdrop-filter: blur(5px);
+    background-color: rgba(217, 217, 217, 0.042);
+  }
+  p{
+    color: var(--Colors-Blue-50, #E0F5FF);
+    text-align: center;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    font-family: "Roboto Serif";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 140%; 
+    margin-top: 17px;
+    margin-bottom: 0px;
+  }
+}
