@@ -4,12 +4,23 @@ import { Center, Container, Flex } from "@mantine/core";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
+import { AcfApi } from "@/services/pages/AcfApi";
 import styles from "../../styles/components/layout.module.scss";
 
 export const HeaderLayout = () => {
   const logoSource = "/local/svg/logo.svg";
   const [isScrolled, setIsScrolled] = useState(false);
   const [opened, setOpened] = useState(false);
+
+  const api = new AcfApi();
+  const getSettings = async () => {
+    const settings = await api.getFields("teset");
+  };
+
+  // useEffect(() => {
+  //   //Rest Forbiden
+  //   getSettings();
+  // }, []);
 
   useEffect(() => {
     const handleScroll = () => {

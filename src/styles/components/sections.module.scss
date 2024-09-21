@@ -180,7 +180,13 @@
   .NewsletterSection{
     width: 100%;
     min-height: 214px;
+    position: relative;
     background-color: #0073A8;
+    >div{height: 100%;
+      >div{
+        height: 100%;
+        min-height: 214px;
+      }}
     h4{
       color: #FFF;
       font-family: "Roboto Serif";
@@ -204,8 +210,13 @@
       font-weight: 400;
     }
     .NewsImageBg{
-      width: 100%;
+      width: 50%;
       height: 100%;
-      background-color: red;
+      position: absolute;
+      right: 0px;
+      height: 100%;
+      top: 0px;
+      background-size: cover;
+      background-repeat: no-repeat;
     }
   }
