@@ -3,7 +3,13 @@ import { IconArrowRight, IconBrandYoutube } from "@tabler/icons-react";
 
 import styles from "../../../styles/components/sections.module.scss";
 
-export const EventsSection = () => {
+export const EventsSection = ({
+  title,
+  subtitle,
+  webcast,
+  meeting,
+  repport,
+}: AcfEvents) => {
   const eventImage = "/local/png/img-events.png";
   return (
     <div
@@ -19,19 +25,20 @@ export const EventsSection = () => {
           className={styles.EventsContent}
         >
           <div>
-            <h2>WHO Traditional Medicine Global Summit</h2>
-            <p>
-              The first WHO Traditional Medicine Global Summit looked anew at
-              the vast potential and applications of traditional medicine amidst
-              important challenges and opportunities to achieve universal health
-              coverage and well-being for people and the planet.
-            </p>
+            <h2>{title}</h2>
+            <p>{subtitle}</p>
             <Group>
-              <Button>
-                Webcasts <IconBrandYoutube style={{ marginLeft: "10px" }} />
-              </Button>
-              <Button>Meeting Reports</Button>
-              <Button>Concept Notes</Button>
+              <a href={webcast} target="_blank">
+                <Button>
+                  Webcasts <IconBrandYoutube style={{ marginLeft: "10px" }} />
+                </Button>
+              </a>
+              <a href={meeting} target="_blank">
+                <Button>Meeting Reports</Button>
+              </a>
+              <a href={repport} target="_blank">
+                <Button>Concept Notes</Button>
+              </a>
             </Group>
           </div>
           <div>

@@ -2,10 +2,11 @@
   background-color: white;
   width: 100%;
   transition: 0.4s;
+  top:0;
   position: relative;
   .LogoContainer{
     transition: 0.4s;
-    padding: 38px 0;
+    padding: 10px 0;
     &:hover{
       img{
         filter: brightness(1.1);
@@ -38,6 +39,13 @@
         }
         a{
           cursor: pointer;
+          color:  #282824;
+          text-align: center;
+          font-family: Roboto;
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: normal;
           &:hover{
             color: silver
           }
@@ -112,6 +120,21 @@
   width: 100%;
   a{
     cursor: pointer;
+  }
+  .SuperiorLinks{
+    display: none;
+    gap: 15px;
+    direction: row;
+    a{
+      gap: 5px;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
+    &.Opened{
+      display: flex;
+    }
   }
 }
 

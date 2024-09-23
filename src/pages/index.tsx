@@ -1,24 +1,86 @@
-import { Container, Flex, Grid, Text } from "@mantine/core";
+import {
+  Center,
+  Container,
+  Flex,
+  Grid,
+  LoadingOverlay,
+  Text,
+} from "@mantine/core";
+import {
+  DimensionsSection,
+  TraditionalSectionCard,
+} from "@/components/sections";
+import { NewsItem, NewsSection } from "@/components/sections/news";
+import { useCallback, useEffect, useState } from "react";
 
 import { EventsSection } from "@/components/sections/events";
 import { HeroSlider } from "@/components/slider";
-import { NewsItem } from "@/components/sections/news";
+import { MediaApi } from "@/services/media/MediaApi";
 import { NewsletterSection } from "@/components/sections/newsletter";
+import { PagesApi } from "@/services/pages/PagesApi";
 import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
-import { TraditionalSectionCard } from "@/components/sections";
 import { TrendingSlider } from "@/components/slider/trending";
 import { VideoSection } from "@/components/video";
 import styles from "../styles/pages/home.module.scss";
 
 export default function Home() {
+  const _api = new PagesApi();
+  const _mediaApi = new MediaApi();
+  const [properties, setProperties] = useState();
+  const [sliderImages, setSliderImages] = useState<Array<string>>();
+  const [acf, setAcf] = useState<HomeAcf>();
+
+  const getSliderImages = async (acfSearch: AcfSearch) => {
+    let images = [];
+    if (acfSearch.slide_image_1)
+      images[0] = await _mediaApi.getMediaById(acfSearch.slide_image_1);
+    if (acfSearch.slide_image_2)
+      images[1] = await _mediaApi.getMediaById(acfSearch.slide_image_2);
+    if (acfSearch.slide_image_3)
+      images[2] = await _mediaApi.getMediaById(acfSearch.slide_image_3);
+    if (acfSearch.slide_image_4)
+      images[3] = await _mediaApi.getMediaById(acfSearch.slide_image_4);
+    if (acfSearch.slide_image_5)
+      images[4] = await _mediaApi.getMediaById(acfSearch.slide_image_5);
+    if (acfSearch.slide_image_5)
+      images[5] = await _mediaApi.getMediaById(acfSearch.slide_image_5);
+    if (acfSearch.slide_image_5)
+      images[6] = await _mediaApi.getMediaById(acfSearch.slide_image_5);
+    return images;
+  };
+
+  const getPageProperties = useCallback(async () => {
+    try {
+      const resp = await _api.getPageProperties("home-global");
+      setProperties(resp[0]);
+      setAcf(resp[0].acf);
+      const imagesResp = await getSliderImages(resp[0].acf.search);
+      setSliderImages(imagesResp);
+    } catch {
+      console.log("Error while get home properties");
+    }
+  }, []);
+
+  useEffect(() => {
+    getPageProperties();
+  }, [getPageProperties]);
+
   return (
     <>
       <div className={styles.HeroSearch}>
-        <HeroSlider />
+        {sliderImages ? (
+          <HeroSlider images={sliderImages} />
+        ) : (
+          <LoadingOverlay visible={true} />
+        )}
+
         <div className={styles.FullContainer}>
           <Container size={"xl"}>
-            <SearchForm />
+            <SearchForm
+              title={acf?.search.title ? acf?.search.title : ""}
+              subtitle={acf?.search.subtitle ? acf.search.subtitle : ""}
+            />
           </Container>
         </div>
       </div>
@@ -26,102 +88,13 @@ export default function Home() {
         <Container size={"xl"} py={"5%"} className={styles.TraditionalMedicine}>
           <h2>
             <img src={"/local/svg/simbol.svg"} />
-            Traditional Medicine Dimensions
+            {acf?.tmd.title}
           </h2>
-          <h4>
-            Lorem ipsum dolor sit amet consectetur. Gravida eu augue ullamcorper{" "}
-            <br /> duis. Id nec mollis proin nullam. At odio ornare.
-          </h4>
-          <Flex
-            mt={80}
-            direction={"row"}
-            wrap={"wrap"}
-            gap={80}
-            justify={"center"}
-            align={"center"}
-          >
-            <TraditionalSectionCard
-              iconPath="/local/png/tmd-1.png"
-              target=""
-              title={
-                <>
-                  Health & <br /> Well-being
-                </>
-              }
-            />
-            <TraditionalSectionCard
-              iconPath="/local/png/tmd-2.png"
-              target=""
-              title={
-                <>
-                  Leadership &<br />
-                  Policies
-                </>
-              }
-            />
-            <TraditionalSectionCard
-              iconPath="/local/png/tmd-3.png"
-              target=""
-              title={
-                <>
-                  Research &<br />
-                  Evidence
-                </>
-              }
-            />
-            <TraditionalSectionCard
-              iconPath="/local/png/tmd-4.png"
-              target=""
-              title={
-                <>
-                  Health Systems
-                  <br />& Services
-                </>
-              }
-            />
-            <TraditionalSectionCard
-              iconPath="/local/png/tmd-5.png"
-              target=""
-              title={
-                <>
-                  Digital Health
-                  <br />
-                  Frontiers
-                </>
-              }
-            />
-            <TraditionalSectionCard
-              iconPath="/local/png/tmd-6.png"
-              target=""
-              title={
-                <>
-                  Biodiversity &<br />
-                  Sustainability
-                </>
-              }
-            />
-            <TraditionalSectionCard
-              iconPath="/local/png/tmd-7.png"
-              target=""
-              title={
-                <>
-                  Rights, Equity
-                  <br />& Ethics
-                </>
-              }
-            />
-            <TraditionalSectionCard
-              iconPath="/local/png/tmd-8.png"
-              target=""
-              title={
-                <>
-                  TM for
-                  <br />
-                  Daily Life
-                </>
-              }
-            />
-          </Flex>
+          <Center m={0} p={0}>
+            <h4>{acf?.tmd.subtitle}</h4>
+          </Center>
+
+          <DimensionsSection />
         </Container>
       </VideoSection>
       <div className={styles.TrandingAndFeatured}>
@@ -130,76 +103,30 @@ export default function Home() {
             <img src={"/local/svg/simbol.svg"} /> Trending Topics
           </h2>
           <div className={styles.TrendingText}>
-            <p>
-              Delve into various themes such as traditional practices,
-              complementary therapies, integrative approaches, and more.
-            </p>
+            <p>{acf?.text_trending_topics}</p>
           </div>
           <TrendingSlider />
         </Container>
         <Container size={"xl"}>
-          <h2 className={styles.TitleWithIcon}>
-            <img src={"/local/svg/simbol.svg"} /> Featured Stories
-          </h2>
-          <Grid my={50}>
-            <Grid.Col span={{ md: 8 }}>
-              <StoriesSection
-                main
-                imagePath="/local/png/ancient.png"
-                title="Ancient Wisdom: Modern Applications of Traditional Medicine"
-                excerpt="Explore how ancient healing practices are being integrated into modern healthcare systems worldwide. This story delves into case studies, expert opinions, and recent research findings."
-              />
-            </Grid.Col>
-            <Grid.Col span={{ md: 4 }}>
-              <StoriesSection
-                imagePath="/local/png/montanha.png"
-                title="Ancient Wisdom: Modern Applications of Traditional Medicine"
-                excerpt="Explore how ancient healing practices are being integrated into modern healthcare systems worldwide. This story delves into case studies, expert opinions, and recent research findings."
-              />
-              <StoriesSection
-                imagePath="/local/png/gana.png"
-                title="Ancient Wisdom: Modern Applications of Traditional Medicine"
-                excerpt="Explore how ancient healing practices are being integrated into modern healthcare systems worldwide. This story delves into case studies, expert opinions, and recent research findings."
-              />
-            </Grid.Col>
-          </Grid>
+          <StoriesSection />
           <h2 className={styles.TitleWithIcon}>
             <img src={"/local/svg/simbol.svg"} /> Events
           </h2>
         </Container>
       </div>
-      <EventsSection />
+      <EventsSection
+        title={acf?.events.title ? acf.events.title : ""}
+        subtitle={acf?.events.subtitle ? acf.events.subtitle : ""}
+        webcast={acf?.events.webcast}
+        meeting={acf?.events.meeting}
+        repport={acf?.events.repport}
+      />
       <div className={styles.NewsContainer}>
         <Container size={"xl"} py={80}>
           <h2 className={styles.TitleWithIcon}>
             <img src={"/local/svg/simbol.svg"} /> News
           </h2>
-          <Flex gap={30}>
-            <NewsItem
-              title="Charting an evidence-based roadmap for WHO Global Traditional Medicine Centre collaborations"
-              date={new Date()}
-              imagePath="/local/png/news1.png"
-              category="Departmental update"
-            />
-            <NewsItem
-              title="Charting an evidence-based roadmap for WHO Global Traditional Medicine Centre collaborations"
-              date={new Date()}
-              imagePath="/local/png/news1.png"
-              category="Departmental update"
-            />
-            <NewsItem
-              title="Charting an evidence-based roadmap for WHO Global Traditional Medicine Centre collaborations"
-              date={new Date()}
-              imagePath="/local/png/news1.png"
-              category="Departmental update"
-            />
-            <NewsItem
-              title="Charting an evidence-based roadmap for WHO Global Traditional Medicine Centre collaborations"
-              date={new Date()}
-              imagePath="/local/png/news1.png"
-              category="Departmental update"
-            />
-          </Flex>
+          <NewsSection />
         </Container>
         <NewsletterSection />
       </div>

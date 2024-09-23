@@ -1,6 +1,7 @@
-import { Button, Flex, TreeNodeData } from "@mantine/core";
+import { Button, Flex } from "@mantine/core";
 
 import { IconArrowRight } from "@tabler/icons-react";
+import { ReactNode } from "react";
 import styles from "../../../styles/components/sections.module.scss";
 
 export interface TrentingTopicProps {
@@ -21,7 +22,7 @@ export const TrendingTopicSection = ({
     >
       <div className={styles.TrendingText}>
         <h3>{title}</h3>
-        <p>{excerpt}</p>
+        <div dangerouslySetInnerHTML={{ __html: excerpt }} />
       </div>
       <div className={styles.TrendingLink}>
         <a href={href} className={styles.TrendingButton}>

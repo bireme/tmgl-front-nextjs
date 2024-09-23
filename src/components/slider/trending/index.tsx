@@ -1,15 +1,35 @@
 import { ActionIcon, Group } from "@mantine/core";
 import { Carousel, Embla } from "@mantine/carousel";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
+import { useCallback, useEffect, useState } from "react";
 
+import { Post } from "@/services/types/posts.dto";
+import { PostsApi } from "@/services/posts/PostsApi";
 import { TrendingTopicSection } from "@/components/sections/topics";
 import styles from "../../../styles/components/slider.module.scss";
-import { useState } from "react";
 
 export const TrendingSlider = () => {
   const [embla, setEmbla] = useState<any>(null);
   const handleNext = () => embla?.scrollNext();
   const handlePrev = () => embla?.scrollPrev();
+
+  const [posts, setPosts] = useState<Array<Post>>([]);
+
+  const getTrendingTopics = useCallback(async () => {
+    const _api = new PostsApi();
+
+    try {
+      const resp = await _api.getCustomPost("trending_topics");
+      setPosts(resp);
+    } catch (error: any) {
+      console.log("Error while get trendingTopics", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    getTrendingTopics();
+  }, [getTrendingTopics]);
+
   return (
     <div className={styles.TrandingSliderContainer}>
       <div className={styles.TrandingSlider}>
@@ -29,49 +49,33 @@ export const TrendingSlider = () => {
         </Group>
         <Carousel
           withControls={false}
-          slideSize="30%"
+          slideSize="15%"
           slideGap="sm"
           align={"start"}
           loop={false}
           getEmblaApi={setEmbla}
           dragFree
         >
-          <Carousel.Slide className={styles.SliderItemContainer}>
-            <TrendingTopicSection
-              href=""
-              title="International Regulatory Cooperation (IRCH) for Herbal Medicines"
-              excerpt="Established in 2006, IRCH is a global network of regulatory authorities responsible for regulation of herbal medicines. "
-            />
-          </Carousel.Slide>
-          <Carousel.Slide className={styles.SliderItemContainer}>
-            <TrendingTopicSection
-              href=""
-              title="International Regulatory Cooperation (IRCH) for Herbal Medicines"
-              excerpt="Established in 2006, IRCH is a global network of regulatory authorities responsible for regulation of herbal medicines. "
-            />
-          </Carousel.Slide>
-
-          <Carousel.Slide className={styles.SliderItemContainer}>
-            <TrendingTopicSection
-              href=""
-              title="International Regulatory Cooperation (IRCH) for Herbal Medicines"
-              excerpt="Established in 2006, IRCH is a global network of regulatory authorities responsible for regulation of herbal medicines. "
-            />
-          </Carousel.Slide>
-          <Carousel.Slide className={styles.SliderItemContainer}>
-            <TrendingTopicSection
-              href=""
-              title="International Regulatory Cooperation (IRCH) for Herbal Medicines"
-              excerpt="Established in 2006, IRCH is a global network of regulatory authorities responsible for regulation of herbal medicines. "
-            />
-          </Carousel.Slide>
-          <Carousel.Slide className={styles.SliderItemContainer}>
-            <TrendingTopicSection
-              href=""
-              title="International Regulatory Cooperation (IRCH) for Herbal Medicines"
-              excerpt="Established in 2006, IRCH is a global network of regulatory authorities responsible for regulation of herbal medicines. "
-            />
-          </Carousel.Slide>
+          {posts?.length > 0 ? (
+            posts?.map((item, key) => {
+              return (
+                <div key={key}>
+                  <Carousel.Slide
+                    key={key}
+                    className={styles.SliderItemContainer}
+                  >
+                    <TrendingTopicSection
+                      href={`/trending_topics/${item.slug}`}
+                      title={`${item.title.rendered}`}
+                      excerpt={`${item.excerpt.rendered}`}
+                    />
+                  </Carousel.Slide>
+                </div>
+              );
+            })
+          ) : (
+            <></>
+          )}
         </Carousel>
       </div>
     </div>

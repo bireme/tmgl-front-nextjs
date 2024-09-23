@@ -1,26 +1,20 @@
 /* eslint-disable @next/next/no-img-element */
 
 import { Center, Container, Flex } from "@mantine/core";
-import { IconMenu2, IconX } from "@tabler/icons-react";
+import {
+  IconInfoCircle,
+  IconLifebuoy,
+  IconMenu2,
+  IconX,
+} from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
-import { AcfApi } from "@/services/pages/AcfApi";
 import styles from "../../styles/components/layout.module.scss";
 
 export const HeaderLayout = () => {
   const logoSource = "/local/svg/logo.svg";
   const [isScrolled, setIsScrolled] = useState(false);
   const [opened, setOpened] = useState(false);
-
-  const api = new AcfApi();
-  const getSettings = async () => {
-    const settings = await api.getFields("teset");
-  };
-
-  // useEffect(() => {
-  //   //Rest Forbiden
-  //   getSettings();
-  // }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -44,9 +38,10 @@ export const HeaderLayout = () => {
     >
       <Container size={"xl"}>
         <Flex
-          gap={"9px"}
+          gap={"10px"}
           direction={"row"}
           align={"center"}
+          justify={"center"}
           className={styles.LogoContainer}
         >
           <Flex direction={"column"}>
@@ -68,6 +63,20 @@ export const HeaderLayout = () => {
               <a href={"/"}>
                 <p>TMGL</p>
               </a>
+              <div
+                className={`${styles.SuperiorLinks} ${
+                  opened || !isScrolled ? styles.Opened : ""
+                }`}
+              >
+                <a>
+                  <IconInfoCircle size={25} stroke={1} />
+                  About Us{" "}
+                </a>
+                <a>
+                  <IconLifebuoy size={25} stroke={1} />
+                  User Support
+                </a>
+              </div>
               {isScrolled ? (
                 <a onClick={() => setOpened(opened ? false : true)}>
                   {opened ? <IconX /> : <IconMenu2 />}
@@ -78,6 +87,7 @@ export const HeaderLayout = () => {
             </Flex>
 
             <Flex
+              mt={10}
               className={`${styles.InfoNavContainer} ${
                 opened ? styles.Opened : ""
               }`}
@@ -88,35 +98,13 @@ export const HeaderLayout = () => {
               </a>
               <Flex className={styles.InfoNav} justify={"fle-end"} gap={"16px"}>
                 <a>Regions & Countries</a>
-                <a>About Us </a>
-                <a>User Support</a>
+                <a>Traditional Medicine Dimensions</a>
+                <a>Browse Resources</a>
+                <a>Search Colletion</a>
               </Flex>
             </Flex>
           </Flex>
         </Flex>
-      </Container>
-      <SubNav opened={opened} />
-    </div>
-  );
-};
-
-export interface SubNavProps {
-  opened: boolean;
-}
-export const SubNav = ({ opened }: SubNavProps) => {
-  return (
-    <div className={`${styles.SubNav} ${opened ? styles.Opened : ""}`}>
-      <Container size={"xl"}>
-        <nav>
-          <a>Health & Well-being</a>
-          <a>Leadership & Policies</a>
-          <a>Research & Evidence</a>
-          <a>Health Systems & Services</a>
-          <a> Digital Health Frontiers</a>
-          <a>Biodiversity & Sustainability</a>
-          <a>Rights, Equity & Ethics</a>
-          <a>TM for Daily Life</a>
-        </nav>
       </Container>
     </div>
   );
