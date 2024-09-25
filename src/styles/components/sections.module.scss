@@ -112,256 +112,337 @@
     }
   }
     
-  }
+}
 
-  .StoreisSection{
-    width: 100%;
-    height: 50%;
-    min-height: 250px;
-    padding: 10px 5px;
-    &.main{
-      height: 100%;
-      min-height: 500px;
-      .StoreisSectionContainer{
-        .Content{
-          width: 60%;
-          padding: 20px 40px;
-          h2{
-            
-            font-size: 28px;
-          }
-          @media (max-width: '750px') {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            h2{
-              font-size: 22px;
-            }
-          }
-        }
-      }
-    }
-    
+.StoreisSection{
+  width: 100%;
+  height: 50%;
+  min-height: 250px;
+  padding: 10px 5px;
+  &.main{
+    height: 100%;
+    min-height: 500px;
     .StoreisSectionContainer{
-      width: 100%;
-      height: 100%;
-      background-size: 150%;
-      transition: 3s ease-in-out;
-      background-repeat: no-repeat;
-      @media (max-width: '750px') {
-        background-size: cover;
-      }
-      background-position: center center;
-      border-radius: 16px;
-      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
-      position: relative;
-      &:hover{
-        background-size: 200%;
-      }
-      >div{
-        z-index: 10;
-      }
       .Content{
-        padding: 20px;
-        color:white;
-        @media (max-width: '750px') {
-          padding: 30px;
-          
-        }
+        width: 60%;
+        padding: 20px 40px;
         h2{
-          margin:0px;
-          color: #FFF;
-          font-size: 22px;
-          font-family: "Roboto Serif";
-          font-style: normal;
-          font-weight: 700;
-          @media (max-width: '750px') {
-            font-size: 20px;
-          }
+          
+          font-size: 28px;
         }
-        p{
-          margin:0px;
-          color: #FFF;
-          font-family: Roboto;
-          font-size: 16px;
-          font-style: normal;
-          font-weight: 300;
-          line-height: 160%; /* 25.6px */
+        @media (max-width: '750px') {
+          height: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          h2{
+            font-size: 22px;
+          }
         }
       }
     }
   }
-
-  .EventsSection{
-    color: white;
+  
+  .StoreisSectionContainer{
     width: 100%;
-    float: left;
-    display: flex;
-    min-height: 512px;
-    background-size: cover;
-    background-position: center center;
-    mix-blend-mode: multiply;
-    background-image: linear-gradient(90deg, rgb(5 29 97 / 88%) 5.19%, rgba(12, 43, 100, 0) 100%), url('../../../public/local/png/img-events.png');
+    height: 100%;
+    background-size: 150%;
+    transition: 3s ease-in-out;
+    background-repeat: no-repeat;
     @media (max-width: '750px') {
-      background-image: linear-gradient(180deg, #0C2B64 5.19%, rgba(12, 43, 100, 0.00) 99.96%) , url('../../../public/local/png/img-events.png');
-      background-position: bottom center;
+      background-size: cover;
     }
-    .EventsContent{
+    background-position: center center;
+    border-radius: 16px;
+    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
+    position: relative;
+    &:hover{
+      background-size: 200%;
+    }
+    >div{
+      z-index: 10;
+    }
+    .Content{
+      padding: 20px;
+      color:white;
+      @media (max-width: '750px') {
+        padding: 30px;
+        
+      }
       h2{
-        color: white;
+        margin:0px;
+        color: #FFF;
+        font-size: 22px;
         font-family: "Roboto Serif";
-        font-size: 26px;
         font-style: normal;
         font-weight: 700;
-        line-height: 120%;
+        @media (max-width: '750px') {
+          font-size: 20px;
+        }
       }
       p{
-        color: white;
+        margin:0px;
+        color: #FFF;
         font-family: Roboto;
         font-size: 16px;
         font-style: normal;
         font-weight: 300;
         line-height: 160%; /* 25.6px */
       }
-      width: 45%;
-      height: 100%;
-      @media (max-width: '750px') {
-        width: 100%;
-      }
-      button{
-        font-weight: 400;
-      }
     }
   }
+}
 
-
-  .NewsItem{
-    text-decoration: none;
-    
-    cursor: pointer;
-    width: 100%;
-    border-radius: 16px;
-    background:  #F3F3F2;
-    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
-    transition: 0.5s;
-    &:hover{
-      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.45);
-    }
-    max-width: 313px;
-    @media (max-width: '750px') {
-      max-width: 90%;
-      min-height: 405px;
-    }
-    min-height: 475px;
-    padding: 12px;
-    .NewsImage{
-      width: 100%;
-      height: 147px;
-      border-radius: 8px;
-      background-position: center center;
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
-    .NewsContent{
-      flex: 1;
-      p{
-        margin-top: 15px;
-        margin-bottom: 10px;
-      }
-      h3{
-        margin: 0px;
-        font-family: "Roboto Serif";
-        font-size: 22px;
-        font-style: normal;
-        font-weight: 700;
-        line-height: 120%; 
-        @media (max-width: '750px') {
-          font-size: 24px;
-        }
-      }
-    }
+.EventsSection{
+  color: white;
+  width: 100%;
+  float: left;
+  display: flex;
+  min-height: 512px;
+  background-size: cover;
+  background-position: center center;
+  mix-blend-mode: multiply;
+  background-image: linear-gradient(90deg, rgb(5 29 97 / 88%) 5.19%, rgba(12, 43, 100, 0) 100%), url('../../../public/local/png/img-events.png');
+  @media (max-width: '750px') {
+    background-image: linear-gradient(180deg, #0C2B64 5.19%, rgba(12, 43, 100, 0.00) 99.96%) , url('../../../public/local/png/img-events.png');
+    background-position: bottom center;
   }
-
-
-  .NewsletterSection{
-    width: 100%;
-    min-height: 214px;
-    position: relative;
-    background-color: #0073A8;
-    >div{height: 100%;
-      >div{
-        height: 100%;
-        min-height: 214px;
-      }}
-    h4{
-      color: #FFF;
+  .EventsContent{
+    h2{
+      color: white;
       font-family: "Roboto Serif";
       font-size: 26px;
       font-style: normal;
       font-weight: 700;
-      line-height: 120%; /* 31.2px */
-      margin:0;
+      line-height: 120%;
     }
-    h5{
-      margin:0;
-      color: #FFF;
+    p{
+      color: white;
       font-family: Roboto;
       font-size: 16px;
       font-style: normal;
       font-weight: 300;
-      line-height: normal;
-      margin-bottom: 16px;
+      line-height: 160%; /* 25.6px */
+    }
+    width: 45%;
+    height: 100%;
+    @media (max-width: '750px') {
+      width: 100%;
     }
     button{
       font-weight: 400;
     }
-    .NewsImageBg{
-      width: 50%;
-      height: 100%;
-      position: absolute;
-      right: 0px;
-      height: 100%;
-      top: 0px;
-      background-size: cover;
-      background-repeat: no-repeat;
+  }
+}
+
+
+.NewsItem{
+  text-decoration: none;
+  
+  cursor: pointer;
+  width: 100%;
+  border-radius: 16px;
+  background:  #F3F3F2;
+  box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
+  transition: 0.5s;
+  &:hover{
+    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.45);
+  }
+  max-width: 313px;
+  @media (max-width: '750px') {
+    max-width: 90%;
+    min-height: 405px;
+  }
+  min-height: 475px;
+  padding: 12px;
+  .NewsImage{
+    width: 100%;
+    height: 147px;
+    border-radius: 8px;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  .NewsContent{
+    flex: 1;
+    p{
+      margin-top: 15px;
+      margin-bottom: 10px;
+    }
+    h3{
+      margin: 0px;
+      font-family: "Roboto Serif";
+      font-size: 22px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 120%; 
       @media (max-width: '750px') {
-        display: none;
-      }
-    } 
-    form{
-      @media (max-width: '750px') {
-        width: 100%;
-        button{
-          width: 50%;
-        }
-        input{
-          flex: 1;
-        }
+        font-size: 24px;
       }
     }
-
-
   }
+}
 
-  .TitleWithIcon{
-    display: flex;
-    gap: 5px;
+.NewsletterSection{
+  width: 100%;
+  min-height: 214px;
+  position: relative;
+  background-color: #0073A8;
+  >div{height: 100%;
+    >div{
+      height: 100%;
+      min-height: 214px;
+    }}
+  h4{
+    color: #FFF;
     font-family: "Roboto Serif";
-    font-size: 36px;
+    font-size: 26px;
     font-style: normal;
-    font-weight: 800;
+    font-weight: 700;
+    line-height: 120%; /* 31.2px */
+    margin:0;
+  }
+  h5{
+    margin:0;
+    color: #FFF;
+    font-family: Roboto;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
     line-height: normal;
-
+    margin-bottom: 16px;
+  }
+  button{
+    font-weight: 400;
+  }
+  .NewsImageBg{
+    width: 50%;
+    height: 100%;
+    position: absolute;
+    right: 0px;
+    height: 100%;
+    top: 0px;
+    background-size: cover;
+    background-repeat: no-repeat;
     @media (max-width: '750px') {
-      flex-direction: column;
-      justify-content: center;
-      align-content: center;
-      text-align: center;
-      align-items: center;
-      img{
-        width: 40px;
+      display: none;
+    }
+  } 
+  form{
+    @media (max-width: '750px') {
+      width: 100%;
+      button{
+        width: 50%;
+      }
+      input{
+        flex: 1;
       }
     }
   }
+
+
+}
+
+.TitleWithIcon{
+  display: flex;
+  gap: 5px;
+  font-family: "Roboto Serif";
+  font-size: 36px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+
+  @media (max-width: '750px') {
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    text-align: center;
+    align-items: center;
+    img{
+      width: 40px;
+    }
+  }
+}
+
+.RelatedArticleItem{
+  display: flex;
+  min-width: 310px;
+  max-width: 1328px;
+  padding: 16px;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--Number-Scales-8s-56, 56px);
+  align-self: stretch;
+  border-radius: 16px;
+  background: var(--Greyscale-Surface-Default, #F3F3F2);
+  box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
+  h3{
+    margin:0px;
+    color: var(--Colors-Pure-Black, #000);
+    font-family: "Roboto Serif";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 120%; 
+  }
+  p{
+    margin: 0px;
+    margin-top: 10px;
+    font-family: Roboto;
+    color: black;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 160%; 
+  }
+  Button{
+    padding: 5px;
+    a{
+      color: white
+    }
+  }
+}
+
+.ArticleItem{
+  display: flex;
+  max-width: 424px;
+  min-height: 145px;
+  padding: 24px;
+  background-color: white;
+  border-radius: 16px;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  h3{
+    margin:0px;
+    font-family: "Roboto Serif";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+  }
+  p{
+    margin: 0px;
+    margin-top: 10px;
+    color: #353535;
+
+    font-family: Roboto;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: normal;
+  }
+  Button{
+    padding: 5px;
+    a{
+      color: black
+    }
+  }
+}
+
+.RecomendedArticlesSection{
+  padding: 60px;
+  background: #F3F3F2;
+  min-height: 400px;
+}

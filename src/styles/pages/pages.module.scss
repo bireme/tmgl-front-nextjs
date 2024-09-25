@@ -53,9 +53,21 @@ line-height: 160%; /* 41.6px */
   line-height: 180%; /* 25.2px */
 }
 
+.PostPageSubtitle{
+  color: #006CB0;
+    font-family: "Roboto Serif";
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%; /* 45px */
+}
+
 .PostContent{
   img{
-    max-width: 100%
+    max-width: 100%;
+  }
+  figure{
+    max-width: 100% ;
   }
   font-family: Roboto;
   font-size: 18px;
@@ -63,7 +75,13 @@ line-height: 160%; /* 41.6px */
   font-weight: 300;
   line-height: 180%; 
   p{
-    margin-bottom: 20px;
+    margin-bottom: 25px;
+    color: var(--Colors-Pure-Black, #000);
+    font-family: Roboto;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 180%; 
   }
   h3{
     color: #006CB0;

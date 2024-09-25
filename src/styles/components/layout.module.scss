@@ -153,22 +153,48 @@
   float: left;
   padding: 70px 0px 0px 0px;
   background: #D9D9D9;
-  .FooterImages{
-    padding: 10px 0px;
-    border-top: solid black 1px;
-      border-bottom: solid black 1px,
-  }
+ 
   @media (max-width: '750px') {
+    .FooterImages{
+      padding: 10px 0px;
+      border-top: solid black 1px;
+      border-bottom: solid black 1px,
+    }
     width: 100%;
     float: left;
   }
   .FooterMap{
+    padding: 0px;
+    flex: 1;
     @media (max-width: '750px') {
       border-left: none;
       float: left;
-      
     }
-    border-left: solid black 2px;
+    p{
+      color: var(--Greyscale-Text-Body, #53524B);
+      font-family: Roboto;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+    }
+    ul{
+      list-style: none;
+      padding:0px;
+      padding-left: 5px;
+      li{
+        cursor: pointer;
+        color: #53524B;
+        padding: 0;
+        font-family: Roboto;
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 300;
+        line-height: normal;
+        margin-top: 8px;
+      }
+    }
+    border-left: solid black 1px;
   }
   .Copy{
     text-align: center;

@@ -1,6 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
-
-import { Center, Container, Flex } from "@mantine/core";
+import { Container, Flex, Grid } from "@mantine/core";
 import {
   IconInfoCircle,
   IconLifebuoy,
@@ -127,13 +125,63 @@ export const FooterLayout = () => {
             <img src={"/local/png/who-medicine-center.png"} width={"50%"} />
             <img src={"/local/png/footer-tmgl.png"} width={"100%"} />
           </Flex>
-          <Flex className={styles.FooterMap} px={"15px"}>
-            <div></div>
-          </Flex>
+          <Grid className={styles.FooterMap} px={"25px"}>
+            <Grid.Col span={{ base: 12, md: 4 }}>
+              <p>Regions</p>
+              <ul>
+                <li>Africa</li>
+                <li>Americas</li>
+                <li>Europe</li>
+                <li>Eastern Mediterranean</li>
+                <li>South-East Asia</li>
+                <li>Western Pacific</li>
+              </ul>
+              <p>Countries</p>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 4 }}>
+              <p>Dimensions</p>
+              <ul>
+                <li>Health & Well-being</li>
+                <li>Leadership & Policies</li>
+                <li>Research & Evidence</li>
+                <li>Health Systems & Services</li>
+                <li>Digital Health Frontiers</li>
+                <li>Biodiversity & Sustainability</li>
+                <li>Rights, Equity & Ethics</li>
+                <li>TM for Daily Life</li>
+              </ul>
+            </Grid.Col>
+            <Grid.Col span={{ base: 12, md: 4 }}>
+              <Flex direction={"column"} justify={"space-between"} gap={20}>
+                <div>
+                  <p>
+                    <b>Trending Topics</b>
+                  </p>
+                  <p>
+                    <b>Featured Stories</b>
+                  </p>
+                  <p>
+                    <b>Events</b>
+                  </p>
+                  <p>
+                    <b>News</b>
+                  </p>
+                </div>
+
+                <div>
+                  <p>
+                    <a>About Us</a>
+                  </p>
+                  <p>
+                    <a>User Support</a>
+                  </p>
+                </div>
+              </Flex>
+            </Grid.Col>
+          </Grid>
         </Flex>
         <Flex py={40} direction={"column"} justify={"center"} align={"center"}>
           <img src={"/local/png/powered-by-bireme.png"} width={"160px"} />
-
           <p className={styles.Copy}>© All rights reserved</p>
         </Flex>
       </Container>

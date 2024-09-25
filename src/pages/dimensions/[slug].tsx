@@ -1,4 +1,8 @@
 import { Container, Grid, LoadingOverlay } from "@mantine/core";
+import {
+  RecomendedArticlesSection,
+  RelatedArticlesSection,
+} from "@/components/sections/recomended";
 import { useCallback, useEffect, useState } from "react";
 
 import { HeroHeader } from "@/components/sections/hero";
@@ -36,15 +40,21 @@ export default function Dimensions() {
           <HeroHeader post={post} />
           <Container py={100} size={"xl"}>
             <Grid>
-              <Grid.Col span={{ base: 12, md: 10 }}>
+              <Grid.Col span={{ base: 12, md: 8 }} p={40}>
                 <div
                   className={styles.PostContent}
                   dangerouslySetInnerHTML={{ __html: post.content.rendered }}
                 />
               </Grid.Col>
-              <Grid.Col span={{ base: 12, md: 2 }}></Grid.Col>
+              <Grid.Col span={{ base: 12, md: 4 }} p={40}>
+                <h3 className={styles.PostPageSubtitle}>
+                  Lorem Ipsum dolor sit amet
+                </h3>
+                <RelatedArticlesSection limit={4} />
+              </Grid.Col>
             </Grid>
           </Container>
+          <RecomendedArticlesSection limit={3} />
         </>
       ) : (
         <LoadingOverlay visible={true} />
