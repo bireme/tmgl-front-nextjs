@@ -78,7 +78,7 @@ export const RecomendedArticlesSection = ({
     <div className={styles.RecomendedArticlesSection}>
       <Container size={"xl"}>
         <h2>Recommended articles</h2>
-        <Flex gap={20}>
+        <Flex gap={20} direction={{ base: "column", md: "row" }}>
           {posts?.map((item, key) => {
             return (
               <ArticleItem

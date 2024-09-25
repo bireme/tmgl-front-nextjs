@@ -49,6 +49,9 @@
   color: white;
   float: left;
   width: 100%;
+  @media (max-width: '750px') {
+    min-height: 80vh;
+  }
   h2{
     padding-left: 40px;
     background-image: url('../../../public/local/svg/simbol.svg');
@@ -82,6 +85,7 @@
     max-width: 55vw;
     @media (max-width: '750px') {
       width: 100%;
+      max-width: 100%;
     }
     color: #FFF;
     font-family: Roboto;
@@ -91,7 +95,7 @@
     line-height: 160%; /* 41.6px */
   }
   .HeroContent{
-    height: 70vh;
+    height: 80vh;
   }
 }
 
