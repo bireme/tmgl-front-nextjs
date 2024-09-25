@@ -1,6 +1,8 @@
-import { Badge, Flex, LoadingOverlay } from "@mantine/core";
+import { Badge, Button, Flex, LoadingOverlay } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 
+import { IconArrowRight } from "@tabler/icons-react";
+import Link from "next/link";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import moment from "moment";
@@ -63,7 +65,6 @@ export const NewsSection = () => {
       console.log("Error while getting news", error);
     }
   }, []);
-
   useEffect(() => {
     getNews();
   }, [getNews]);
@@ -71,6 +72,7 @@ export const NewsSection = () => {
   return (
     <>
       <Flex
+        mb={40}
         gap={30}
         direction={{ base: "column", md: "row" }}
         justify={"center"}
@@ -99,6 +101,17 @@ export const NewsSection = () => {
           <LoadingOverlay visible={true} />
         )}
       </Flex>
+      <Link
+        href={"/news"}
+        style={{ textDecoration: "none", color: "black", fontSize: "18px" }}
+      >
+        <Flex justify={"flex-start"} align={"center"} gap={10}>
+          <p>Explore archived news</p>{" "}
+          <Button p={5} size={"xs"}>
+            <IconArrowRight />
+          </Button>
+        </Flex>
+      </Link>
     </>
   );
 };

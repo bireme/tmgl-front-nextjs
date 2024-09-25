@@ -243,9 +243,7 @@
 
 .NewsItem{
   text-decoration: none;
-  
   cursor: pointer;
-  width: 100%;
   border-radius: 16px;
   background:  #F3F3F2;
   box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
@@ -253,7 +251,7 @@
   &:hover{
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.45);
   }
-  max-width: 313px;
+  max-width: 300px;
   @media (max-width: '750px') {
     max-width: 90%;
     min-height: 405px;
@@ -334,10 +332,11 @@
     }
   } 
   form{
+    width: 100%;
     @media (max-width: '750px') {
       width: 100%;
       button{
-        width: 50%;
+        flex: 1;
       }
       input{
         flex: 1;

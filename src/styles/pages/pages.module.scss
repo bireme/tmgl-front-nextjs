@@ -116,3 +116,26 @@
       width: 100%;
     }
 }
+.NotFoundPage{
+  p{
+    color: var(--Colors-Pure-Black, #000);
+    font-family: "Roboto Serif";
+    font-size: 28px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 160%;
+    b{
+      font-weight: 700;
+    }
+  }
+}
+
+.tmgl_primary_button{
+  color: white;
+}
+
+.tmgl_secondary_button{
+  border:solid #0093d5 2px;
+  color: #0093d5;
+  background-color: #C2ECFF;
+}

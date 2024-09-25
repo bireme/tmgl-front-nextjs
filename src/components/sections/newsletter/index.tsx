@@ -1,8 +1,10 @@
 import { Button, Container, Flex, Grid, Group, Input } from "@mantine/core";
 
 import styles from "../../../styles/components/sections.module.scss";
+import { useRouter } from "next/router";
 
 export const NewsletterSection = () => {
+  const router = useRouter();
   return (
     <div className={styles.NewsletterSection}>
       <Container size={"xl"}>
@@ -14,8 +16,15 @@ export const NewsletterSection = () => {
               inbox
             </h5>
             <Flex gap={"10px"} style={{ width: "100%" }}>
-              <Input />
-              <Button>Subscribe</Button>
+              <Input style={{ width: "30%" }} size={"md"} />
+              <Button
+                onClick={() => {
+                  router.push("/subscription");
+                }}
+                size={"md"}
+              >
+                Subscribe
+              </Button>
             </Flex>
           </form>
         </Flex>

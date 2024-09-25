@@ -6,6 +6,8 @@ import { useCallback, useEffect, useState } from "react";
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { RecomendedArticlesSection } from "@/components/sections/recomended";
+import { RelatedVideosSection } from "@/components/videos";
 import moment from "moment";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
@@ -85,6 +87,8 @@ export default function News() {
               dangerouslySetInnerHTML={{ __html: post.content.rendered }}
             />
           </Container>
+          <RelatedVideosSection />
+          <RecomendedArticlesSection limit={3} />
         </>
       ) : (
         <LoadingOverlay visible={true} />

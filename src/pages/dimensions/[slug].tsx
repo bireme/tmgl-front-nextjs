@@ -8,6 +8,7 @@ import { useCallback, useEffect, useState } from "react";
 import { HeroHeader } from "@/components/sections/hero";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { RelatedVideosSection } from "@/components/videos";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
@@ -54,6 +55,7 @@ export default function Dimensions() {
               </Grid.Col>
             </Grid>
           </Container>
+          <RelatedVideosSection />
           <RecomendedArticlesSection limit={3} />
         </>
       ) : (
