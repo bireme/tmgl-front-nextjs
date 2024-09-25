@@ -114,17 +114,18 @@ export const FooterLayout = () => {
   return (
     <div className={styles.FooterLayout}>
       <Container size={"xl"}>
-        <Flex>
+        <Flex direction={{ base: "column-reverse", md: "row" }}>
           <Flex
             justify={"center"}
             align={"center"}
             direction={"column"}
             gap={40}
             px={"15px"}
+            className={styles.FooterImages}
           >
             <img src={"/local/png/who.png"} width={"50%"} />
             <img src={"/local/png/who-medicine-center.png"} width={"50%"} />
-            <img src={"/local/png/footer-tmgl.png"} />
+            <img src={"/local/png/footer-tmgl.png"} width={"100%"} />
           </Flex>
           <Flex className={styles.FooterMap} px={"15px"}>
             <div></div>

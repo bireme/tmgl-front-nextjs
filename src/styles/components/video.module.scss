@@ -13,6 +13,10 @@
     left: 0;
     top:0;
     pointer-events: none;
+    @media (max-width: '750px') {
+      width: auto;
+      height: 100%;
+    }
   }
   &::after{
     left: 0;

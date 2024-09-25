@@ -12,12 +12,7 @@ export const EventsSection = ({
 }: AcfEvents) => {
   const eventImage = "/local/png/img-events.png";
   return (
-    <div
-      className={styles.EventsSection}
-      style={{
-        backgroundImage: `linear-gradient(90deg, rgb(5 29 97 / 88%) 5.19%, rgba(12, 43, 100, 0) 100%), url(${eventImage})`,
-      }}
-    >
+    <div className={styles.EventsSection}>
       <Container size={"xl"} py={80}>
         <Flex
           direction={"column"}
@@ -27,7 +22,7 @@ export const EventsSection = ({
           <div>
             <h2>{title}</h2>
             <p>{subtitle}</p>
-            <Group>
+            <Flex direction={{ base: "column", md: "row" }} gap={15}>
               <a href={webcast} target="_blank">
                 <Button>
                   Webcasts <IconBrandYoutube style={{ marginLeft: "10px" }} />
@@ -39,10 +34,10 @@ export const EventsSection = ({
               <a href={repport} target="_blank">
                 <Button>Concept Notes</Button>
               </a>
-            </Group>
+            </Flex>
           </div>
           <div>
-            <Flex gap={10} align={"center"}>
+            <Flex mt={25} gap={10} align={"center"}>
               Explore all events{" "}
               <Button size={"xs"} p={5}>
                 <IconArrowRight stroke={1} />

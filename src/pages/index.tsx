@@ -98,7 +98,11 @@ export default function Home() {
         </Container>
       </VideoSection>
       <div className={styles.TrandingAndFeatured}>
-        <Container size={"xl"} mt={80} style={{ minHeight: "600px" }}>
+        <Container
+          size={"xl"}
+          mt={80}
+          className={styles.TrandingAndFeaturedContainer}
+        >
           <h2 className={styles.TitleWithIcon}>
             <img src={"/local/svg/simbol.svg"} /> Trending Topics
           </h2>

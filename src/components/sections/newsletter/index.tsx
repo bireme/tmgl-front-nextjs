@@ -13,10 +13,10 @@ export const NewsletterSection = () => {
               TCIM news, events, opportunities and updates, monthly in your
               inbox
             </h5>
-            <Group gap={"10px"} style={{ width: "100%" }}>
-              <Input style={{ width: "40%" }} />
+            <Flex gap={"10px"} style={{ width: "100%" }}>
+              <Input />
               <Button>Subscribe</Button>
-            </Group>
+            </Flex>
           </form>
         </Flex>
       </Container>

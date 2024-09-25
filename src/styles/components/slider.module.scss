@@ -8,6 +8,9 @@
   z-index: -1;
   .eachSlide > div{
     height: 79vh;
+    @media (max-width: '750px') {
+      height: 86vh;
+    }
     &::before{
       position: absolute;
       content: "";
@@ -16,6 +19,11 @@
       background: linear-gradient(to right, rgba(0, 0, 0, .8), rgba(0, 0, 0, 0));
       width: 100%;
       height: 100%;
+      @media (max-width: '750px') {
+        transform: rotate(180deg);
+        background: linear-gradient(0deg, rgba(0, 28, 41, 0.00) 9.74%, rgba(0, 28, 41, 0.51) 34.35%, #001c29ef 59.96%);
+      }
+     
     }
   }
 }
@@ -26,6 +34,9 @@
   justify-content: center;
   background-size: cover;
   height: 350px;
+  @media (max-width: '750px') {
+    background-position: center center;
+  }
 }
 
 
@@ -36,6 +47,10 @@
   height: 100%;
   right: 0;
   position: absolute;
+  @media (max-width: '750px') {
+    width: 100%;
+    margin-top: 150px;
+  }
 }
 .TrandingSlider{
   position: absolute;

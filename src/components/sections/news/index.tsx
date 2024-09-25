@@ -70,7 +70,12 @@ export const NewsSection = () => {
 
   return (
     <>
-      <Flex gap={30}>
+      <Flex
+        gap={30}
+        direction={{ base: "column", md: "row" }}
+        justify={"center"}
+        align={"center"}
+      >
         {posts ? (
           posts.length >= 4 ? (
             <>
@@ -81,7 +86,7 @@ export const NewsSection = () => {
                     href={`/news/${item.slug}`}
                     title={item.title.rendered}
                     date={moment(item.date).toDate()}
-                    imagePath={_api.findFeaturedMedia(item, "thumbnail")}
+                    imagePath={_api.findFeaturedMedia(item, "full")}
                     category={_api.getPostCategories(item)[0]}
                   />
                 );

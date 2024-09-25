@@ -46,7 +46,7 @@ export const DimensionsSection = () => {
       const result = await _api.getCustomPost("dimensions");
       setPosts(result);
     } catch (error: any) {
-      console.log("Error while trying to get Featured Stories: ", error);
+      console.log("Error while trying to get Dimensions: ", error);
     }
   }, []);
 
@@ -58,9 +58,9 @@ export const DimensionsSection = () => {
     <>
       <Flex
         mt={80}
-        direction={"row"}
+        direction={{ base: "row" }}
         wrap={"wrap"}
-        gap={80}
+        gap={{ md: 80, base: 20 }}
         justify={"center"}
         align={"center"}
       >

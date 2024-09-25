@@ -4,7 +4,11 @@ import styles from "../../../styles/components/forms.module.scss";
 
 export const SearchForm = ({ title, subtitle }: AcfSearch) => {
   return (
-    <Flex className={styles.SearchForm} align={"center"}>
+    <Flex
+      className={styles.SearchForm}
+      py={{ base: 40, md: 0 }}
+      align={{ base: "flex-end", md: "center" }}
+    >
       <form>
         <h2>{title}</h2>
         <h3>{subtitle}</h3>

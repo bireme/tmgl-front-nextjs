@@ -4,6 +4,16 @@
   transition: 0.4s;
   top:0;
   position: relative;
+
+  @media (max-width: '750px') {
+    .SuperiorLinks{
+      display: none !important;
+    }
+    .InfoNavContainer{
+      display: none !important;
+    }
+  }
+
   .LogoContainer{
     transition: 0.4s;
     padding: 10px 0;
@@ -143,7 +153,21 @@
   float: left;
   padding: 70px 0px 0px 0px;
   background: #D9D9D9;
+  .FooterImages{
+    padding: 10px 0px;
+    border-top: solid black 1px;
+      border-bottom: solid black 1px,
+  }
+  @media (max-width: '750px') {
+    width: 100%;
+    float: left;
+  }
   .FooterMap{
+    @media (max-width: '750px') {
+      border-left: none;
+      float: left;
+      
+    }
     border-left: solid black 2px;
   }
   .Copy{

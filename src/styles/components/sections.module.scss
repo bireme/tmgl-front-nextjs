@@ -10,11 +10,23 @@
   min-width: 260px;
   max-width: 260px;
   transition: 0.5s;
+  @media (max-width: '750px') {
+    min-width: 180px;
+    max-width: 180px;
+    min-height: 170px;
+    padding: 10px 5px !important;
+    img{
+      width: 45px;
+    }
+  }
   &:hover{
     backdrop-filter: blur(5px);
     background-color: rgba(217, 217, 217, 0.042);
   }
   p{
+    @media (max-width: '750px') {
+      font-size: 17px;
+    }
     color: var(--Colors-Blue-50, #E0F5FF);
     text-align: center;
     text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -118,7 +130,16 @@
             
             font-size: 28px;
           }
-          
+          @media (max-width: '750px') {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            h2{
+              font-size: 22px;
+            }
+          }
         }
       }
     }
@@ -129,6 +150,9 @@
       background-size: 150%;
       transition: 3s ease-in-out;
       background-repeat: no-repeat;
+      @media (max-width: '750px') {
+        background-size: cover;
+      }
       background-position: center center;
       border-radius: 16px;
       box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
@@ -142,6 +166,10 @@
       .Content{
         padding: 20px;
         color:white;
+        @media (max-width: '750px') {
+          padding: 30px;
+          
+        }
         h2{
           margin:0px;
           color: #FFF;
@@ -149,6 +177,9 @@
           font-family: "Roboto Serif";
           font-style: normal;
           font-weight: 700;
+          @media (max-width: '750px') {
+            font-size: 20px;
+          }
         }
         p{
           margin:0px;
@@ -172,6 +203,11 @@
     background-size: cover;
     background-position: center center;
     mix-blend-mode: multiply;
+    background-image: linear-gradient(90deg, rgb(5 29 97 / 88%) 5.19%, rgba(12, 43, 100, 0) 100%), url('../../../public/local/png/img-events.png');
+    @media (max-width: '750px') {
+      background-image: linear-gradient(180deg, #0C2B64 5.19%, rgba(12, 43, 100, 0.00) 99.96%) , url('../../../public/local/png/img-events.png');
+      background-position: bottom center;
+    }
     .EventsContent{
       h2{
         color: white;
@@ -191,6 +227,9 @@
       }
       width: 45%;
       height: 100%;
+      @media (max-width: '750px') {
+        width: 100%;
+      }
       button{
         font-weight: 400;
       }
@@ -211,6 +250,10 @@
       box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.45);
     }
     max-width: 313px;
+    @media (max-width: '750px') {
+      max-width: 90%;
+      min-height: 405px;
+    }
     min-height: 475px;
     padding: 12px;
     .NewsImage{
@@ -218,6 +261,7 @@
       height: 147px;
       border-radius: 8px;
       background-position: center center;
+      background-repeat: no-repeat;
       background-size: cover;
     }
     .NewsContent{
@@ -233,6 +277,9 @@
         font-style: normal;
         font-weight: 700;
         line-height: 120%; 
+        @media (max-width: '750px') {
+          font-size: 24px;
+        }
       }
     }
   }
@@ -279,8 +326,21 @@
       top: 0px;
       background-size: cover;
       background-repeat: no-repeat;
+      @media (max-width: '750px') {
+        display: none;
+      }
+    } 
+    form{
+      @media (max-width: '750px') {
+        width: 100%;
+        button{
+          width: 50%;
+        }
+        input{
+          flex: 1;
+        }
+      }
     }
-
 
 
   }
@@ -293,4 +353,15 @@
     font-style: normal;
     font-weight: 800;
     line-height: normal;
+
+    @media (max-width: '750px') {
+      flex-direction: column;
+      justify-content: center;
+      align-content: center;
+      text-align: center;
+      align-items: center;
+      img{
+        width: 40px;
+      }
+    }
   }
