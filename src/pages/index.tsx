@@ -4,6 +4,7 @@ import {
   Flex,
   Grid,
   LoadingOverlay,
+  Modal,
   Text,
 } from "@mantine/core";
 import {
@@ -30,6 +31,7 @@ export default function Home() {
   const [properties, setProperties] = useState();
   const [sliderImages, setSliderImages] = useState<Array<string>>();
   const [acf, setAcf] = useState<HomeAcf>();
+  const [showModal, setShowModal] = useState(true);
 
   const getSliderImages = async (acfSearch: AcfSearch) => {
     let images = [];
@@ -68,6 +70,11 @@ export default function Home() {
 
   return (
     <>
+      <Modal
+        title={"Warning"}
+        onClose={() => setShowModal(false)}
+        opened={showModal}
+      ></Modal>
       <div className={styles.HeroSearch}>
         {sliderImages ? (
           <HeroSlider images={sliderImages} />
