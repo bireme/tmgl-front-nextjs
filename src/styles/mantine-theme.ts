@@ -1,13 +1,8 @@
 import { createTheme } from "@mantine/core";
-import { elMessiriFont } from "@/fonts/elMessiri";
-import { karlaFont } from "@/fonts/karla";
 
 //Here you can change allmost all the design system of mantine library.
 export const mantineTheme = createTheme({
   fontFamily: "Roboto",
-  headings: {
-    fontFamily: elMessiriFont.style.fontFamily,
-  },
   primaryShade: 5,
   primaryColor: "tmgl-blue",
   defaultRadius: "md",

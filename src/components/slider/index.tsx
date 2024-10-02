@@ -1,7 +1,6 @@
 import "react-slideshow-image/dist/styles.css";
 
-import { Fade, Slide } from "react-slideshow-image";
-
+import { Fade } from "react-slideshow-image";
 import styles from "../../styles/components/slider.module.scss";
 
 export interface HeroSliderProps {

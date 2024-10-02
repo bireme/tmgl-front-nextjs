@@ -27,38 +27,24 @@ import styles from "../styles/pages/home.module.scss";
 
 export default function Home() {
   const _api = new PagesApi();
-  const _mediaApi = new MediaApi();
   const [properties, setProperties] = useState();
   const [sliderImages, setSliderImages] = useState<Array<string>>();
   const [acf, setAcf] = useState<HomeAcf>();
-  const [showModal, setShowModal] = useState(true);
-
-  const getSliderImages = async (acfSearch: AcfSearch) => {
-    let images = [];
-    if (acfSearch.slide_image_1)
-      images[0] = await _mediaApi.getMediaById(acfSearch.slide_image_1);
-    if (acfSearch.slide_image_2)
-      images[1] = await _mediaApi.getMediaById(acfSearch.slide_image_2);
-    if (acfSearch.slide_image_3)
-      images[2] = await _mediaApi.getMediaById(acfSearch.slide_image_3);
-    if (acfSearch.slide_image_4)
-      images[3] = await _mediaApi.getMediaById(acfSearch.slide_image_4);
-    if (acfSearch.slide_image_5)
-      images[4] = await _mediaApi.getMediaById(acfSearch.slide_image_5);
-    if (acfSearch.slide_image_5)
-      images[5] = await _mediaApi.getMediaById(acfSearch.slide_image_5);
-    if (acfSearch.slide_image_5)
-      images[6] = await _mediaApi.getMediaById(acfSearch.slide_image_5);
-    return images;
-  };
+  const [showModal, setShowModal] = useState(false);
 
   const getPageProperties = useCallback(async () => {
     try {
       const resp = await _api.getPageProperties("home-global");
       setProperties(resp[0]);
       setAcf(resp[0].acf);
-      const imagesResp = await getSliderImages(resp[0].acf.search);
-      setSliderImages(imagesResp);
+      setSliderImages([
+        resp[0].acf.search.slide_image_1,
+        resp[0].acf.search.slide_image_2,
+        resp[0].acf.search.slide_image_3,
+        resp[0].acf.search.slide_image_4,
+        resp[0].acf.search.slide_image_5,
+        resp[0].acf.search.slide_image_6,
+      ]);
     } catch {
       console.log("Error while get home properties");
     }
@@ -76,11 +62,7 @@ export default function Home() {
         opened={showModal}
       ></Modal>
       <div className={styles.HeroSearch}>
-        {sliderImages ? (
-          <HeroSlider images={sliderImages} />
-        ) : (
-          <LoadingOverlay visible={true} />
-        )}
+        {sliderImages ? <HeroSlider images={sliderImages} /> : <></>}
 
         <div className={styles.FullContainer}>
           <Container size={"xl"}>

@@ -7,7 +7,9 @@ export class PagesApi extends BaseUnauthenticatedApi {
   }
 
   public async getPageProperties(pageSlug: string): Promise<any> {
-    const { data } = await this._api.get(`?slug=${pageSlug}`);
+    const { data } = await this._api.get(
+      `?slug=${pageSlug}&acf_format=standard`
+    );
     return data;
   }
 }
