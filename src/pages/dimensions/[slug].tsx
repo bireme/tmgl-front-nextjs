@@ -38,7 +38,11 @@ export default function Dimensions() {
     <>
       {post ? (
         <>
-          <HeroHeader post={post} />
+          <HeroHeader
+            post={post}
+            path={["TMGL", "TM Dimensions"]}
+            type="TM Dimensions"
+          />
           <Container py={100} size={"xl"}>
             <Grid>
               <Grid.Col span={{ base: 12, md: 8 }} p={40}>

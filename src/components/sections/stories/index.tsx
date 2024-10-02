@@ -79,6 +79,7 @@ export const StoriesSection = () => {
                   imagePath={_api.findFeaturedMedia(posts[0], "large")}
                   title={posts[0].title.rendered}
                   excerpt={posts[0].excerpt.rendered}
+                  href={`/featured-stories/${posts[0].slug}`}
                 />
               </Grid.Col>
               <Grid.Col span={{ md: 4 }}>
@@ -86,11 +87,13 @@ export const StoriesSection = () => {
                   imagePath={_api.findFeaturedMedia(posts[1], "medium")}
                   title={posts[1].title.rendered}
                   excerpt={posts[1].excerpt.rendered}
+                  href={`/featured-stories/${posts[1].slug}`}
                 />
                 <StoriesItem
                   imagePath={_api.findFeaturedMedia(posts[2], "medium")}
                   title={posts[2].title.rendered}
                   excerpt={posts[2].excerpt.rendered}
+                  href={`/featured-stories/${posts[2].slug}`}
                 />
               </Grid.Col>
             </Grid>

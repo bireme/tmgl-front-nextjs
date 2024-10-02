@@ -23,45 +23,6 @@ export class PostsApi extends BaseUnauthenticatedApi {
     return data;
   }
 
-  public findFeaturedMedia(post: Post, size?: string): string {
-    let url;
-    if (post._embedded) {
-      if (post._embedded["wp:featuredmedia"].length > 0) {
-        if (
-          post._embedded["wp:featuredmedia"][0].media_details.sizes &&
-          size != "full"
-        ) {
-          switch (size) {
-            case "thumbnail":
-              url =
-                post._embedded["wp:featuredmedia"][0].media_details.sizes
-                  .thumbnail.source_url;
-              break;
-            case "medium":
-              url =
-                post._embedded["wp:featuredmedia"][0].media_details.sizes.medium
-                  ?.source_url;
-              break;
-            case "large":
-              url =
-                post._embedded["wp:featuredmedia"][0].media_details.sizes.large
-                  ?.source_url;
-              break;
-            case "full":
-              url =
-                post._embedded["wp:featuredmedia"][0].media_details.sizes.full
-                  ?.source_url;
-              break;
-          }
-        } else {
-          url = post._embedded["wp:featuredmedia"][0].source_url;
-        }
-      }
-    }
-    if (url) return url;
-    return "";
-  }
-
   public getPostCategories(post: Post): string[] {
     const categories = post._embedded?.["wp:term"]?.[0];
 

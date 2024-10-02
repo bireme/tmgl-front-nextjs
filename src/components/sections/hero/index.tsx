@@ -10,17 +10,25 @@ import styles from "../../../styles/components/sections.module.scss";
 
 export interface HeroHeaderProps {
   post: Post;
+  path: Array<string>;
+  type: string;
 }
-export const HeroHeader = ({ post }: HeroHeaderProps) => {
+export const HeroHeader = ({ post, path, type }: HeroHeaderProps) => {
   const [background, setBackground] = useState<string>();
   const [acfs, setAcfs] = useState<DimensionsAcf>();
-  const _api = new PostsApi();
   const _mediaApi = new MediaApi();
 
   const getBackground = useCallback(async () => {
-    const acfs = post.acf as unknown as DimensionsAcf;
-    setAcfs(acfs);
-    setBackground(await _mediaApi.getMediaById(acfs.cover_image));
+    //May we can change dimensions to use featured image than acf.
+    if (type == "TM Dimensions") {
+      const acfs = post.acf as unknown as DimensionsAcf;
+      setAcfs(acfs);
+      //Change This in ACF Options to return url
+      setBackground(await _mediaApi.getMediaById(acfs.cover_image));
+    } else {
+      console.log(_mediaApi.findFeaturedMedia(post));
+      setBackground(_mediaApi.findFeaturedMedia(post, "full"));
+    }
   }, []);
   useEffect(() => {
     getBackground();
@@ -30,7 +38,7 @@ export const HeroHeader = ({ post }: HeroHeaderProps) => {
     <div
       className={styles.HeroHeader}
       style={{
-        backgroundImage: `url(${background})`,
+        backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, .8), rgba(0, 0, 0, 0)),url(${background})`,
       }}
     >
       <Container size={"xl"}>
@@ -41,16 +49,24 @@ export const HeroHeader = ({ post }: HeroHeaderProps) => {
         >
           <div>
             <BreadCrumbs
-              path={[
-                "TMGL",
-                "TM Dimensions",
-                acfs?.long_title ? acfs.long_title : "",
-              ]}
+              path={path.concat([
+                acfs?.long_title
+                  ? acfs.long_title
+                  : post.title
+                  ? post.title.rendered
+                  : "",
+              ])}
             />
           </div>
           <div>
-            <h2 className={styles.TitleWithIcon}>TM Dimensions</h2>
-            <h1>{acfs?.long_title}</h1>
+            <h2 className={styles.TitleWithIcon}>{type}</h2>
+            <h1>
+              {acfs?.long_title
+                ? acfs?.long_title
+                : post.title
+                ? post.title.rendered
+                : ""}
+            </h1>
             <div
               className={styles.Excerpt}
               dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}

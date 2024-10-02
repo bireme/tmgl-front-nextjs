@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 
+import { Post } from "./types/posts.dto";
+
 export abstract class BaseUnauthenticatedApi {
   protected _api: AxiosInstance;
 
@@ -11,5 +13,44 @@ export abstract class BaseUnauthenticatedApi {
       baseURL: `${process.env.NEXT_PUBLIC_API_BASE_URL}/${endpoint}`,
     });
     this._api.defaults.headers.common["Accept"] = "*/*";
+  }
+
+  public findFeaturedMedia(post: Post, size?: string): string {
+    let url;
+    if (post._embedded) {
+      if (post._embedded["wp:featuredmedia"].length > 0) {
+        if (
+          post._embedded["wp:featuredmedia"][0].media_details.sizes &&
+          size != "full"
+        ) {
+          switch (size) {
+            case "thumbnail":
+              url =
+                post._embedded["wp:featuredmedia"][0].media_details.sizes
+                  .thumbnail.source_url;
+              break;
+            case "medium":
+              url =
+                post._embedded["wp:featuredmedia"][0].media_details.sizes.medium
+                  ?.source_url;
+              break;
+            case "large":
+              url =
+                post._embedded["wp:featuredmedia"][0].media_details.sizes.large
+                  ?.source_url;
+              break;
+            case "full":
+              url =
+                post._embedded["wp:featuredmedia"][0].media_details.sizes.full
+                  ?.source_url;
+              break;
+          }
+        } else {
+          url = post._embedded["wp:featuredmedia"][0].source_url;
+        }
+      }
+    }
+    if (url) return url;
+    return "";
   }
 }
