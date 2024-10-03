@@ -1,0 +1,43 @@
+.FirstSection{
+  width: 100%;
+  min-height: 100vh;
+  float: left;
+  background-position: right;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: 40%;
+  .Content{
+    width: 60%;
+    @media (max-width: '750px') {
+      width: 100%;
+    }
+    h4,h3,h2{
+      color:  #0093D5;
+      font-family: "Roboto Serif";
+    }
+    h4{
+      font-size: 24px;
+      margin-top: 0px;
+    }
+    h3{
+      color:  #0093D5;
+      font-family: "Roboto Serif";
+      font-size: 28px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 160%;
+      margin-bottom: 0px;
+    }
+    p{
+      color: #000;
+      font-family: Roboto;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 160%;
+      strong{
+        font-weight: 700;
+      }
+    }
+  }
+}

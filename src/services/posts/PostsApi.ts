@@ -13,13 +13,15 @@ export class PostsApi extends BaseUnauthenticatedApi {
     const { data } = await this._api.get(
       `${postTypeSlug}?per_page=${
         perPage ? perPage : process.env.POSTSPERPAGE
-      }&_embed&orderby=date&order=desc`
+      }&_embed&orderby=date&order=desc&acf_format=standard`
     );
     return data;
   }
 
   public async getPost(postTypeSlug: string, slug: string) {
-    const { data } = await this._api.get(`${postTypeSlug}?slug=${slug}&_embed`);
+    const { data } = await this._api.get(
+      `${postTypeSlug}?slug=${slug}&_embed&acf_format=standard`
+    );
     return data;
   }
 
