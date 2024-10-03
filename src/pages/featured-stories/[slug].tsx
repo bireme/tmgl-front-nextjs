@@ -1,5 +1,9 @@
 import { Container, LoadingOverlay } from "@mantine/core";
 import {
+  EvidenceMapItem,
+  EvidenceMapsSection,
+} from "@/components/sections/evidence-maps";
+import {
   FirstSection,
   SecondSection,
   ThirdSection,
@@ -52,6 +56,7 @@ export default function FeaturedStories() {
             <>
               <FirstSection acf={acf} />
               <SecondSection acf={acf} />
+              <EvidenceMapsSection />
               <ThirdSection acf={acf} />
               <div className={styles.Float}>
                 <RelatedVideosSection />

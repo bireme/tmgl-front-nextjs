@@ -1,7 +1,6 @@
 import { Container, Grid, Image } from "@mantine/core";
 
 import { FeaturedStoriesAcf } from "@/services/types/featuredStoriesAcf";
-import { setConfig } from "next/config";
 import styles from "../../../../styles/components/feature-stories.module.scss";
 
 export interface SectionProps {
