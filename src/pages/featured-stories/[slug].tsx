@@ -1,11 +1,18 @@
 import { Container, LoadingOverlay } from "@mantine/core";
+import {
+  FirstSection,
+  SecondSection,
+  ThirdSection,
+} from "@/components/sections/stories/page";
 import { useCallback, useEffect, useState } from "react";
 
 import { FeaturedStoriesAcf } from "@/services/types/featuredStoriesAcf";
-import { FirstSection } from "@/components/sections/stories/page";
 import { HeroHeader } from "@/components/sections/hero";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { RecomendedArticlesSection } from "@/components/sections/recomended";
+import { RelatedVideosSection } from "@/components/videos";
+import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
 export default function FeaturedStories() {
@@ -41,7 +48,19 @@ export default function FeaturedStories() {
             path={["HOME", "Featured Stories"]}
             type="Featured Stories"
           />
-          {acf ? <FirstSection acf={acf} /> : <></>}
+          {acf ? (
+            <>
+              <FirstSection acf={acf} />
+              <SecondSection acf={acf} />
+              <ThirdSection acf={acf} />
+              <div className={styles.Float}>
+                <RelatedVideosSection />
+                <RecomendedArticlesSection limit={3} />
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
         </>
       ) : (
         <>

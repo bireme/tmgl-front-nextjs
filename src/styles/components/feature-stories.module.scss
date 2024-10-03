@@ -43,5 +43,72 @@
 }
 
 .SecondSection{
-  
+  width: 100%;
+  float: left;
+  min-height: 400px;
+  .Content{
+    h3{
+      font-family: "Roboto Serif";
+      font-size: 28px;
+      font-style: normal;
+      font-weight: 800;
+      line-height: 150%; /* 45px */
+      margin-top: 0px;
+    }
+    h4{
+      font-family: "Roboto Serif";
+      font-size: 22px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 160%;
+    }
+    p{
+      font-family: Roboto;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 160%; /* 32px */
+    }
+  }
+}
+
+.ThirdSection{
+  width: 100%;
+  min-height: 100vh;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  float: left;
+  padding-top: 150px;
+
+  .Content{
+    img{
+      float: none;
+      margin: 0 auto;
+      width: 100%;
+      height: auto;
+    }
+    h2{
+      font-family: "Roboto Serif";
+      font-size: 30px;
+      font-style: normal;
+      font-weight: 800;
+      line-height: 150%; /* 45px */
+      margin-top: 0px;
+    }
+    h4{
+      font-family: "Roboto Serif";
+      font-size: 22px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 160%;
+    }
+    p{
+      font-family: Roboto;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 160%; /* 32px */
+    }
+  }
 }
