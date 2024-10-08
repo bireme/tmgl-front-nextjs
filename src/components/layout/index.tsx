@@ -5,6 +5,7 @@ import {
   IconArrowRight,
   IconChevronsLeft,
   IconChevronsRight,
+  IconHelpCircleFilled,
   IconInfoCircle,
   IconLifebuoy,
   IconMenu2,
@@ -106,8 +107,20 @@ export const HeaderLayout = () => {
               >
                 {globalMenu?.map((item, key) => {
                   return (
-                    <a key={key}>
-                      <IconInfoCircle size={25} stroke={1} />
+                    <a
+                      key={key}
+                      onClick={() => {
+                        setMegaMenuOpen(true);
+                        setSelectedMenuItem(item);
+                        setSelectedSubItem(undefined);
+                      }}
+                    >
+                      {item.title == "About Us" ? (
+                        <IconInfoCircle size={25} stroke={1} />
+                      ) : (
+                        <IconLifebuoy size={25} stroke={1} />
+                      )}
+
                       {item.title}
                     </a>
                   );
