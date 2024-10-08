@@ -5,14 +5,31 @@ import {
   IconMenu2,
   IconX,
 } from "@tabler/icons-react";
+import { decodeHtmlEntities, removeHtmlTags } from "@/helpers/stringhelper";
 import { useEffect, useState } from "react";
 
+import { MenuItemDTO } from "@/services/types/menus.dto";
+import { MenusApi } from "@/services/menus/MenusApi";
 import styles from "../../styles/components/layout.module.scss";
 
 export const HeaderLayout = () => {
   const logoSource = "/local/svg/logo.svg";
   const [isScrolled, setIsScrolled] = useState(false);
   const [opened, setOpened] = useState(false);
+  const [globalMenu, setGlobalMenu] = useState<MenuItemDTO[]>();
+  const [regMenu, setRegMenu] = useState<MenuItemDTO[]>();
+  const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemDTO>();
+  const [selectedSubItem, setSelectedSubItem] = useState<MenuItemDTO>();
+  const menuApi = new MenusApi();
+
+  const getMenus = async () => {
+    const retMenu = await menuApi.getMenu("global-menu");
+    const regRetMenu = await menuApi.getMenu("regional-menu");
+    setRegMenu(regRetMenu);
+    setGlobalMenu(retMenu);
+    console.log(retMenu);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +43,10 @@ export const HeaderLayout = () => {
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
+  }, []);
+
+  useEffect(() => {
+    getMenus();
   }, []);
 
   return (
@@ -66,14 +87,14 @@ export const HeaderLayout = () => {
                   opened || !isScrolled ? styles.Opened : ""
                 }`}
               >
-                <a>
-                  <IconInfoCircle size={25} stroke={1} />
-                  About Us{" "}
-                </a>
-                <a>
-                  <IconLifebuoy size={25} stroke={1} />
-                  User Support
-                </a>
+                {globalMenu?.map((item, key) => {
+                  return (
+                    <a key={key}>
+                      <IconInfoCircle size={25} stroke={1} />
+                      {item.title}
+                    </a>
+                  );
+                })}
               </div>
               {isScrolled ? (
                 <a onClick={() => setOpened(opened ? false : true)}>
@@ -95,15 +116,74 @@ export const HeaderLayout = () => {
                 <small>The WHO Traditional Medicine Global Library</small>
               </a>
               <Flex className={styles.InfoNav} justify={"fle-end"} gap={"16px"}>
-                <a>Regions & Countries</a>
-                <a>Traditional Medicine Dimensions</a>
-                <a>Browse Resources</a>
-                <a>Search Colletion</a>
+                {regMenu?.map((item, key) => {
+                  return (
+                    <a
+                      onClick={() => {
+                        setMegaMenuOpen(true);
+                        setSelectedMenuItem(item);
+                      }}
+                      key={key}
+                    >
+                      {decodeHtmlEntities(item.title ? item.title : "")}
+                    </a>
+                  );
+                })}
               </Flex>
             </Flex>
           </Flex>
         </Flex>
       </Container>
+      {megaMenuOpen ? (
+        <div
+          className={styles.MegaMenuOverlay}
+          onClick={() => setMegaMenuOpen(false)}
+        >
+          <div
+            className={styles.MegaMenu}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              console.log("teste");
+            }}
+          >
+            <Grid>
+              <Grid.Col span={{ base: 12, md: 4 }}>
+                <h2>
+                  {decodeHtmlEntities(
+                    selectedMenuItem?.title ? selectedMenuItem.title : ""
+                  )}
+                </h2>
+                <nav>
+                  {selectedMenuItem?.children.map((item, key) => {
+                    return (
+                      <a
+                        key={key}
+                        onClick={() => setSelectedSubItem(item)}
+                        className={`${
+                          selectedSubItem?.ID == item.ID ? styles.selected : ""
+                        }`}
+                      >
+                        {decodeHtmlEntities(item.title ? item.title : "")}
+                        {selectedSubItem?.ID == item.ID ? (
+                          <div>
+                            <img src={"/local/svg/menuIcons.svg"} width={10} />
+                            <img src={"/local/svg/menuIcons.svg"} width={10} />
+                          </div>
+                        ) : (
+                          <></>
+                        )}
+                      </a>
+                    );
+                  })}
+                </nav>
+              </Grid.Col>
+            </Grid>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
     </div>
   );
 };

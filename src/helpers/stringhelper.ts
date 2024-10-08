@@ -1,3 +1,5 @@
+import * as he from "he";
+
 export function removeHTMLTagsAndLimit(text: string, limit: number): string {
   const strippedText = text.replace(/(<([^>]+)>)/gi, "");
 
@@ -8,9 +10,7 @@ export function removeHTMLTagsAndLimit(text: string, limit: number): string {
   return truncatedText;
 }
 export function decodeHtmlEntities(text: string): string {
-  const element = document.createElement("textarea");
-  element.innerHTML = text;
-  return element.value;
+  return he.decode(text);
 }
 
 export function extimateTime(words: number): number {
