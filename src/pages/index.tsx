@@ -17,6 +17,7 @@ import { useCallback, useEffect, useState } from "react";
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
 import { EventsSection } from "@/components/sections/events";
 import { HeroSlider } from "@/components/slider";
+import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { MediaApi } from "@/services/media/MediaApi";
 import { NewsletterSection } from "@/components/sections/newsletter";
 import { PagesApi } from "@/services/pages/PagesApi";

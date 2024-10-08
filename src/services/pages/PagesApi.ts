@@ -1,9 +1,8 @@
 import { BaseUnauthenticatedApi } from "../BaseUnauthenticatedApi";
 
 export class PagesApi extends BaseUnauthenticatedApi {
-  public constructor() {
-    //ChangeHere
-    super("wp/v2/pages");
+  public constructor(region?: string) {
+    super(`${region ? region + "/" : ""}wp-json/wp/v2/pages`);
   }
 
   public async getPageProperties(pageSlug: string): Promise<any> {

@@ -1,3 +1,5 @@
+import { AcfImageArray } from "./featuredStoriesAcf";
+
 interface AcfSearch {
   title: string;
   subtitle: string;
@@ -20,6 +22,8 @@ interface AcfEvents {
 interface AcfTmd {
   title: string;
   subtitle: string;
+  dimensions?: any;
+  background_image: AcfImageArray;
 }
 
 interface AcfModalHome {
@@ -27,7 +31,7 @@ interface AcfModalHome {
   modal_content: string;
 }
 
-interface HomeAcf {
+export interface HomeAcf {
   search: AcfSearch;
   text_trending_topics: string;
   events: AcfEvents;

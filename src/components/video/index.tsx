@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import styles from "../../styles/components/video.module.scss";
+
 const video = "/local/video/bg.mp4";
 
 type CustomComponentProps = {

@@ -1,12 +1,9 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
-import {
-  decodeHtmlEntities,
-  removeHTMLTagsAndLimit,
-} from "@/helpers/stringhelper";
+import { useCallback, useEffect, useState } from "react";
 
 import { Flex } from "@mantine/core";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../styles/components/sections.module.scss";
 import { useRouter } from "next/router";
 

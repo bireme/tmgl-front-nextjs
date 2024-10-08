@@ -2,8 +2,8 @@ import { BaseUnauthenticatedApi } from "../BaseUnauthenticatedApi";
 import { Post } from "../types/posts.dto";
 
 export class PostsApi extends BaseUnauthenticatedApi {
-  public constructor() {
-    super("wp/v2/");
+  public constructor(region?: string) {
+    super(`${region ? region + "/" : ""}wp-json/wp/v2/`);
   }
 
   public async getCustomPost(

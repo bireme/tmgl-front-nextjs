@@ -3,8 +3,7 @@ import { MenuItemDTO } from "../types/menus.dto";
 
 export class MenusApi extends BaseUnauthenticatedApi {
   public constructor() {
-    //ChangeHere
-    super("wp-api-menus/v2/");
+    super("wp-json/wp-api-menus/v2/");
   }
 
   public async getMenu(menuSlug: string): Promise<MenuItemDTO[]> {
