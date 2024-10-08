@@ -1,5 +1,6 @@
 import { Button, Flex, Input } from "@mantine/core";
 
+import { AcfSearch } from "@/services/types/homeAcf.dto";
 import styles from "../../../styles/components/forms.module.scss";
 import { useRouter } from "next/router";
 import { useState } from "react";

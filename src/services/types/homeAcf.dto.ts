@@ -1,6 +1,6 @@
 import { AcfImageArray } from "./featuredStoriesAcf";
 
-interface AcfSearch {
+export interface AcfSearch {
   title: string;
   subtitle: string;
   slide_image_1?: number;
