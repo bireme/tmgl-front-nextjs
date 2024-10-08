@@ -11,12 +11,13 @@ interface AcfSearch {
   slide_image_6?: number;
 }
 
-interface AcfEvents {
+export interface AcfEvents {
   title: string;
   subtitle: string;
   webcast?: string;
   meeting?: string;
   repport?: string;
+  background?: AcfImageArray;
 }
 
 interface AcfTmd {

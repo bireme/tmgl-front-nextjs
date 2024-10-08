@@ -1,6 +1,8 @@
-import { Button, Container, Flex, Group } from "@mantine/core";
+import { BackgroundImage, Button, Container, Flex, Group } from "@mantine/core";
 import { IconArrowRight, IconBrandYoutube } from "@tabler/icons-react";
+import { decodeHtmlEntities, removeHtmlTags } from "@/helpers/stringhelper";
 
+import { AcfEvents } from "@/services/types/homeAcf.dto";
 import styles from "../../../styles/components/sections.module.scss";
 
 export const EventsSection = ({
@@ -9,10 +11,18 @@ export const EventsSection = ({
   webcast,
   meeting,
   repport,
+  background,
 }: AcfEvents) => {
   const eventImage = "/local/png/img-events.png";
   return (
-    <div className={styles.EventsSection}>
+    <div
+      className={styles.EventsSection}
+      style={{
+        backgroundImage: `linear-gradient(90deg, rgb(5 29 97 / 88%) 5.19%, rgba(12, 43, 100, 0) 100%), url('${
+          background ? background?.url : eventImage
+        }')`,
+      }}
+    >
       <Container size={"xl"} py={80}>
         <Flex
           direction={"column"}
@@ -21,7 +31,7 @@ export const EventsSection = ({
         >
           <div>
             <h2>{title}</h2>
-            <p>{subtitle}</p>
+            <p>{removeHtmlTags(subtitle)}</p>
             <Flex direction={{ base: "column", md: "row" }} gap={15}>
               <a href={webcast} target="_blank">
                 <Button>
