@@ -9,6 +9,7 @@ const nextConfig = {
     BASE_URL: process.env.BASE_URL,
     POSTSPERPAGE: process.env.POSTSPERPAGE,
     BASE_SEARCH_URL: process.env.BASE_SEARCH_URL,
+    WP_BASE_URL: process.env.WP_BASE_URL
   },
 };
 

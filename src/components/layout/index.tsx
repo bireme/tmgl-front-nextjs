@@ -1,11 +1,20 @@
-import { Container, Flex, Grid } from "@mantine/core";
+/* eslint-disable @next/next/no-img-element */
+
+import { Button, Container, Flex, Grid } from "@mantine/core";
 import {
+  IconArrowRight,
+  IconChevronsLeft,
+  IconChevronsRight,
   IconInfoCircle,
   IconLifebuoy,
   IconMenu2,
   IconX,
 } from "@tabler/icons-react";
-import { decodeHtmlEntities, removeHtmlTags } from "@/helpers/stringhelper";
+import {
+  decodeHtmlEntities,
+  removeHTMLTagsAndLimit,
+  removeHtmlTags,
+} from "@/helpers/stringhelper";
 import { useEffect, useState } from "react";
 
 import { MenuItemDTO } from "@/services/types/menus.dto";
@@ -21,6 +30,7 @@ export const HeaderLayout = () => {
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemDTO>();
   const [selectedSubItem, setSelectedSubItem] = useState<MenuItemDTO>();
+  const [prevSelectedSubItem, setPrevSelectedSubItem] = useState<MenuItemDTO>();
   const menuApi = new MenusApi();
 
   const getMenus = async () => {
@@ -44,6 +54,13 @@ export const HeaderLayout = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  const handlePrevMenuItem = () => {
+    if (prevSelectedSubItem) {
+      setSelectedMenuItem(prevSelectedSubItem);
+      setPrevSelectedSubItem(undefined);
+    }
+  };
 
   useEffect(() => {
     getMenus();
@@ -122,6 +139,7 @@ export const HeaderLayout = () => {
                       onClick={() => {
                         setMegaMenuOpen(true);
                         setSelectedMenuItem(item);
+                        setSelectedSubItem(undefined);
                       }}
                       key={key}
                     >
@@ -144,12 +162,22 @@ export const HeaderLayout = () => {
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              console.log("teste");
             }}
           >
             <Grid>
               <Grid.Col span={{ base: 12, md: 4 }}>
-                <h2>
+                <h2
+                  onClick={() => {
+                    handlePrevMenuItem();
+                  }}
+                >
+                  {prevSelectedSubItem ? (
+                    <>
+                      <IconChevronsLeft />
+                    </>
+                  ) : (
+                    <></>
+                  )}
                   {decodeHtmlEntities(
                     selectedMenuItem?.title ? selectedMenuItem.title : ""
                   )}
@@ -159,7 +187,15 @@ export const HeaderLayout = () => {
                     return (
                       <a
                         key={key}
-                        onClick={() => setSelectedSubItem(item)}
+                        onClick={() => {
+                          if (item.children.length > 0) {
+                            setPrevSelectedSubItem(selectedMenuItem);
+                            setSelectedMenuItem(item);
+                            setSelectedSubItem(item.children[0]);
+                          } else {
+                            setSelectedSubItem(item);
+                          }
+                        }}
                         className={`${
                           selectedSubItem?.ID == item.ID ? styles.selected : ""
                         }`}
@@ -167,8 +203,7 @@ export const HeaderLayout = () => {
                         {decodeHtmlEntities(item.title ? item.title : "")}
                         {selectedSubItem?.ID == item.ID ? (
                           <div>
-                            <img src={"/local/svg/menuIcons.svg"} width={10} />
-                            <img src={"/local/svg/menuIcons.svg"} width={10} />
+                            <IconChevronsRight />
                           </div>
                         ) : (
                           <></>
@@ -177,6 +212,69 @@ export const HeaderLayout = () => {
                     );
                   })}
                 </nav>
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, md: 8 }}>
+                <Flex
+                  justify={"center"}
+                  align={"center"}
+                  style={{ height: "100%" }}
+                >
+                  {selectedSubItem ? (
+                    !selectedSubItem.description ||
+                    selectedSubItem.description == "" ? (
+                      <>
+                        {selectedSubItem.attr ? (
+                          <>
+                            <img
+                              alt={"menun-image"}
+                              src={`${process.env.WP_BASE_URL}${selectedSubItem.attr}`}
+                              className={styles.SelectedMenuItemFullImage}
+                            />
+                            <a
+                              href={selectedMenuItem?.url}
+                              className={styles.FullImageSubItembBtn}
+                            >
+                              <Button>
+                                {decodeHtmlEntities(selectedSubItem.title)}{" "}
+                                Portal
+                              </Button>
+                            </a>
+                          </>
+                        ) : (
+                          <></>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <Grid mt={40}>
+                          <Grid.Col span={{ base: 12, md: 4 }}>
+                            <img
+                              alt={"menu-image"}
+                              src={`${process.env.WP_BASE_URL}${selectedSubItem.attr}`}
+                              width={"100%"}
+                            />
+                          </Grid.Col>
+                          <Grid.Col span={{ base: 12, md: 8 }}>
+                            {selectedSubItem.description}
+                            <a href={selectedMenuItem?.url}>
+                              <Button mt={15}>
+                                Explore
+                                {removeHTMLTagsAndLimit(
+                                  selectedSubItem.title,
+                                  20
+                                )}
+                                {selectedSubItem.title.length > 20 ? "..." : ""}
+                                <IconArrowRight stroke={1.5} />
+                              </Button>
+                            </a>
+                          </Grid.Col>
+                        </Grid>
+                      </>
+                    )
+                  ) : (
+                    <></>
+                  )}
+                </Flex>
               </Grid.Col>
             </Grid>
           </div>
