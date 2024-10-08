@@ -22,11 +22,9 @@ export const HeroHeader = ({ post, path, type }: HeroHeaderProps) => {
     //May we can change dimensions to use featured image than acf.
     if (type == "TM Dimensions") {
       const acfs = post.acf as unknown as DimensionsAcf;
+      setBackground(acfs.cover_image.url);
       setAcfs(acfs);
-      //Change This in ACF Options to return url
-      setBackground(await _mediaApi.getMediaById(acfs.cover_image));
     } else {
-      console.log(_mediaApi.findFeaturedMedia(post));
       setBackground(_mediaApi.findFeaturedMedia(post, "full"));
     }
   }, []);

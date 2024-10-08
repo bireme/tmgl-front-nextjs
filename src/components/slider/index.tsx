@@ -1,10 +1,11 @@
 import "react-slideshow-image/dist/styles.css";
 
+import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
 import { Fade } from "react-slideshow-image";
 import styles from "../../styles/components/slider.module.scss";
 
 export interface HeroSliderProps {
-  images: Array<string | undefined>;
+  images: Array<AcfImageArray | undefined>;
 }
 
 export const HeroSlider = ({ images }: HeroSliderProps) => {
@@ -22,7 +23,7 @@ export const HeroSlider = ({ images }: HeroSliderProps) => {
           if (image)
             return (
               <div key={key} className={styles.eachSlide}>
-                <div style={{ backgroundImage: `url(${image})` }}></div>
+                <div style={{ backgroundImage: `url(${image.url})` }}></div>
               </div>
             );
         })}

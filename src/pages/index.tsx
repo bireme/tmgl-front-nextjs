@@ -14,6 +14,7 @@ import {
 import { NewsItem, NewsSection } from "@/components/sections/news";
 import { useCallback, useEffect, useState } from "react";
 
+import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
 import { EventsSection } from "@/components/sections/events";
 import { HeroSlider } from "@/components/slider";
 import { MediaApi } from "@/services/media/MediaApi";
@@ -28,7 +29,7 @@ import styles from "../styles/pages/home.module.scss";
 export default function Home() {
   const _api = new PagesApi();
   const [properties, setProperties] = useState();
-  const [sliderImages, setSliderImages] = useState<Array<string>>();
+  const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
   const [showModal, setShowModal] = useState(false);
 
@@ -37,14 +38,7 @@ export default function Home() {
       const resp = await _api.getPageProperties("home-global");
       setProperties(resp[0]);
       setAcf(resp[0].acf);
-      setSliderImages([
-        resp[0].acf.search.slide_image_1,
-        resp[0].acf.search.slide_image_2,
-        resp[0].acf.search.slide_image_3,
-        resp[0].acf.search.slide_image_4,
-        resp[0].acf.search.slide_image_5,
-        resp[0].acf.search.slide_image_6,
-      ]);
+      setSliderImages(resp[0].acf.search.slider_images);
     } catch {
       console.log("Error while get home properties");
     }
