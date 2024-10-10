@@ -173,7 +173,6 @@ export const HeaderLayout = () => {
           <div
             className={styles.MegaMenu}
             onClick={(e) => {
-              e.preventDefault();
               e.stopPropagation();
             }}
           >
@@ -240,11 +239,13 @@ export const HeaderLayout = () => {
                           <>
                             <img
                               alt={"menun-image"}
+                              width={"100%"}
                               src={`${process.env.WP_BASE_URL}${selectedSubItem.attr}`}
                               className={styles.SelectedMenuItemFullImage}
                             />
                             <a
-                              href={selectedMenuItem?.url}
+                              onClick={() => {}}
+                              href={selectedSubItem.url}
                               className={styles.FullImageSubItembBtn}
                             >
                               <Button>
