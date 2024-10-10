@@ -47,7 +47,9 @@ export const RegionalDimensions = ({
                     key={key}
                     sm={true}
                     iconPath={dimension.icon.url}
-                    target={`/dimensions/${dimension.global_slug}`}
+                    target={`${region ? "/" + region : ""}/dimensions/${
+                      dimension.global_slug
+                    }`}
                     title={dimension.title}
                   />
                 );
