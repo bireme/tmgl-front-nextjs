@@ -8,12 +8,15 @@ export class PostsApi extends BaseUnauthenticatedApi {
 
   public async getCustomPost(
     postTypeSlug: string,
-    perPage?: number
+    perPage?: number,
+    parent?: number
   ): Promise<Post[]> {
     const { data } = await this._api.get(
       `${postTypeSlug}?per_page=${
         perPage ? perPage : process.env.POSTSPERPAGE
-      }&_embed&orderby=date&order=desc&acf_format=standard`
+      }&_embed&orderby=date&order=desc&acf_format=standard${
+        parent || parent == 0 ? "&parent=" + parent : ""
+      }`
     );
     return data;
   }

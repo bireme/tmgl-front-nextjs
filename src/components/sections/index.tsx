@@ -20,7 +20,7 @@ export const TraditionalSectionCard = ({
   const router = useRouter();
   return (
     <Flex
-      p={"20px"}
+      p={"60px"}
       className={styles.TraditionalSection}
       onClick={() => {
         router.push(target ? target : "");
@@ -40,7 +40,7 @@ export const DimensionsSection = () => {
   const _api = new PostsApi();
   const getDimensions = useCallback(async () => {
     try {
-      const result = await _api.getCustomPost("dimensions");
+      const result = await _api.getCustomPost("dimensions", 20, 0);
       setPosts(result);
     } catch (error: any) {
       console.log("Error while trying to get Dimensions: ", error);
