@@ -1,6 +1,7 @@
-import { Button, Container, Grid } from "@mantine/core";
+import { Button, Container, Flex, Grid } from "@mantine/core";
 
 import { HomeAcf } from "@/services/types/homeAcf.dto";
+import { TraditionalSectionCard } from "..";
 import styles from "../../../styles/components/sections.module.scss";
 
 export interface RegionalDimensionsProps {
@@ -31,7 +32,20 @@ export const RegionalDimensions = ({
               </Button>
             </a>
           </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 7.5 }}></Grid.Col>
+          <Grid.Col span={{ base: 12, md: 7.5 }}>
+            <Flex direction={"row"} wrap={"wrap"} gap={20}>
+              {acf.tmd?.dimensions?.map((dimension: any, key: number) => {
+                return (
+                  <TraditionalSectionCard
+                    key={key}
+                    iconPath={dimension.icon.url}
+                    target={`/dimensions/${dimension.global_slug}`}
+                    title={dimension.title}
+                  />
+                );
+              })}
+            </Flex>
+          </Grid.Col>
         </Grid>
       </Container>
     </div>

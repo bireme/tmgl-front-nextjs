@@ -20,7 +20,7 @@ export const TraditionalSectionCard = ({
   const router = useRouter();
   return (
     <Flex
-      p={"30px"}
+      p={"20px"}
       className={styles.TraditionalSection}
       onClick={() => {
         router.push(target ? target : "");

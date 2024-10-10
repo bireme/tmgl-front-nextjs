@@ -19,7 +19,7 @@ export abstract class BaseUnauthenticatedApi {
   public findFeaturedMedia(post: Post, size?: string): string {
     let url;
     if (post._embedded) {
-      if (post._embedded["wp:featuredmedia"].length > 0) {
+      if (post._embedded["wp:featuredmedia"]?.length > 0) {
         if (
           post._embedded["wp:featuredmedia"][0].media_details.sizes &&
           size != "full"
