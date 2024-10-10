@@ -55,7 +55,11 @@ export default function Dimensions() {
                 <h3 className={styles.PostPageSubtitle}>
                   Lorem Ipsum dolor sit amet
                 </h3>
-                <RelatedArticlesSection limit={4} />
+                <RelatedArticlesSection
+                  postTypeSlug="dimensions"
+                  limit={4}
+                  parent={post.id}
+                />
               </Grid.Col>
             </Grid>
           </Container>

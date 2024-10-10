@@ -53,17 +53,27 @@ export const RelatedArticleItem = ({
 
 export interface RecomendedArticlesSectionProps {
   limit: number;
+  postTypeSlug?: string;
   tags?: Array<string>;
+  parent?: number;
 }
 export const RecomendedArticlesSection = ({
   limit,
+  postTypeSlug,
+  parent,
   tags,
 }: RecomendedArticlesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
   const _api = new PostsApi();
   const getArticles = useCallback(async () => {
     try {
-      const resp = await _api.getCustomPost("posts", limit);
+      let posttype = postTypeSlug ? postTypeSlug : "posts";
+      console.log(postTypeSlug);
+      const resp = await _api.getCustomPost(
+        posttype,
+        limit,
+        parent ? parent : undefined
+      );
       setPosts(resp);
     } catch (error: any) {
       console.log("Error while getting Articles", error);
@@ -102,13 +112,21 @@ export const RecomendedArticlesSection = ({
 
 export const RelatedArticlesSection = ({
   limit,
+  postTypeSlug,
+  parent,
   tags,
 }: RecomendedArticlesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
   const _api = new PostsApi();
   const getArticles = useCallback(async () => {
     try {
-      const resp = await _api.getCustomPost("posts", limit);
+      let posttype = postTypeSlug ? postTypeSlug : "posts";
+      console.log(postTypeSlug);
+      const resp = await _api.getCustomPost(
+        posttype,
+        limit,
+        parent ? parent : undefined
+      );
       setPosts(resp);
     } catch (error: any) {
       console.log("Error while getting Articles", error);
@@ -123,7 +141,7 @@ export const RelatedArticlesSection = ({
       {posts?.map((item, key) => {
         return (
           <RelatedArticleItem
-            title={item.title.rendered}
+            title={decodeHtmlEntities(item.title.rendered)}
             key={key}
             excerpt={
               removeHTMLTagsAndLimit(
@@ -131,7 +149,7 @@ export const RelatedArticlesSection = ({
                 120
               ) + "..."
             }
-            href={`/news/${item.slug}`}
+            href={`/${postTypeSlug ? postTypeSlug : "news"}/${item.slug}`}
           />
         );
       })}

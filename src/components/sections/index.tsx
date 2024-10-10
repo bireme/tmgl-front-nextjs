@@ -11,17 +11,19 @@ export interface TraditionalSectionCardProps {
   iconPath: string;
   title: string;
   target?: string;
+  sm?: boolean;
 }
 export const TraditionalSectionCard = ({
   iconPath,
   title,
   target,
+  sm,
 }: TraditionalSectionCardProps) => {
   const router = useRouter();
   return (
     <Flex
-      p={"60px"}
-      className={styles.TraditionalSection}
+      p={sm ? 20 : 60}
+      className={`${styles.TraditionalSection} ${sm ? styles.Small : ""}`}
       onClick={() => {
         router.push(target ? target : "");
       }}

@@ -32,12 +32,20 @@ export const RegionalDimensions = ({
               </Button>
             </a>
           </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 7.5 }}>
-            <Flex direction={"row"} wrap={"wrap"} gap={20}>
+          <Grid.Col span={{ base: 12, md: 7.5 }} px={20}>
+            <Flex
+              direction={"row"}
+              wrap={"wrap"}
+              gap={20}
+              justify={"space-evenly"}
+              align={"center"}
+              mt={60}
+            >
               {acf.tmd?.dimensions?.map((dimension: any, key: number) => {
                 return (
                   <TraditionalSectionCard
                     key={key}
+                    sm={true}
                     iconPath={dimension.icon.url}
                     target={`/dimensions/${dimension.global_slug}`}
                     title={dimension.title}
