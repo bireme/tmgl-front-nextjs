@@ -1,4 +1,5 @@
 import {
+  Button,
   Center,
   Container,
   Flex,
@@ -18,6 +19,8 @@ import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
 import { EventsSection } from "@/components/sections/events";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
+import { IconArrowRight } from "@tabler/icons-react";
+import Link from "next/link";
 import { MediaApi } from "@/services/media/MediaApi";
 import { NewsletterSection } from "@/components/sections/newsletter";
 import { PagesApi } from "@/services/pages/PagesApi";
@@ -92,11 +95,42 @@ export default function Home() {
           </h2>
           <div className={styles.TrendingText}>
             <p>{acf?.text_trending_topics}</p>
+            <Link
+              href={"/trending-topics"}
+              style={{
+                textDecoration: "none",
+                color: "black",
+                fontSize: "18px",
+              }}
+            >
+              <Flex justify={"flex-start"} align={"center"} gap={10}>
+                <p>Explore more trending topics</p>{" "}
+                <Button p={5} size={"xs"}>
+                  <IconArrowRight />
+                </Button>
+              </Flex>
+            </Link>
           </div>
           <TrendingSlider />
         </Container>
         <Container size={"xl"}>
           <StoriesSection />
+          <Link
+            href={"/featured-stories"}
+            style={{
+              textDecoration: "none",
+              color: "black",
+              fontSize: "18px",
+            }}
+          >
+            <Flex justify={"flex-start"} align={"center"} gap={10}>
+              <p>Explore more featured stories</p>{" "}
+              <Button p={5} size={"xs"}>
+                <IconArrowRight />
+              </Button>
+            </Flex>
+          </Link>
+          <br></br>
           <h2 className={styles.TitleWithIcon}>
             <img src={"/local/svg/simbol.svg"} /> Events
           </h2>

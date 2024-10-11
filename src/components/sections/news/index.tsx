@@ -54,12 +54,15 @@ export const NewsItem = ({
   );
 };
 
-export const NewsSection = () => {
+export interface NewsSectionProps {
+  region?: string;
+}
+export const NewsSection = ({ region }: NewsSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
   const _api = new PostsApi();
   const getNews = useCallback(async () => {
     try {
-      const resp = await _api.getCustomPost("posts", 4);
+      const resp = await _api.getCustomPost("posts", 4, -1, region);
       setPosts(resp);
     } catch (error: any) {
       console.log("Error while getting news", error);
@@ -95,10 +98,10 @@ export const NewsSection = () => {
               })}
             </>
           ) : (
-            <LoadingOverlay visible={true} />
+            <></>
           )
         ) : (
-          <LoadingOverlay visible={true} />
+          <></>
         )}
       </Flex>
       <Link
