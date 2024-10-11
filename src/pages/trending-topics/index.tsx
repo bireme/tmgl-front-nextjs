@@ -1,6 +1,7 @@
 import { Container, Grid } from "@mantine/core";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import { FeedSection } from "@/components/feed";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
@@ -17,10 +18,7 @@ export default function TrendingTopics() {
           sit odio sapien turpis. Enim eu dictum magnis magna sed sed.
           Condimentum quam at erat libero adipiscing urna non.
         </p>
-        <Grid>
-          <Grid.Col span={{ md: 3, sm: 12 }}></Grid.Col>
-          <Grid.Col span={{ md: 9, sm: 12 }}></Grid.Col>
-        </Grid>
+        <FeedSection postType="trending_topics" />
       </Container>
     </>
   );

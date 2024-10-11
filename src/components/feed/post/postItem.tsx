@@ -23,12 +23,17 @@ export const PostItem = ({
       align={"flex-end"}
       justify={"space-between"}
     >
-      <div
-        className={styles.PostImage}
-        style={{
-          backgroundImage: `url(${thumbnail})`,
-        }}
-      ></div>
+      {thumbnail && thumbnail != "" ? (
+        <div
+          className={styles.PostImage}
+          style={{
+            backgroundImage: `url(${thumbnail})`,
+          }}
+        ></div>
+      ) : (
+        ""
+      )}
+
       <div className={styles.PostContent}>
         <h3>{title}</h3>
         <div dangerouslySetInnerHTML={{ __html: excerpt }}></div>
