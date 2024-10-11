@@ -56,5 +56,33 @@
 }
 
 .Filters{
-  
+  h4{
+    color: var(--Colors-Pure-Black, #000);
+    font-family: "Roboto Serif";
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  h5{
+    color: var(--Colors-Pure-Black, #000);
+    font-family: "Roboto Serif";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+  }
+  h5{
+    color: var(--Colors-Pure-Black, #000);
+    font-family: "Roboto Serif";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor:pointer;
+    gap: 5px;
+  }
 }

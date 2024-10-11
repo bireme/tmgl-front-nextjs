@@ -28,7 +28,7 @@ export abstract class BaseUnauthenticatedApi {
             case "thumbnail":
               url =
                 post._embedded["wp:featuredmedia"][0].media_details.sizes
-                  .thumbnail.source_url;
+                  .thumbnail?.source_url;
               break;
             case "medium":
               url =

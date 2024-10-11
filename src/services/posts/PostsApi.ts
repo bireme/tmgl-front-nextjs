@@ -1,9 +1,23 @@
+import { TaxonomyDTO, TaxonomyTermDTO } from "../types/taxonomies.dto";
+
 import { BaseUnauthenticatedApi } from "../BaseUnauthenticatedApi";
 import { Post } from "../types/posts.dto";
 
 export class PostsApi extends BaseUnauthenticatedApi {
   public constructor(region?: string) {
     super(`${region ? region + "/" : ""}wp-json/wp/v2/`);
+  }
+
+  public async getTaxonomies(taxSlug?: string): Promise<TaxonomyDTO[]> {
+    const { data } = await this._api.get(`taxonomies`);
+    return data;
+  }
+
+  public async getTaxonomiesBySlug(
+    taxSlug: string
+  ): Promise<TaxonomyTermDTO[]> {
+    const { data } = await this._api.get(`${taxSlug}`);
+    return data;
   }
 
   public async getCustomPost(
