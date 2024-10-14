@@ -46,6 +46,8 @@ export const SecondSection = ({ acf }: SectionProps) => {
               radius={"md"}
               width={"100%"}
             />
+            <p>{acf.second_session.imagem.caption}</p>
+            <small>{acf.second_session.imagem.description}</small>
           </Grid.Col>
         </Grid>
       </Container>

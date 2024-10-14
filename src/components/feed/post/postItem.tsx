@@ -38,10 +38,12 @@ export const PostItem = ({
         <h3>{title}</h3>
         <div dangerouslySetInnerHTML={{ __html: excerpt }}></div>
       </div>
-      <Button size={"sm"}>
-        {" "}
-        <IconArrowRight />{" "}
-      </Button>
+      <a href={href}>
+        <Button size={"sm"}>
+          {" "}
+          <IconArrowRight />{" "}
+        </Button>
+      </a>
     </Flex>
   );
 };

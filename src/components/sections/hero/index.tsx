@@ -1,25 +1,30 @@
-import { Container, Flex } from "@mantine/core";
+import { Badge, Container, Flex } from "@mantine/core";
+import { BreadCrumbs, pathItem } from "@/components/breadcrumbs";
 import { useCallback, useEffect, useState } from "react";
 
-import { BreadCrumbs } from "@/components/breadcrumbs";
+import { CustomTaxBadge } from "@/components/categories";
 import { DimensionsAcf } from "@/services/types/dimensionsAcf";
 import { MediaApi } from "@/services/media/MediaApi";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { colors } from "@/helpers/colors";
+import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/sections.module.scss";
 
 export interface HeroHeaderProps {
   post: Post;
-  path: Array<string>;
+  path: Array<pathItem>;
   type: string;
 }
+
 export const HeroHeader = ({ post, path, type }: HeroHeaderProps) => {
   const [background, setBackground] = useState<string>();
   const [acfs, setAcfs] = useState<DimensionsAcf>();
   const _mediaApi = new MediaApi();
+  const _postApi = new PostsApi();
+  const categories = _postApi.getPostCategories(post);
 
   const getBackground = useCallback(async () => {
-    //May we can change dimensions to use featured image than acf.
     if (type == "TM Dimensions") {
       const acfs = post.acf as unknown as DimensionsAcf;
       setBackground(acfs.cover_image.url);
@@ -46,15 +51,7 @@ export const HeroHeader = ({ post, path, type }: HeroHeaderProps) => {
           className={styles.HeroContent}
         >
           <div>
-            <BreadCrumbs
-              path={path.concat([
-                acfs?.long_title
-                  ? acfs.long_title
-                  : post.title
-                  ? post.title.rendered
-                  : "",
-              ])}
-            />
+            <BreadCrumbs path={path} />
           </div>
           <div>
             <h2 className={styles.TitleWithIcon}>{type}</h2>
@@ -62,13 +59,14 @@ export const HeroHeader = ({ post, path, type }: HeroHeaderProps) => {
               {acfs?.long_title
                 ? acfs?.long_title
                 : post.title
-                ? post.title.rendered
+                ? decodeHtmlEntities(post.title.rendered)
                 : ""}
             </h1>
             <div
               className={styles.Excerpt}
               dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
             />
+            <CustomTaxBadge names={[type]} />
           </div>
         </Flex>
       </Container>

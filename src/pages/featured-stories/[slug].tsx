@@ -49,7 +49,10 @@ export default function FeaturedStories() {
         <>
           <HeroHeader
             post={post}
-            path={["HOME", "Featured Stories"]}
+            path={[
+              { path: "/", name: "HOME" },
+              { path: "/featured-stories", name: "Featured Stories" },
+            ]}
             type="Featured Stories"
           />
           {acf ? (

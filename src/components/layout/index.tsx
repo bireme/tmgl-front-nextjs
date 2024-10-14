@@ -16,11 +16,14 @@ import {
   removeHTMLTagsAndLimit,
   removeHtmlTags,
 } from "@/helpers/stringhelper";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
+import { GlobalContext } from "@/contexts/globalContext";
 import { MenuItemDTO } from "@/services/types/menus.dto";
 import { MenusApi } from "@/services/menus/MenusApi";
+import { getRegionName } from "@/helpers/regions";
 import styles from "../../styles/components/layout.module.scss";
+import { useRouter } from "next/router";
 
 export const HeaderLayout = () => {
   const logoSource = "/local/svg/logo.svg";
@@ -32,7 +35,9 @@ export const HeaderLayout = () => {
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemDTO>();
   const [selectedSubItem, setSelectedSubItem] = useState<MenuItemDTO>();
   const [prevSelectedSubItem, setPrevSelectedSubItem] = useState<MenuItemDTO>();
+  const router = useRouter();
   const menuApi = new MenusApi();
+  const { regionName } = useContext(GlobalContext);
 
   const getMenus = async () => {
     const retMenu = await menuApi.getMenu("global-menu");
@@ -98,7 +103,9 @@ export const HeaderLayout = () => {
               className={styles.SuperiorFlex}
             >
               <a href={"/"}>
-                <p>TMGL</p>
+                <p>
+                  TMGL <span>{getRegionName(regionName)}</span>
+                </p>
               </a>
               <div
                 className={`${styles.SuperiorLinks} ${
@@ -150,9 +157,15 @@ export const HeaderLayout = () => {
                   return (
                     <a
                       onClick={() => {
-                        setMegaMenuOpen(true);
-                        setSelectedMenuItem(item);
-                        setSelectedSubItem(undefined);
+                        if (item.children?.length > 0) {
+                          setMegaMenuOpen(true);
+                          setSelectedMenuItem(item);
+                          setSelectedSubItem(undefined);
+                        } else {
+                          if (item.url) {
+                            router.push(item.url);
+                          }
+                        }
                       }}
                       key={key}
                     >
@@ -179,6 +192,9 @@ export const HeaderLayout = () => {
             <Grid>
               <Grid.Col span={{ base: 12, md: 4 }}>
                 <h2
+                  style={{
+                    cursor: prevSelectedSubItem ? "pointer" : "default",
+                  }}
                   onClick={() => {
                     handlePrevMenuItem();
                   }}

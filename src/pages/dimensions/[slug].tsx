@@ -40,7 +40,10 @@ export default function Dimensions() {
         <>
           <HeroHeader
             post={post}
-            path={["TMGL", "TM Dimensions"]}
+            path={[
+              { path: "/", name: "HOME" },
+              { path: "/dimensions", name: "TM Dimensions" },
+            ]}
             type="TM Dimensions"
           />
           <Container py={100} size={"xl"}>

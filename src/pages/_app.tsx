@@ -8,15 +8,18 @@ import "@mantine/carousel/styles.css";
 import { FooterLayout, HeaderLayout } from "@/components/layout";
 
 import type { AppProps } from "next/app";
+import { GlobalProvider } from "@/contexts/globalContext";
 import { MantineProvider } from "@mantine/core";
 import { mantineTheme } from "@styles/mantine-theme";
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <MantineProvider theme={mantineTheme}>
-      <HeaderLayout />
-      <Component {...pageProps} />
-      <FooterLayout />
+      <GlobalProvider>
+        <HeaderLayout />
+        <Component {...pageProps} />
+        <FooterLayout />
+      </GlobalProvider>
     </MantineProvider>
   );
 }
