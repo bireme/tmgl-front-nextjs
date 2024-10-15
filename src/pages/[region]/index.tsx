@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
 import { Container } from "@mantine/core";
 import { EventsSection } from "@/components/sections/events";
+import { GlobalContext } from "@/contexts/globalContext";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { NewsSection } from "@/components/sections/news";
@@ -17,6 +18,7 @@ import { useRouter } from "next/router";
 
 export default function RegionHome() {
   const router = useRouter();
+  const { setRegionName } = useContext(GlobalContext);
   const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
   const {
@@ -25,6 +27,7 @@ export default function RegionHome() {
 
   const getPageProperties = useCallback(async () => {
     const _api = new PagesApi(region ? region.toString() : "");
+    setRegionName(region ? region.toString() : "");
     try {
       const resp = await _api.getPageProperties("home");
       setAcf(resp[0].acf);

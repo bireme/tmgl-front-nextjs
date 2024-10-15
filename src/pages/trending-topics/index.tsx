@@ -9,7 +9,13 @@ export default function TrendingTopics() {
   return (
     <>
       <Container size={"xl"} py={60}>
-        <BreadCrumbs path={["HOME", "Trending Topics"]} blackColor={true} />
+        <BreadCrumbs
+          path={[
+            { path: "/", name: "HOME" },
+            { path: "/trending-topics", name: "Trending Topics" },
+          ]}
+          blackColor={true}
+        />
         <h2 className={styles.TitleWithIcon}> Trending Topics</h2>
         <p>
           Lorem ipsum dolor sit amet consectetur. Mi nec enim sit nulla. Elit

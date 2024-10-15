@@ -38,6 +38,12 @@ export const SearchForm = ({ title, subtitle }: AcfSearch) => {
             onChange={(e) => {
               setSearchString(e.target.value);
             }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") {
+                event.preventDefault(); // Evita que o formulário seja submetido automaticamente
+                handleSearch(); // Função para submeter o formulário
+              }
+            }}
             value={searchString ? searchString : ""}
           />
           <Button
@@ -51,15 +57,11 @@ export const SearchForm = ({ title, subtitle }: AcfSearch) => {
           </Button>
         </Flex>
         <Flex gap={20} mt={18}>
-          <a
-            href={
-              "https://pesquisa.bvsalud.org/tmgl/decs-locator/?lang=en&mode=&tree_id=MT"
-            }
-          >
+          <a href={"https://pesquisa.bvsalud.org/tmgl/advanced/?lang=en"}>
             Advanced search
           </a>
-          <a href={"https://pesquisa.bvsalud.org/tmgl/advanced/?lang=en"}>
-            How to search
+          <a href={"https://pesquisa.bvsalud.org/tmgl/decs-locator/?lang=en"}>
+            Subject Headings
           </a>
         </Flex>
       </form>

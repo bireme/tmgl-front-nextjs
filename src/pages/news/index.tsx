@@ -25,7 +25,13 @@ export default function NewsList() {
 
   return (
     <Container size={"xl"} py={60}>
-      <BreadCrumbs path={["HOME", "News"]} blackColor={true} />
+      <BreadCrumbs
+        path={[
+          { path: "/", name: "HOME" },
+          { path: "/news", name: "News" },
+        ]}
+        blackColor={true}
+      />
       <h2 className={styles.TitleWithIcon}>News</h2>
       <Flex direction={"row"} gap={25} justify={"space-between"} wrap={"wrap"}>
         {posts.map((post, key) => {

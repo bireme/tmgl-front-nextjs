@@ -9,13 +9,13 @@ export default function FeaturedStories() {
         <BreadCrumbs
           path={[
             { path: "/", name: "HOME" },
-            { path: "/featured-stories", name: "Featured Stories" },
+            { path: "/dimensions", name: "TM Dimensions" },
           ]}
           blackColor={true}
         />
         <h2 className={styles.TitleWithIcon}>
           <img src={"/local/svg/simbol.svg"} />
-          Featured Stories
+          TM Dimensions
         </h2>
         <p>
           Lorem ipsum dolor sit amet consectetur. Mi nec enim sit nulla. Elit
@@ -24,7 +24,7 @@ export default function FeaturedStories() {
           sit odio sapien turpis. Enim eu dictum magnis magna sed sed.
           Condimentum quam at erat libero adipiscing urna non.
         </p>
-        <FeedSection postType="featured_stories" />
+        <FeedSection postType="dimensions" />
       </Container>
     </>
   );

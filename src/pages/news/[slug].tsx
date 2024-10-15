@@ -39,7 +39,10 @@ export default function News() {
         <>
           <Container mt={80} size={"xl"}>
             <BreadCrumbs
-              path={["HOME", "News", post.title.rendered]}
+              path={[
+                { path: "/", name: "HOME" },
+                { path: "/news", name: "News" },
+              ]}
               blackColor={true}
             />
           </Container>

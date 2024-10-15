@@ -13,10 +13,11 @@ import {
   TraditionalSectionCard,
 } from "@/components/sections";
 import { NewsItem, NewsSection } from "@/components/sections/news";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
 import { EventsSection } from "@/components/sections/events";
+import { GlobalContext } from "@/contexts/globalContext";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { IconArrowRight } from "@tabler/icons-react";
@@ -35,6 +36,7 @@ export default function Home() {
   const [properties, setProperties] = useState();
   const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
+  const { setRegionName } = useContext(GlobalContext);
   const [showModal, setShowModal] = useState(false);
 
   const getPageProperties = useCallback(async () => {
@@ -50,6 +52,7 @@ export default function Home() {
 
   useEffect(() => {
     getPageProperties();
+    setRegionName("");
   }, [getPageProperties]);
 
   return (

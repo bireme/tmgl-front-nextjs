@@ -46,7 +46,7 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
                     excerpt={decodeHtmlEntities(
                       removeHTMLTagsAndLimit(post.excerpt.rendered, 120)
                     )}
-                    href={`/news/${post.slug}`}
+                    href={`/${postType.replace("_", "-")}/${post.slug}`}
                     thumbnail={_api.findFeaturedMedia(post, "medium")}
                   />
                 );

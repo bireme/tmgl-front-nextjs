@@ -130,6 +130,16 @@
   width: 100%;
   a{
     cursor: pointer;
+    span{
+      border-left: solid black 1px;
+      padding-left: 10px;
+      color: var(--Colors-Pure-Black, #000);
+      font-family: Roboto;
+      font-size: 28px;
+      font-style: normal;
+      font-weight: 200;
+      line-height: normal;
+    }
   }
   .SuperiorLinks{
     display: none;
@@ -141,6 +151,7 @@
       flex-direction: row;
       justify-content: center;
       align-items: center;
+      
     }
     &.Opened{
       display: flex;
@@ -230,6 +241,10 @@
       font-weight: 700;
       line-height: 160%; /* 51.2px */
       text-align: center;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
     }
     nav{
       width: 100%;
