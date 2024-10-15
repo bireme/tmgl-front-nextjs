@@ -49,7 +49,7 @@ export const StoriesItem = ({
 };
 
 export interface StoriesSectionProps {
-  region: string;
+  region?: string;
 }
 export const StoriesSection = ({ region }: StoriesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>();
