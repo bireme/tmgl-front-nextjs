@@ -73,7 +73,7 @@ export default function RegionHome() {
                 <TrendingSlider />
               </Container>
               <Container size={"xl"}>
-                <StoriesSection />
+                <StoriesSection region={region ? region.toString() : ""} />
                 <h2 className={styles.TitleWithIcon}>
                   <img src={"/local/svg/simbol.svg"} /> Events
                 </h2>

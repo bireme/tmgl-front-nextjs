@@ -48,9 +48,14 @@ export const StoriesItem = ({
   );
 };
 
-export const StoriesSection = () => {
+export interface StoriesSectionProps {
+  region: string;
+}
+export const StoriesSection = ({ region }: StoriesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>();
   const _api = new PostsApi();
+
+  //Realizar a Filtragem a partir do region
   const getFeaturedStories = useCallback(async () => {
     try {
       const result = await _api.getCustomPost("featured_stories", 3);
