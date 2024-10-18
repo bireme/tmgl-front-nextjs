@@ -16,14 +16,18 @@
 
   .LogoContainer{
     transition: 0.4s;
-    padding: 10px 0;
+    padding: 8px 0;
+    a{
+      display: flex;
+      padding-top: 2px;
+    }
     &:hover{
       img{
         filter: brightness(1.1);
       }
     }
     img{
-      width: 82px;
+      width: 72px;
     }
     .BrandContent{
       width: 100%;
@@ -34,7 +38,7 @@
       p{
         margin-top: 0px;
         margin-bottom: 5px;
-        font-size: 36px;
+        font-size: 32px;
         font-style: normal;
         font-weight: 600;
         line-height: normal;
@@ -81,9 +85,12 @@
       display: none;
     }
     .LogoContainer{
-      padding: 15px 0px;
+      padding: 5px 0px;
+      p{
+        font-size: 30px;
+      }
       img{
-        width: 55px;
+        width: 45px;
       }
       .BrandContent{
         .InfoNavContainer{
@@ -127,19 +134,23 @@
 }
 
 .SuperiorFlex{
+  &.HasRegion{
+    a{
+      span{
+        border-left: solid black 1px;
+        padding-left: 10px;
+        color: var(--Colors-Pure-Black, #000);
+        font-family: Roboto;
+        font-size: 28px;
+        font-style: normal;
+        font-weight: 200;
+        line-height: normal;
+      }
+    }
+  }
   width: 100%;
   a{
     cursor: pointer;
-    span{
-      border-left: solid black 1px;
-      padding-left: 10px;
-      color: var(--Colors-Pure-Black, #000);
-      font-family: Roboto;
-      font-size: 28px;
-      font-style: normal;
-      font-weight: 200;
-      line-height: normal;
-    }
   }
   .SuperiorLinks{
     display: none;

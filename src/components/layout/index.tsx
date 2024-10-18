@@ -100,7 +100,9 @@ export const HeaderLayout = () => {
               direction={"row"}
               justify={"space-between"}
               align={"center"}
-              className={styles.SuperiorFlex}
+              className={`${styles.SuperiorFlex} ${
+                getRegionName(regionName) ? styles.HasRegion : ""
+              }`}
             >
               <a href={"/"}>
                 <p>
@@ -143,7 +145,7 @@ export const HeaderLayout = () => {
             </Flex>
 
             <Flex
-              mt={10}
+              mt={0}
               className={`${styles.InfoNavContainer} ${
                 opened ? styles.Opened : ""
               }`}
