@@ -95,7 +95,7 @@ export default function RegionHome() {
                 <h2 className={styles.TitleWithIcon}>
                   <img src={"/local/svg/simbol.svg"} /> News
                 </h2>
-                <NewsSection region={region ? region.toString() : undefined} />
+                {/* <NewsSection region={region ? region.toString() : undefined} /> */}
               </Container>
               <NewsletterSection />
             </div>

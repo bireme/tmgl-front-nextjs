@@ -55,7 +55,7 @@ export const NewsItem = ({
 };
 
 export interface NewsSectionProps {
-  region?: string;
+  region?: number[];
 }
 export const NewsSection = ({ region }: NewsSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
