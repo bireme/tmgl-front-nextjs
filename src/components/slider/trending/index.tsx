@@ -65,7 +65,7 @@ export const TrendingSlider = () => {
                     className={styles.SliderItemContainer}
                   >
                     <TrendingTopicSection
-                      href={`/trending_topics/${item.slug}`}
+                      href={`/trending-topics/${item.slug}`}
                       title={`${item.title.rendered}`}
                       excerpt={`${item.excerpt.rendered}`}
                     />

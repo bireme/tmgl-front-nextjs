@@ -90,6 +90,7 @@
   width: 100%;
   @media (max-width: '750px') {
     min-height: 80vh;
+    background-position: right center;
   }
   h2{
     padding-left: 40px;
@@ -106,6 +107,8 @@
     max-width: 50vw;
     @media (max-width: '750px') {
       width: 100%;
+      font-size: 1.3rem;
+      max-width:100%;
     }
   }
   h1{
@@ -118,6 +121,8 @@
     max-width:45vw;
     @media (max-width: '750px') {
       width: 100%;
+      max-width:100%;
+      font-size: 2rem;
     }
   }
   .Excerpt{
@@ -125,6 +130,7 @@
     @media (max-width: '750px') {
       width: 100%;
       max-width: 100%;
+      font-size: 1.3rem;
     }
     color: #FFF;
     font-family: Roboto;
@@ -135,6 +141,12 @@
   }
   .HeroContent{
     height: 80vh;
+    @media (max-width: '750px') {
+      .TitleWithIcon, h2{
+        width: 100%;
+        max-width: 100%;
+      }
+    }
   }
 }
 
@@ -417,9 +429,9 @@
   @media (max-width: '750px') {
     flex-direction: column;
     justify-content: center;
-    align-content: center;
+    align-content: flex-start;
     text-align: center;
-    align-items: center;
+    align-items: flex-start;
     img{
       width: 40px;
     }

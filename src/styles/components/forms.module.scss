@@ -43,6 +43,14 @@
   }
   .HeroFormInput{
     min-width: 70%;
+    @media (max-width: '750px') {
+      min-width: 40%;
+      width: 65%;
+    }
+    @media (max-width: '350px') {
+      min-width: 50%;
+      width: 50%;
+    }
   }
   a{
     color: #FAFAFA;
