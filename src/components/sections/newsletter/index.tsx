@@ -10,7 +10,7 @@ export const NewsletterSection = () => {
       <Container size={"xl"}>
         <Flex justify={"flex-start"} align={"center"}>
           <form>
-            <h4>Subscribe to the TMGL Bulletin</h4>
+            <h4>Join the TMGL Community</h4>
             <h5>
               TCIM news, events, opportunities and updates, monthly in your
               inbox

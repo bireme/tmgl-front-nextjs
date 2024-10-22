@@ -8,12 +8,22 @@ import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/forms.module.scss";
 import { useForm } from "@mantine/form";
 
-export const FiltersForm = () => {
+interface FiltersFormProps {
+  onSubmit: (regions?: number[]) => void;
+}
+export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
+  const initialValues: {
+    dimensions: number[];
+    regions: number[];
+  } = {
+    dimensions: [],
+    regions: [],
+  };
+
   const form = useForm({
-    initialValues: {
-      dimensions: [""],
-    },
+    initialValues: initialValues,
   });
+
   const _api = new PostsApi();
   const [dimensions, setDimensions] = useState<TaxonomyTermDTO[]>();
   const [countries, setCountries] = useState<TaxonomyTermDTO[]>();
@@ -44,23 +54,38 @@ export const FiltersForm = () => {
           <h5>
             <img src={"/local/svg/arrowup.svg"} /> TM Dimensions{" "}
           </h5>
-          <Checkbox key={-1} label={"All"} radius={3} mb={10} />
+          <Checkbox
+            key={-1}
+            onChange={(event) => {
+              if (event.currentTarget.checked) {
+                form.setFieldValue(
+                  "dimensions",
+                  dimensions ? dimensions.map((d) => d.id) : []
+                );
+              } else {
+                form.setFieldValue("dimensions", []);
+              }
+            }}
+            label={"All"}
+            radius={3}
+            mb={10}
+          />
           {dimensions?.map((item, key) => {
             return (
               <Checkbox
                 key={key}
-                checked={form.values.dimensions.includes(item.name)}
+                checked={form.values.dimensions.includes(item.id)}
                 onChange={(event) => {
                   const currentCheckbox = form.values.dimensions;
                   if (event.currentTarget.checked) {
                     form.setFieldValue("dimensions", [
                       ...currentCheckbox,
-                      item.name,
+                      item.id,
                     ]);
                   } else {
                     form.setFieldValue(
                       "dimensions",
-                      currentCheckbox.filter((i) => i !== item.name)
+                      currentCheckbox.filter((i) => i !== item.id)
                     );
                   }
                 }}
@@ -112,7 +137,7 @@ export const FiltersForm = () => {
           </h5>
         </div>
 
-        <Button size={"md"} fullWidth>
+        <Button type="submit" size={"md"} fullWidth>
           {" "}
           Aply Filters{" "}
         </Button>

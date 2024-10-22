@@ -17,10 +17,13 @@ export interface FeedSectionProps {
 }
 export const FeedSection = ({ postType }: FeedSectionProps) => {
   const [posts, setPosts] = useState<Post[]>([]);
+  const [regionsFilter, setRegionsFilter] = useState<number[]>([]);
   const _api = new PostsApi();
 
-  const getPosts = async () => {
-    const data = await _api.getCustomPost(postType, 9, 0);
+  const getPosts = async (regions?: number[]) => {
+    if (regions) setRegionsFilter(regions);
+
+    const data = await _api.getCustomPost(postType, 9, 0, regionsFilter);
     setPosts(data);
   };
 
@@ -32,13 +35,12 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
     <div className={styles.FeedSection}>
       <Grid>
         <Grid.Col span={{ base: 12, md: 2.5 }}>
-          <FiltersForm />
+          <FiltersForm onSubmit={() => getPosts()} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 9.5 }} py={60} px={20}>
           {posts.length > 0 ? (
             <Flex direction={"row"} wrap={"wrap"} gap={30}>
               {posts.map((post, index) => {
-                console.log(_api.findFeaturedMedia(post, "thumbnail"));
                 return (
                   <PostItem
                     title={decodeHtmlEntities(post.title.rendered)}

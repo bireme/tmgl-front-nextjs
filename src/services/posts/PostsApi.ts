@@ -24,14 +24,18 @@ export class PostsApi extends BaseUnauthenticatedApi {
     postTypeSlug: string,
     perPage?: number,
     parent?: number,
-    region?: string
+    region?: number[]
   ): Promise<Post[]> {
     const { data } = await this._api.get(
       `${postTypeSlug}?per_page=${
         perPage ? perPage : process.env.POSTSPERPAGE
       }&_embed&orderby=date&order=desc&acf_format=standard${
         parent || (parent == 0 && parent >= 0) ? "&parent=" + parent : ""
-      }${region ? "&region=" + region : ""}`
+      }${
+        region && region.length > 0
+          ? `&region=${region.length > 0 ? region.join(",") : ""}`
+          : ""
+      }`
     );
     return data;
   }

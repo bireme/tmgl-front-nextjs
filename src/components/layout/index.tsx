@@ -287,18 +287,26 @@ export const HeaderLayout = () => {
                             />
                           </Grid.Col>
                           <Grid.Col span={{ base: 12, md: 8 }}>
-                            {selectedSubItem.description}
-                            <a href={selectedMenuItem?.url}>
-                              <Button mt={15}>
-                                Explore
-                                {removeHTMLTagsAndLimit(
-                                  selectedSubItem.title,
-                                  20
-                                )}
-                                {selectedSubItem.title.length > 20 ? "..." : ""}
-                                <IconArrowRight stroke={1.5} />
-                              </Button>
-                            </a>
+                            <div className={styles.halfImageContainer}>
+                              <div>{selectedSubItem.description}</div>
+
+                              <a
+                                className={styles.HalfImageSubItembBtn}
+                                href={selectedSubItem?.url}
+                              >
+                                <Button mt={15}>
+                                  Explore{" "}
+                                  {removeHTMLTagsAndLimit(
+                                    selectedSubItem.title,
+                                    20
+                                  )}
+                                  {selectedSubItem.title.length > 20
+                                    ? "..."
+                                    : ""}
+                                  <IconArrowRight stroke={1.5} />
+                                </Button>
+                              </a>
+                            </div>
                           </Grid.Col>
                         </Grid>
                       </>
