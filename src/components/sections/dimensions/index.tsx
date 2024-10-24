@@ -26,11 +26,19 @@ export const RegionalDimensions = ({
               {acf.tmd.title}
             </h2>
             <div dangerouslySetInnerHTML={{ __html: acf.tmd.subtitle }} />
-            <a href={""}>
-              <Button style={{ fontWeight: 400 }} mt={20}>
-                Explore the content
-              </Button>
-            </a>
+            {acf.tmd?.explore_page ? (
+              <>
+                <a
+                  href={`${region}/content/${acf.tmd?.explore_page.post_name}`}
+                >
+                  <Button style={{ fontWeight: 400 }} mt={20}>
+                    Explore the content
+                  </Button>
+                </a>
+              </>
+            ) : (
+              <> </>
+            )}
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 7.5 }} px={20}>
             <Flex

@@ -18,7 +18,7 @@ import { useRouter } from "next/router";
 
 export default function RegionHome() {
   const router = useRouter();
-  const { setRegionName } = useContext(GlobalContext);
+  const { setRegionName, regionName } = useContext(GlobalContext);
   const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
   const {
@@ -32,13 +32,14 @@ export default function RegionHome() {
       const resp = await _api.getPageProperties("home");
       setAcf(resp[0].acf);
       setSliderImages(resp[0].acf.search.slider_images);
+      console.log(regionName);
     } catch {
       console.log("Error while get home properties");
     }
   }, [region]);
 
   useEffect(() => {
-    getPageProperties();
+    if (region) getPageProperties();
   }, [getPageProperties]);
 
   return (

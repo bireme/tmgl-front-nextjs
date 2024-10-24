@@ -1,35 +1,37 @@
 import { Container, Flex, LoadingOverlay } from "@mantine/core";
-import { IconPrinter, IconShare, IconShare3 } from "@tabler/icons-react";
+import { IconPrinter, IconShare } from "@tabler/icons-react";
 import { countWords, extimateTime } from "@/helpers/stringhelper";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
-import { RecomendedArticlesSection } from "@/components/sections/recomended";
-import { RelatedVideosSection } from "@/components/videos";
 import moment from "moment";
-import styles from "../../styles/pages/pages.module.scss";
+import styles from "../../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
-export default function News() {
+export default function Content() {
   const router = useRouter();
   const {
     query: { slug },
   } = router;
+  const { asPath } = router;
   const [post, setPost] = useState<Post>();
-  const _api = new PostsApi();
-
+  const { regionName, setRegionName } = useContext(GlobalContext);
+  const pathSegments = asPath.split("/").filter(Boolean);
+  const _api = new PostsApi(pathSegments[0]);
   const getPost = useCallback(async (slug: string) => {
     try {
-      const resp = await _api.getPost("posts", slug);
+      const resp = await _api.getPost("pages", slug);
       setPost(resp[0]);
     } catch {
-      console.log("Error while trying to get dimension");
+      console.log("Error while trying to get page");
     }
   }, []);
 
   useEffect(() => {
+    setRegionName(pathSegments[0]);
     if (slug) getPost(slug.toString());
   }, [getPost, slug]);
 
@@ -40,14 +42,17 @@ export default function News() {
           <Container mt={80} size={"xl"}>
             <BreadCrumbs
               path={[
-                { path: "/", name: "HOME" },
-                { path: "/news", name: "News" },
+                { path: `/${regionName}`, name: "HOME" },
+                {
+                  path: `/content/${slug ? slug.toString() : ""}`,
+                  name: slug ? slug.toString().toUpperCase() : "",
+                },
               ]}
               blackColor={true}
             />
           </Container>
           <Container mt={40} size={"md"}>
-            <h3 className={styles.TitleWithIcon}>News</h3>
+            <h3 className={styles.TitleWithIcon}>Content</h3>
             <h1 className={styles.PostTitle}>{post.title.rendered}</h1>
             <div
               className={styles.PostSubtitle}
@@ -99,8 +104,6 @@ export default function News() {
               dangerouslySetInnerHTML={{ __html: post.content.rendered }}
             />
           </Container>
-          <RelatedVideosSection />
-          <RecomendedArticlesSection limit={3} />
         </>
       ) : (
         <LoadingOverlay visible={true} />
