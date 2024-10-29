@@ -32,6 +32,7 @@ export const HeaderLayout = () => {
   const [globalMenu, setGlobalMenu] = useState<MenuItemDTO[]>();
   const [regMenu, setRegMenu] = useState<MenuItemDTO[]>();
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
+  const [responsiveMenuOpen, setResponsiveMenuOpen] = useState(true);
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemDTO>();
   const [selectedSubItem, setSelectedSubItem] = useState<MenuItemDTO>();
   const [prevSelectedSubItem, setPrevSelectedSubItem] = useState<MenuItemDTO>();
@@ -109,6 +110,28 @@ export const HeaderLayout = () => {
                   TMGL <span>{getRegionName(regionName)}</span>
                 </p>
               </a>
+              <div className={styles.ResponsiveMenuButton}>
+                {!responsiveMenuOpen ? (
+                  <>
+                    <IconMenu2
+                      size={25}
+                      stroke={1.5}
+                      onClick={() => setResponsiveMenuOpen(true)}
+                    />
+                  </>
+                ) : (
+                  <>
+                    <IconX
+                      size={25}
+                      stroke={1.5}
+                      onClick={() => {
+                        setResponsiveMenuOpen(false);
+                        setMegaMenuOpen(false);
+                      }}
+                    />
+                  </>
+                )}
+              </div>
               <div
                 className={`${styles.SuperiorLinks} ${
                   opened || !isScrolled ? styles.Opened : ""
@@ -136,7 +159,10 @@ export const HeaderLayout = () => {
                 })}
               </div>
               {isScrolled ? (
-                <a onClick={() => setOpened(opened ? false : true)}>
+                <a
+                  className={styles.ScrolledButton}
+                  onClick={() => setOpened(opened ? false : true)}
+                >
                   {opened ? <IconX /> : <IconMenu2 />}
                 </a>
               ) : (
@@ -182,7 +208,7 @@ export const HeaderLayout = () => {
       </Container>
       {megaMenuOpen ? (
         <div
-          className={styles.MegaMenuOverlay}
+          className={`${styles.MegaMenuOverlay} ${styles.Main}`}
           onClick={() => setMegaMenuOpen(false)}
         >
           <div
@@ -243,7 +269,10 @@ export const HeaderLayout = () => {
                   })}
                 </nav>
               </Grid.Col>
-              <Grid.Col span={{ base: 12, md: 8 }}>
+              <Grid.Col
+                span={{ base: 12, md: 8 }}
+                className={styles.MegaMenuRightSection}
+              >
                 <Flex
                   justify={"center"}
                   align={"center"}
@@ -317,6 +346,62 @@ export const HeaderLayout = () => {
                 </Flex>
               </Grid.Col>
             </Grid>
+          </div>
+        </div>
+      ) : (
+        <></>
+      )}
+
+      {responsiveMenuOpen ? (
+        <div
+          className={styles.MegaMenuOverlay}
+          onClick={() => {
+            setMegaMenuOpen(false);
+            setResponsiveMenuOpen(false);
+          }}
+        >
+          <div className={styles.ResponsiveMenu}>
+            <nav>
+              {regMenu?.map((item, key) => {
+                return (
+                  <a
+                    onClick={(e) => {
+                      if (item.children?.length > 0) {
+                        e.stopPropagation();
+                        setMegaMenuOpen(true);
+                        setSelectedMenuItem(item);
+                        setSelectedSubItem(undefined);
+                      } else {
+                        if (item.url) {
+                          router.push(item.url);
+                        }
+                      }
+                    }}
+                    key={key}
+                  >
+                    {megaMenuOpen ? <>teste</> : <></>}
+                    {decodeHtmlEntities(item.title ? item.title : "")}
+                  </a>
+                );
+              })}
+              <hr />
+            </nav>
+            <nav className={styles.secondNav}>
+              {globalMenu?.map((item, key) => {
+                return (
+                  <a
+                    key={key}
+                    onClick={() => {
+                      setMegaMenuOpen(true);
+                      setSelectedMenuItem(item);
+                      setSelectedSubItem(undefined);
+                    }}
+                  >
+                    {item.title}
+                  </a>
+                );
+              })}
+            </nav>
           </div>
         </div>
       ) : (
