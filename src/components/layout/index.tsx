@@ -323,8 +323,9 @@ export const HeaderLayout = () => {
                           </Grid.Col>
                           <Grid.Col span={{ base: 12, md: 8 }}>
                             <div className={styles.halfImageContainer}>
-                              <div>{selectedSubItem.description}</div>
-
+                              <div className={styles.halfImagetext}>
+                                {selectedSubItem.description}
+                              </div>
                               <a
                                 className={styles.HalfImageSubItembBtn}
                                 href={selectedSubItem?.url}
