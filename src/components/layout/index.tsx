@@ -5,7 +5,6 @@ import {
   IconArrowRight,
   IconChevronsLeft,
   IconChevronsRight,
-  IconHelpCircleFilled,
   IconInfoCircle,
   IconLifebuoy,
   IconMenu2,
@@ -14,7 +13,6 @@ import {
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
-  removeHtmlTags,
 } from "@/helpers/stringhelper";
 import { useContext, useEffect, useState } from "react";
 
@@ -23,6 +21,7 @@ import { MenuItemDTO } from "@/services/types/menus.dto";
 import { MenusApi } from "@/services/menus/MenusApi";
 import { getRegionName } from "@/helpers/regions";
 import styles from "../../styles/components/layout.module.scss";
+import { useMediaQuery } from "@mantine/hooks";
 import { useRouter } from "next/router";
 
 export const HeaderLayout = () => {
@@ -32,13 +31,14 @@ export const HeaderLayout = () => {
   const [globalMenu, setGlobalMenu] = useState<MenuItemDTO[]>();
   const [regMenu, setRegMenu] = useState<MenuItemDTO[]>();
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
-  const [responsiveMenuOpen, setResponsiveMenuOpen] = useState(true);
+  const [responsiveMenuOpen, setResponsiveMenuOpen] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemDTO>();
   const [selectedSubItem, setSelectedSubItem] = useState<MenuItemDTO>();
   const [prevSelectedSubItem, setPrevSelectedSubItem] = useState<MenuItemDTO>();
   const router = useRouter();
   const menuApi = new MenusApi();
   const { regionName } = useContext(GlobalContext);
+  const mediaQueryMatches = useMediaQuery("(max-width: 750px)");
 
   const getMenus = async () => {
     const retMenu = await menuApi.getMenu("global-menu");
@@ -250,6 +250,12 @@ export const HeaderLayout = () => {
                             setSelectedSubItem(item.children[0]);
                           } else {
                             setSelectedSubItem(item);
+                            //If the site is being displayed at a phone this need to act lile a link
+                            if (mediaQueryMatches) {
+                              router.push(item.url);
+                              setMegaMenuOpen(false);
+                              setResponsiveMenuOpen(false);
+                            }
                           }
                         }}
                         className={`${
