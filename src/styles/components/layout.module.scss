@@ -12,6 +12,24 @@
       display: none !important;
     }
   }
+.HeaderActionContainer{
+  position: relative;
+  width: 100%;
+  .HeaderActionButton{
+    width: 100%;
+    cursor: pointer;
+    padding-top: 10px;
+    display: flex;
+    align-items: flex-end;
+    flex-direction: row;
+    align-content: center;
+    justify-content: flex-end;
+    &.HeaderActionOpened{
+      position: absolute;
+      top: 5px;
+    }
+  }
+}
 
   .ScrolledButton{
     @media (max-width: '750px') {

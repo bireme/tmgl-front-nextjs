@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 
-import { Button, Container, Flex, Grid } from "@mantine/core";
+import { Button, Container, Flex, Grid, stylesToString } from "@mantine/core";
 import {
   IconArrowRight,
   IconChevronsLeft,
@@ -80,6 +80,24 @@ export const HeaderLayout = () => {
       } ${opened ? styles.Opened : ""}`}
     >
       <Container size={"xl"}>
+        {isScrolled ? (
+          <div className={styles.HeaderActionContainer}>
+            <div
+              className={`${styles.HeaderActionButton} ${
+                !opened ? styles.HeaderActionOpened : ""
+              } `}
+            >
+              <a
+                className={styles.ScrolledButton}
+                onClick={() => setOpened(opened ? false : true)}
+              >
+                {opened ? <IconX /> : <IconMenu2 />}
+              </a>
+            </div>
+          </div>
+        ) : (
+          <></>
+        )}
         <Flex
           gap={"10px"}
           direction={"row"}
@@ -158,16 +176,6 @@ export const HeaderLayout = () => {
                   );
                 })}
               </div>
-              {isScrolled ? (
-                <a
-                  className={styles.ScrolledButton}
-                  onClick={() => setOpened(opened ? false : true)}
-                >
-                  {opened ? <IconX /> : <IconMenu2 />}
-                </a>
-              ) : (
-                <></>
-              )}
             </Flex>
 
             <Flex
