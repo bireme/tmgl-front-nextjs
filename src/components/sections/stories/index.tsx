@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/sections.module.scss";
 
 export interface StoreisSectionProps {
@@ -33,7 +34,10 @@ export const StoriesItem = ({
           align={"flex-start"}
           gap={10}
         >
-          <h2>{title}</h2>
+          <h2>
+            {!main ? removeHTMLTagsAndLimit(title, 80) : title}{" "}
+            {title.length > 80 && !main ? "..." : ""}
+          </h2>
           {main ? (
             <div dangerouslySetInnerHTML={{ __html: excerpt ? excerpt : "" }} />
           ) : (
