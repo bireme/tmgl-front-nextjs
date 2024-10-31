@@ -251,7 +251,7 @@ export const HeaderLayout = () => {
                     return (
                       <a
                         key={key}
-                        onClick={() => {
+                        onMouseEnter={() => {
                           if (item.children.length > 0) {
                             setPrevSelectedSubItem(selectedMenuItem);
                             setSelectedMenuItem(item);
@@ -394,7 +394,7 @@ export const HeaderLayout = () => {
                     }}
                     key={key}
                   >
-                    {megaMenuOpen ? <>teste</> : <></>}
+                    {megaMenuOpen ? <></> : <></>}
                     {decodeHtmlEntities(item.title ? item.title : "")}
                   </a>
                 );

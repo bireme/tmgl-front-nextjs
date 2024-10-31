@@ -20,15 +20,19 @@ export default function Content() {
   const [post, setPost] = useState<Post>();
   const { regionName, setRegionName } = useContext(GlobalContext);
   const pathSegments = asPath.split("/").filter(Boolean);
-  const _api = new PostsApi(pathSegments[0]);
-  const getPost = useCallback(async (slug: string) => {
-    try {
-      const resp = await _api.getPost("pages", slug);
-      setPost(resp[0]);
-    } catch {
-      console.log("Error while trying to get page");
-    }
-  }, []);
+  const _api = new PostsApi();
+  const getPost = useCallback(
+    async (slug: string) => {
+      try {
+        const _pageApi = new PostsApi(pathSegments[0]);
+        const resp = await _pageApi.getPost("pages", slug);
+        setPost(resp[0]);
+      } catch {
+        console.log("Error while trying to get page");
+      }
+    },
+    [pathSegments]
+  );
 
   useEffect(() => {
     setRegionName(pathSegments[0]);
