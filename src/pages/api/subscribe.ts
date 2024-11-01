@@ -2,7 +2,10 @@
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import Base64 from "crypto-js/enc-base64";
 import axios from "axios";
+import hmacSHA512 from "crypto-js/hmac-sha512";
+import sha256 from "crypto-js/sha256";
 
 type Data = {
   message: string;
@@ -17,14 +20,24 @@ export default async function handler(
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not permited" });
   }
-
+  var CryptoJS = require("crypto-js");
   const { email } = req.body;
 
   if (!email || typeof email !== "string") {
     return res.status(400).json({ message: "Email is a required field" });
   }
 
-  const API_KEY = process.env.MAILCHIMP_API_KEY;
+  if (process.env.MAILCHIMP_API_KEY && process.env.SECRET) {
+    var bytesToKey = CryptoJS.AES.decrypt(
+      process.env.MAILCHIMP_API_KEY,
+      process.env.SECRET
+    );
+    var originalKey = bytesToKey.toString(CryptoJS.enc.Utf8);
+  } else {
+    return res.status(500).json({ message: "MailChimp Config not found" });
+  }
+
+  const API_KEY = originalKey;
   const LIST_ID = process.env.MAILCHIMP_LIST_ID;
   const DATA_CENTER = process.env.MAILCHIMP_DATA_CENTER;
 
