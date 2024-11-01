@@ -106,7 +106,7 @@ export const HeaderLayout = () => {
           className={styles.LogoContainer}
         >
           <Flex direction={"column"}>
-            <a href={"/"}>
+            <a href={`/${regionName ? regionName : ""}}`}>
               <img src={logoSource} alt="brand-logo" id={"BrandLogo"} />
             </a>
           </Flex>
@@ -500,7 +500,7 @@ export const FooterLayout = () => {
         </Flex>
         <Flex py={40} direction={"column"} justify={"center"} align={"center"}>
           <img src={"/local/png/powered-by-bireme.png"} width={"160px"} />
-          <p className={styles.Copy}>© All rights reserved</p>
+          <p className={styles.Copy}>© WHO (CC BY-NC-SA 4.0)</p>
         </Flex>
       </Container>
     </div>

@@ -10,6 +10,10 @@ export function getRegionName(region: string) {
       return "Africa";
     case "wpro":
       return "Western Pacific";
+    case "amro":
+      return "Americas";
+    case "americas":
+      return "Americas";
     default:
       return region;
   }
