@@ -40,7 +40,6 @@ export class MailChimpService {
         };
       }
     } catch (error) {
-      console.log(error);
       return {
         status: false,
         message: "Something went wrong, try again later",

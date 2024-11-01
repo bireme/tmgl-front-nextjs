@@ -37,7 +37,6 @@ export const NewsletterSection = () => {
     const response: MailChimpResponse = await _subscribeService.subscribeEmail(
       email
     );
-    console.log(response);
     if (response.status == true) {
       router.push("/subscription");
     } else {
