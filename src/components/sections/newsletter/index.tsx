@@ -2,9 +2,6 @@ import {
   Button,
   Container,
   Flex,
-  Grid,
-  Group,
-  Input,
   LoadingOverlay,
   TextInput,
 } from "@mantine/core";
@@ -13,10 +10,10 @@ import {
   MailChimpService,
 } from "@/services/mailchimp/MailChimpService";
 import { isEmail, useForm } from "@mantine/form";
+import { useEffect, useState } from "react";
 
 import styles from "../../../styles/components/sections.module.scss";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 export const NewsletterSection = () => {
   const router = useRouter();

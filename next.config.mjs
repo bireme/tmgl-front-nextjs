@@ -13,6 +13,7 @@ const nextConfig = {
     MAILCHIMP_API_KEY:process.env.MAILCHIMP_API_KEY,
     MAILCHIMP_LIST_ID:process.env.MAILCHIMP_LIST_ID,
     MAILCHIMP_DATA_CENTER:process.env.MAILCHIMP_DATA_CENTER,
+    SECRET: process.env.SECRET
   },
 };
 
