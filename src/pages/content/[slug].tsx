@@ -1,11 +1,16 @@
 import { Container, Flex, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare } from "@tabler/icons-react";
-import { countWords, extimateTime } from "@/helpers/stringhelper";
+import {
+  countWords,
+  decodeHtmlEntities,
+  extimateTime,
+} from "@/helpers/stringhelper";
 import { useCallback, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { ShareModal } from "@/components/share";
 import moment from "moment";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
@@ -16,12 +21,25 @@ export default function Content() {
     query: { slug },
   } = router;
   const [post, setPost] = useState<Post>();
+  const [parent, setParent] = useState<Post>();
   const _api = new PostsApi();
+  const [openShareModal, setOpenShareModal] = useState(false);
+  const [fullUrl, setFullUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setFullUrl(window.location.href);
+    }
+  }, [router.asPath]);
 
   const getPost = useCallback(async (slug: string) => {
     try {
       const resp = await _api.getPost("pages", slug);
       setPost(resp[0]);
+      if (resp[0].parent) {
+        const parentResp = await _api.getPostById("pages", resp[0].parent);
+        setParent(parentResp[parentResp.length - 1]);
+      }
     } catch {
       console.log("Error while trying to get page");
     }
@@ -48,7 +66,14 @@ export default function Content() {
             />
           </Container>
           <Container mt={40} size={"md"}>
-            <h3 className={styles.TitleWithIcon}>Content</h3>
+            {parent ? (
+              <h3 className={styles.TitleWithIcon}>
+                {decodeHtmlEntities(parent.title.rendered)}
+              </h3>
+            ) : (
+              <></>
+            )}
+
             <h1 className={styles.PostTitle}>{post.title.rendered}</h1>
             <div
               className={styles.PostSubtitle}
@@ -71,10 +96,14 @@ export default function Content() {
             >
               <div></div>
               <Flex className={styles.functions} gap={20}>
-                <span>
+                <span
+                  onClick={() => {
+                    setOpenShareModal(true);
+                  }}
+                >
                   <IconShare /> Share
                 </span>
-                <span>
+                <span onClick={() => window.print()}>
                   <IconPrinter /> Print
                 </span>
               </Flex>
@@ -104,6 +133,11 @@ export default function Content() {
       ) : (
         <LoadingOverlay visible={true} />
       )}
+      <ShareModal
+        open={openShareModal}
+        setOpen={setOpenShareModal}
+        link={fullUrl ? fullUrl : ""}
+      />
     </>
   );
 }

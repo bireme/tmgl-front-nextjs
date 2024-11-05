@@ -39,7 +39,11 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 9.5 }} py={60} px={20}>
           {posts.length > 0 ? (
-            <Flex direction={"row"} wrap={"wrap"} gap={30}>
+            <Flex
+              direction={{ base: "column", md: "row" }}
+              wrap={"wrap"}
+              gap={30}
+            >
               {posts.map((post, index) => {
                 return (
                   <PostItem

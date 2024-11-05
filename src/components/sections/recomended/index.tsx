@@ -23,7 +23,7 @@ export const ArticleItem = ({ excerpt, title, href }: ArticleItemProps) => {
       <p>{excerpt}</p>
       <Button size={"xs"}>
         <a href={href}>
-          <IconArrowRight stroke={1} />
+          <IconArrowRight color="white" stroke={1} />
         </a>
       </Button>
     </div>
@@ -68,7 +68,6 @@ export const RecomendedArticlesSection = ({
   const getArticles = useCallback(async () => {
     try {
       let posttype = postTypeSlug ? postTypeSlug : "posts";
-      console.log(postTypeSlug);
       const resp = await _api.getCustomPost(
         posttype,
         limit,
@@ -121,7 +120,6 @@ export const RelatedArticlesSection = ({
   const getArticles = useCallback(async () => {
     try {
       let posttype = postTypeSlug ? postTypeSlug : "posts";
-      console.log(postTypeSlug);
       const resp = await _api.getCustomPost(
         posttype,
         limit,
@@ -137,20 +135,17 @@ export const RelatedArticlesSection = ({
     getArticles();
   }, [getArticles]);
   return (
-    <Flex gap={40} direction={"column"} px={20}>
+    <Flex gap={40} direction={"column"} px={0}>
       {posts?.map((item, key) => {
         return (
-          <RelatedArticleItem
-            title={decodeHtmlEntities(item.title.rendered)}
-            key={key}
-            excerpt={
-              removeHTMLTagsAndLimit(
-                decodeHtmlEntities(item.excerpt.rendered),
-                120
-              ) + "..."
-            }
-            href={`/${postTypeSlug ? postTypeSlug : "news"}/${item.slug}`}
-          />
+          <>
+            <a
+              className={styles.RelatedArticleLink}
+              href={`/${postTypeSlug ? postTypeSlug : "news"}/${item.slug}`}
+            >
+              <h3>{decodeHtmlEntities(item.title.rendered)}</h3>
+            </a>
+          </>
         );
       })}
     </Flex>

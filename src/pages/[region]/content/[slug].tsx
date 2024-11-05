@@ -7,6 +7,7 @@ import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { ShareModal } from "@/components/share";
 import moment from "moment";
 import styles from "../../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
@@ -21,6 +22,9 @@ export default function Content() {
   const { regionName, setRegionName } = useContext(GlobalContext);
   const pathSegments = asPath.split("/").filter(Boolean);
   const _api = new PostsApi();
+  const [openShareModal, setOpenShareModal] = useState(false);
+  const [fullUrl, setFullUrl] = useState<string | null>(null);
+
   const getPost = useCallback(
     async (slug: string) => {
       try {
@@ -79,10 +83,14 @@ export default function Content() {
             >
               <div></div>
               <Flex className={styles.functions} gap={20}>
-                <span>
+                <span
+                  onClick={() => {
+                    setOpenShareModal(true);
+                  }}
+                >
                   <IconShare /> Share
                 </span>
-                <span>
+                <span onClick={() => window.print()}>
                   <IconPrinter /> Print
                 </span>
               </Flex>
@@ -112,6 +120,11 @@ export default function Content() {
       ) : (
         <LoadingOverlay visible={true} />
       )}
+      <ShareModal
+        open={openShareModal}
+        setOpen={setOpenShareModal}
+        link={fullUrl ? fullUrl : ""}
+      />
     </>
   );
 }

@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 export default function RegionHome() {
   const router = useRouter();
   const { setRegionName, regionName } = useContext(GlobalContext);
+  const { globalConfig, setGlobalConfig } = useContext(GlobalContext);
   const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
   const {
@@ -28,15 +29,30 @@ export default function RegionHome() {
   const getPageProperties = useCallback(async () => {
     const _api = new PagesApi(region ? region.toString() : "");
     setRegionName(region ? region.toString() : "");
+
+    if (globalConfig) {
+      if (
+        !globalConfig?.acf.regionais?.find(
+          (region) =>
+            region.rest_api_prefix.toLocaleLowerCase() ==
+            regionName.toLocaleLowerCase()
+        )
+      ) {
+        setRegionName("");
+        router.push("/404");
+      } else {
+        setRegionName(region ? region.toString() : "");
+      }
+    }
+
     try {
       const resp = await _api.getPageProperties("home");
       setAcf(resp[0].acf);
       setSliderImages(resp[0].acf.search.slider_images);
-      console.log(regionName);
     } catch {
       console.log("Error while get home properties");
     }
-  }, [region]);
+  }, [region, globalConfig]);
 
   useEffect(() => {
     if (region) getPageProperties();
@@ -92,12 +108,11 @@ export default function RegionHome() {
               background={acf?.events.background}
             />
             <div className={styles.NewsContainer}>
-              <Container size={"xl"} py={80}>
-                <h2 className={styles.TitleWithIcon}>
-                  <img src={"/local/svg/simbol.svg"} /> News
-                </h2>
-                {/* <NewsSection region={region ? region.toString() : undefined} /> */}
-              </Container>
+              <NewsSection
+                region={region ? region.toString() : ""}
+                title={true}
+              />
+
               <NewsletterSection />
             </div>
           </>

@@ -1,6 +1,5 @@
 import { BaseUnauthenticatedApi } from "../BaseUnauthenticatedApi";
 import { MediaResponse } from "../types/media.dto";
-import { extend } from "dayjs";
 
 export class MediaApi extends BaseUnauthenticatedApi {
   public constructor() {

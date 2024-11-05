@@ -12,7 +12,6 @@ import {
   DimensionsSection,
   TraditionalSectionCard,
 } from "@/components/sections";
-import { NewsItem, NewsSection } from "@/components/sections/news";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
@@ -23,6 +22,7 @@ import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
 import { MediaApi } from "@/services/media/MediaApi";
+import { NewsSection } from "@/components/sections/news";
 import { NewsletterSection } from "@/components/sections/newsletter";
 import { PagesApi } from "@/services/pages/PagesApi";
 import { SearchForm } from "@/components/forms/search";
@@ -147,12 +147,7 @@ export default function Home() {
         repport={acf?.events.repport}
       />
       <div className={styles.NewsContainer}>
-        <Container size={"xl"} py={80}>
-          <h2 className={styles.TitleWithIcon}>
-            <img src={"/local/svg/simbol.svg"} /> News
-          </h2>
-          <NewsSection />
-        </Container>
+        <NewsSection title={true} />
         <NewsletterSection />
       </div>
     </>

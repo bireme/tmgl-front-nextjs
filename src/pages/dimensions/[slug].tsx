@@ -3,12 +3,14 @@ import {
   RecomendedArticlesSection,
   RelatedArticlesSection,
 } from "@/components/sections/recomended";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
+import { GlobalContext } from "@/contexts/globalContext";
 import { HeroHeader } from "@/components/sections/hero";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { RelatedVideosSection } from "@/components/videos";
+import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
@@ -19,6 +21,8 @@ export default function Dimensions() {
   } = router;
   const [post, setPost] = useState<Post>();
   const _api = new PostsApi();
+
+  const { globalConfig } = useContext(GlobalContext);
 
   const getPost = useCallback(async (slug: string) => {
     try {
@@ -43,6 +47,10 @@ export default function Dimensions() {
             path={[
               { path: "/", name: "HOME" },
               { path: "/dimensions", name: "TM Dimensions" },
+              {
+                path: `/dimensions/${post.slug}`,
+                name: decodeHtmlEntities(post.title.rendered),
+              },
             ]}
             type="TM Dimensions"
           />
@@ -56,7 +64,7 @@ export default function Dimensions() {
               </Grid.Col>
               <Grid.Col span={{ base: 12, md: 4 }} p={40}>
                 <h3 className={styles.PostPageSubtitle}>
-                  Lorem Ipsum dolor sit amet
+                  {globalConfig?.acf.aside_tab_title}
                 </h3>
                 <RelatedArticlesSection
                   postTypeSlug="dimensions"

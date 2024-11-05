@@ -119,6 +119,7 @@
     max-width: 50vw;
     @media (max-width: '750px') {
       width: 100%;
+      max-width: 100%;
     }
 }
 .NotFoundPage{

@@ -1,4 +1,4 @@
-import { Badge, Button, Flex, LoadingOverlay } from "@mantine/core";
+import { Badge, Button, Container, Flex, LoadingOverlay } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 
 import { IconArrowRight } from "@tabler/icons-react";
@@ -55,14 +55,15 @@ export const NewsItem = ({
 };
 
 export interface NewsSectionProps {
-  region?: number[];
+  region?: string;
+  title?: boolean;
 }
-export const NewsSection = ({ region }: NewsSectionProps) => {
+export const NewsSection = ({ region, title }: NewsSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
   const _api = new PostsApi();
   const getNews = useCallback(async () => {
     try {
-      const resp = await _api.getCustomPost("posts", 4, -1, region);
+      const resp = await _api.getCustomPost("posts", 4, -1, undefined, region);
       setPosts(resp);
     } catch (error: any) {
       console.log("Error while getting news", error);
@@ -74,47 +75,68 @@ export const NewsSection = ({ region }: NewsSectionProps) => {
 
   return (
     <>
-      <Flex
-        mb={40}
-        gap={30}
-        direction={{ base: "column", md: "row" }}
-        justify={"center"}
-        align={"center"}
-      >
-        {posts ? (
-          posts.length >= 4 ? (
+      {posts.length > 0 ? (
+        <Container size={"xl"} py={80}>
+          {title && posts.length > 0 ? (
             <>
-              {posts.map((item, key) => {
-                return (
-                  <NewsItem
-                    key={key}
-                    href={`/news/${item.slug}`}
-                    title={item.title.rendered}
-                    date={moment(item.date).toDate()}
-                    imagePath={_api.findFeaturedMedia(item, "full")}
-                    category={_api.getPostCategories(item)[0]}
-                  />
-                );
-              })}
+              <h2 className={styles.TitleWithIcon}>
+                <img src={"/local/svg/simbol.svg"} /> News
+              </h2>
             </>
           ) : (
             <></>
-          )
-        ) : (
-          <></>
-        )}
-      </Flex>
-      <Link
-        href={"/news"}
-        style={{ textDecoration: "none", color: "black", fontSize: "18px" }}
-      >
-        <Flex justify={"flex-start"} align={"center"} gap={10}>
-          <p>Explore archived news</p>{" "}
-          <Button p={5} size={"xs"}>
-            <IconArrowRight />
-          </Button>
-        </Flex>
-      </Link>
+          )}
+          {posts?.length > 0 ? (
+            <>
+              <Flex
+                mb={40}
+                gap={30}
+                direction={{ base: "column", md: "row" }}
+                justify={"flex-start"}
+                align={"center"}
+              >
+                {posts.map((item, key) => {
+                  return (
+                    <NewsItem
+                      key={key}
+                      href={`/news/${item.slug}`}
+                      title={item.title.rendered}
+                      date={moment(item.date).toDate()}
+                      imagePath={_api.findFeaturedMedia(item, "full")}
+                      category={_api.getPostCategories(item)[0]}
+                    />
+                  );
+                })}
+              </Flex>
+            </>
+          ) : (
+            <></>
+          )}
+          {posts.length > 0 ? (
+            <>
+              <Link
+                href={"/news"}
+                style={{
+                  textDecoration: "none",
+                  color: "black",
+                  fontSize: "18px",
+                }}
+              >
+                <Flex justify={"flex-start"} align={"center"} gap={10}>
+                  <p>Explore archived news</p>{" "}
+                  <Button p={5} size={"xs"}>
+                    <IconArrowRight />
+                  </Button>
+                </Flex>
+              </Link>
+            </>
+          ) : (
+            <></>
+          )}
+        </Container>
+      ) : (
+        <></>
+      )}
     </>
   );
 };
