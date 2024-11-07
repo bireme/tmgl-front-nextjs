@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const fullUrl = request.nextUrl.href;
   const _configApi = new GlobalConfigApi();
   const data = await _configApi.getGlobalConfig();
-
+  console.log("middleware chamado");
   const rule = data.acf.route.find((r) => r.url === fullUrl);
 
   if (rule) {
