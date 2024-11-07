@@ -2,7 +2,6 @@ import { Flex, Modal } from "@mantine/core";
 import {
   IconBrandFacebook,
   IconBrandLinkedin,
-  IconBrandWhatsapp,
   IconBrandX,
 } from "@tabler/icons-react";
 

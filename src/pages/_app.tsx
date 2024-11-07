@@ -4,12 +4,13 @@ import "@mantine/carousel/styles.css";
 import "../styles/custom-global.scss";
 
 import { Button, MantineProvider, Modal } from "@mantine/core";
-import { FooterLayout, HeaderLayout } from "@/components/layout";
 import { useEffect, useState } from "react";
 
 import type { AppProps } from "next/app";
 import Cookies from "js-cookie";
+import { FooterLayout } from "@/components/layout/footer";
 import { GlobalProvider } from "@/contexts/globalContext";
+import { HeaderLayout } from "@/components/layout/header";
 import { mantineTheme } from "@styles/mantine-theme";
 
 export default function App({ Component, pageProps }: AppProps) {
