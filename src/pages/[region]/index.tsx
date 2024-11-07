@@ -31,11 +31,15 @@ export default function RegionHome() {
     setRegionName(region ? region.toString() : "");
 
     if (globalConfig) {
+      console.log(router.asPath);
       if (
         !globalConfig?.acf.regionais?.find(
           (region) =>
             region.rest_api_prefix.toLocaleLowerCase() ==
             regionName.toLocaleLowerCase()
+        ) &&
+        !globalConfig?.acf.route?.find(
+          (r) => r.url === window.location.origin + router.asPath
         )
       ) {
         setRegionName("");
