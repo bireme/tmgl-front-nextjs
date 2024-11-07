@@ -15,6 +15,9 @@ const nextConfig = {
     MAILCHIMP_DATA_CENTER:process.env.MAILCHIMP_DATA_CENTER,
     SECRET: process.env.SECRET
   },
+  experimental: {
+    middleware: true,
+  },
 };
 
 export default nextConfig;
