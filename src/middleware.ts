@@ -8,7 +8,7 @@ export async function middleware(request: NextRequest) {
   const data = await _configApi.getGlobalConfig();
 
   const rule = data.acf.route.find((r) => r.url === fullUrl);
-  console.log(data);
+  console.log(fullUrl);
   if (rule) {
     return NextResponse.redirect(rule.redirect);
   }
