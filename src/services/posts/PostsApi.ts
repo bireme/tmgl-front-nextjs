@@ -50,7 +50,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
         region && region.length > 0
           ? `&region=${region.length > 0 ? region.join(",") : ""}`
           : ""
-      }`
+      }&lang=all`
     );
     return data;
   }

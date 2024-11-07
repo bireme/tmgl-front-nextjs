@@ -56,6 +56,8 @@ export interface RecomendedArticlesSectionProps {
   postTypeSlug?: string;
   tags?: Array<string>;
   parent?: number;
+  region?: string;
+  callBack?: Function;
 }
 export const RecomendedArticlesSection = ({
   limit,
@@ -114,9 +116,11 @@ export const RelatedArticlesSection = ({
   postTypeSlug,
   parent,
   tags,
+  region,
+  callBack,
 }: RecomendedArticlesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
-  const _api = new PostsApi();
+  const _api = new PostsApi(region ? region : undefined);
   const getArticles = useCallback(async () => {
     try {
       let posttype = postTypeSlug ? postTypeSlug : "posts";
@@ -126,6 +130,9 @@ export const RelatedArticlesSection = ({
         parent ? parent : undefined
       );
       setPosts(resp);
+      if (callBack) {
+        callBack(resp.length);
+      }
     } catch (error: any) {
       console.log("Error while getting Articles", error);
     }
@@ -137,12 +144,16 @@ export const RelatedArticlesSection = ({
   return (
     <Flex gap={40} direction={"column"} px={0}>
       {posts?.map((item, key) => {
+        const posttypeRouter =
+          postTypeSlug == "page" || postTypeSlug == "pages"
+            ? "content"
+            : postTypeSlug;
+        const href = `${region ? "/" + region : ""}/${
+          posttypeRouter ? posttypeRouter : "news"
+        }/${item.slug}`;
         return (
           <>
-            <a
-              className={styles.RelatedArticleLink}
-              href={`/${postTypeSlug ? postTypeSlug : "news"}/${item.slug}`}
-            >
+            <a className={styles.RelatedArticleLink} href={`${href}`}>
               <h3>{decodeHtmlEntities(item.title.rendered)}</h3>
             </a>
           </>

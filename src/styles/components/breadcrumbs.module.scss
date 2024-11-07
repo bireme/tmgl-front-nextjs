@@ -9,24 +9,27 @@
   color: black;
   
   &.blackColor{
-    span{
+      div{
+        &:last-of-type{
+          color: black;
+        }
+      }
+    
+  } 
+  div{
+      cursor: pointer;
+      color: #0093D5;
+      font-family: Roboto;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: 120%; /* 19.2px */
+      
       &:last-of-type{
-        color: black;
+        color: white;
       }
     }
-  } 
-  span{
-    cursor: pointer;
-    color: #0093D5;
-    font-family: Roboto;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 120%; /* 19.2px */
-    
-    &:last-of-type{
-      color: white;
-    }
-  }
+  
+  
   
 }

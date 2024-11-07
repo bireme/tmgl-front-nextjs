@@ -98,7 +98,21 @@ export interface Post {
   categories: number[];
   tags: any[];
   class_list: string[];
-  acf: any[];
+  acf: any;
   _links: Links;
   _embedded?: Embedded;
+}
+
+export interface AcfMultTab {
+  Itens: MultTabItems[];
+}
+
+export interface MultTabItems {
+  tab_name: string;
+  tab_items?: MultTabItem[];
+}
+
+export interface MultTabItem {
+  item_name: string;
+  item_content?: string;
 }

@@ -23,6 +23,7 @@ export default function Dimensions() {
   const _api = new PostsApi();
 
   const { globalConfig } = useContext(GlobalContext);
+  const [releatedNumber, setReleatedNumber] = useState(0);
 
   const getPost = useCallback(async (slug: string) => {
     try {
@@ -56,17 +57,26 @@ export default function Dimensions() {
           />
           <Container py={100} size={"xl"}>
             <Grid>
-              <Grid.Col span={{ base: 12, md: 8 }} p={40}>
+              <Grid.Col
+                span={{ base: 12, md: releatedNumber > 0 ? 8 : 12 }}
+                p={40}
+              >
                 <div
                   className={styles.PostContent}
                   dangerouslySetInnerHTML={{ __html: post.content.rendered }}
                 />
               </Grid.Col>
               <Grid.Col span={{ base: 12, md: 4 }} p={40}>
-                <h3 className={styles.PostPageSubtitle}>
-                  {globalConfig?.acf.aside_tab_title}
-                </h3>
+                {releatedNumber > 0 ? (
+                  <h3 className={styles.PostPageSubtitle}>
+                    {globalConfig?.acf.aside_tab_title}
+                  </h3>
+                ) : (
+                  <></>
+                )}
+
                 <RelatedArticlesSection
+                  callBack={setReleatedNumber}
                   postTypeSlug="dimensions"
                   limit={4}
                   parent={post.id}
@@ -75,7 +85,7 @@ export default function Dimensions() {
             </Grid>
           </Container>
           <RelatedVideosSection />
-          <RecomendedArticlesSection limit={3} />
+          <RecomendedArticlesSection callBack={setReleatedNumber} limit={3} />
         </>
       ) : (
         <LoadingOverlay visible={true} />
