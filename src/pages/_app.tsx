@@ -1,24 +1,24 @@
-// Import styles of packages that you've installed.
-// All packages except `@mantine/hooks` require styles imports
-
 import "@mantine/core/styles.css";
 import "@mantine/dates/styles.css";
 import "@mantine/carousel/styles.css";
+import "../styles/custom-global.scss";
 
 import { Button, MantineProvider, Modal } from "@mantine/core";
-import { FooterLayout, HeaderLayout } from "@/components/layout";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { AppProps } from "next/app";
 import Cookies from "js-cookie";
+import { FooterLayout } from "@/components/layout/footer";
 import { GlobalProvider } from "@/contexts/globalContext";
+import { HeaderLayout } from "@/components/layout/header";
 import { mantineTheme } from "@styles/mantine-theme";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [warningModal, setWarningModal] = useState(false);
 
   const handleAgreeWarning = () => {
-    Cookies.set("warningModalReaded", "true", { expires: 7 });
+    //TODO : Modal esta sempre ativo
+    Cookies.set("warningModalReaded", "false", { expires: 7 });
     setWarningModal(false);
   };
 

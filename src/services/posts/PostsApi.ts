@@ -2,6 +2,7 @@ import { TaxonomyDTO, TaxonomyTermDTO } from "../types/taxonomies.dto";
 
 import { BaseUnauthenticatedApi } from "../BaseUnauthenticatedApi";
 import { Post } from "../types/posts.dto";
+import { TaxonomiesApi } from "../taxonomies/TaxonomiesApi";
 
 export class PostsApi extends BaseUnauthenticatedApi {
   public constructor(region?: string) {
@@ -24,8 +25,22 @@ export class PostsApi extends BaseUnauthenticatedApi {
     postTypeSlug: string,
     perPage?: number,
     parent?: number,
-    region?: number[]
+    region?: number[],
+    regionString?: string
   ): Promise<Post[]> {
+    if (regionString) {
+      const _taxApi = new TaxonomiesApi();
+      const taxonomies = await _taxApi.getTaxonomies("region");
+      if (taxonomies) {
+        const filteredRegions = taxonomies.filter(
+          (t) => t?.name == regionString || t?.slug == regionString
+        );
+        if (filteredRegions.length > 0) {
+          region = [filteredRegions[0].id];
+        }
+      }
+    }
+
     const { data } = await this._api.get(
       `${postTypeSlug}?per_page=${
         perPage ? perPage : process.env.POSTSPERPAGE
@@ -35,7 +50,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
         region && region.length > 0
           ? `&region=${region.length > 0 ? region.join(",") : ""}`
           : ""
-      }`
+      }&lang=all`
     );
     return data;
   }
@@ -44,6 +59,11 @@ export class PostsApi extends BaseUnauthenticatedApi {
     const { data } = await this._api.get(
       `${postTypeSlug}?slug=${slug}&_embed&acf_format=standard`
     );
+    return data;
+  }
+
+  public async getPostById(postTypeSlug: string, id: string) {
+    const { data } = await this._api.get(`${postTypeSlug}?id=${id}`);
     return data;
   }
 

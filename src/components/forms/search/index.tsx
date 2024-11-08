@@ -16,6 +16,8 @@ export const SearchForm = ({ title, subtitle }: AcfSearch) => {
       }
       if (searchString) {
         router.push(process.env.BASE_SEARCH_URL + `/?q=${searchString}`);
+      } else {
+        router.push(process.env.BASE_SEARCH_URL);
       }
     } catch (error) {
       console.log(error);

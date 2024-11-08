@@ -20,18 +20,18 @@ export const BreadCrumbs = ({ path, blackColor }: BreadCrumbsProps) => {
     >
       {path.map((item, key) => {
         return (
-          <>
-            <span
-              key={key}
-              onClick={() => {
-                router.push(`/${item.path}`);
-              }}
-            >
+          <div
+            key={key}
+            onClick={() => {
+              router.push(`/${item.path}`);
+            }}
+          >
+            <span>
               {removeHTMLTagsAndLimit(item.name, 40)}
               {item.name.length > 40 ? "..." : ""}
             </span>{" "}
             {key < path.length - 1 ? ">" : ""}{" "}
-          </>
+          </div>
         );
       })}
     </div>

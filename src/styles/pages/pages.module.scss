@@ -81,12 +81,18 @@
   figure{
     max-width: 100% ;
   }
+  a{
+    max-width: 100%;
+    color: light-dark(var(--mantine-color-blue-5));
+  }
   font-family: Roboto;
   font-size: 18px;
   font-style: normal;
-  font-weight: 300;
+  font-weight: 400;
   line-height: 180%; 
+  margin-bottom: 100px;
   p{
+    max-width: 100%;
     margin-bottom: 25px;
     color: var(--Colors-Pure-Black, #000);
     font-family: Roboto;
@@ -106,6 +112,7 @@
 }
 
 .TitleWithIcon{
+    text-transform: capitalize;
     padding-left: 40px;
     background-image: url('../../../public/local/svg/simbol.svg');
     background-position: left center;
@@ -119,6 +126,7 @@
     max-width: 50vw;
     @media (max-width: '750px') {
       width: 100%;
+      max-width: 100%;
     }
 }
 .NotFoundPage{

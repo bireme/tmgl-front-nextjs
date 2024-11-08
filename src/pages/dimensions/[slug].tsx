@@ -3,12 +3,14 @@ import {
   RecomendedArticlesSection,
   RelatedArticlesSection,
 } from "@/components/sections/recomended";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
+import { GlobalContext } from "@/contexts/globalContext";
 import { HeroHeader } from "@/components/sections/hero";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { RelatedVideosSection } from "@/components/videos";
+import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
@@ -19,6 +21,9 @@ export default function Dimensions() {
   } = router;
   const [post, setPost] = useState<Post>();
   const _api = new PostsApi();
+
+  const { globalConfig } = useContext(GlobalContext);
+  const [releatedNumber, setReleatedNumber] = useState(0);
 
   const getPost = useCallback(async (slug: string) => {
     try {
@@ -43,22 +48,35 @@ export default function Dimensions() {
             path={[
               { path: "/", name: "HOME" },
               { path: "/dimensions", name: "TM Dimensions" },
+              {
+                path: `/dimensions/${post.slug}`,
+                name: decodeHtmlEntities(post.title.rendered),
+              },
             ]}
             type="TM Dimensions"
           />
           <Container py={100} size={"xl"}>
             <Grid>
-              <Grid.Col span={{ base: 12, md: 8 }} p={40}>
+              <Grid.Col
+                span={{ base: 12, md: releatedNumber > 0 ? 8 : 12 }}
+                p={40}
+              >
                 <div
                   className={styles.PostContent}
                   dangerouslySetInnerHTML={{ __html: post.content.rendered }}
                 />
               </Grid.Col>
               <Grid.Col span={{ base: 12, md: 4 }} p={40}>
-                <h3 className={styles.PostPageSubtitle}>
-                  Lorem Ipsum dolor sit amet
-                </h3>
+                {releatedNumber > 0 ? (
+                  <h3 className={styles.PostPageSubtitle}>
+                    {globalConfig?.acf.aside_tab_title}
+                  </h3>
+                ) : (
+                  <></>
+                )}
+
                 <RelatedArticlesSection
+                  callBack={setReleatedNumber}
                   postTypeSlug="dimensions"
                   limit={4}
                   parent={post.id}
@@ -67,7 +85,7 @@ export default function Dimensions() {
             </Grid>
           </Container>
           <RelatedVideosSection />
-          <RecomendedArticlesSection limit={3} />
+          <RecomendedArticlesSection callBack={setReleatedNumber} limit={3} />
         </>
       ) : (
         <LoadingOverlay visible={true} />

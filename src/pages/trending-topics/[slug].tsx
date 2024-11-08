@@ -8,6 +8,7 @@ import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { RecomendedArticlesSection } from "@/components/sections/recomended";
 import { RelatedVideosSection } from "@/components/videos";
+import { ShareModal } from "@/components/share";
 import moment from "moment";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
@@ -19,6 +20,8 @@ export default function TrendingTopics() {
   } = router;
   const [post, setPost] = useState<Post>();
   const _api = new PostsApi();
+  const [openShareModal, setOpenShareModal] = useState(false);
+  const [fullUrl, setFullUrl] = useState<string | null>(null);
 
   const getPost = useCallback(async (slug: string) => {
     try {
@@ -70,10 +73,14 @@ export default function TrendingTopics() {
             >
               <div></div>
               <Flex className={styles.functions} gap={20}>
-                <span>
+                <span
+                  onClick={() => {
+                    setOpenShareModal(true);
+                  }}
+                >
                   <IconShare /> Share
                 </span>
-                <span>
+                <span onClick={() => window.print()}>
                   <IconPrinter /> Print
                 </span>
               </Flex>
@@ -96,6 +103,11 @@ export default function TrendingTopics() {
       ) : (
         <LoadingOverlay visible={true} />
       )}
+      <ShareModal
+        open={openShareModal}
+        setOpen={setOpenShareModal}
+        link={fullUrl ? fullUrl : ""}
+      />
     </>
   );
 }
