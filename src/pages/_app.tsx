@@ -18,17 +18,19 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const handleAgreeWarning = () => {
     //TODO : Modal esta sempre ativo
-    Cookies.set("warningModalReaded", "false", { expires: 7 });
+    // Cookies.set("warningModalReaded", "false", { expires: 7 });
     setWarningModal(false);
   };
 
   useEffect(() => {
-    const valorDoCookie = Cookies.get("warningModalReaded");
-    if (valorDoCookie == "true") {
-      setWarningModal(false);
-    } else {
-      setWarningModal(true);
-    }
+    //const valorDoCookie = Cookies.get("warningModalReaded");
+    // const valorDoCookie = "false";
+    // if (valorDoCookie == "true") {
+    //   setWarningModal(false);
+    // } else {
+    //   setWarningModal(true);
+    // }
+    setWarningModal(true);
   }, []);
 
   return (
