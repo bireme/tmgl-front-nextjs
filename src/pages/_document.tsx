@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/next-script-for-ga */
+
 import { Head, Html, Main, NextScript } from "next/document";
 
 import { ColorSchemeScript } from "@mantine/core";
@@ -28,6 +30,21 @@ export default function Document() {
                       r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
                       a.appendChild(r);
                   })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
+            `,
+          }}
+        />
+        {/* Script Google Tag (gtag.js) */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-EQQV5PQT16"
+        ></script>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-EQQV5PQT16');
             `,
           }}
         />

@@ -99,6 +99,9 @@
   &.scrolled{
     &.Opened{
       background-color: white;
+      .LogoContainer{
+        margin-bottom: 10px;
+      }
     }
     z-index: 99999;
     position: fixed;
@@ -267,11 +270,44 @@
     width: 100%;
     float: left;
   }
+
+  
+
   .FooterMap{
+    .FooterRight{
+      a{
+        cursor: pointer;
+        color: black;
+        padding: 0;
+        font-family: Roboto;
+        font-size: 15px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        margin-top: 8px;
+        text-decoration: none;
+        width: 100%;
+        float: left;
+      }
+    }
     padding: 0px;
     flex: 1;
     @media (max-width: '750px') {
       border-left: none;
+      float: left;
+    }
+    a{
+      cursor: pointer;
+      color: #53524B;
+      padding: 0;
+      font-family: Roboto;
+      font-size: 15px;
+      font-style: normal;
+      font-weight: 300;
+      line-height: normal;
+      margin-top: 8px;
+      text-decoration: none;
+      width: 100%;
       float: left;
     }
     p{
@@ -287,15 +323,18 @@
       padding:0px;
       padding-left: 5px;
       li{
-        cursor: pointer;
-        color: #53524B;
-        padding: 0;
-        font-family: Roboto;
-        font-size: 15px;
-        font-style: normal;
-        font-weight: 300;
-        line-height: normal;
-        margin-top: 8px;
+        a{
+          cursor: pointer;
+          color: #53524B;
+          padding: 0;
+          font-family: Roboto;
+          font-size: 15px;
+          font-style: normal;
+          font-weight: 300;
+          line-height: normal;
+          margin-top: 8px;
+          text-decoration: none;
+        }
       }
     }
     border-left: solid black 1px;

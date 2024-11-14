@@ -7,26 +7,42 @@
   border-radius: var(--Radius-M, 8px);
   background: rgba(199, 198, 192, 0.30);
   color: black;
-  
-  &.blackColor{
-      div{
-        &:last-of-type{
-          color: black;
-        }
-      }
-    
-  } 
-  div{
-      cursor: pointer;
+  a{
+    text-decoration: none;
+    color: inherit;
+    color: #0093D5;
+    cursor: pointer;
       color: #0093D5;
       font-family: Roboto;
       font-size: 16px;
       font-style: normal;
       font-weight: 700;
       line-height: 120%; /* 19.2px */
-      
+      text-transform: capitalize;
+  }
+  
+  &.blackColor{
+      a{
+        &:last-of-type{
+            color: black;
+        }
+        .separator{
+            color: black;
+        }
+      }
+  } 
+  a{
+      .separator{
+        a{
+          color: white;
+        }
+        margin-left: 5px;
+        margin-right: 5px;
+      }
       &:last-of-type{
-        color: white;
+        a{
+          color: white;
+        }
       }
     }
   

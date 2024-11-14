@@ -5,24 +5,37 @@ import { GlobalConfigApi } from "@/services/globalConfig/GlobalConfigApi";
 import { GlobalContext } from "@/contexts/globalContext";
 import { MenuItemDTO } from "@/services/types/menus.dto";
 import { MenusApi } from "@/services/menus/MenusApi";
+import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../styles/components/layout.module.scss";
-import { useRouter } from "next/router";
 
 export const FooterLayout = () => {
   const _configApi = new GlobalConfigApi();
   const { setGlobalConfig, globalConfig } = useContext(GlobalContext);
-  const router = useRouter();
-  const [footerCenter, setFooterCenter] = useState<MenuItemDTO[]>();
-  const [footerRight, setFooterRight] = useState<MenuItemDTO[]>();
   const [footerLeft, setFooterLeft] = useState<MenuItemDTO[]>();
+  const [footerRight, setFooterRight] = useState<MenuItemDTO[]>();
+  const [footerCenter, setFooterCenter] = useState<MenuItemDTO[]>();
   const menuApi = new MenusApi();
+  const getFooterMenus = async () => {
+    try {
+      const footerLeftResp = await menuApi.getMenu("footer-left");
+      const footerRightResp = await menuApi.getMenu("footer-right");
+      const footerCenterResp = await menuApi.getMenu("footer-center");
+
+      setFooterLeft(footerLeftResp);
+      setFooterCenter(footerCenterResp);
+      setFooterRight(footerRightResp);
+
+      //TODO: FooterRight Bottom
+    } catch (err: any) {
+      console.log("Error while fetching footer menus");
+    }
+  };
 
   const getGlobalConfig = async () => {
     if (!globalConfig) {
       try {
         const data = await _configApi.getGlobalConfig();
         setGlobalConfig(data);
-        console.log(data);
       } catch (err: any) {
         console.log("Error while fetching global config");
       }
@@ -30,18 +43,42 @@ export const FooterLayout = () => {
     //TODO : Adicionar configurações globais a um cookie para não realizar a requisição desnecessáriamente.
   };
 
-  const getMenus = async () => {
-    const footerLeftRet = await menuApi.getMenu("footer-left");
-    const footerCenterRet = await menuApi.getMenu("footer-center");
-    const footerRightRet = await menuApi.getMenu("footer-right");
-    setFooterCenter(footerCenterRet);
-    setFooterLeft(footerLeftRet);
-    setFooterRight(footerRightRet);
+  const parseWpLink = (wpLink: string) => {
+    return wpLink
+      .replace(process.env.WP_BASE_URL ? process.env.WP_BASE_URL : "", "")
+      .replace("", "");
+  };
+
+  const renderMenuItem = (item: MenuItemDTO, index: number) => {
+    if (item.children.length > 0) {
+      return (
+        <>
+          <p key={index}>{decodeHtmlEntities(item.title)}</p>
+          <ul>
+            {item.children.map((itemChild, index) => {
+              return (
+                <li key={index}>
+                  <a href={parseWpLink(itemChild.url)}>
+                    {decodeHtmlEntities(itemChild.title)}
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      );
+    } else {
+      return (
+        <a key={index} href={parseWpLink(item.url)}>
+          {decodeHtmlEntities(item.title)}
+        </a>
+      );
+    }
   };
 
   useEffect(() => {
+    getFooterMenus();
     getGlobalConfig();
-    getMenus();
   }, []);
 
   return (
@@ -63,38 +100,21 @@ export const FooterLayout = () => {
             </Flex>
             <Grid className={styles.FooterMap} px={"25px"}>
               <Grid.Col span={{ base: 12, md: 4 }}>
-                {footerLeft?.map((item, key) => {
-                  return <p key={key}>{item.title}</p>;
+                {footerLeft?.map((item, index) => {
+                  return renderMenuItem(item, index);
                 })}
               </Grid.Col>
               <Grid.Col span={{ base: 12, md: 4 }}>
-                <p>Dimensions</p>
-                <ul>
-                  <li>Health & Well-being</li>
-                  <li>Leadership & Policies</li>
-                  <li>Research & Evidence</li>
-                  <li>Health Systems & Services</li>
-                  <li>Digital Health Frontiers</li>
-                  <li>Biodiversity & Sustainability</li>
-                  <li>Rights, Equity & Ethics</li>
-                  <li>TM for Daily Life</li>
-                </ul>
+                {footerCenter?.map((item, index) => {
+                  return renderMenuItem(item, index);
+                })}
               </Grid.Col>
               <Grid.Col span={{ base: 12, md: 4 }}>
                 <Flex direction={"column"} justify={"space-between"} gap={20}>
-                  <div>
-                    <p>
-                      <b>Trending Topics</b>
-                    </p>
-                    <p>
-                      <b>Featured Stories</b>
-                    </p>
-                    <p>
-                      <b>Events</b>
-                    </p>
-                    <p>
-                      <b>News</b>
-                    </p>
+                  <div className={styles.FooterRight}>
+                    {footerRight?.map((item, index) => {
+                      return renderMenuItem(item, index);
+                    })}
                   </div>
 
                   <div>

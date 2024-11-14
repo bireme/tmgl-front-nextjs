@@ -1,3 +1,4 @@
+import { BreadCrumbs, pathItem } from "@/components/breadcrumbs";
 import { Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare } from "@tabler/icons-react";
 import {
@@ -7,7 +8,6 @@ import {
 } from "@/helpers/stringhelper";
 import { useCallback, useContext, useEffect, useState } from "react";
 
-import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
 import { Multitabs } from "@/components/multitab";
 import { Post } from "@/services/types/posts.dto";
@@ -23,71 +23,75 @@ export default function Content() {
   const {
     query: { slug },
   } = router;
-  const { asPath } = router;
   const [post, setPost] = useState<Post>();
-  const { regionName, setRegionName } = useContext(GlobalContext);
-  const pathSegments = asPath.split("/").filter(Boolean);
   const _api = new PostsApi();
   const [parent, setParent] = useState<Post>();
   const [openShareModal, setOpenShareModal] = useState(false);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
   const [releatedNumber, setReleatedNumber] = useState(0);
+  const [breadcrumbsPath, setBreadcrumbsPath] = useState<pathItem[]>();
 
-  const getPost = useCallback(
-    async (slug: string) => {
-      try {
-        const _pageApi = new PostsApi();
-        const resp = await _pageApi.getPost("pages", slug);
-        setPost(resp[0]);
-        if (resp[0].parent) {
-          const parentResp = await _api.getPostById("pages", resp[0].parent);
-          setParent(parentResp[parentResp.length - 1]);
+  const getPost = useCallback(async (slug: string) => {
+    try {
+      const _pageApi = new PostsApi();
+      const resp = await _pageApi.getPost("pages", slug);
+      setPost(resp[0]);
+      if (resp[0].parent) {
+        const parentResp = await _api.getPostById("pages", resp[0].parent);
+        if (parentResp) {
+          setBreadcrumbsPath([
+            { path: `/`, name: "HOME" },
+            {
+              path: `/content/${parentResp.slug}`,
+              name: parentResp.title.rendered,
+            },
+            {
+              path: `/content/${slug ? slug.toString() : ""}`,
+              name: slug ? slug.toString() : "",
+            },
+          ]);
         }
-      } catch {
-        console.log("Error while trying to get page");
+        setParent(parentResp);
       }
-    },
-    [pathSegments]
-  );
+    } catch {
+      console.log("Error while trying to get page");
+    }
+  }, []);
 
   useEffect(() => {
-    setRegionName(pathSegments[0]);
-    if (slug) getPost(slug.toString());
-  }, [slug]);
+    if (slug) {
+      setBreadcrumbsPath([
+        { path: `/`, name: "HOME" },
+        {
+          path: `/content/${slug ? slug.toString() : ""}`,
+          name: slug ? slug.toString() : "",
+        },
+      ]);
+      getPost(slug.toString());
+    }
+  }, [getPost, slug]);
 
   return (
     <>
       {post ? (
         <>
           <Container mt={80} size={"xl"}>
-            <BreadCrumbs
-              path={[
-                { path: `/${regionName}`, name: "HOME" },
-                {
-                  path: `/content/${slug ? slug.toString() : ""}`,
-                  name: slug ? slug.toString().toUpperCase() : "",
-                },
-              ]}
-              blackColor={true}
-            />
+            {breadcrumbsPath ? (
+              <BreadCrumbs path={breadcrumbsPath} blackColor={true} />
+            ) : (
+              <></>
+            )}
           </Container>
           <Container mt={40} size={releatedNumber > 0 ? "xl" : "lg"}>
             <Grid>
               <Grid.Col span={releatedNumber > 0 ? 9 : 12} px={20}>
-                {parent ? (
-                  <h3 className={styles.TitleWithIcon}>
-                    {decodeHtmlEntities(parent.title.rendered)}
-                  </h3>
-                ) : (
-                  <h3 className={styles.TitleWithIcon}>
-                    {decodeHtmlEntities(regionName)}
-                  </h3>
-                )}
+                <h3 className={styles.TitleWithIcon}>
+                  {decodeHtmlEntities(
+                    parent?.title?.rendered ? parent.title.rendered : ""
+                  )}
+                </h3>
                 <h1 className={styles.PostTitle}>{post.title.rendered}</h1>
-                <div
-                  className={styles.PostSubtitle}
-                  dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
-                />
+
                 <div className={styles.PostProps}>
                   <span>
                     {moment(post.date).format("DD MMMM YYYY")} | Reading time:{" "}
@@ -147,7 +151,6 @@ export default function Content() {
               </Grid.Col>
               <Grid.Col span={3} px={20}>
                 <RelatedArticlesSection
-                  region={regionName}
                   postTypeSlug="pages"
                   limit={99}
                   parent={post.id}

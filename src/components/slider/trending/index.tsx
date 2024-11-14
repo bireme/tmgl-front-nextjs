@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { RssService } from "@/services/rss/RssService";
 import { TrendingTopicSection } from "@/components/sections/topics";
 import styles from "../../../styles/components/slider.module.scss";
 
@@ -12,6 +13,7 @@ export const TrendingSlider = () => {
   const [embla, setEmbla] = useState<any>(null);
   const handleNext = () => embla?.scrollNext();
   const handlePrev = () => embla?.scrollPrev();
+  const rssService = new RssService();
 
   const [posts, setPosts] = useState<Array<Post>>([]);
 
