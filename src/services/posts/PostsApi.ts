@@ -63,7 +63,8 @@ export class PostsApi extends BaseUnauthenticatedApi {
   }
 
   public async getPostById(postTypeSlug: string, id: string) {
-    const { data } = await this._api.get(`${postTypeSlug}?id=${id}`);
+    const { data } = await this._api.get(`${postTypeSlug}/${id}`);
+    console.log(data);
     return data;
   }
 

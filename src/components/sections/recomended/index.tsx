@@ -152,11 +152,11 @@ export const RelatedArticlesSection = ({
           posttypeRouter ? posttypeRouter : "news"
         }/${item.slug}`;
         return (
-          <>
+          <div key={key} className={styles.RelatedArticleLinkBox}>
             <a className={styles.RelatedArticleLink} href={`${href}`}>
               <h3>{decodeHtmlEntities(item.title.rendered)}</h3>
             </a>
-          </>
+          </div>
         );
       })}
     </Flex>

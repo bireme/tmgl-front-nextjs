@@ -520,14 +520,24 @@
   min-height: 400px;
 }
 
-.RelatedArticleLink{
-  background-color: #F3F3F2 ;
-  color:#006CB0;
-  padding: 5px 15px;
-  border-radius: 8px;
-  text-align: left;
-  width: 100%;
+.RelatedArticleLinkBox{
+     background-color: #F3F3F2 ;
+    color:#006CB0;
+    padding: 5px 15px;
+    border-radius: 8px;
+    text-align: left;
+    width: 100%;
+  .RelatedArticleLink{
+    color:#006CB0;
+    text-align: left;
+    width: 100%;
+    margin: 0px;
+    h3{
+      margin: 0px;
+    }
+  }
 }
+
 
 .EvidenceMapItem{
   border-radius: 16px;
