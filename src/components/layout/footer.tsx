@@ -1,13 +1,21 @@
 import { Container, Flex, Grid } from "@mantine/core";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { GlobalConfigApi } from "@/services/globalConfig/GlobalConfigApi";
 import { GlobalContext } from "@/contexts/globalContext";
+import { MenuItemDTO } from "@/services/types/menus.dto";
+import { MenusApi } from "@/services/menus/MenusApi";
 import styles from "../../styles/components/layout.module.scss";
+import { useRouter } from "next/router";
 
 export const FooterLayout = () => {
   const _configApi = new GlobalConfigApi();
   const { setGlobalConfig, globalConfig } = useContext(GlobalContext);
+  const router = useRouter();
+  const [footerCenter, setFooterCenter] = useState<MenuItemDTO[]>();
+  const [footerRight, setFooterRight] = useState<MenuItemDTO[]>();
+  const [footerLeft, setFooterLeft] = useState<MenuItemDTO[]>();
+  const menuApi = new MenusApi();
 
   const getGlobalConfig = async () => {
     if (!globalConfig) {
@@ -22,8 +30,18 @@ export const FooterLayout = () => {
     //TODO : Adicionar configurações globais a um cookie para não realizar a requisição desnecessáriamente.
   };
 
+  const getMenus = async () => {
+    const footerLeftRet = await menuApi.getMenu("footer-left");
+    const footerCenterRet = await menuApi.getMenu("footer-center");
+    const footerRightRet = await menuApi.getMenu("footer-right");
+    setFooterCenter(footerCenterRet);
+    setFooterLeft(footerLeftRet);
+    setFooterRight(footerRightRet);
+  };
+
   useEffect(() => {
     getGlobalConfig();
+    getMenus();
   }, []);
 
   return (
@@ -45,16 +63,9 @@ export const FooterLayout = () => {
             </Flex>
             <Grid className={styles.FooterMap} px={"25px"}>
               <Grid.Col span={{ base: 12, md: 4 }}>
-                <p>Regions</p>
-                <ul>
-                  <li>Africa</li>
-                  <li>Americas</li>
-                  <li>Europe</li>
-                  <li>Eastern Mediterranean</li>
-                  <li>South-East Asia</li>
-                  <li>Western Pacific</li>
-                </ul>
-                <p>Countries</p>
+                {footerLeft?.map((item, key) => {
+                  return <p key={key}>{item.title}</p>;
+                })}
               </Grid.Col>
               <Grid.Col span={{ base: 12, md: 4 }}>
                 <p>Dimensions</p>
