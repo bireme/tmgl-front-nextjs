@@ -99,6 +99,9 @@
   &.scrolled{
     &.Opened{
       background-color: white;
+      .LogoContainer{
+        margin-bottom: 10px;
+      }
     }
     z-index: 99999;
     position: fixed;

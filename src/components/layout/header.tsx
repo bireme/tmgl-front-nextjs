@@ -16,7 +16,6 @@ import {
 } from "@/helpers/stringhelper";
 import { useContext, useEffect, useState } from "react";
 
-import { GlobalConfigApi } from "@/services/globalConfig/GlobalConfigApi";
 import { GlobalContext } from "@/contexts/globalContext";
 import { MenuItemDTO } from "@/services/types/menus.dto";
 import { MenusApi } from "@/services/menus/MenusApi";
