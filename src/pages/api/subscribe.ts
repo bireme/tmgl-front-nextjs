@@ -2,10 +2,7 @@
 
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import Base64 from "crypto-js/enc-base64";
 import axios from "axios";
-import hmacSHA512 from "crypto-js/hmac-sha512";
-import sha256 from "crypto-js/sha256";
 
 type Data = {
   message: string;
@@ -40,17 +37,14 @@ export default async function handler(
   const API_KEY = originalKey;
   const LIST_ID = process.env.MAILCHIMP_LIST_ID;
   const DATA_CENTER = process.env.MAILCHIMP_DATA_CENTER;
-
   if (!API_KEY || !LIST_ID || !DATA_CENTER) {
     return res.status(500).json({ message: "MailChimp Config not found" });
   }
-
   const url = `https://${DATA_CENTER}.api.mailchimp.com/3.0/lists/${LIST_ID}/members`;
-
   try {
     const response = await axios.post(
       url,
-      { email_address: email, status: "subscribed" },
+      { email_address: email, status: "pending" },
       { headers: { Authorization: `apikey ${API_KEY}` } }
     );
 
