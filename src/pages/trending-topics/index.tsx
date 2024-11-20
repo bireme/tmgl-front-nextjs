@@ -1,7 +1,7 @@
 import { Container, Grid } from "@mantine/core";
+import { FeedSection, TrendingTopicsFeedSection } from "@/components/feed";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
-import { FeedSection } from "@/components/feed";
 import { GlobalContext } from "@/contexts/globalContext";
 import styles from "../../styles/pages/pages.module.scss";
 import { useContext } from "react";
@@ -21,7 +21,7 @@ export default function TrendingTopics() {
         />
         <h2 className={styles.TitleWithIcon}> Trending Topics</h2>
         <p>{globalConfig?.acf.trending_description}</p>
-        <FeedSection postType="trending_topics" />
+        <TrendingTopicsFeedSection />
       </Container>
     </>
   );

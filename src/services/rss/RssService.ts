@@ -6,11 +6,12 @@ export async function FetchRSSFeed(
   lang: string,
   from: number,
   count: number,
-  page: number
+  page: number,
+  queryString?: string
 ): Promise<Array<ArticleDTO>> {
   try {
     const response = await axios.get("/api/rssfeed", {
-      params: { lang, from, count, page },
+      params: { lang, from, count, page, queryString },
     });
     const feedItems = response.data.rss.channel.item || [];
     return feedItems;

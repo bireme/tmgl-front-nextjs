@@ -145,3 +145,36 @@ export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
     </div>
   );
 };
+
+export interface TrendingTopicsFiltersFormProps {
+  queryString: string;
+  setQueryString: (queryString: string) => void;
+}
+export const TrendingTopicsFiltersForm = ({
+  queryString,
+  setQueryString,
+}: TrendingTopicsFiltersFormProps) => {
+  const form = useForm({
+    initialValues: {
+      query: queryString,
+    },
+  });
+
+  return (
+    <div className={styles.Filters}>
+      <form onSubmit={form.onSubmit((values) => setQueryString(values.query))}>
+        <h4>Filters</h4>
+        <h5>Search</h5>
+        <Input
+          size={"md"}
+          placeholder="Search for something"
+          {...form.getInputProps("query")}
+        />
+        <Button mt={20} type="submit" size={"md"} fullWidth>
+          {" "}
+          Aply Filters{" "}
+        </Button>
+      </form>
+    </div>
+  );
+};
