@@ -19,7 +19,7 @@ export const TrendingSlider = () => {
   const [posts, setPosts] = useState<Array<ArticleDTO>>([]);
 
   const getTrendingTopics = useCallback(async () => {
-    const articlesResponse = await FetchRSSFeed("en", 0, 10, 1);
+    const articlesResponse = await FetchRSSFeed(0, 10, 1);
     setPosts(articlesResponse);
   }, []);
 

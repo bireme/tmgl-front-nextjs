@@ -1,15 +1,16 @@
 import { Container, Flex, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare, IconShare3 } from "@tabler/icons-react";
 import { countWords, extimateTime } from "@/helpers/stringhelper";
-import { useCallback, useEffect, useState } from "react";
+import moment, { lang } from "moment";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { RecomendedArticlesSection } from "@/components/sections/recomended";
 import { RelatedVideosSection } from "@/components/videos";
 import { ShareModal } from "@/components/share";
-import moment from "moment";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 

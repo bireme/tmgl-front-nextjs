@@ -12,10 +12,12 @@ import {
 } from "@tabler/icons-react";
 import {
   decodeHtmlEntities,
+  parseWpLink,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
 import { useContext, useEffect, useState } from "react";
 
+import Cookies from "js-cookie";
 import { GlobalContext } from "@/contexts/globalContext";
 import { MenuItemDTO } from "@/services/types/menus.dto";
 import { MenusApi } from "@/services/menus/MenusApi";
@@ -88,7 +90,7 @@ export const HeaderLayout = () => {
           />{" "}
           <a
             onClick={() => {}}
-            href={selectedSubItem.url}
+            href={parseWpLink(selectedSubItem.url)}
             className={styles.FullImageSubItembBtn}
           >
             <Button>{decodeHtmlEntities(selectedSubItem.title)} Portal</Button>
@@ -117,7 +119,7 @@ export const HeaderLayout = () => {
                 </div>
                 <a
                   className={styles.HalfImageSubItembBtn}
-                  href={selectedSubItem?.url}
+                  href={parseWpLink(selectedSubItem?.url)}
                 >
                   <Button mt={15}>
                     Explore {removeHTMLTagsAndLimit(selectedSubItem.title, 20)}
@@ -235,7 +237,6 @@ export const HeaderLayout = () => {
                       ) : (
                         <IconLifebuoy size={25} stroke={1} />
                       )}
-
                       {item.title}
                     </a>
                   );
@@ -399,7 +400,7 @@ export const HeaderLayout = () => {
                         setSelectedSubItem(undefined);
                       } else {
                         if (item.url) {
-                          router.push(item.url);
+                          router.push(parseWpLink(item.url));
                         }
                       }
                     }}

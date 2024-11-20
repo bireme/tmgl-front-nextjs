@@ -1,11 +1,17 @@
+/* eslint-disable react/no-is-mounted */
+
 import axios, { AxiosInstance } from "axios";
 
+import Cookies from "js-cookie";
 import { Post } from "./types/posts.dto";
 
 export abstract class BaseUnauthenticatedApi {
   protected _api: AxiosInstance;
+  protected _lang: string;
 
   public constructor(endpoint: string, region?: string) {
+    const cookieLang = Cookies.get("lang");
+    this._lang = cookieLang ? cookieLang : "en";
     if (!process.env.NEXT_PUBLIC_API_BASE_URL) {
       throw new Error("env variable NEXT_PUBLIC_API_BASE_URL not set");
     }

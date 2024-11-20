@@ -5,6 +5,7 @@ import {
   decodeHtmlEntities,
   extimateTime,
 } from "@/helpers/stringhelper";
+import moment, { lang } from "moment";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
@@ -14,7 +15,6 @@ import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { RelatedArticlesSection } from "@/components/sections/recomended";
 import { ShareModal } from "@/components/share";
-import moment from "moment";
 import styles from "../../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
@@ -43,8 +43,8 @@ export default function Content() {
           const parentResp = await _api.getPostById("pages", resp[0].parent);
           setParent(parentResp[parentResp.length - 1]);
         }
-      } catch {
-        console.log("Error while trying to get page");
+      } catch (error) {
+        console.log("Error while trying to get page", error);
       }
     },
     [pathSegments]

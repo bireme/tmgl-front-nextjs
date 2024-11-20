@@ -1,9 +1,10 @@
 import { Badge, Container, Flex } from "@mantine/core";
 import { BreadCrumbs, pathItem } from "@/components/breadcrumbs";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { CustomTaxBadge } from "@/components/categories";
 import { DimensionsAcf } from "@/services/types/dimensionsAcf";
+import { GlobalContext } from "@/contexts/globalContext";
 import { MediaApi } from "@/services/media/MediaApi";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";

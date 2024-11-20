@@ -101,6 +101,10 @@ export interface Post {
   acf: any;
   _links: Links;
   _embedded?: Embedded;
+  lang: string;
+  translations: {
+    [key: string]: number;
+  };
 }
 
 export interface AcfMultTab {

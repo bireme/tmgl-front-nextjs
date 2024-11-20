@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { Flex } from "@mantine/core";
+import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { decodeHtmlEntities } from "@/helpers/stringhelper";

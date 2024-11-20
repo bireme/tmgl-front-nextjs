@@ -4,7 +4,7 @@ import "@mantine/carousel/styles.css";
 import "../styles/custom-global.scss";
 
 import { Button, MantineProvider, Modal } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 
 import type { AppProps } from "next/app";
 import Cookies from "js-cookie";
@@ -12,24 +12,22 @@ import { FooterLayout } from "@/components/layout/footer";
 import { GlobalProvider } from "@/contexts/globalContext";
 import { HeaderLayout } from "@/components/layout/header";
 import { mantineTheme } from "@styles/mantine-theme";
+import { useRouter } from "next/router";
 
 export default function App({ Component, pageProps }: AppProps) {
   const [warningModal, setWarningModal] = useState(false);
-
+  const router = useRouter();
+  // const { lang } = router.query;
   const handleAgreeWarning = () => {
-    //TODO : Modal esta sempre ativo
-    // Cookies.set("warningModalReaded", "false", { expires: 7 });
     setWarningModal(false);
   };
 
+  //Get the lang and put in a cookie
+  // useLayoutEffect(() => {
+  //   Cookies.set("lang", lang ? lang.toString() : "en");
+  // }, [lang]);
+
   useEffect(() => {
-    //const valorDoCookie = Cookies.get("warningModalReaded");
-    // const valorDoCookie = "false";
-    // if (valorDoCookie == "true") {
-    //   setWarningModal(false);
-    // } else {
-    //   setWarningModal(true);
-    // }
     setWarningModal(true);
   }, []);
 

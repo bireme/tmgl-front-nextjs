@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 export default function RegionHome() {
   const router = useRouter();
   const { setRegionName, regionName } = useContext(GlobalContext);
-  const { globalConfig, setGlobalConfig } = useContext(GlobalContext);
+  const { globalConfig } = useContext(GlobalContext);
   const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
   const {
@@ -31,7 +31,6 @@ export default function RegionHome() {
     setRegionName(region ? region.toString() : "");
 
     if (globalConfig) {
-      console.log(router.asPath);
       if (
         !globalConfig?.acf.regionais?.find(
           (region) =>
@@ -116,7 +115,6 @@ export default function RegionHome() {
                 region={region ? region.toString() : ""}
                 title={true}
               />
-
               <NewsletterSection />
             </div>
           </>

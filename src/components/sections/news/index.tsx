@@ -1,6 +1,7 @@
 import { Badge, Button, Container, Flex, LoadingOverlay } from "@mantine/core";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
+import { GlobalContext } from "@/contexts/globalContext";
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
 import { Post } from "@/services/types/posts.dto";

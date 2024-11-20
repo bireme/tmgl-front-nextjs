@@ -4,10 +4,11 @@ import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { ArticleDTO } from "@/services/types/rssFeedTypes";
 import { FetchRSSFeed } from "@/services/rss/RssService";
+import { GlobalContext } from "@/contexts/globalContext";
 import { NewsItem } from "../sections/news";
 import { Post } from "@/services/types/posts.dto";
 import { PostItem } from "./post/postItem";
@@ -20,6 +21,7 @@ export interface FeedSectionProps {
 export const FeedSection = ({ postType }: FeedSectionProps) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [regionsFilter, setRegionsFilter] = useState<number[]>([]);
+  const {} = useContext(GlobalContext);
   const _api = new PostsApi();
 
   const getPosts = async (regions?: number[]) => {
@@ -75,7 +77,7 @@ export const TrendingTopicsFeedSection = () => {
   const [count, setCount] = useState<number>(9);
   const getPosts = async (qs?: string, ct?: number) => {
     try {
-      const data = await FetchRSSFeed("en", 0, ct ? ct : count, 1, qs);
+      const data = await FetchRSSFeed(0, ct ? ct : count, 1, qs);
       setPosts(data);
     } catch {
       console.log("Error while trying to get Trending Topics from RSS");

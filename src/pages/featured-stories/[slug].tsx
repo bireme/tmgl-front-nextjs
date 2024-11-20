@@ -8,9 +8,10 @@ import {
   SecondSection,
   ThirdSection,
 } from "@/components/sections/stories/page";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
 import { FeaturedStoriesAcf } from "@/services/types/featuredStoriesAcf";
+import { GlobalContext } from "@/contexts/globalContext";
 import { HeroHeader } from "@/components/sections/hero";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";

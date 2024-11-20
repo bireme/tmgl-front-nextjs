@@ -1,15 +1,16 @@
 import { ArticleDTO } from "../types/rssFeedTypes";
+import Cookies from "js-cookie";
 import axios from "axios";
-import { parseStringPromise } from "xml2js";
 
 export async function FetchRSSFeed(
-  lang: string,
   from: number,
   count: number,
   page: number,
   queryString?: string
 ): Promise<Array<ArticleDTO>> {
   try {
+    const cookieLang = Cookies.get("lang");
+    const lang = cookieLang ? cookieLang : "en";
     const response = await axios.get("/api/rssfeed", {
       params: { lang, from, count, page, queryString },
     });

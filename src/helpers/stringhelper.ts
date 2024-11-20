@@ -1,5 +1,12 @@
 import * as he from "he";
 
+export const parseWpLink = (wpLink: string, prefix?: string) => {
+  return wpLink
+    .replace(process.env.WP_BASE_URL ? process.env.WP_BASE_URL : "", "")
+    .replace("/es/", "/")
+    .replace("", "");
+};
+
 export function removeHTMLTagsAndLimit(text: string, limit: number): string {
   const strippedText = text.replace(/(<([^>]+)>)/gi, "");
 

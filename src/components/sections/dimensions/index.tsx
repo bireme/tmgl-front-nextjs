@@ -1,7 +1,9 @@
 import { Button, Container, Flex, Grid } from "@mantine/core";
 
+import Cookies from "js-cookie";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { TraditionalSectionCard } from "..";
+import { cookies } from "next/headers";
 import styles from "../../../styles/components/sections.module.scss";
 
 export interface RegionalDimensionsProps {
@@ -13,6 +15,7 @@ export const RegionalDimensions = ({
   region,
   acf,
 }: RegionalDimensionsProps) => {
+  const _lang = Cookies.get("lang");
   return (
     <div
       className={styles.RegionalDimensions}
@@ -29,7 +32,9 @@ export const RegionalDimensions = ({
             {acf.tmd?.explore_page ? (
               <>
                 <a
-                  href={`${region}/content/${acf.tmd?.explore_page.post_name}`}
+                  href={`${region}/content/${acf.tmd?.explore_page.post_name}${
+                    _lang ? `?lang=${_lang}` : ""
+                  }`}
                 >
                   <Button style={{ fontWeight: 400 }} mt={20}>
                     Explore the content

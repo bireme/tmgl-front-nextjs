@@ -20,10 +20,9 @@ export default function Dimensions() {
     query: { slug },
   } = router;
   const [post, setPost] = useState<Post>();
-  const _api = new PostsApi();
-
   const { globalConfig } = useContext(GlobalContext);
   const [releatedNumber, setReleatedNumber] = useState(0);
+  const _api = new PostsApi();
 
   const getPost = useCallback(async (slug: string) => {
     try {

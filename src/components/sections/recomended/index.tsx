@@ -3,8 +3,9 @@ import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
+import { GlobalContext } from "@/contexts/globalContext";
 import { IconArrowRight } from "@tabler/icons-react";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";

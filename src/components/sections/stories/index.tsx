@@ -1,8 +1,10 @@
 import { BackgroundImage, Button, Flex, Grid } from "@mantine/core";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 
+import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { lang } from "moment";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/sections.module.scss";
 
@@ -75,12 +77,12 @@ export const StoriesSection = ({ region }: StoriesSectionProps) => {
 
   return (
     <>
-      <h2 className={styles.TitleWithIcon}>
-        <img src={"/local/svg/simbol.svg"} /> Featured Stories
-      </h2>
       {posts ? (
         posts.length > 0 ? (
           <>
+            <h2 className={styles.TitleWithIcon}>
+              <img src={"/local/svg/simbol.svg"} /> Featured Stories
+            </h2>
             <Grid my={50}>
               <Grid.Col span={{ md: 8 }}>
                 <StoriesItem

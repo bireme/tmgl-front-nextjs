@@ -1,10 +1,15 @@
 /* eslint-disable react/no-unescaped-entities */
+
 import { Button, Container, Flex, Grid } from "@mantine/core";
 
 import Link from "next/link";
 import styles from "../styles/pages/pages.module.scss";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 export default function Custom404() {
+  const router = useRouter();
+
   return (
     <Container size={"xl"} py={150}>
       <Grid className={styles.NotFoundPage}>

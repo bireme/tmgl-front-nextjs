@@ -7,7 +7,9 @@ export class MenusApi extends BaseUnauthenticatedApi {
   }
 
   public async getMenu(menuSlug: string): Promise<MenuItemDTO[]> {
-    const { data } = await this._api.get(`/menu-locations/${menuSlug}`);
+    const { data } = await this._api.get(
+      `/menu-locations/${menuSlug}${this._lang ? `?lang=${this._lang}` : ""}`
+    );
     return data;
   }
 

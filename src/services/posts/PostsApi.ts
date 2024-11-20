@@ -9,7 +9,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
     super(`${region ? region + "/" : ""}wp-json/wp/v2/`);
   }
 
-  public async getTaxonomies(taxSlug?: string): Promise<TaxonomyDTO[]> {
+  public async getTaxonomies(): Promise<TaxonomyDTO[]> {
     const { data } = await this._api.get(`taxonomies`);
     return data;
   }
@@ -50,7 +50,13 @@ export class PostsApi extends BaseUnauthenticatedApi {
         region && region.length > 0
           ? `&region=${region.length > 0 ? region.join(",") : ""}`
           : ""
-      }&lang=all`
+      }&${
+        this._lang == "en"
+          ? postTypeSlug == "posts" || postTypeSlug == "pages"
+            ? `lang=${this._lang}`
+            : ""
+          : `lang=${this._lang}`
+      }`
     );
     return data;
   }
@@ -59,6 +65,22 @@ export class PostsApi extends BaseUnauthenticatedApi {
     const { data } = await this._api.get(
       `${postTypeSlug}?slug=${slug}&_embed&acf_format=standard`
     );
+    //Verify if the client is using another language
+    const foundPost = data[0];
+    if (foundPost.lang != this._lang) {
+      //In that case the lang returned is not the same as the user is trying to access, may because de slug is in a diferent language
+      //Lets see if there is any translation to this post
+      if (Object.keys(foundPost.translations).length > 0) {
+        if (foundPost.translations[this._lang]) {
+          const translated_postId: number = foundPost.translations[this._lang];
+          const transalated_response = await this._api.get(
+            `${postTypeSlug}/${translated_postId}?_embed&acf_format=standard`
+          );
+          return [transalated_response.data];
+        }
+      }
+    }
+
     return data;
   }
 

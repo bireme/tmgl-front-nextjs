@@ -13,6 +13,8 @@ interface IGlobalContextData {
   setRegionName: Dispatch<SetStateAction<string>>;
   globalConfig?: GlobalConfigAcf;
   setGlobalConfig: Dispatch<SetStateAction<GlobalConfigAcf | undefined>>;
+  language: string;
+  setLanguage: Dispatch<SetStateAction<string>>;
 }
 
 interface IGlobalProviderProps {
@@ -28,9 +30,17 @@ export const GlobalProvider = ({ children }: IGlobalProviderProps) => {
   const [globalConfig, setGlobalConfig] = useState<GlobalConfigAcf | undefined>(
     undefined
   );
+  const [language, setLanguage] = useState<string>("en");
   return (
     <GlobalContext.Provider
-      value={{ regionName, setRegionName, globalConfig, setGlobalConfig }}
+      value={{
+        regionName,
+        setRegionName,
+        globalConfig,
+        setGlobalConfig,
+        language,
+        setLanguage,
+      }}
     >
       {children}
     </GlobalContext.Provider>

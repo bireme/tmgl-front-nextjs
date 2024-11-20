@@ -1,7 +1,8 @@
 import { Button, Checkbox, Input } from "@mantine/core";
 import { IconArrowUp, IconChevronCompactUp } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
+import { GlobalContext } from "@/contexts/globalContext";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { TaxonomyTermDTO } from "@/services/types/taxonomies.dto";
 import { decodeHtmlEntities } from "@/helpers/stringhelper";
@@ -24,6 +25,7 @@ export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
     initialValues: initialValues,
   });
 
+  //TODO: fix to use region
   const _api = new PostsApi();
   const [dimensions, setDimensions] = useState<TaxonomyTermDTO[]>();
   const [countries, setCountries] = useState<TaxonomyTermDTO[]>();

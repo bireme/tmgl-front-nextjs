@@ -33,8 +33,7 @@ export default function Content() {
 
   const getPost = useCallback(async (slug: string) => {
     try {
-      const _pageApi = new PostsApi();
-      const resp = await _pageApi.getPost("pages", slug);
+      const resp = await _api.getPost("pages", slug);
       setPost(resp[0]);
       if (resp[0].parent) {
         const parentResp = await _api.getPostById("pages", resp[0].parent);
