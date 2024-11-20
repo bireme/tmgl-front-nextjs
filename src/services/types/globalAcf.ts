@@ -8,12 +8,17 @@ export interface RouteItems {
   redirect: string;
 }
 
+export interface FooterImages {
+  url: string;
+  image: string;
+}
+
 export interface GlobalConfigAcf {
   acf: {
     aside_tab_title: string;
     content_description: string;
     dimensions_description: string;
-    footerimages: boolean;
+    footerimages: FooterImages[];
     news_description: string;
     privacy_policy_url: string;
     regionais: RegionalItems[];

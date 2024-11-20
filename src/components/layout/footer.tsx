@@ -93,9 +93,9 @@ export const FooterLayout = () => {
               px={"15px"}
               className={styles.FooterImages}
             >
-              <img src={"/local/png/who.png"} width={"50%"} />
-              <img src={"/local/png/who-medicine-center.png"} width={"50%"} />
-              <img src={"/local/png/footer-tmgl.png"} width={"100%"} />
+              {globalConfig?.acf?.footerimages?.map((item, index) => {
+                return <img src={item.image} key={index} width={"80%"} />;
+              })}
             </Flex>
             <Grid className={styles.FooterMap} px={"25px"}>
               <Grid.Col span={{ base: 12, md: 4 }}>
