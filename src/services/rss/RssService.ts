@@ -1,15 +1,21 @@
-import Parser from "rss-parser";
+import { ArticleDTO } from "../types/rssFeedTypes";
+import axios from "axios";
+import { parseStringPromise } from "xml2js";
 
-export class RssService {
-  private _parser: Parser<any, any> = new Parser({
-    customFields: {
-      feed: ["foo", "baz"],
-      item: ["bar"],
-    },
-  });
-
-  public getFeed = async () => {
-    const feed = await this._parser.parseURL("https://www.reddit.com/.rss");
-    console.log(feed);
-  };
+export async function FetchRSSFeed(
+  lang: string,
+  from: number,
+  count: number,
+  page: number
+): Promise<Array<ArticleDTO>> {
+  try {
+    const response = await axios.get("/api/rssfeed", {
+      params: { lang, from, count, page },
+    });
+    const feedItems = response.data.rss.channel.item || [];
+    return feedItems;
+  } catch (error) {
+    console.error("Error while searching RSS FEED by Client Service:", error);
+    throw new Error("Error while searching RSS FEED by Client Service");
+  }
 }

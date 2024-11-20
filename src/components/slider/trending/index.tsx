@@ -3,29 +3,24 @@ import { Carousel, Embla } from "@mantine/carousel";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 
+import { ArticleDTO } from "@/services/types/rssFeedTypes";
+import { FetchRSSFeed } from "@/services/rss/RssService";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
-import { RssService } from "@/services/rss/RssService";
 import { TrendingTopicSection } from "@/components/sections/topics";
+import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/slider.module.scss";
 
 export const TrendingSlider = () => {
   const [embla, setEmbla] = useState<any>(null);
   const handleNext = () => embla?.scrollNext();
   const handlePrev = () => embla?.scrollPrev();
-  const rssService = new RssService();
 
-  const [posts, setPosts] = useState<Array<Post>>([]);
+  const [posts, setPosts] = useState<Array<ArticleDTO>>([]);
 
   const getTrendingTopics = useCallback(async () => {
-    const _api = new PostsApi();
-
-    try {
-      const resp = await _api.getCustomPost("trending_topics");
-      setPosts(resp);
-    } catch (error: any) {
-      console.log("Error while get trendingTopics", error);
-    }
+    const articlesResponse = await FetchRSSFeed("en", 0, 10, 1);
+    setPosts(articlesResponse);
   }, []);
 
   useEffect(() => {
@@ -67,9 +62,11 @@ export const TrendingSlider = () => {
                     className={styles.SliderItemContainer}
                   >
                     <TrendingTopicSection
-                      href={`/trending-topics/${item.slug}`}
-                      title={`${item.title.rendered}`}
-                      excerpt={`${item.excerpt.rendered}`}
+                      href={item.link}
+                      title={`${item.title.slice(0, 150)} ${
+                        item.title.length > 150 ? "..." : ""
+                      }`}
+                      excerpt={`${item.description.trim().slice(0, 120)}...`}
                     />
                   </Carousel.Slide>
                 </div>

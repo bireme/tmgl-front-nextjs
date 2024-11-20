@@ -1,6 +1,7 @@
 import { Container, Flex, Grid } from "@mantine/core";
 import { useContext, useEffect, useState } from "react";
 
+import { FetchRSSFeed } from "@/services/rss/RssService";
 import { GlobalConfigApi } from "@/services/globalConfig/GlobalConfigApi";
 import { GlobalContext } from "@/contexts/globalContext";
 import { MenuItemDTO } from "@/services/types/menus.dto";
@@ -15,6 +16,7 @@ export const FooterLayout = () => {
   const [footerRight, setFooterRight] = useState<MenuItemDTO[]>();
   const [footerCenter, setFooterCenter] = useState<MenuItemDTO[]>();
   const menuApi = new MenusApi();
+
   const getFooterMenus = async () => {
     try {
       const footerLeftResp = await menuApi.getMenu("footer-left");
@@ -52,7 +54,7 @@ export const FooterLayout = () => {
   const renderMenuItem = (item: MenuItemDTO, index: number) => {
     if (item.children.length > 0) {
       return (
-        <>
+        <div key={index}>
           <p key={index}>{decodeHtmlEntities(item.title)}</p>
           <ul>
             {item.children.map((itemChild, index) => {
@@ -65,7 +67,7 @@ export const FooterLayout = () => {
               );
             })}
           </ul>
-        </>
+        </div>
       );
     } else {
       return (
