@@ -26,5 +26,6 @@ export interface GlobalConfigAcf {
     stories_description: string;
     terms_and_conditions_url: string;
     trending_description: string;
+    filter_rss?: string;
   };
 }

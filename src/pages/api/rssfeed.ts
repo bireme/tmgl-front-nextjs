@@ -8,11 +8,13 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    const { lang, from, count, page, queryString } = req.query;
+    const { lang, from, count, page, queryString, filter } = req.query;
     const feedUrl = process.env.RSS_FEED_URL ? process.env.RSS_FEED_URL : "";
     const response = await axios.get(
       feedUrl +
-        `&lang=${lang}&from=${from}&count=${count}&page=${page}&q=${queryString}`,
+        `&lang=${lang}&from=${from}&count=${count}&page=${page}${
+          filter ? filter : ""
+        }${queryString ? `&q=${queryString}` : ""}`,
       { responseType: "text" }
     );
     const xmlData = response.data;

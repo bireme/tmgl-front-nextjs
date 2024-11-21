@@ -6,13 +6,14 @@ export async function FetchRSSFeed(
   from: number,
   count: number,
   page: number,
-  queryString?: string
+  queryString?: string,
+  filter?: string
 ): Promise<Array<ArticleDTO>> {
   try {
     const cookieLang = Cookies.get("lang");
     const lang = cookieLang ? cookieLang : "en";
     const response = await axios.get("/api/rssfeed", {
-      params: { lang, from, count, page, queryString },
+      params: { lang, from, count, page, queryString, filter },
     });
     const feedItems = response.data.rss.channel.item || [];
     return feedItems;
