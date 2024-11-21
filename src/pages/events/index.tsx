@@ -5,7 +5,7 @@ import { GlobalContext } from "@/contexts/globalContext";
 import styles from "../../styles/pages/home.module.scss";
 import { useContext } from "react";
 
-export default function News() {
+export default function EventsFeed() {
   const { globalConfig } = useContext(GlobalContext);
 
   return (
@@ -20,10 +20,10 @@ export default function News() {
         />
         <h2 className={styles.TitleWithIcon}>
           <img src={"/local/svg/simbol.svg"} />
-          News
+          Events
         </h2>
-        <p>{globalConfig?.acf.news_description}</p>
-        <FeedSection postType="posts" />
+        <p>{globalConfig?.acf.events_description}</p>
+        <EventsFeed />
       </Container>
     </>
   );

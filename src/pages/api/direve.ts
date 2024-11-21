@@ -10,6 +10,7 @@ export default async function handler(
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not permited" });
   }
+
   const key = process.env.DIREV_API_KEY;
   var bytesToKey = CryptoJS.AES.decrypt(key, process.env.SECRET);
   var originalKey = bytesToKey.toString(CryptoJS.enc.Utf8);
@@ -20,13 +21,15 @@ export default async function handler(
 
   try {
     const response = await axios.get(
-      `${process.env.DIREV_API_URL}/search/?q=${query}&lang=${lang}&format=json&count=${count}`,
+      `${process.env.DIREV_API_URL}/search/?${query ? `q=${query}` : ""}&lang=${
+        lang ? lang : "en"
+      }&format=json&count=${count ? count : 10}`,
       { headers: { apiKey: originalKey } }
     );
     return res.status(200).json({ data: response.data, status: true });
   } catch (error: any) {
     const errorMessage =
       error.response?.data?.detail || "Erro while searching events";
-    return res.status(200).json({ message: errorMessage, status: false });
+    return res.status(200).json({ message: error, status: false });
   }
 }

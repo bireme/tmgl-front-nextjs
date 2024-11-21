@@ -14,7 +14,9 @@ const nextConfig = {
     MAILCHIMP_LIST_ID:process.env.MAILCHIMP_LIST_ID,
     MAILCHIMP_DATA_CENTER:process.env.MAILCHIMP_DATA_CENTER,
     SECRET: process.env.SECRET,
-    RSS_FEED_URL: process.env.RSS_FEED_URL
+    RSS_FEED_URL: process.env.RSS_FEED_URL,
+    DIREV_API_KEY: process.env.DIREV_API_KEY,
+    DIREV_API_URL: process.env.DIREV_API_URL
   },
 };
 

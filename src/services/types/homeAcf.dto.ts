@@ -12,8 +12,8 @@ export interface AcfSearch {
 }
 
 export interface AcfEvents {
-  title: string;
-  subtitle: string;
+  title?: string;
+  subtitle?: string;
   webcast?: string;
   meeting?: string;
   repport?: string;

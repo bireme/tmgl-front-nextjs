@@ -7,6 +7,8 @@ import {
 import { useContext, useEffect, useState } from "react";
 
 import { ArticleDTO } from "@/services/types/rssFeedTypes";
+import { DireveService } from "@/services/direve/direveService";
+import { EventInterface } from "@/services/types/eventInterface";
 import { FetchRSSFeed } from "@/services/rss/RssService";
 import { GlobalContext } from "@/contexts/globalContext";
 import { NewsItem } from "../sections/news";
@@ -62,6 +64,82 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
                 );
               })}
             </Flex>
+          ) : (
+            <LoadingOverlay visible={true} />
+          )}
+        </Grid.Col>
+      </Grid>
+    </div>
+  );
+};
+
+export const EventsFeedSection = () => {
+  const [posts, setPosts] = useState<EventInterface[]>([]);
+  const _direveService = new DireveService();
+  const [count, setCount] = useState<number>(9);
+  const getEvents = async (qs?: string, count?: number) => {
+    const events = await _direveService.getEvents(
+      "eng",
+      count ? count : 10,
+      qs
+    );
+    setPosts(events);
+  };
+  const [queryString, setQueryString] = useState<string>("");
+
+  useEffect(() => {
+    getEvents();
+  }, []);
+
+  const applyQueryString = async (qs: string) => {
+    setQueryString(qs);
+    setPosts([]);
+    await getEvents(qs);
+  };
+
+  return (
+    <div className={styles.FeedSection}>
+      <Grid>
+        <Grid.Col span={{ base: 12, md: 2.5 }}>
+          <TrendingTopicsFiltersForm
+            queryString={queryString}
+            setQueryString={applyQueryString}
+          />
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 9.5 }} py={60} px={20}>
+          {posts.length > 0 ? (
+            <>
+              <Flex
+                direction={{ base: "column", md: "row" }}
+                wrap={"wrap"}
+                gap={30}
+              >
+                {posts.map((post, index) => {
+                  return (
+                    <PostItem
+                      title={decodeHtmlEntities(post.title.trim())}
+                      key={index}
+                      excerpt={decodeHtmlEntities(
+                        removeHTMLTagsAndLimit(post.description.trim(), 120)
+                      )}
+                      href={`${post.links.length > 0 ? post.links[0].url : ""}`}
+                      thumbnail=""
+                    />
+                  );
+                })}
+              </Flex>
+              <Center>
+                <Button
+                  mt={60}
+                  onClick={() => {
+                    getEvents(queryString, count + 9);
+                    setCount(count + 9);
+                  }}
+                >
+                  Load more
+                </Button>
+              </Center>
+            </>
           ) : (
             <LoadingOverlay visible={true} />
           )}

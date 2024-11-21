@@ -26,6 +26,5 @@ export default async function handler(
     res.status(200).json(jsonData);
   } catch (error) {
     console.error("Error while searching RSS FEED:", error);
-    throw new Error("Error while searching RSS FEED");
   }
 }

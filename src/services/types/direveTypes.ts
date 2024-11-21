@@ -103,6 +103,9 @@ interface DiaServerResponse {
   responseHeader: ResponseHeader;
 }
 
-export interface ApiResponse {
-  diaServerResponse: DiaServerResponse[];
+export interface DireveApiResponse {
+  data: {
+    diaServerResponse: DiaServerResponse[];
+  };
+  status: boolean;
 }

@@ -102,14 +102,7 @@ export default function RegionHome() {
                 </h2>
               </Container>
             </div>
-            <EventsSection
-              title={acf?.events.title ? acf.events.title : ""}
-              subtitle={acf?.events.subtitle ? acf.events.subtitle : ""}
-              webcast={acf?.events.webcast}
-              meeting={acf?.events.meeting}
-              repport={acf?.events.repport}
-              background={acf?.events.background}
-            />
+            <EventsSection background={acf?.events.background} />
             <div className={styles.NewsContainer}>
               <NewsSection
                 region={region ? region.toString() : ""}
