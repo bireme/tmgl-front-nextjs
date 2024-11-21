@@ -94,7 +94,7 @@ export default function Home() {
           className={styles.TrandingAndFeaturedContainer}
         >
           <h2 className={styles.TitleWithIcon}>
-            <img src={"/local/svg/simbol.svg"} /> Trending Topics
+            <img src={"/local/svg/simbol.svg"} /> Recent literature reviews
           </h2>
           <div className={styles.TrendingText}>
             <p>{acf?.text_trending_topics}</p>
@@ -107,7 +107,7 @@ export default function Home() {
               }}
             >
               <Flex justify={"flex-start"} align={"center"} gap={10}>
-                <p>Explore more trending topics</p>{" "}
+                <p>Explore more</p>{" "}
                 <Button p={5} size={"xs"}>
                   <IconArrowRight />
                 </Button>

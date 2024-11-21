@@ -81,7 +81,7 @@ export const NewsSection = ({ region, title }: NewsSectionProps) => {
           {title && posts.length > 0 ? (
             <>
               <h2 className={styles.TitleWithIcon}>
-                <img src={"/local/svg/simbol.svg"} /> News
+                <img src={"/local/svg/simbol.svg"} /> News from WHO
               </h2>
             </>
           ) : (
