@@ -1,6 +1,7 @@
+import { EventsFeedSection, FeedSection } from "@/components/feed";
+
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { Container } from "@mantine/core";
-import { FeedSection } from "@/components/feed";
 import { GlobalContext } from "@/contexts/globalContext";
 import styles from "../../styles/pages/home.module.scss";
 import { useContext } from "react";
@@ -23,7 +24,7 @@ export default function EventsFeed() {
           Events
         </h2>
         <p>{globalConfig?.acf.events_description}</p>
-        <EventsFeed />
+        <EventsFeedSection />
       </Container>
     </>
   );

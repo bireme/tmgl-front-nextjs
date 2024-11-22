@@ -117,11 +117,24 @@ export const EventsFeedSection = () => {
                 {posts.map((post, index) => {
                   return (
                     <PostItem
-                      title={decodeHtmlEntities(post.title.trim())}
+                      title={
+                        removeHTMLTagsAndLimit(post.title.trim(), 100) +
+                        `${post.title.trim().length > 100 ? "..." : ""}`
+                      }
                       key={index}
-                      excerpt={decodeHtmlEntities(
-                        removeHTMLTagsAndLimit(post.description.trim(), 120)
-                      )}
+                      excerpt={
+                        removeHTMLTagsAndLimit(
+                          post.description
+                            ? post.description.toString().trim()
+                            : "",
+                          100
+                        ) +
+                        `${
+                          post.description?.toString().trim().length > 100
+                            ? "..."
+                            : ""
+                        }`
+                      }
                       href={`${post.links.length > 0 ? post.links[0].url : ""}`}
                       thumbnail=""
                     />
