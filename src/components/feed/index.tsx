@@ -178,7 +178,9 @@ export const TrendingTopicsFeedSection = () => {
       );
       setPosts(data);
     } catch {
-      console.log("Error while trying to get Trending Topics from RSS");
+      console.log(
+        "Error while trying to get Recent Literature Review from RSS"
+      );
     }
   };
 

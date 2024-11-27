@@ -51,7 +51,7 @@ export default function TrendingTopics() {
             />
           </Container>
           <Container mt={40} size={"md"}>
-            <h3 className={styles.TitleWithIcon}>Trending Topics</h3>
+            <h3 className={styles.TitleWithIcon}>Recent Literature Review</h3>
             <h1 className={styles.PostTitle}>{post.title.rendered}</h1>
             <div
               className={styles.PostSubtitle}

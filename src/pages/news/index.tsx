@@ -20,7 +20,7 @@ export default function News() {
         />
         <h2 className={styles.TitleWithIcon}>
           <img src={"/local/svg/simbol.svg"} />
-          News
+          News from WHO GTMC
         </h2>
         <p>{globalConfig?.acf.news_description}</p>
         <FeedSection postType="posts" />

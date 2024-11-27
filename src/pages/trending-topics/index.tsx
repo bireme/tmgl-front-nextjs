@@ -15,11 +15,11 @@ export default function TrendingTopics() {
         <BreadCrumbs
           path={[
             { path: "/", name: "HOME" },
-            { path: "/trending-topics", name: "Trending Topics" },
+            { path: "/recent-literature-", name: "Recent Literature Review" },
           ]}
           blackColor={true}
         />
-        <h2 className={styles.TitleWithIcon}> Trending Topics</h2>
+        <h2 className={styles.TitleWithIcon}> Recent Literature Review</h2>
         <p>{globalConfig?.acf.trending_description}</p>
         <TrendingTopicsFeedSection />
       </Container>
