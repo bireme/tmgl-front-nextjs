@@ -16,18 +16,23 @@ export const TrendingSlider = () => {
   const [embla, setEmbla] = useState<any>(null);
   const handleNext = () => embla?.scrollNext();
   const handlePrev = () => embla?.scrollPrev();
-  const { globalConfig } = useContext(GlobalContext);
+  const { globalConfig, regionName } = useContext(GlobalContext);
   const [posts, setPosts] = useState<Array<ArticleDTO>>([]);
 
   const getTrendingTopics = useCallback(async () => {
-    if (globalConfig?.acf.filter_rss) {
-      const articlesResponse = await FetchRSSFeed(
-        0,
-        10,
-        1,
-        undefined,
-        globalConfig?.acf.filter_rss
+    let filter = globalConfig?.acf.filter_rss;
+    if (regionName) {
+      let regionalFilter = globalConfig?.acf.region_filters.filter(
+        (f) => f.region_prefix.toLowerCase() == regionName.toLowerCase()
       );
+      if (regionalFilter)
+        if (regionalFilter.length > 0) {
+          filter = regionalFilter[0].region_filter;
+        }
+    }
+
+    if (globalConfig?.acf.filter_rss) {
+      const articlesResponse = await FetchRSSFeed(0, 10, 1, undefined, filter);
       setPosts(articlesResponse);
     }
   }, [globalConfig]);

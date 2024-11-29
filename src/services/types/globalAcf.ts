@@ -13,6 +13,11 @@ export interface FooterImages {
   image: string;
 }
 
+export interface RegionFilter {
+  region_prefix: string;
+  region_filter: string;
+}
+
 export interface GlobalConfigAcf {
   acf: {
     aside_tab_title: string;
@@ -28,5 +33,6 @@ export interface GlobalConfigAcf {
     trending_description: string;
     events_description: string;
     filter_rss?: string;
+    region_filters: RegionFilter[];
   };
 }
