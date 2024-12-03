@@ -136,7 +136,7 @@ export const FooterLayout = () => {
             align={"center"}
           >
             <img src={"/local/png/powered-by-bireme.png"} width={"160px"} />
-            <p className={styles.Copy}>© WHO (CC BY-NC-SA 4.0)</p>
+            <p className={styles.Copy}>CC BY-NC-SA 3.0 IGO</p>
           </Flex>
         </Container>
       </div>
