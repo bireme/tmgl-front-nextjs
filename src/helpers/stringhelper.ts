@@ -21,6 +21,7 @@ export function decodeHtmlEntities(text: string): string {
 }
 
 export function extimateTime(words: number): number {
+  //Todo: Calcular por hora minuto ou segundo
   return words * 10;
 }
 

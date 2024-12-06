@@ -141,7 +141,7 @@ export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
 
         <Button type="submit" size={"md"} fullWidth>
           {" "}
-          Aply Filters{" "}
+          Apply Filters{" "}
         </Button>
       </form>
     </div>
@@ -174,7 +174,7 @@ export const TrendingTopicsFiltersForm = ({
         />
         <Button mt={20} type="submit" size={"md"} fullWidth>
           {" "}
-          Aply Filters{" "}
+          Apply Filters{" "}
         </Button>
       </form>
     </div>
