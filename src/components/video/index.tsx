@@ -16,3 +16,11 @@ export const VideoSection = ({ children }: CustomComponentProps) => {
     </div>
   );
 };
+
+export const ImageSection = ({ children }: CustomComponentProps) => {
+  return (
+    <div className={styles.ImageSection}>
+      <div className={styles.Content}>{children}</div>
+    </div>
+  );
+};

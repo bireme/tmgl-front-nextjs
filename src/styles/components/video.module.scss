@@ -1,3 +1,25 @@
+.ImageSection{
+  position:relative;
+  width: 100%;
+  min-height: 95vh;
+  padding: 0px;
+  overflow: hidden;
+  background-image: url('../../../public/local/png/video-image.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  &::after{
+    left: 0;
+    top: 0;
+    z-index: 1;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    content: "";
+    background-color: #0a2936b6;
+  }
+}
+
+
 .VideoSection{
   position:relative;
   width: 100%;

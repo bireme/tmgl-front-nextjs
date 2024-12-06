@@ -12,6 +12,7 @@ import {
   DimensionsSection,
   TraditionalSectionCard,
 } from "@/components/sections";
+import { ImageSection, VideoSection } from "@/components/video";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
@@ -28,7 +29,6 @@ import { PagesApi } from "@/services/pages/PagesApi";
 import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
 import { TrendingSlider } from "@/components/slider/trending";
-import { VideoSection } from "@/components/video";
 import styles from "../styles/pages/home.module.scss";
 
 export default function Home() {
@@ -74,7 +74,7 @@ export default function Home() {
           </Container>
         </div>
       </div>
-      <VideoSection>
+      <ImageSection>
         <Container size={"xl"} py={"5%"} className={styles.TraditionalMedicine}>
           <h2>
             <img src={"/local/svg/simbol.svg"} />
@@ -86,7 +86,7 @@ export default function Home() {
 
           <DimensionsSection />
         </Container>
-      </VideoSection>
+      </ImageSection>
       <div className={styles.TrandingAndFeatured}>
         <Container
           size={"xl"}
@@ -99,7 +99,7 @@ export default function Home() {
           <div className={styles.TrendingText}>
             <p>{acf?.text_trending_topics}</p>
             <Link
-              href={"/trending-topics"}
+              href={"/recent-literature-reviews"}
               style={{
                 textDecoration: "none",
                 color: "black",

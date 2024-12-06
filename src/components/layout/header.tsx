@@ -301,6 +301,10 @@ export const HeaderLayout = () => {
                 <h2
                   style={{
                     cursor: prevSelectedSubItem ? "pointer" : "default",
+                    display: "flex",
+                    flexDirection: "row",
+                    alignContent: "center",
+                    alignItems: "center",
                   }}
                   onClick={() => {
                     handlePrevMenuItem();
@@ -322,7 +326,7 @@ export const HeaderLayout = () => {
                     return (
                       <a
                         key={key}
-                        onMouseEnter={() => {
+                        onClick={() => {
                           if (item.children.length > 0) {
                             setPrevSelectedSubItem(selectedMenuItem);
                             setSelectedMenuItem(item);
