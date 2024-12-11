@@ -1,5 +1,5 @@
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Flex, Grid, GridCol, LoadingOverlay } from "@mantine/core";
-import { useEffect, useState } from "react";
 
 import { IconArrowRight } from "@tabler/icons-react";
 import { LisDocuments } from "@/services/types/lisTypes";
@@ -62,6 +62,49 @@ export const ResourceCard = ({
   );
 };
 
+export interface PaginationProps {
+  currentIndex: number;
+  totalPages: number;
+  callBack: Dispatch<SetStateAction<number>>;
+}
+export const Pagination = ({
+  currentIndex,
+  totalPages,
+  callBack,
+}: PaginationProps) => {
+  return (
+    <Flex className={styles.Pagination} gap={5}>
+      <a
+        className={currentIndex - 1 < 1 ? styles.disabled : ""}
+        onClick={() => {
+          callBack(currentIndex - 1);
+        }}
+      >
+        Prev{" "}
+      </a>
+      {Array.from({ length: totalPages }, (_, i) => i + 1).map((i, k) => {
+        return (
+          <a
+            key={k}
+            onClick={() => callBack(i)}
+            className={i == currentIndex ? styles.active : ""}
+          >
+            {i}
+          </a>
+        );
+      })}
+      <a
+        className={currentIndex + 1 > totalPages ? styles.disabled : ""}
+        onClick={() => {
+          callBack(currentIndex + 1);
+        }}
+      >
+        Next
+      </a>
+    </Flex>
+  );
+};
+
 export interface ResourcesFeedSectionProps {
   thematicArea: string;
   displayType: string;
@@ -72,25 +115,30 @@ export const ResourcesFeedSection = ({
 }: ResourcesFeedSectionProps) => {
   const [items, setItems] = useState<LisDocuments[]>([]);
   const _lisService = new LisService();
-  const [count, setCount] = useState<number>(12);
-  const [offset, setOffset] = useState<number>(0);
+  const count = 3;
+
+  const [page, setPage] = useState<number>(1);
+  const [totalPages, setTotalPages] = useState<number>(1);
   const getResources = async () => {
     const response = await _lisService.getResources(
       thematicArea,
       count,
-      offset
+      (page - 1) * count
     );
     setItems(response.data.diaServerResponse[0]?.response.docs);
+    setTotalPages(
+      Math.round(response.data.diaServerResponse[0]?.response.numFound / count)
+    );
   };
 
   useEffect(() => {
     getResources();
-  }, []);
+  }, [page]);
 
   return (
     <Grid>
-      <Grid.Col span={3}></Grid.Col>
-      <Grid.Col span={9}>
+      <Grid.Col span={3.5}></Grid.Col>
+      <Grid.Col span={8.5}>
         <Flex
           direction={{
             base: displayType == "column" ? "column" : "row",
@@ -98,7 +146,7 @@ export const ResourcesFeedSection = ({
           }}
           gap={30}
           wrap={"wrap"}
-          justify={"flex-end"}
+          justify={"flex-start"}
         >
           {items.length > 0 ? (
             <>
@@ -107,7 +155,6 @@ export const ResourcesFeedSection = ({
                   <ResourceCard
                     displayType={displayType}
                     key={k}
-                    image="https://cursinhoparamedicina.com.br/wp-content/uploads/2022/10/Paisagem-1.jpg"
                     title={i.title}
                     excerpt={removeHTMLTagsAndLimit(i.abstract, 140)}
                     link={i.link[0]}
@@ -119,6 +166,13 @@ export const ResourcesFeedSection = ({
             <LoadingOverlay visible={true} />
           )}
         </Flex>
+        <div className={styles.PaginationContainer}>
+          <Pagination
+            callBack={setPage}
+            currentIndex={page}
+            totalPages={totalPages}
+          />
+        </div>
       </Grid.Col>
     </Grid>
   );

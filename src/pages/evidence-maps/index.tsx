@@ -20,7 +20,7 @@ export default function EvidenceMapsFeed() {
             { path: "/evidence-maps", name: "Evidence Maps" },
           ]}
         />
-        <Flex justify={"space-between"} align={"center"}>
+        <Flex justify={"space-between"} align={"center"} px={15}>
           <h2 className={styles.TitleWithIcon}>
             <img src={"/local/svg/simbol.svg"} />
             Evidence Maps Platform
