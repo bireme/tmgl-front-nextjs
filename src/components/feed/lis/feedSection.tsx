@@ -1,9 +1,10 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Flex, Grid, GridCol, LoadingOverlay } from "@mantine/core";
+import { LisApiResponse, LisDocuments } from "@/services/types/lisTypes";
+import { LisService, queryType } from "@/services/lis/LisService";
 
 import { IconArrowRight } from "@tabler/icons-react";
-import { LisDocuments } from "@/services/types/lisTypes";
-import { LisService } from "@/services/lis/LisService";
+import { LisFilters } from "./filters";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
@@ -73,7 +74,7 @@ export const Pagination = ({
   callBack,
 }: PaginationProps) => {
   return (
-    <Flex className={styles.Pagination} gap={5}>
+    <Flex className={styles.Pagination} gap={5} wrap={"wrap"}>
       <a
         className={currentIndex - 1 < 1 ? styles.disabled : ""}
         onClick={() => {
@@ -82,7 +83,10 @@ export const Pagination = ({
       >
         Prev{" "}
       </a>
-      {Array.from({ length: totalPages }, (_, i) => i + 1).map((i, k) => {
+      {Array.from(
+        { length: totalPages ? (totalPages > 100 ? 100 : totalPages) : 1 },
+        (_, i) => i + 1
+      ).map((i, k) => {
         return (
           <a
             key={k}
@@ -114,66 +118,93 @@ export const ResourcesFeedSection = ({
   displayType,
 }: ResourcesFeedSectionProps) => {
   const [items, setItems] = useState<LisDocuments[]>([]);
+  const [loading, setLoading] = useState(false);
   const _lisService = new LisService();
-  const count = 3;
+  const [filter, setFilter] = useState<queryType[]>([]);
+  const [lisResponse, setLisResponse] = useState<LisApiResponse>();
+  const count = 12;
 
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const getResources = async () => {
+    setLoading(true);
     const response = await _lisService.getResources(
       thematicArea,
       count,
-      (page - 1) * count
+      (page - 1) * count,
+      filter && filter.length > 0 ? filter : undefined
     );
+    setLisResponse(response);
     setItems(response.data.diaServerResponse[0]?.response.docs);
     setTotalPages(
       Math.round(response.data.diaServerResponse[0]?.response.numFound / count)
     );
+    setLoading(false);
+  };
+
+  const applyFilters = async (queryList?: queryType[]) => {
+    setFilter(queryList ? queryList : []);
+    setPage(1);
   };
 
   useEffect(() => {
     getResources();
-  }, [page]);
+  }, [page, filter]);
 
   return (
-    <Grid>
-      <Grid.Col span={3.5}></Grid.Col>
-      <Grid.Col span={8.5}>
-        <Flex
-          direction={{
-            base: displayType == "column" ? "column" : "row",
-            md: "row",
-          }}
-          gap={30}
-          wrap={"wrap"}
-          justify={"flex-start"}
-        >
-          {items.length > 0 ? (
-            <>
-              {items.map((i, k) => {
-                return (
-                  <ResourceCard
-                    displayType={displayType}
-                    key={k}
-                    title={i.title}
-                    excerpt={removeHTMLTagsAndLimit(i.abstract, 140)}
-                    link={i.link[0]}
-                  />
-                );
-              })}
-            </>
-          ) : (
-            <LoadingOverlay visible={true} />
-          )}
-        </Flex>
-        <div className={styles.PaginationContainer}>
-          <Pagination
-            callBack={setPage}
-            currentIndex={page}
-            totalPages={totalPages}
+    <>
+      <LoadingOverlay visible={loading} style={{ position: "fixed" }} />
+      <Grid>
+        <Grid.Col span={{ md: 3, base: 12 }} order={{ base: 2, sm: 1 }}>
+          <LisFilters
+            contentThemeList={lisResponse?.data?.diaServerResponse[0]?.facet_counts.facet_fields.descriptor_filter.map(
+              (i: any) => {
+                return {
+                  label: i[0],
+                  ocorrences: i[1],
+                };
+              }
+            )}
+            callBack={applyFilters}
           />
-        </div>
-      </Grid.Col>
-    </Grid>
+        </Grid.Col>
+        <Grid.Col span={{ base: 12, md: 9 }} order={{ base: 2, sm: 1 }}>
+          <Flex
+            direction={{
+              base: displayType == "column" ? "column" : "row",
+              md: "row",
+            }}
+            gap={30}
+            wrap={"wrap"}
+            justify={"flex-start"}
+          >
+            {items.length > 0 ? (
+              <>
+                {items.map((i, k) => {
+                  return (
+                    <ResourceCard
+                      displayType={displayType}
+                      key={k}
+                      title={i.title}
+                      excerpt={removeHTMLTagsAndLimit(i.abstract, 140)}
+                      link={i.link[0]}
+                    />
+                  );
+                })}
+              </>
+            ) : (
+              <LoadingOverlay visible={true} />
+            )}
+          </Flex>
+          <div className={styles.PaginationContainer}>
+            <Pagination
+              callBack={setPage}
+              currentIndex={page}
+              totalPages={totalPages}
+            />
+          </div>
+        </Grid.Col>
+      </Grid>
+    </>
   );
 };

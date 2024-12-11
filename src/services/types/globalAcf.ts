@@ -29,9 +29,12 @@ export interface GlobalConfigAcf {
     regionais: RegionalItems[];
     route: RouteItems[];
     stories_description: string;
+    journals_description?: string;
+    evidence_maps_description?: string;
     terms_and_conditions_url: string;
     trending_description: string;
     events_description: string;
+    database_repositories_descriptions?: string;
     filter_rss?: string;
     region_filters: RegionFilter[];
   };

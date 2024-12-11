@@ -1,3 +1,52 @@
+.FilterContent{
+  padding: 00px 30px;
+  @media (max-width: '750px') {
+    padding: 0 10px;
+  }
+  h3{
+    font-family: Roboto Serif    ;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0px;
+    margin-bottom: 24px;
+  }
+  label{
+    font-size: 14px;
+    font-family: Roboto Serif;
+  }
+  input{
+    border-color: #282824;
+  }
+  .filterGroupItem{
+    border-bottom: none !important;
+    button{
+      span{
+        padding: 0px;
+        font-family: Roboto Serif    ;
+        font-weight: 700;
+        color: black;
+        font-size: 14px;
+        margin-left: 0px;
+        margin-right: 10px;
+      }
+    }
+  }
+
+  .filterCheckbox{
+    label{
+      font-family:Roboto;
+      font-size: 14px;
+      font-weight: 400;
+    }
+    span{
+      color: #A3A199;
+      font-family:Roboto;
+      font-size: 14px;
+      font-weight: 300;
+    }
+  }
+}
+
 .Pagination{
   >a{
     color: #6C757D;
@@ -34,6 +83,9 @@
   border-radius: 18px;
   padding: 18px;
   min-height: 440px;
+  @media (max-width: '750px') {
+    width: 100%;
+  }
   &.Row{
     width: 100%;
     min-height: 244px;
@@ -55,9 +107,9 @@
   }
   h3{
     font-family: 'Roboto Serif';
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
-    line-height: 26.4px;
+    line-height: 24.4px;
     text-align: left;
     text-underline-position: from-font;
     text-decoration-skip-ink: none;

@@ -16,13 +16,13 @@ export default function EvidenceMapsFeed() {
         <BreadCrumbs
           path={[
             { path: "/", name: "HOME" },
-            { path: "/evidence-maps", name: "Evidence Maps" },
+            { path: "/journals", name: "Journals" },
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
-          <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
+          <h3 className={styles.TitleWithIcon}>
             <img src={"/local/svg/simbol.svg"} />
-            Evidence Maps Platform
+            Journals
           </h3>
 
           <div>
@@ -41,15 +41,9 @@ export default function EvidenceMapsFeed() {
           </div>
         </Flex>
         <Flex px={15} mb={40}>
-          <p className={styles.DescriptionThin}>
-            {globalConfig?.acf.evidence_maps_description}
-          </p>
+          <p>{globalConfig?.acf.journals_description}</p>
         </Flex>
-
-        <ResourcesFeedSection
-          thematicArea="TMGL-EV"
-          displayType={displayType}
-        />
+        <ResourcesFeedSection thematicArea="TMGL" displayType={displayType} />
       </Container>
     </>
   );
