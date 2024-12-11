@@ -15,7 +15,7 @@ export default function EventsFeed() {
         <BreadCrumbs
           path={[
             { path: "/", name: "HOME" },
-            { path: "/news", name: "News" },
+            { path: "/events", name: "Events" },
           ]}
           blackColor={true}
         />

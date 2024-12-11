@@ -17,15 +17,9 @@ import { useRouter } from "next/router";
 export default function App({ Component, pageProps }: AppProps) {
   const [warningModal, setWarningModal] = useState(false);
   const router = useRouter();
-  // const { lang } = router.query;
   const handleAgreeWarning = () => {
     setWarningModal(false);
   };
-
-  //Get the lang and put in a cookie
-  // useLayoutEffect(() => {
-  //   Cookies.set("lang", lang ? lang.toString() : "en");
-  // }, [lang]);
 
   useEffect(() => {
     setWarningModal(true);

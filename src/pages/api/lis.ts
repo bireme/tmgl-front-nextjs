@@ -10,23 +10,18 @@ export default async function handler(
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method not permited" });
   }
-
+  const { query, count, q, start } = req.body;
   const apiKey = decryptFromEnv(
     process.env.DIREV_API_KEY ? process.env.DIREV_API_KEY : ""
   );
 
-  const { query, lang, count } = req.body;
-
   try {
-    const response = await axios.get(
-      `${process.env.DIREV_API_URL}/search/?${query ? `q=${query}` : ""}&lang=${
-        lang ? lang : "en"
-      }&format=json&count=${count ? count : 10}`,
-      { headers: { apiKey: apiKey } }
-    );
+    if (!process.env.LIS_API_URL) throw new Error("LIS_API_URL not defined");
+    const url = `${process.env.LIS_API_URL}search/?fq=${query}&count=${count}&q=${q}&start=${start}`;
+    console.log(apiKey);
+    const response = await axios.get(url, { headers: { apiKey: apiKey } });
     return res.status(200).json({ data: response.data, status: true });
-  } catch (error: any) {
-    console.log(error);
-    return res.status(200).json({ message: error.message, status: false });
+  } catch (error) {
+    console.error("Error while fecthing lis resources:");
   }
 }

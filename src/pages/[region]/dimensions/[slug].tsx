@@ -84,8 +84,8 @@ export default function Dimensions() {
               </Grid.Col>
             </Grid>
           </Container>
-          <RelatedVideosSection />
-          <RecomendedArticlesSection callBack={setReleatedNumber} limit={3} />
+          {/* <RelatedVideosSection />
+          <RecomendedArticlesSection callBack={setReleatedNumber} limit={3} /> */}
         </>
       ) : (
         <LoadingOverlay visible={true} />

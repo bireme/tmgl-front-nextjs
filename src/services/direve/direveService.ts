@@ -1,4 +1,3 @@
-import { DireveApiResponse } from "../types/direveTypes";
 import { EventInterface } from "../types/eventInterface";
 import axios from "axios";
 
@@ -30,7 +29,7 @@ export class DireveService {
         };
       });
     } catch (error) {
-      console.error("Error while searching events:", error);
+      console.log(error);
       throw new Error("Error while searching events");
     }
   };

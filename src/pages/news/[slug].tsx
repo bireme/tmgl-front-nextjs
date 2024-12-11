@@ -106,8 +106,8 @@ export default function News() {
               dangerouslySetInnerHTML={{ __html: post.content.rendered }}
             />
           </Container>
-          <RelatedVideosSection />
-          <RecomendedArticlesSection limit={3} />
+          {/* <RelatedVideosSection />
+          <RecomendedArticlesSection limit={3} /> */}
         </>
       ) : (
         <LoadingOverlay visible={true} />

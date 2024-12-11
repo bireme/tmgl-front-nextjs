@@ -149,9 +149,12 @@ export const RelatedArticlesSection = ({
           postTypeSlug == "page" || postTypeSlug == "pages"
             ? "content"
             : postTypeSlug;
-        const href = `${region ? "/" + region : ""}/${
-          posttypeRouter ? posttypeRouter : "news"
-        }/${item.slug}`;
+
+        const href = item.acf?.external_link
+          ? item.acf.external_link
+          : `${region ? "/" + region : ""}/${
+              posttypeRouter ? posttypeRouter : "news"
+            }/${item.slug}`;
         return (
           <div key={key} className={styles.RelatedArticleLinkBox}>
             <a className={styles.RelatedArticleLink} href={`${href}`}>

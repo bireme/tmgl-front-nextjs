@@ -4,7 +4,7 @@ import { IconArrowRight, IconBrandYoutube } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 import { AcfEvents } from "@/services/types/homeAcf.dto";
-import { DireveService } from "@/services/direve/direveService";
+import { DireveService } from "@/services/direve/DireveService";
 import styles from "../../../styles/components/sections.module.scss";
 
 export const EventsSection = ({ background }: AcfEvents) => {

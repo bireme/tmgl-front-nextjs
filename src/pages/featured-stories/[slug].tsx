@@ -62,10 +62,10 @@ export default function FeaturedStories() {
               <SecondSection acf={acf} />
               <EvidenceMapsSection />
               <ThirdSection acf={acf} />
-              <div className={styles.Float}>
+              {/* <div className={styles.Float}>
                 <RelatedVideosSection />
                 <RecomendedArticlesSection limit={3} />
-              </div>
+              </div> */}
             </>
           ) : (
             <></>

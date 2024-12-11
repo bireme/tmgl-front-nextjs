@@ -7,7 +7,7 @@ import {
 import { useContext, useEffect, useState } from "react";
 
 import { ArticleDTO } from "@/services/types/rssFeedTypes";
-import { DireveService } from "@/services/direve/direveService";
+import { DireveService } from "@/services/direve/DireveService";
 import { EventInterface } from "@/services/types/eventInterface";
 import { FetchRSSFeed } from "@/services/rss/RssService";
 import { GlobalContext } from "@/contexts/globalContext";
@@ -58,7 +58,11 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
                     excerpt={decodeHtmlEntities(
                       removeHTMLTagsAndLimit(post.excerpt.rendered, 120)
                     )}
-                    href={`/${postType.replace("_", "-")}/${post.slug}`}
+                    href={
+                      post.acf?.external_link
+                        ? post.acf.external_link
+                        : `/${postType.replace("_", "-")}/${post.slug}`
+                    }
                     thumbnail={_api.findFeaturedMedia(post, "medium")}
                   />
                 );
