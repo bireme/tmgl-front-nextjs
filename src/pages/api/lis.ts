@@ -19,7 +19,9 @@ export default async function handler(
     if (!process.env.LIS_API_URL) throw new Error("LIS_API_URL not defined");
     const url = `${process.env.LIS_API_URL}search/${
       query ? `?fq=${query}&` : "?"
-    }count=${count}${q ? `&q=${q}` : ""}&start=${start}`;
+    }${count ? `count=${count}` : ""}${q ? `&q=${q}` : ""}${
+      start ? `&start=${start}` : ""
+    }`;
     console.log(url);
     const response = await axios.get(url, { headers: { apiKey: apiKey } });
     return res.status(200).json({ data: response.data, status: true });

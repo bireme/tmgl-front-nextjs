@@ -25,6 +25,9 @@
       a{
         &:last-of-type{
             color: black;
+            span{
+              color: black;
+            }
         }
         .separator{
             color: black;
@@ -40,8 +43,11 @@
         margin-right: 5px;
       }
       &:last-of-type{
-        a{
+        span{
           color: white;
+          span{
+            color: white;
+          }
         }
       }
     }

@@ -26,7 +26,7 @@ export const EventsSection = ({ background }: AcfEvents) => {
       className={styles.EventsSection}
       style={{
         backgroundImage: `linear-gradient(90deg, rgb(5 29 97 / 88%) 5.19%, rgba(12, 43, 100, 0) 100%), url('${
-          background ? background?.url : eventImage
+          background ? background?.url + ".webp" : eventImage
         }')`,
       }}
     >

@@ -16,8 +16,8 @@ export class LisService {
   ): Promise<LisApiResponse> => {
     let query = undefined;
     let q = undefined;
-    if (resource != "all" || (queryItems && queryItems.length > 0)) {
-      let query = `${resource != "all" ? `thematic_area:"${resource}` : ""}"${
+    if (resource != "all" || queryItems) {
+      query = `${resource != "all" ? `thematic_area:"${resource}` : ""}"${
         queryItems
           ? queryItems
               .map((k) => {
@@ -26,7 +26,7 @@ export class LisService {
               .join("&")
           : ""
       }`;
-      let q = "AND";
+      q = "AND";
     }
 
     const { data } = await axios.post<LisApiResponse>("/api/lis", {
@@ -34,6 +34,15 @@ export class LisService {
       count,
       start,
       q,
+    });
+    return data;
+  };
+
+  public getItem = async (id: string) => {
+    const query = `id:"${id}"`;
+    const { data } = await axios.post<LisApiResponse>("/api/lis", {
+      query,
+      q: "AND",
     });
     return data;
   };

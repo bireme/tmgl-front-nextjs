@@ -94,7 +94,9 @@ export const FooterLayout = () => {
               className={styles.FooterImages}
             >
               {globalConfig?.acf?.footerimages?.map((item, index) => {
-                return <img src={item.image} key={index} width={"80%"} />;
+                return (
+                  <img src={item.image + ".webp"} key={index} width={"80%"} />
+                );
               })}
             </Flex>
             <Grid className={styles.FooterMap} px={"25px"}>

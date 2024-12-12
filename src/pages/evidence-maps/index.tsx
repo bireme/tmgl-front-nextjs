@@ -14,6 +14,7 @@ export default function EvidenceMapsFeed() {
     <>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
+          blackColor
           path={[
             { path: "/", name: "HOME" },
             { path: "/evidence-maps", name: "Evidence Maps" },
@@ -49,6 +50,7 @@ export default function EvidenceMapsFeed() {
         <ResourcesFeedSection
           thematicArea="TMGL-EV"
           displayType={displayType}
+          resourceType="evidence-maps"
         />
       </Container>
     </>

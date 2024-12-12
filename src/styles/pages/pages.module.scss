@@ -32,6 +32,43 @@
   background-position: center center;
   background-repeat: no-repeat;
 }
+.MapDetails{
+  h5{
+    font-family: Roboto Serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-align: left;
+    color: #006CB0; 
+    margin-bottom: 10px; 
+    margin-top: 0px;
+  }
+  hr{
+    color: black;
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+  p{
+    margin-top: 0px;
+    margin-bottom: 5px;
+    font-family: Roboto;
+    font-size:  1.3rem;
+    font-weight: 400;
+    line-height: 2rem;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    b{
+      font-family: Roboto;
+      font-size: 1.3rem;
+      font-weight: 700;
+      line-height: 2rem;
+      text-align: left;
+      text-underline-position: from-font;
+      text-decoration-skip-ink: none;
+
+    }
+  }
+}
 .CatAndFunctions{
   .functions{
     span{
@@ -151,4 +188,46 @@
   border:solid #0093d5 2px;
   color: #0093d5;
   background-color: #C2ECFF;
+}
+
+.JournalTitleContent{
+  h1{
+    font-family: Roboto Serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    line-height: 55.2px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #006CB0;
+    margin-top: 0px;
+    margin-bottom: 0px;
+  }
+  p{
+    font-family: Roboto;
+    font-size: 1.3rem;
+    font-weight: 400;
+    line-height: 41.6px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+
+  }
+}
+
+.JournalDetails{
+  p{
+    b{
+      font-family: Roboto;
+      font-size: 1.3rem;
+      font-weight: 700;
+      line-height: 26.4px;
+      text-align: left;
+      text-underline-position: from-font;
+      text-decoration-skip-ink: none;
+    }
+    a{
+      color: #0093D5;
+    }
+  }
 }

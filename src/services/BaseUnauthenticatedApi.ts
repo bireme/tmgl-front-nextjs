@@ -57,7 +57,7 @@ export abstract class BaseUnauthenticatedApi {
         }
       }
     }
-    if (url) return url;
+    if (url) return url + ".webp";
     return "";
   }
 }

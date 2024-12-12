@@ -15,6 +15,7 @@ export interface ResourceCardProps {
   displayType: string;
   image?: string;
   tags?: Array<string>;
+  resourceType?: string;
 }
 export const ResourceCard = ({
   title,
@@ -112,10 +113,12 @@ export const Pagination = ({
 export interface ResourcesFeedSectionProps {
   thematicArea: string;
   displayType: string;
+  resourceType?: string;
 }
 export const ResourcesFeedSection = ({
   thematicArea,
   displayType,
+  resourceType,
 }: ResourcesFeedSectionProps) => {
   const [items, setItems] = useState<LisDocuments[]>([]);
   const [loading, setLoading] = useState(false);
@@ -187,7 +190,9 @@ export const ResourcesFeedSection = ({
                       key={k}
                       title={i.title}
                       excerpt={removeHTMLTagsAndLimit(i.abstract, 140)}
-                      link={i.link[0]}
+                      link={
+                        resourceType ? `${resourceType}/${i.id}` : i.link[0]
+                      }
                     />
                   );
                 })}

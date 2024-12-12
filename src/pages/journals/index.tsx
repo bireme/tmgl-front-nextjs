@@ -14,12 +14,13 @@ export default function EvidenceMapsFeed() {
     <>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
+          blackColor
           path={[
             { path: "/", name: "HOME" },
             { path: "/journals", name: "Journals" },
           ]}
         />
-        <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
+        <Flex justify={"space-between"} align={"center"} px={10} mt={0}>
           <h3 className={styles.TitleWithIcon}>
             <img src={"/local/svg/simbol.svg"} />
             Journals
@@ -43,7 +44,11 @@ export default function EvidenceMapsFeed() {
         <Flex px={15} mb={40}>
           <p>{globalConfig?.acf.journals_description}</p>
         </Flex>
-        <ResourcesFeedSection thematicArea="TMGL" displayType={displayType} />
+        <ResourcesFeedSection
+          resourceType="journals"
+          thematicArea="TMGL"
+          displayType={displayType}
+        />
       </Container>
     </>
   );
