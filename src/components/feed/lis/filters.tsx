@@ -8,7 +8,7 @@ import {
   stylesToString,
 } from "@mantine/core";
 
-import { queryType } from "@/services/lis/LisService";
+import { queryType } from "@/services/apiRepositories/RepositoriesServices";
 import styles from "../../../styles/components/resources.module.scss";
 import { useState } from "react";
 

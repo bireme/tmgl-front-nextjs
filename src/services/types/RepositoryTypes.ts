@@ -1,4 +1,4 @@
-export interface LisApiResponse {
+export interface RepositoryApiResponse {
   data: {
     diaServerResponse: DiaServerResponse[];
   };

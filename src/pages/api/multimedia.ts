@@ -16,8 +16,9 @@ export default async function handler(
   );
 
   try {
-    if (!process.env.LIS_API_URL) throw new Error("LIS_API_URL not defined");
-    const url = `${process.env.LIS_API_URL}search/${
+    if (!process.env.MULTIMEDIA_API_URL)
+      throw new Error("LIS_API_URL not defined");
+    const url = `${process.env.MULTIMEDIA_API_URL}search/${
       query ? `?fq=${query}&` : "?"
     }${count ? `count=${count}` : ""}${q ? `&q=${q}` : ""}${
       start ? `&start=${start}` : ""
@@ -25,6 +26,6 @@ export default async function handler(
     const response = await axios.get(url, { headers: { apiKey: apiKey } });
     return res.status(200).json({ data: response.data, status: true });
   } catch (error) {
-    console.error("Error while fecthing LIS resources:");
+    console.error("Error while fecthing MULTIMEDIA resources:");
   }
 }

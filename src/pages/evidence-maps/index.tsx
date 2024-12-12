@@ -48,6 +48,7 @@ export default function EvidenceMapsFeed() {
         </Flex>
 
         <ResourcesFeedSection
+          repository="lis"
           thematicArea="TMGL-EV"
           displayType={displayType}
           resourceType="evidence-maps"

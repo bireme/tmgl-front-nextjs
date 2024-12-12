@@ -3,8 +3,8 @@ import { IconPrinter, IconShare } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
-import { LisDocuments } from "@/services/types/lisTypes";
-import { LisService } from "@/services/lis/LisService";
+import { LisDocuments } from "@/services/types/RepositoryTypes";
+import { RepositoriesServices } from "@/services/apiRepositories/RepositoriesServices";
 import { ShareModal } from "@/components/share";
 import moment from "moment";
 import pageStyles from "../../styles/pages/pages.module.scss";
@@ -19,12 +19,12 @@ export default function EvidenceMap() {
   const {
     query: { id },
   } = router;
-  const _service = new LisService();
+  const _service = new RepositoriesServices();
 
   const getItem = async () => {
     try {
       if (id) {
-        const response = await _service.getItem(id.toString());
+        const response = await _service.getItem(id.toString(), "lis");
         setItem(response.data.diaServerResponse[0]?.response.docs[0]);
       }
     } catch (e) {

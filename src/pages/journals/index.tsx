@@ -47,6 +47,7 @@ export default function EvidenceMapsFeed() {
         <ResourcesFeedSection
           resourceType="journals"
           thematicArea="TMGL"
+          repository="journals"
           displayType={displayType}
         />
       </Container>

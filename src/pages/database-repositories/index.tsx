@@ -43,8 +43,12 @@ export default function EvidenceMapsFeed() {
         <Flex px={15} mb={40}>
           <p>{globalConfig?.acf.database_repositories_descriptions}</p>
         </Flex>
-
-        <ResourcesFeedSection thematicArea="all" displayType={displayType} />
+        {/* Precisa filtrar pelo database_source */}
+        <ResourcesFeedSection
+          repository="lis"
+          thematicArea="all"
+          displayType={displayType}
+        />
       </Container>
     </>
   );

@@ -17,7 +17,10 @@ const nextConfig = {
     RSS_FEED_URL: process.env.RSS_FEED_URL,
     DIREV_API_KEY: process.env.DIREV_API_KEY,
     DIREV_API_URL: process.env.DIREV_API_URL,
-    LIS_API_URL: process.env.LIS_API_URL
+    LIS_API_URL: process.env.LIS_API_URL,
+    JOURNALS_API_URL: process.env.JOURNALS_API_URL,
+    MULTIMEDIA_API_URL: process.env.MULTIMEDIA_API_URL,
+    
   },
 };
 

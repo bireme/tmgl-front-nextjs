@@ -1,7 +1,13 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Flex, Grid, GridCol, LoadingOverlay } from "@mantine/core";
-import { LisApiResponse, LisDocuments } from "@/services/types/lisTypes";
-import { LisService, queryType } from "@/services/lis/LisService";
+import {
+  LisDocuments,
+  RepositoryApiResponse,
+} from "@/services/types/RepositoryTypes";
+import {
+  RepositoriesServices,
+  queryType,
+} from "@/services/apiRepositories/RepositoriesServices";
 
 import { IconArrowRight } from "@tabler/icons-react";
 import { LisFilters } from "./filters";
@@ -113,18 +119,20 @@ export const Pagination = ({
 export interface ResourcesFeedSectionProps {
   thematicArea: string;
   displayType: string;
+  repository: string;
   resourceType?: string;
 }
 export const ResourcesFeedSection = ({
   thematicArea,
   displayType,
   resourceType,
+  repository,
 }: ResourcesFeedSectionProps) => {
   const [items, setItems] = useState<LisDocuments[]>([]);
   const [loading, setLoading] = useState(false);
-  const _lisService = new LisService();
+  const _lisService = new RepositoriesServices();
   const [filter, setFilter] = useState<queryType[]>([]);
-  const [lisResponse, setLisResponse] = useState<LisApiResponse>();
+  const [lisResponse, setLisResponse] = useState<RepositoryApiResponse>();
   const count = 12;
 
   const [page, setPage] = useState<number>(1);
@@ -135,6 +143,7 @@ export const ResourcesFeedSection = ({
       thematicArea,
       count,
       (page - 1) * count,
+      repository,
       filter && filter.length > 0 ? filter : undefined
     );
     setLisResponse(response);
