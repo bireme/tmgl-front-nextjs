@@ -7,7 +7,7 @@ import { GlobalContext } from "@/contexts/globalContext";
 import { ResourcesFeedSection } from "@/components/feed/lis/feedSection";
 import styles from "../../styles/pages/home.module.scss";
 
-export default function EvidenceMapsFeed() {
+export default function DatabaseRepositories() {
   const { globalConfig } = useContext(GlobalContext);
   const [displayType, setDisplayType] = useState<string>("column");
   return (

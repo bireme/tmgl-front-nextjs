@@ -3,6 +3,17 @@
   float: left;
 }
 
+.MediaCaption{
+  font-family: Roboto;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 28.8px;
+  text-align: left;
+  text-underline-position: from-font;
+  text-decoration-skip-ink: none;
+  color: #53524B;
+}
+
 .PostTitle{
   color: #006CB0;
   font-family: "Roboto Serif";
@@ -48,7 +59,7 @@
     margin-bottom: 20px;
   }
   p{
-    margin-top: 0px;
+    margin-top: 15px;
     margin-bottom: 5px;
     font-family: Roboto;
     font-size:  1.3rem;

@@ -151,7 +151,9 @@ export const HeaderLayout = () => {
             >
               <a
                 className={styles.ScrolledButton}
-                onClick={() => setOpened(opened ? false : true)}
+                onClick={() => {
+                  setOpened(opened ? false : true);
+                }}
               >
                 {opened ? <IconX /> : <IconMenu2 />}
               </a>
@@ -196,7 +198,10 @@ export const HeaderLayout = () => {
                     <IconMenu2
                       size={25}
                       stroke={1.5}
-                      onClick={() => setResponsiveMenuOpen(true)}
+                      onClick={() => {
+                        setResponsiveMenuOpen(true);
+                        setMegaMenuOpen(false);
+                      }}
                     />
                   </>
                 ) : (
@@ -402,6 +407,7 @@ export const HeaderLayout = () => {
                         setMegaMenuOpen(true);
                         setSelectedMenuItem(item);
                         setSelectedSubItem(undefined);
+                        setResponsiveMenuOpen(false);
                       } else {
                         if (item.url) {
                           router.push(parseWpLink(item.url));
@@ -422,10 +428,18 @@ export const HeaderLayout = () => {
                 return (
                   <a
                     key={key}
-                    onClick={() => {
-                      setMegaMenuOpen(true);
-                      setSelectedMenuItem(item);
-                      setSelectedSubItem(undefined);
+                    onClick={(e) => {
+                      if (item.children?.length > 0) {
+                        e.stopPropagation();
+                        setMegaMenuOpen(true);
+                        setSelectedMenuItem(item);
+                        setSelectedSubItem(undefined);
+                        setResponsiveMenuOpen(false);
+                      } else {
+                        if (item.url) {
+                          router.push(parseWpLink(item.url));
+                        }
+                      }
                     }}
                   >
                     {item.title}

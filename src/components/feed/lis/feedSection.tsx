@@ -9,112 +9,11 @@ import {
   queryType,
 } from "@/services/apiRepositories/RepositoriesServices";
 
-import { IconArrowRight } from "@tabler/icons-react";
-import { LisFilters } from "./filters";
+import { Pagination } from "../pagination";
+import { ResourceCard } from "../resourceitem";
+import { ResourceFilters } from "../filters";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
-
-export interface ResourceCardProps {
-  title: string;
-  excerpt: string;
-  link: string;
-  displayType: string;
-  image?: string;
-  tags?: Array<string>;
-  resourceType?: string;
-}
-export const ResourceCard = ({
-  title,
-  excerpt,
-  link,
-  displayType,
-  image,
-  tags,
-}: ResourceCardProps) => {
-  return (
-    <Flex
-      direction={displayType == "column" ? "column" : "row"}
-      align={displayType == "column" ? "flex-end" : "flex-start"}
-      justify={"space-between"}
-      gap={30}
-      className={`${styles.ResourceCard} ${
-        displayType == "column" ? "" : styles.Row
-      }`}
-    >
-      {image && displayType != "column" && (
-        <div
-          className={styles.CardImage}
-          style={{ backgroundImage: `url(${image})` }}
-        ></div>
-      )}
-      <div className={styles.CardContent}>
-        {image && displayType == "column" && (
-          <div
-            className={styles.CardImage}
-            style={{ backgroundImage: `url(${image})` }}
-          ></div>
-        )}
-        <h3>{title}</h3>
-        <p>{excerpt}</p>
-      </div>
-      <Flex
-        align={"flex-end"}
-        style={{ height: displayType == "column" ? "auto" : "100%" }}
-      >
-        <a href={link}>
-          {" "}
-          <IconArrowRight />{" "}
-        </a>
-      </Flex>
-    </Flex>
-  );
-};
-
-export interface PaginationProps {
-  currentIndex: number;
-  totalPages: number;
-  callBack: Dispatch<SetStateAction<number>>;
-}
-export const Pagination = ({
-  currentIndex,
-  totalPages,
-  callBack,
-}: PaginationProps) => {
-  return (
-    <Flex className={styles.Pagination} gap={5} wrap={"wrap"}>
-      <a
-        className={currentIndex - 1 < 1 ? styles.disabled : ""}
-        onClick={() => {
-          callBack(currentIndex - 1);
-        }}
-      >
-        Prev{" "}
-      </a>
-      {Array.from(
-        { length: totalPages ? (totalPages > 100 ? 100 : totalPages) : 1 },
-        (_, i) => i + 1
-      ).map((i, k) => {
-        return (
-          <a
-            key={k}
-            onClick={() => callBack(i)}
-            className={i == currentIndex ? styles.active : ""}
-          >
-            {i}
-          </a>
-        );
-      })}
-      <a
-        className={currentIndex + 1 > totalPages ? styles.disabled : ""}
-        onClick={() => {
-          callBack(currentIndex + 1);
-        }}
-      >
-        Next
-      </a>
-    </Flex>
-  );
-};
 
 export interface ResourcesFeedSectionProps {
   thematicArea: string;
@@ -168,7 +67,7 @@ export const ResourcesFeedSection = ({
       <LoadingOverlay visible={loading} style={{ position: "fixed" }} />
       <Grid>
         <Grid.Col span={{ md: 3, base: 12 }} order={{ base: 2, sm: 1 }}>
-          <LisFilters
+          <ResourceFilters
             contentThemeList={lisResponse?.data?.diaServerResponse[0]?.facet_counts.facet_fields.descriptor_filter.map(
               (i: any) => {
                 return {

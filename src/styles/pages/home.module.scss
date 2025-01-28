@@ -100,6 +100,10 @@
 
 .TitleWithIcon{
   @media (max-width: '750px') {
+    &.center{
+      text-align: center;
+      align-items: center;
+    }
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;

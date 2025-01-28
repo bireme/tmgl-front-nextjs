@@ -1,11 +1,8 @@
 import { LisDocuments, RepositoryApiResponse } from "../types/RepositoryTypes";
 
 import axios from "axios";
+import { queryType } from "../types/resources";
 
-export interface queryType {
-  parameter: string;
-  query: string;
-}
 export class RepositoriesServices {
   public getResources = async (
     thematic_area: string,

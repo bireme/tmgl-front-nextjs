@@ -15,7 +15,7 @@ export interface NewsItemProps {
   date: Date;
   title: string;
   href: string;
-  category?: string;
+  category?: string[];
 }
 export const NewsItem = ({
   imagePath,
@@ -47,9 +47,21 @@ export const NewsItem = ({
           </p>
           <h3>{title}</h3>
         </div>
-        <Badge color={"tmgl-red"} style={{ fontWeight: 400 }} px={15} py={10}>
-          {category}
-        </Badge>
+        <Flex gap={10}>
+          {category?.map((item, key) => {
+            return (
+              <Badge
+                key={key}
+                color={"tmgl-red"}
+                style={{ fontWeight: 400 }}
+                px={15}
+                py={10}
+              >
+                {item}
+              </Badge>
+            );
+          })}
+        </Flex>
       </Flex>
     </Flex>
   );
@@ -104,7 +116,7 @@ export const NewsSection = ({ region, title }: NewsSectionProps) => {
                       title={item.title.rendered}
                       date={moment(item.date).toDate()}
                       imagePath={_api.findFeaturedMedia(item, "full")}
-                      category={_api.getPostCategories(item)[0]}
+                      category={_api.getPostTags(item)}
                     />
                   );
                 })}

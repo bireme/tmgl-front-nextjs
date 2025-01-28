@@ -4,7 +4,7 @@ export interface RepositoryApiResponse {
   };
 }
 
-interface FacetField {
+export interface FacetField {
   name: string;
   count: number;
 }
@@ -25,37 +25,37 @@ export interface FacetCounts {
 }
 
 export interface FacetFields {
-  act_type: FacetField[];
-  aggregation_level: FacetField[];
-  audience: FacetField[];
-  collection: FacetField[];
-  country: FacetField[];
-  course_type: FacetField[];
-  database: FacetField[];
-  descriptor_filter: FacetField[];
-  event_type: FacetField[];
-  format: FacetField[];
-  indexed_database: FacetField[];
-  institution_thematic: FacetField[];
-  institution_type: FacetField[];
-  journal: FacetField[];
-  language: FacetField[];
-  learning_context: FacetField[];
-  learning_resource_type: FacetField[];
-  license: FacetField[];
-  media_collection_filter: FacetField[];
-  media_type_filter: FacetField[];
-  publication_country: FacetField[];
-  publication_language: FacetField[];
-  publication_type: FacetField[];
-  publication_year: FacetField[];
-  scope: FacetField[];
-  scope_region: FacetField[];
-  scope_state: FacetField[];
-  status: FacetField[];
-  tec_resource_type: FacetField[];
-  thematic_area_display: FacetField[];
-  type: FacetField[];
+  act_type: Array<String>;
+  aggregation_level: Array<String>;
+  audience: Array<String>;
+  collection: Array<String>;
+  country: Array<String>;
+  course_type: Array<String>;
+  database: Array<String>;
+  descriptor_filter: Array<String>;
+  event_type: Array<String>;
+  format: Array<String>;
+  indexed_database: Array<String>;
+  institution_thematic: Array<String>;
+  institution_type: Array<String>;
+  journal: Array<String>;
+  language: Array<String>;
+  learning_context: Array<String>;
+  learning_resource_type: Array<String>;
+  license: Array<String>;
+  media_collection_filter: Array<String>;
+  media_type_filter: Array<String>;
+  publication_country: Array<String>;
+  publication_language: Array<String>;
+  publication_type: Array<String>;
+  publication_year: Array<String>;
+  scope: Array<String>;
+  scope_region: Array<String>;
+  scope_state: Array<String>;
+  status: Array<String>;
+  tec_resource_type: Array<String>;
+  thematic_area_display: Array<String>;
+  type: Array<String>;
 }
 
 export interface ApiResponse {
@@ -82,6 +82,7 @@ export interface LisDocuments {
   source_type_display: string[];
   status: number;
   thematic_area: string[];
+  publication_country?: string[];
   thematic_area_display: string[];
   title: string;
   updated_date: string;

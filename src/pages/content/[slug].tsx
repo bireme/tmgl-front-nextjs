@@ -94,7 +94,7 @@ export default function Content() {
                 <div className={styles.PostProps}>
                   <span>
                     {moment(post.date).format("DD MMMM YYYY")} | Reading time:{" "}
-                    {extimateTime(countWords(post.content.rendered))} min (
+                    {extimateTime(countWords(post.content.rendered))} (
                     {countWords(post.content.rendered)} words){" "}
                   </span>
                 </div>

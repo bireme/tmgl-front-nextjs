@@ -93,7 +93,7 @@ export default function Home() {
           mt={80}
           className={styles.TrandingAndFeaturedContainer}
         >
-          <h2 className={styles.TitleWithIcon}>
+          <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
             <img src={"/local/svg/simbol.svg"} /> Recent literature reviews
           </h2>
           <div className={styles.TrendingText}>

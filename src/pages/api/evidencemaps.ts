@@ -19,7 +19,7 @@ export default async function handler(
   try {
     if (!process.env.BVSALUD_URL) throw new Error("BVSALUD_URL not defined");
     let baseUrl = process.env.BVSALUD_URL;
-    baseUrl += "title/v1/";
+    baseUrl += "resource/v1/";
 
     const url = `${baseUrl}search/${query ? `?fq=${query}&` : "?"}${
       count ? `count=${count}` : ""

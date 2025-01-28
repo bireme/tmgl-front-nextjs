@@ -1,31 +1,42 @@
-import { Container, Flex, Grid } from "@mantine/core";
+import { Badge, Container, Flex, Grid } from "@mantine/core";
 import { IconPrinter, IconShare } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
+import moment, { lang } from "moment";
+import { useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
-import { LisDocuments } from "@/services/types/RepositoryTypes";
-import { RepositoriesServices } from "@/services/apiRepositories/RepositoriesServices";
+import { EvidenceMapItemDto } from "@/services/types/evidenceMapsDto";
+import { EvidenceMapsService } from "@/services/apiRepositories/EvidenceMapsService";
+import { GlobalContext } from "@/contexts/globalContext";
 import { ShareModal } from "@/components/share";
-import moment from "moment";
+import { TableauEmbed } from "@stoddabr/react-tableau-embed-live";
+import { TagItem } from "@/components/feed/resourceitem";
 import pageStyles from "../../styles/pages/pages.module.scss";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
 export default function EvidenceMap() {
   const router = useRouter();
-  const [item, setItem] = useState<LisDocuments>();
+  const [item, setItem] = useState<EvidenceMapItemDto>();
   const [openShareModal, setOpenShareModal] = useState(false);
+  const [tags, setTags] = useState<Array<TagItem>>([]);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
+  const { language } = useContext(GlobalContext);
   const {
     query: { id },
   } = router;
-  const _service = new RepositoriesServices();
+  const _service = new EvidenceMapsService();
+  const tagColors = {
+    country: "#69A221",
+    descriptor: "#8B142A",
+    region: "#3F6114",
+  };
 
   const getItem = async () => {
     try {
       if (id) {
-        const response = await _service.getItem(id.toString(), "lis");
-        setItem(response.data.diaServerResponse[0]?.response.docs[0]);
+        const response = await _service.getItem(id.toString());
+        setItem(response.data[0]);
+        setTags(_service.formatTags(response.data[0], language));
       }
     } catch (e) {
       console.log("Error while trying to get Evidence Map");
@@ -57,7 +68,7 @@ export default function EvidenceMap() {
           Evidence Maps Platform
         </h5>
         <h3 className={`${styles.BlueTitle}`}>{item?.title}</h3>
-        <p className={`${styles.Description}`}>{item?.abstract}</p>
+        <p className={`${styles.Description}`}>{item?.excerpt}</p>
         <Flex
           className={styles.CatAndFunctions}
           direction={"row"}
@@ -66,8 +77,36 @@ export default function EvidenceMap() {
           py={20}
           mb={10}
         >
-          <div></div>
-          <Flex className={pageStyles.functions} gap={20}>
+          <div>
+            <Flex wrap={"wrap"} gap={5} className={styles.Tags}>
+              {tags
+                ?.filter((tag) => tag.type == "descriptor")
+                .map((tag) => (
+                  <Badge
+                    size={"lg"}
+                    key={tag.name}
+                    color={tagColors.descriptor}
+                  >
+                    {tag.name}
+                  </Badge>
+                ))}
+              {tags
+                ?.filter((tag) => tag.type == "region")
+                .map((tag) => (
+                  <Badge size={"lg"} key={tag.name} color={tagColors.region}>
+                    {tag.name}
+                  </Badge>
+                ))}
+              {tags
+                ?.filter((tag) => tag.type == "country")
+                .map((tag) => (
+                  <Badge size={"lg"} key={tag.name} color={tagColors.country}>
+                    {tag.name}
+                  </Badge>
+                ))}
+            </Flex>
+          </div>
+          <Flex className={pageStyles.functions} mb={20} gap={20}>
             <span
               onClick={() => {
                 setOpenShareModal(true);
@@ -81,38 +120,43 @@ export default function EvidenceMap() {
           </Flex>
         </Flex>
         <hr />
-        <Grid>
+        <Grid mt={40}>
           <Grid.Col span={{ md: 9.5, base: 12 }}>
-            <iframe
-              src={item?.link[0]}
-              width={"100%"}
-              height={"70vh"}
-              style={{ float: "left" }}
-            />
+            <div
+              className="App"
+              style={{
+                alignItems: "center",
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+              }}
+            >
+              {item?.links ? (
+                <TableauEmbed
+                  sourceUrl={_service.getTableauVixLink(item.links)}
+                />
+              ) : (
+                <></>
+              )}
+            </div>
           </Grid.Col>
           <Grid.Col span={{ md: 2.5, base: 12 }}>
             <div className={pageStyles.MapDetails}>
               <h5>Map Details</h5>
-              <p>
+              {/* <p>
                 <b>Related Documents</b>
-              </p>
+              </p> */}
               <hr />
               <p>
                 <b>Publication Date</b>
-              </p>
-              <p>
-                {moment(item?.created_date, "YYYYMMDD").format("MMM DD, YYYY")}
+                <br />
+                {moment(item?.created_at, "YYYYMMDD").format("MMM DD, YYYY")}
               </p>
               <p>
                 <b>Last Update</b>
+                <br />
+                {moment(item?.updated_at, "YYYYMMDD").format("MMM DD, YYYY")}
               </p>
-              <p>
-                {moment(item?.updated_date, "YYYYMMDD").format("MMM DD, YYYY")}
-              </p>
-              {/* <p>
-                <b>Visualizations</b>
-              </p>
-              <p></p> */}
             </div>
           </Grid.Col>
         </Grid>

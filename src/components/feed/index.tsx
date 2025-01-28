@@ -28,8 +28,12 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
 
   const getPosts = async (regions?: number[]) => {
     if (regions) setRegionsFilter(regions);
-
-    const data = await _api.getCustomPost(postType, 9, 0, regionsFilter);
+    const data = await _api.getCustomPost(
+      postType == "news" ? "posts" : postType,
+      9,
+      0,
+      regionsFilter
+    );
     setPosts(data);
   };
 
@@ -64,6 +68,7 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
                         : `/${postType.replace("_", "-")}/${post.slug}`
                     }
                     thumbnail={_api.findFeaturedMedia(post, "medium")}
+                    tags={_api.getPostTags(post)}
                   />
                 );
               })}

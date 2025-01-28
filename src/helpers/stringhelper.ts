@@ -8,7 +8,7 @@ export const parseWpLink = (wpLink: string, prefix?: string) => {
 };
 
 export function removeHTMLTagsAndLimit(text: string, limit: number): string {
-  const strippedText = text.replace(/(<([^>]+)>)/gi, "");
+  const strippedText = text?.replace(/(<([^>]+)>)/gi, "");
 
   const truncatedText =
     strippedText.length > limit
@@ -20,9 +20,28 @@ export function decodeHtmlEntities(text: string): string {
   return he.decode(text);
 }
 
-export function extimateTime(words: number): number {
-  //Todo: Calcular por hora minuto ou segundo
-  return words * 10;
+export function extimateTime(
+  words: number,
+  wordsPerMinute: number = 120
+): string {
+  // Calculate total time in seconds
+  const totalSeconds = Math.ceil((words / wordsPerMinute) * 60);
+
+  // Convert to hours, minutes, and seconds
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  // Build the formatted time string
+  const formattedTime = [
+    hours > 0 ? `${hours}h` : "", // Include hours if greater than 0
+    minutes > 0 ? `${minutes}min` : "", // Include minutes if greater than 0
+    `${seconds}s`, // Always include seconds
+  ]
+    .filter(Boolean)
+    .join(" "); // Filter out empty parts and join with a space
+
+  return formattedTime;
 }
 
 export function countWords(text: string): number {

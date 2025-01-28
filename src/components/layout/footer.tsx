@@ -99,7 +99,7 @@ export const FooterLayout = () => {
                 );
               })}
             </Flex>
-            <Grid className={styles.FooterMap} px={"25px"}>
+            <Grid className={styles.FooterMap} px={"25px"} mb={30}>
               <Grid.Col span={{ base: 12, md: 4 }}>
                 {footerLeft?.map((item, index) => {
                   return renderMenuItem(item, index);

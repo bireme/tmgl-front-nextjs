@@ -67,9 +67,9 @@ export const NewsletterSection = () => {
             </h5>
             <Flex gap={"10px"} style={{ width: "100%" }}>
               <TextInput
+                className={styles.InputForm}
                 key={form.key("email")}
                 {...form.getInputProps("email")}
-                style={{ width: "30%" }}
                 size={"md"}
               />
               <Button type={"submit"} size={"md"}>

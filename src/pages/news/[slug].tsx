@@ -5,11 +5,8 @@ import moment, { lang } from "moment";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
-import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
-import { RecomendedArticlesSection } from "@/components/sections/recomended";
-import { RelatedVideosSection } from "@/components/videos";
 import { ShareModal } from "@/components/share";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
@@ -59,7 +56,7 @@ export default function News() {
             <div className={styles.PostProps}>
               <span>
                 {moment(post.date).format("DD MMMM YYYY")} | Reading time:{" "}
-                {extimateTime(countWords(post.content.rendered))} min (
+                {extimateTime(countWords(post.content.rendered))} (
                 {countWords(post.content.rendered)} words){" "}
               </span>
             </div>
@@ -96,6 +93,22 @@ export default function News() {
                     )})`,
                   }}
                 />
+                {post._embedded ? (
+                  post._embedded["wp:featuredmedia"]?.length > 0 ? (
+                    <div
+                      className={styles.MediaCaption}
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          post._embedded["wp:featuredmedia"][0].caption
+                            .rendered,
+                      }}
+                    ></div>
+                  ) : (
+                    <></>
+                  )
+                ) : (
+                  <></>
+                )}
               </>
             ) : (
               <></>

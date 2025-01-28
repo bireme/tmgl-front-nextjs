@@ -61,5 +61,8 @@
   }
   .Controlls{
     width: 5%;
+    @media (max-width: '750px') {
+      display: none;
+    }
   }
 }

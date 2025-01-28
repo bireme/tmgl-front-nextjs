@@ -58,6 +58,11 @@ interface FeaturedMedia {
   id: number;
   media_details: MediaDetails;
   source_url: string;
+  caption: Caption;
+}
+
+interface Caption {
+  rendered: string;
 }
 
 interface Term {

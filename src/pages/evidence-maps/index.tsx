@@ -3,11 +3,11 @@ import { IconLayoutGrid, IconLayoutList } from "@tabler/icons-react";
 import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import { EvidenceMapsFeed } from "@/components/feed/evidencemaps";
 import { GlobalContext } from "@/contexts/globalContext";
-import { ResourcesFeedSection } from "@/components/feed/lis/feedSection";
 import styles from "../../styles/pages/home.module.scss";
 
-export default function EvidenceMapsFeed() {
+export default function EvidenceMaps() {
   const { globalConfig } = useContext(GlobalContext);
   const [displayType, setDisplayType] = useState<string>("column");
   return (
@@ -47,12 +47,7 @@ export default function EvidenceMapsFeed() {
           </p>
         </Flex>
 
-        <ResourcesFeedSection
-          repository="lis"
-          thematicArea="TMGL-EV"
-          displayType={displayType}
-          resourceType="evidence-maps"
-        />
+        <EvidenceMapsFeed displayType={displayType} />
       </Container>
     </>
   );

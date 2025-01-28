@@ -91,12 +91,30 @@ export class PostsApi extends BaseUnauthenticatedApi {
   }
 
   public getPostCategories(post: Post): string[] {
-    const categories = post._embedded?.["wp:term"]?.[0];
+    const categories = post._embedded?.["wp:term"]?.filter(
+      (i) => i[0]?.taxonomy == "category"
+    )[0];
 
     if (categories && categories.length > 0) {
-      return categories.map((category) => category.name);
+      return categories
+        .map((category) => category.name)
+        .filter((i) => i != "Uncategorized");
     } else {
-      return ["Uncategorized"];
+      return [];
+    }
+  }
+
+  public getPostTags(post: Post): string[] {
+    const categories = post._embedded?.["wp:term"]?.filter(
+      (i) => i[0]?.taxonomy == "post_tag"
+    )[0];
+
+    if (categories && categories.length > 0) {
+      return categories
+        .map((category) => category.name)
+        .filter((i) => i != "Uncategorized");
+    } else {
+      return [];
     }
   }
 }

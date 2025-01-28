@@ -23,7 +23,7 @@ export default function News() {
           News from WHO GTMC
         </h2>
         <p>{globalConfig?.acf.news_description}</p>
-        <FeedSection postType="posts" />
+        <FeedSection postType="news" />
       </Container>
     </>
   );

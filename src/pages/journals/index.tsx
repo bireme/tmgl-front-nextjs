@@ -3,11 +3,12 @@ import { IconLayoutGrid, IconLayoutList } from "@tabler/icons-react";
 import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import { EvidenceMapsFeed } from "@/components/feed/evidencemaps";
 import { GlobalContext } from "@/contexts/globalContext";
-import { ResourcesFeedSection } from "@/components/feed/lis/feedSection";
+import { JournalsFeed } from "@/components/feed/journals";
 import styles from "../../styles/pages/home.module.scss";
 
-export default function EvidenceMapsFeed() {
+export default function Journals() {
   const { globalConfig } = useContext(GlobalContext);
   const [displayType, setDisplayType] = useState<string>("column");
   return (
@@ -20,8 +21,8 @@ export default function EvidenceMapsFeed() {
             { path: "/journals", name: "Journals" },
           ]}
         />
-        <Flex justify={"space-between"} align={"center"} px={10} mt={0}>
-          <h3 className={styles.TitleWithIcon}>
+        <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
+          <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
             <img src={"/local/svg/simbol.svg"} />
             Journals
           </h3>
@@ -42,14 +43,12 @@ export default function EvidenceMapsFeed() {
           </div>
         </Flex>
         <Flex px={15} mb={40}>
-          <p>{globalConfig?.acf.journals_description}</p>
+          <p className={styles.DescriptionThin}>
+            {globalConfig?.acf.journals_description}
+          </p>
         </Flex>
-        <ResourcesFeedSection
-          resourceType="journals"
-          thematicArea="TMGL"
-          repository="journals"
-          displayType={displayType}
-        />
+
+        <JournalsFeed displayType={displayType} />
       </Container>
     </>
   );
