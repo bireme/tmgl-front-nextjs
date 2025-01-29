@@ -7,11 +7,10 @@ import {
 import { useContext, useEffect, useState } from "react";
 
 import { ArticleDTO } from "@/services/types/rssFeedTypes";
-import { DireveService } from "@/services/direve/DireveService";
+import { DireveService } from "@/services/direve/direveService";
 import { EventInterface } from "@/services/types/eventInterface";
 import { FetchRSSFeed } from "@/services/rss/RssService";
 import { GlobalContext } from "@/contexts/globalContext";
-import { NewsItem } from "../sections/news";
 import { Post } from "@/services/types/posts.dto";
 import { PostItem } from "./post/postItem";
 import { PostsApi } from "@/services/posts/PostsApi";

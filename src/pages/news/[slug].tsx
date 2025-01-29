@@ -1,4 +1,4 @@
-import { Container, Flex, LoadingOverlay } from "@mantine/core";
+import { Badge, Container, Flex, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare, IconShare3 } from "@tabler/icons-react";
 import { countWords, extimateTime } from "@/helpers/stringhelper";
 import moment, { lang } from "moment";
@@ -8,6 +8,7 @@ import { BreadCrumbs } from "@/components/breadcrumbs";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { ShareModal } from "@/components/share";
+import { TagItem } from "@/components/feed/resourceitem";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
@@ -17,12 +18,14 @@ export default function News() {
     query: { slug },
   } = router;
   const [post, setPost] = useState<Post>();
+  const [tags, setTags] = useState<Array<TagItem>>([]);
   const _api = new PostsApi();
   const [openShareModal, setOpenShareModal] = useState(false);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
   const getPost = useCallback(async (slug: string) => {
     try {
       const resp = await _api.getPost("posts", slug);
+      setTags(_api.formatTags(resp[0]));
       setPost(resp[0]);
     } catch {
       console.log("Error while trying to get dimension");
@@ -32,6 +35,12 @@ export default function News() {
   useEffect(() => {
     if (slug) getPost(slug.toString());
   }, [getPost, slug]);
+
+  const tagColors = {
+    country: "#69A221",
+    descriptor: "#8B142A",
+    region: "#3F6114",
+  };
 
   return (
     <>
@@ -68,7 +77,43 @@ export default function News() {
               py={20}
               mb={10}
             >
-              <div></div>
+              <div>
+                <Flex wrap={"wrap"} gap={5} className={styles.Tags}>
+                  {tags
+                    ?.filter((tag) => tag.type == "descriptor")
+                    .map((tag) => (
+                      <Badge
+                        size={"lg"}
+                        key={tag.name}
+                        color={tagColors.descriptor}
+                      >
+                        {tag.name}
+                      </Badge>
+                    ))}
+                  {tags
+                    ?.filter((tag) => tag.type == "region")
+                    .map((tag) => (
+                      <Badge
+                        size={"lg"}
+                        key={tag.name}
+                        color={tagColors.region}
+                      >
+                        {tag.name}
+                      </Badge>
+                    ))}
+                  {tags
+                    ?.filter((tag) => tag.type == "country")
+                    .map((tag) => (
+                      <Badge
+                        size={"lg"}
+                        key={tag.name}
+                        color={tagColors.country}
+                      >
+                        {tag.name}
+                      </Badge>
+                    ))}
+                </Flex>
+              </div>
               <Flex className={styles.functions} gap={20}>
                 <span
                   onClick={() => {

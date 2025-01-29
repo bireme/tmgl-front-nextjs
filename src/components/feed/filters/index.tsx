@@ -11,13 +11,20 @@ export interface FilterType {
 }
 export interface FilterOption {
   label: string;
-  ocorrences: number;
+  ocorrences?: number;
+  id?: string;
 }
 export interface FiltersFormProps {
   callBack: (q?: queryType[]) => {};
   filters?: FilterType[];
+  stringParameter?: string; //Parametro para busca aberta (muda em determinadas api's)
 }
-export const ResourceFilters = ({ callBack, filters }: FiltersFormProps) => {
+export const ResourceFilters = ({
+  callBack,
+  filters,
+  stringParameter,
+}: FiltersFormProps) => {
+  stringParameter = stringParameter ? stringParameter : "title";
   const [queryString, setQueryString] = useState<string>("");
   const [selectedFilters, setSelectedFilters] = useState<{
     [key: string]: string[];
@@ -26,21 +33,31 @@ export const ResourceFilters = ({ callBack, filters }: FiltersFormProps) => {
   const handleCheckboxChange = (
     filterLabel: string,
     itemLabel: string,
-    checked: boolean
+    checked: boolean,
+    itemId?: string
   ) => {
-    setSelectedFilters((prev) => ({
-      ...prev,
-      [filterLabel]: checked
-        ? [...(prev[filterLabel] || []), itemLabel]
-        : (prev[filterLabel] || []).filter((item) => item !== itemLabel),
-    }));
+    if (itemId) {
+      setSelectedFilters((prev) => ({
+        ...prev,
+        [filterLabel]: checked
+          ? [...(prev[filterLabel] || []), itemId]
+          : (prev[filterLabel] || []).filter((item) => item !== itemId),
+      }));
+    } else {
+      setSelectedFilters((prev) => ({
+        ...prev,
+        [filterLabel]: checked
+          ? [...(prev[filterLabel] || []), itemLabel]
+          : (prev[filterLabel] || []).filter((item) => item !== itemLabel),
+      }));
+    }
   };
 
   const submit = () => {
     let queryItems: queryType[] = [];
 
     if (queryString) {
-      queryItems.push({ parameter: "title", query: queryString });
+      queryItems.push({ parameter: stringParameter, query: queryString });
     }
 
     Object.entries(selectedFilters).forEach(([filterLabel, items]) => {
@@ -48,7 +65,6 @@ export const ResourceFilters = ({ callBack, filters }: FiltersFormProps) => {
         queryItems.push({ parameter: filterLabel, query: item });
       });
     });
-    console.log(queryItems);
     callBack(queryItems.length > 0 ? queryItems : undefined);
   };
 
@@ -92,20 +108,26 @@ export const ResourceFilters = ({ callBack, filters }: FiltersFormProps) => {
                         radius={"xs"}
                         size="xs"
                         checked={
-                          selectedFilters[f.queryType]?.includes(item.label) ||
-                          false
+                          item.id
+                            ? selectedFilters[f.queryType]?.includes(item.id) ||
+                              false
+                            : selectedFilters[f.queryType]?.includes(
+                                item.label
+                              ) || false
                         }
+                        value={item.id ? item.id : item.label}
                         label={item.label}
                         onChange={(event) =>
                           handleCheckboxChange(
                             f.queryType,
                             item.label,
-                            event.currentTarget.checked
+                            event.currentTarget.checked,
+                            item.id
                           )
                         }
                         key={k}
                       />
-                      <span>({item.ocorrences})</span>
+                      {item.ocorrences && <span>({item.ocorrences})</span>}
                     </Flex>
                   ))}
               </Accordion.Panel>

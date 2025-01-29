@@ -95,10 +95,13 @@
     min-height: 244px;
     .CardImage{
       height: 100%;
-      width: 20%;
+      width: 40%;
     }
     .CardContent{
       width: 80%;
+    }
+    .Tags{
+      display: none;
     }
   }
   .CardImage{

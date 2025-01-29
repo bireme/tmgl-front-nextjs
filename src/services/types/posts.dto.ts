@@ -78,6 +78,15 @@ interface Embedded {
   "wp:term": Term[][];
 }
 
+export interface ListPostsDto {
+  totalItems: number;
+  data: Post[];
+  regions: Term[];
+  tags: Term[];
+  dimensions: Term[];
+  countries: Term[];
+}
+
 export interface Post {
   id: number;
   date: string;

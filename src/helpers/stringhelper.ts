@@ -1,11 +1,27 @@
 import * as he from "he";
 
+import { queryType } from "@/services/types/resources";
+
 export const parseWpLink = (wpLink: string, prefix?: string) => {
   return wpLink
     .replace(process.env.WP_BASE_URL ? process.env.WP_BASE_URL : "", "")
     .replace("/es/", "/")
     .replace("", "");
 };
+
+export function createUrlParametersFilter(
+  queryItems: Array<queryType>
+): string {
+  let queryString = "";
+  for (let i = 0; i < queryItems.length; i++) {
+    if (i > 0 && queryItems[i - 1].parameter == queryItems[i].parameter) {
+      queryString += `,${queryItems[i].query}`;
+    } else {
+      queryString += `&${queryItems[i].parameter}=${queryItems[i].query}`;
+    }
+  }
+  return queryString;
+}
 
 export function removeHTMLTagsAndLimit(text: string, limit: number): string {
   const strippedText = text?.replace(/(<([^>]+)>)/gi, "");

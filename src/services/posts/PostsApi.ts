@@ -1,8 +1,14 @@
+import { ListPostsDto, Post } from "../types/posts.dto";
 import { TaxonomyDTO, TaxonomyTermDTO } from "../types/taxonomies.dto";
+import {
+  createUrlParametersFilter,
+  decodeHtmlEntities,
+} from "@/helpers/stringhelper";
 
 import { BaseUnauthenticatedApi } from "../BaseUnauthenticatedApi";
-import { Post } from "../types/posts.dto";
+import { TagItem } from "@/components/feed/resourceitem";
 import { TaxonomiesApi } from "../taxonomies/TaxonomiesApi";
+import { queryType } from "../types/resources";
 
 export class PostsApi extends BaseUnauthenticatedApi {
   public constructor(region?: string) {
@@ -59,6 +65,82 @@ export class PostsApi extends BaseUnauthenticatedApi {
       }`
     );
     return data;
+  }
+
+  public async listPosts(
+    postTypeSlug: string,
+    perPage: number,
+    page: number,
+    queryItems?: Array<queryType>
+  ): Promise<ListPostsDto> {
+    const response = await this._api.get<Post[]>(
+      `${postTypeSlug}?per_page=${
+        perPage ? perPage : process.env.POSTSPERPAGE
+      }&page=${page}&_embed&orderby=date&order=desc&acf_format=standard${
+        queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
+      }`
+    );
+
+    console.log(createUrlParametersFilter(queryItems ? queryItems : []));
+
+    const [regions, tags, dimensions, countries] = await Promise.all([
+      this._api.get("/region?per_page=100"),
+      this._api.get("/tags?per_page=100"),
+      this._api.get("/tm-dimension?per_page=100"),
+      this._api.get("/country?per_page=100"),
+    ]);
+
+    return {
+      data: response.data,
+      totalItems: parseInt(response.headers["x-wp-total"], 10),
+      regions: regions.data,
+      tags: tags.data,
+      dimensions: dimensions.data,
+      countries: countries.data,
+    };
+  }
+
+  public formatTags(item: Post): TagItem[] {
+    const countries = item._embedded?.["wp:term"]
+      .flat()
+      .filter((term) => term.taxonomy === "country");
+
+    let countryTags: TagItem[] = [];
+
+    if (countries) {
+      countryTags = countries.map((c) => ({
+        name: decodeHtmlEntities(c.name),
+        type: "country",
+      }));
+    }
+
+    const regions = item._embedded?.["wp:term"]
+      .flat()
+      .filter((term) => term.taxonomy === "region");
+
+    let regionTags: TagItem[] = [];
+
+    if (regions) {
+      regionTags = regions.map((c) => ({
+        name: decodeHtmlEntities(c.name),
+        type: "region",
+      }));
+    }
+
+    const tags = item._embedded?.["wp:term"]
+      .flat()
+      .filter((term) => term.taxonomy === "tm-dimension");
+
+    let tagsTags: TagItem[] = [];
+
+    if (tags) {
+      tagsTags = tags.map((c) => ({
+        name: decodeHtmlEntities(c.name),
+        type: "descriptor",
+      }));
+    }
+
+    return countryTags.concat(regionTags).concat(tagsTags);
   }
 
   public async getPost(postTypeSlug: string, slug: string) {
