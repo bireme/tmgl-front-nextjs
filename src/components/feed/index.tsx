@@ -7,8 +7,8 @@ import {
 import { useContext, useEffect, useState } from "react";
 
 import { ArticleDTO } from "@/services/types/rssFeedTypes";
-import { DireveService } from "@/services/direve/direveService";
-import { EventInterface } from "@/services/types/eventInterface";
+import { DireveService } from "@/services/apiRepositories/DireveService";
+import { EventInterface } from "@/services/types/eventsDto";
 import { FetchRSSFeed } from "@/services/rss/RssService";
 import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";

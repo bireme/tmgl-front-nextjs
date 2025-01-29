@@ -3,11 +3,12 @@ import { IconLayoutGrid, IconLayoutList } from "@tabler/icons-react";
 import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import { EventsFeed } from "@/components/feed/events";
 import { GlobalContext } from "@/contexts/globalContext";
 import { ResourcesFeedSection } from "@/components/feed/lis/feedSection";
 import styles from "../../styles/pages/home.module.scss";
 
-export default function EventsFeed() {
+export default function Events() {
   const { globalConfig } = useContext(GlobalContext);
   const [displayType, setDisplayType] = useState<string>("column");
   return (
@@ -43,12 +44,7 @@ export default function EventsFeed() {
         <Flex px={15} mb={40}>
           <p>{globalConfig?.acf.events_description}</p>
         </Flex>
-        <ResourcesFeedSection
-          resourceType="events"
-          thematicArea=""
-          repository="direv"
-          displayType={displayType}
-        />
+        <EventsFeed displayType={displayType} />
       </Container>
     </>
   );

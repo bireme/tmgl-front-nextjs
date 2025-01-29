@@ -1,36 +1,36 @@
-import {
-  EvidenceMapItemDto,
-  EvidenceMapsServiceDto,
-} from "@/services/types/evidenceMapsDto";
+import { EventsItemsDto, EventsServiceDto } from "@/services/types/eventsDto";
 import { Flex, Grid, LoadingOverlay } from "@mantine/core";
+import {
+  decodeHtmlEntities,
+  removeHTMLTagsAndLimit,
+} from "@/helpers/stringhelper";
 import { useContext, useEffect, useState } from "react";
 
-import { EvidenceMapsService } from "@/services/apiRepositories/EvidenceMapsService";
+import { DireveService } from "@/services/apiRepositories/DireveService";
 import { GlobalContext } from "@/contexts/globalContext";
 import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
 import { groupOccurrencesByRegion } from "../utils";
 import { queryType } from "@/services/types/resources";
-import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const EvidenceMapsFeed = ({ displayType }: { displayType: string }) => {
+export const EventsFeed = ({ displayType }: { displayType: string }) => {
   const [loading, setLoading] = useState(false);
-  const _service = new EvidenceMapsService();
+  const _service = new DireveService();
   const count = 12;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
-  const [items, setItems] = useState<EvidenceMapItemDto[]>([]);
-  const [apiResponse, setApiResponse] = useState<EvidenceMapsServiceDto>();
+  const [items, setItems] = useState<EventsItemsDto[]>([]);
+  const [apiResponse, setApiResponse] = useState<EventsServiceDto>();
   const { language } = useContext(GlobalContext);
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(1);
   };
-  const getEvidencemaps = async () => {
+  const getEvents = async () => {
     setLoading(true);
     try {
       const response = await _service.getResources(
@@ -43,13 +43,13 @@ export const EvidenceMapsFeed = ({ displayType }: { displayType: string }) => {
       setApiResponse(response);
     } catch (error) {
       console.log(error);
-      console.log("Error while fetching Evidencemaps");
+      console.log("Error while fetching Events");
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    getEvidencemaps();
+    getEvents();
   }, [page, filter]);
 
   return (
@@ -62,19 +62,17 @@ export const EvidenceMapsFeed = ({ displayType }: { displayType: string }) => {
               callBack={applyFilters}
               filters={[
                 {
-                  queryType: "publication_country",
+                  queryType: "country",
                   label: "Countries",
-                  items: apiResponse?.countryFilters
-                    .filter((c) => c.lang == language)
-                    .map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                    })),
+                  items: apiResponse?.countryFilters.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                  })),
                 },
                 {
-                  queryType: "descriptor",
-                  label: "Thematic Area",
-                  items: apiResponse?.thematicAreaFilters.map((c) => ({
+                  queryType: "descriptor_filter",
+                  label: "TM Dimensions",
+                  items: apiResponse?.descriptorFilter.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
                   })),
@@ -83,12 +81,10 @@ export const EvidenceMapsFeed = ({ displayType }: { displayType: string }) => {
                   queryType: "Region",
                   label: "Region",
                   items: groupOccurrencesByRegion(
-                    apiResponse?.countryFilters
-                      .filter((c) => c.lang == "en")
-                      .map((c) => ({
-                        label: c.type,
-                        ocorrences: c.count,
-                      }))
+                    apiResponse?.countryFilters.map((c) => ({
+                      label: c.type,
+                      ocorrences: c.count,
+                    }))
                   ),
                 },
               ]}
@@ -114,12 +110,15 @@ export const EvidenceMapsFeed = ({ displayType }: { displayType: string }) => {
                     <ResourceCard
                       displayType={displayType}
                       key={k}
-                      title={i.title}
+                      title={`${removeHTMLTagsAndLimit(
+                        i.title ? i.title : "",
+                        100
+                      )} ${i.title?.length > 100 ? "..." : ""}`}
                       tags={_service.formatTags(i, language)}
-                      excerpt={
-                        removeHTMLTagsAndLimit(i.excerpt, 180) +
-                        `${i.excerpt.length > 180 ? "..." : ""}`
-                      }
+                      excerpt={`${removeHTMLTagsAndLimit(
+                        i.observations ? i.observations : "",
+                        180
+                      )} ${i.observations?.length > 180 ? "..." : ""}`}
                       link={`/evidence-maps/${i.id}`}
                     />
                   );

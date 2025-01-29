@@ -17,7 +17,11 @@ export function getCountryTags(
 export function getRegionByCountry(countries: string[]): string[] {
   let regions = groupCountriesByRegion(CountriesRegions);
   const itemRegions = regions.filter((region) =>
-    region.countries.some((country) => countries.includes(country))
+    region.countries.some((country) =>
+      countries
+        .map((c) => c.toLocaleLowerCase())
+        .includes(country.toLocaleLowerCase())
+    )
   );
   return itemRegions.map((region) => region.region);
 }
@@ -32,7 +36,7 @@ export function groupOccurrencesByRegion(
     // Somar as ocorrências dos países que pertencem à região
     const totalOccurrences = filterOptions
       .filter((option) => countriesInRegion.includes(option.label))
-      .reduce((sum, option) => sum + option.ocorrences, 0);
+      .reduce((sum, option) => sum + (option.ocorrences || 0), 0);
 
     // Retornar um novo FilterOption para a região
     return {
@@ -56,6 +60,9 @@ function groupCountriesByRegion(
     if (region) {
       // Add the country (English name) to the existing region's countries list
       region.countries.push(country.en);
+      region.countries.push(country.es);
+      region.countries.push(country.pt);
+      region.countries.push(country.fr);
     } else {
       // Create a new region group
       acc.push({

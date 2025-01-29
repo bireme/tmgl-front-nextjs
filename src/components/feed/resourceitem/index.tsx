@@ -58,38 +58,40 @@ export const ResourceCard = ({
         <h3>{title}</h3>
         <p>{excerpt}</p>
       </div>
-      <Flex wrap={"wrap"} gap={5} className={styles.Tags}>
-        {tags
-          ?.filter((tag) => tag.type == "descriptor")
-          .map((tag) => (
-            <Badge size={"md"} key={tag.name} color={colors.descriptor}>
-              {tag.name}
-            </Badge>
-          ))}
-        {tags
-          ?.filter((tag) => tag.type == "region")
-          .map((tag) => (
-            <Badge size={"md"} key={tag.name} color={colors.region}>
-              {tag.name}
-            </Badge>
-          ))}
-        {tags
-          ?.filter((tag) => tag.type == "country")
-          .map((tag) => (
-            <Badge size={"md"} key={tag.name} color={colors.country}>
-              {tag.name}
-            </Badge>
-          ))}
-      </Flex>
-      <Flex
-        align={"flex-end"}
-        style={{ height: displayType == "column" ? "auto" : "100%" }}
-      >
-        <a href={link}>
-          {" "}
-          <IconArrowRight />{" "}
-        </a>
-      </Flex>
+      <div style={{ width: "100%" }}>
+        <Flex mb={20} wrap={"wrap"} gap={5} className={styles.Tags}>
+          {tags
+            ?.filter((tag) => tag.type == "descriptor")
+            .map((tag) => (
+              <Badge size={"md"} key={tag.name} color={colors.descriptor}>
+                {tag.name}
+              </Badge>
+            ))}
+          {tags
+            ?.filter((tag) => tag.type == "region")
+            .map((tag) => (
+              <Badge size={"md"} key={tag.name} color={colors.region}>
+                {tag.name}
+              </Badge>
+            ))}
+          {tags
+            ?.filter((tag) => tag.type == "country")
+            .map((tag) => (
+              <Badge size={"md"} key={tag.name} color={colors.country}>
+                {tag.name}
+              </Badge>
+            ))}
+        </Flex>
+        <Flex
+          align={"flex-end"}
+          style={{ height: displayType == "column" ? "auto" : "100%" }}
+        >
+          <a href={link}>
+            {" "}
+            <IconArrowRight />{" "}
+          </a>
+        </Flex>
+      </div>
     </Flex>
   );
 };

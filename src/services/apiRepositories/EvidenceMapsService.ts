@@ -33,12 +33,12 @@ export class EvidenceMapsService {
       queryItems
         ? queryItems
             .map((k) => {
-              return `${k.parameter}:"${k.query}"`;
+              return `${k.parameter}:"${k.query.replace('"', "")}"`;
             })
             .join("&")
         : ""
     }`;
-    q = "AND";
+    q = "*:*";
     const { data } = await axios.post<RepositoryApiResponse>(
       `/api/evidencemaps`,
       {
