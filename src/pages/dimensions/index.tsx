@@ -1,6 +1,5 @@
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { Container } from "@mantine/core";
-import { FeedSection } from "@/components/feed";
 import { GlobalContext } from "@/contexts/globalContext";
 import styles from "../../styles/pages/home.module.scss";
 import { useContext } from "react";
