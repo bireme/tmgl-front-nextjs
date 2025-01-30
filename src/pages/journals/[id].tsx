@@ -2,8 +2,8 @@ import { Container, Flex, Grid } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import { JournalsService } from "@/services/apiRepositories/JournalsService";
 import { LisDocuments } from "@/services/types/RepositoryTypes";
-import { RepositoriesServices } from "@/services/apiRepositories/RepositoriesServices";
 import pageStyles from "../../styles/pages/pages.module.scss";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
@@ -14,13 +14,13 @@ export default function Journal() {
   const {
     query: { id },
   } = router;
-  const _service = new RepositoriesServices();
+  const _service = new JournalsService();
 
   const getItem = async () => {
     try {
       if (id) {
-        const response = await _service.getItem(id.toString(), "journals");
-        setItem(response.data.diaServerResponse[0]?.response.docs[0]);
+        // const response = await _service.getItem(id.toString(), "journals");
+        // setItem(response.data.diaServerResponse[0]?.response.docs[0]);
       }
     } catch (e) {
       console.log("Error while trying to get Evidence Map");
