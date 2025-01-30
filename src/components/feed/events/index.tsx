@@ -119,7 +119,7 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
                         i.observations ? i.observations : "",
                         180
                       )} ${i.observations?.length > 180 ? "..." : ""}`}
-                      link={`/evidence-maps/${i.id}`}
+                      link={i.links ? i.links[0].url : ""}
                     />
                   );
                 })}

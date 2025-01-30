@@ -83,6 +83,9 @@
   border-radius: 18px;
   padding: 18px;
   min-height: 440px;
+  &.Small{
+    min-height: 140px;
+  }
   @media (max-width: '750px') {
     width: 100%;
   }

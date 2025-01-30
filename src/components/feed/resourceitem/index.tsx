@@ -11,6 +11,7 @@ export interface ResourceCardProps {
   image?: string;
   tags?: Array<TagItem>;
   resourceType?: string;
+  size?: string;
 }
 
 export interface TagItem {
@@ -25,6 +26,7 @@ export const ResourceCard = ({
   displayType,
   image,
   tags,
+  size,
 }: ResourceCardProps) => {
   const colors = {
     country: "#69A221",
@@ -40,7 +42,7 @@ export const ResourceCard = ({
       gap={30}
       className={`${styles.ResourceCard} ${
         displayType == "column" ? "" : styles.Row
-      }`}
+      } ${size == "Small" ? styles.Small : "auto"}`}
     >
       {image && displayType != "column" && (
         <div
@@ -58,7 +60,7 @@ export const ResourceCard = ({
         <h3>{title}</h3>
         <p>{excerpt}</p>
       </div>
-      <div style={{ width: "100%" }}>
+      <Flex style={{ width: "100%" }} direction={"column"}>
         <Flex mb={20} wrap={"wrap"} gap={5} className={styles.Tags}>
           {tags
             ?.filter((tag) => tag.type == "descriptor")
@@ -84,6 +86,7 @@ export const ResourceCard = ({
         </Flex>
         <Flex
           align={"flex-end"}
+          justify={"flex-end"}
           style={{ height: displayType == "column" ? "auto" : "100%" }}
         >
           <a href={link}>
@@ -91,7 +94,7 @@ export const ResourceCard = ({
             <IconArrowRight />{" "}
           </a>
         </Flex>
-      </div>
+      </Flex>
     </Flex>
   );
 };

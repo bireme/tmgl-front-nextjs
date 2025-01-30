@@ -1,4 +1,3 @@
-import { Country, queryType } from "../types/resources";
 import {
   EvidenceMapItemDto,
   EvidenceMapsServiceDto,
@@ -19,6 +18,7 @@ import { RepositoryApiResponse } from "../types/RepositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
 import moment from "moment";
+import { queryType } from "../types/resources";
 
 export class EvidenceMapsService {
   public getResources = async (

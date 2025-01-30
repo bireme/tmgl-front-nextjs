@@ -4,6 +4,7 @@ export interface JournalServiceDto {
   data: JournalItemDto[];
   languageFilters: MultLangFilter[];
   countryFilters: MultLangFilter[];
+  totalFound: number;
   thematicAreaFilters: FilterItem[];
 }
 
@@ -15,4 +16,5 @@ export interface JournalItemDto {
   created_at: Date;
   updated_at: Date;
   countries?: Country[];
+  descriptors?: string[];
 }

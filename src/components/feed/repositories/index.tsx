@@ -3,38 +3,34 @@ import {
   EvidenceMapsServiceDto,
 } from "@/services/types/evidenceMapsDto";
 import { Flex, Grid, LoadingOverlay } from "@mantine/core";
-import {
-  JournalItemDto,
-  JournalServiceDto,
-} from "@/services/types/JournalsDto";
-import { getCountryTags, groupOccurrencesByRegion } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
-import { JournalsService } from "@/services/apiRepositories/JournalsService";
 import { Pagination } from "../pagination";
+import { RepositorieService } from "@/services/apiRepositories/RepositoriesServices";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
+import { groupOccurrencesByRegion } from "../utils";
 import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const JournalsFeed = ({ displayType }: { displayType: string }) => {
+export const RepositoriesFeed = ({ displayType }: { displayType: string }) => {
   const [loading, setLoading] = useState(false);
-  const _service = new JournalsService();
+  const _service = new RepositorieService();
   const count = 12;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
-  const [items, setItems] = useState<JournalItemDto[]>([]);
-  const [apiResponse, setApiResponse] = useState<JournalServiceDto>();
+  const [items, setItems] = useState<EvidenceMapItemDto[]>([]);
+  const [apiResponse, setApiResponse] = useState<EvidenceMapsServiceDto>();
   const { language } = useContext(GlobalContext);
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(1);
   };
-  const getJournals = async () => {
+  const getEvidencemaps = async () => {
     setLoading(true);
     try {
       const response = await _service.getResources(
@@ -47,13 +43,13 @@ export const JournalsFeed = ({ displayType }: { displayType: string }) => {
       setApiResponse(response);
     } catch (error) {
       console.log(error);
-      console.log("Error while fetching journals");
+      console.log("Error while fetching Evidencemaps");
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    getJournals();
+    getEvidencemaps();
   }, [page, filter]);
 
   return (
@@ -66,24 +62,6 @@ export const JournalsFeed = ({ displayType }: { displayType: string }) => {
               callBack={applyFilters}
               filters={[
                 {
-                  queryType: "descriptor",
-                  label: "TM Dimensions",
-                  items: apiResponse?.thematicAreaFilters.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
-                },
-                {
-                  queryType: "Region",
-                  label: "Region",
-                  items: groupOccurrencesByRegion(
-                    apiResponse?.countryFilters.map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                    }))
-                  ),
-                },
-                {
                   queryType: "publication_country",
                   label: "Countries",
                   items: apiResponse?.countryFilters
@@ -92,6 +70,26 @@ export const JournalsFeed = ({ displayType }: { displayType: string }) => {
                       label: c.type,
                       ocorrences: c.count,
                     })),
+                },
+                {
+                  queryType: "descriptor",
+                  label: "Thematic Area",
+                  items: apiResponse?.thematicAreaFilters.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                  })),
+                },
+                {
+                  queryType: "region",
+                  label: "Region",
+                  items: groupOccurrencesByRegion(
+                    apiResponse?.countryFilters
+                      .filter((c) => c.lang == "en")
+                      .map((c) => ({
+                        label: c.type,
+                        ocorrences: c.count,
+                      }))
+                  ),
                 },
               ]}
             />
@@ -114,21 +112,21 @@ export const JournalsFeed = ({ displayType }: { displayType: string }) => {
                 {items.map((i, k) => {
                   return (
                     <ResourceCard
-                      size={"Small"}
                       displayType={displayType}
                       key={k}
                       title={i.title}
                       tags={_service.formatTags(i, language)}
                       excerpt={
-                        i.excerpt ? removeHTMLTagsAndLimit(i.excerpt, 140) : ""
+                        removeHTMLTagsAndLimit(i.excerpt, 180) +
+                        `${i.excerpt.length > 180 ? "..." : ""}`
                       }
-                      link={`/journals/${i.id}`}
+                      link={i.links ? i.links[0] : ""}
                     />
                   );
                 })}
               </>
             ) : (
-              <LoadingOverlay visible={true} />
+              <></>
             )}
           </Flex>
           <div className={styles.PaginationContainer}>

@@ -4,6 +4,7 @@ import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
+import { RepositoriesFeed } from "@/components/feed/repositories";
 import { ResourcesFeedSection } from "@/components/feed/lis/feedSection";
 import styles from "../../styles/pages/home.module.scss";
 
@@ -14,6 +15,7 @@ export default function DatabaseRepositories() {
     <>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
+          blackColor
           path={[
             { path: "/", name: "HOME" },
             { path: "/database-repositories", name: "Database Repositories" },
@@ -44,11 +46,7 @@ export default function DatabaseRepositories() {
           <p>{globalConfig?.acf.database_repositories_descriptions}</p>
         </Flex>
         {/* Precisa filtrar pelo database_source */}
-        <ResourcesFeedSection
-          repository="lis"
-          thematicArea="all"
-          displayType={displayType}
-        />
+        <RepositoriesFeed displayType={displayType} />
       </Container>
     </>
   );

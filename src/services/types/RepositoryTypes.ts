@@ -70,6 +70,7 @@ export interface LisDocuments {
   created_date: string;
   descriptor: string[];
   django_ct: string;
+  country?: string;
   django_id: string;
   id: string;
   language: string[];

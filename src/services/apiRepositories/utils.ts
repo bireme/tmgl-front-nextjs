@@ -30,10 +30,20 @@ export function parseCountries(item: LisDocuments): Country[] {
   return countries;
 }
 
+export function parseJournalCountries(item: LisDocuments): Country[] {
+  let countries: Country[] = [];
+  if (item.country) {
+    let countryLangs = parseCountry(item.country);
+    countries.push(countryLangs);
+  }
+
+  return countries;
+}
+
 export function parseTematicAreas(item: LisDocuments): Area[] {
   let areas: Area[] = [];
-  item.thematic_area_display?.forEach((country) => {
-    let areaLangs = parseTematicArea(country);
+  item.thematic_area_display?.forEach((desc) => {
+    let areaLangs = parseTematicArea(desc);
     areas.push(areaLangs);
   });
   return areas;

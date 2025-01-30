@@ -5,7 +5,6 @@ import { useContext, useState } from "react";
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { EventsFeed } from "@/components/feed/events";
 import { GlobalContext } from "@/contexts/globalContext";
-import { ResourcesFeedSection } from "@/components/feed/lis/feedSection";
 import styles from "../../styles/pages/home.module.scss";
 
 export default function Events() {
