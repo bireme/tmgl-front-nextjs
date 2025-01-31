@@ -17,7 +17,6 @@ import {
 } from "@/helpers/stringhelper";
 import { useContext, useEffect, useState } from "react";
 
-import Cookies from "js-cookie";
 import { GlobalContext } from "@/contexts/globalContext";
 import { MenuItemDTO } from "@/services/types/menus.dto";
 import { MenusApi } from "@/services/menus/MenusApi";
@@ -170,7 +169,7 @@ export const HeaderLayout = () => {
           className={styles.LogoContainer}
         >
           <Flex direction={"column"}>
-            <a href={`/${regionName ? regionName : ""}`}>
+            <a href={`/`}>
               <img src={logoSource} alt="brand-logo" id={"BrandLogo"} />
             </a>
           </Flex>

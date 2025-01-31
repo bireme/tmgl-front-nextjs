@@ -4,6 +4,7 @@ import { decodeHtmlEntities, removeHtmlTags } from "@/helpers/stringhelper";
 
 import { AcfEvents } from "@/services/types/homeAcf.dto";
 import styles from "../../../styles/components/sections.module.scss";
+import { useRouter } from "next/router";
 
 export const EventsSection = ({
   title,
@@ -14,6 +15,7 @@ export const EventsSection = ({
   background,
 }: AcfEvents) => {
   const eventImage = "/local/png/img-events.png";
+  const router = useRouter();
   return (
     <div
       className={styles.EventsSection}
@@ -47,7 +49,16 @@ export const EventsSection = ({
             </Flex>
           </div>
           <div>
-            <Flex mt={25} gap={10} align={"center"}>
+            <Flex
+              mt={25}
+              gap={10}
+              align={"center"}
+              onClick={() => {
+                router.push("/events");
+              }}
+              component="a"
+              style={{ cursor: "pointer" }}
+            >
               Explore all events{" "}
               <Button size={"xs"} p={5}>
                 <IconArrowRight stroke={1} />

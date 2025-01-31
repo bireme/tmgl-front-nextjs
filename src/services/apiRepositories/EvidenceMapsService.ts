@@ -96,7 +96,7 @@ export class EvidenceMapsService {
     let q = undefined;
 
     query = `thematic_area:"TMGL-EV"id:"${id}"`;
-    q = "AND";
+    q = "*:*";
     const { data } = await axios.post<RepositoryApiResponse>(
       `/api/evidencemaps`,
       {
