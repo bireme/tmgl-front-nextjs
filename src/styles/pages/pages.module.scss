@@ -95,6 +95,7 @@
       font-style: normal;
       font-weight: 400;
       line-height: 120%; 
+      
     }
   }
 }
@@ -240,5 +241,17 @@
     a{
       color: #0093D5;
     }
+  }
+}
+
+@media print {
+  .HeaderContent{
+    display: none !important;
+    &.scrolled{
+      display: none !important;
+    }
+  }
+  .FooterLayout{
+    display: none !important;
   }
 }

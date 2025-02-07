@@ -44,6 +44,9 @@ export default function EvidenceMap() {
   };
 
   useEffect(() => {
+    if (window) {
+      setFullUrl(window.location.href);
+    }
     getItem();
   }, [id]);
 
@@ -65,7 +68,7 @@ export default function EvidenceMap() {
           style={{ margin: "5px" }}
         >
           <img src={"/local/svg/simbol.svg"} />
-          Evidence Maps Platform
+          Evidence Maps
         </h5>
         <h3 className={`${styles.BlueTitle}`}>{item?.title}</h3>
         <p className={`${styles.Description}`}>{item?.excerpt}</p>
@@ -108,13 +111,14 @@ export default function EvidenceMap() {
           </div>
           <Flex className={pageStyles.functions} mb={20} gap={20}>
             <span
+              style={{ cursor: "pointer" }}
               onClick={() => {
                 setOpenShareModal(true);
               }}
             >
               <IconShare /> Share
             </span>
-            <span onClick={() => window.print()}>
+            <span style={{ cursor: "pointer" }} onClick={() => window.print()}>
               <IconPrinter /> Print
             </span>
           </Flex>

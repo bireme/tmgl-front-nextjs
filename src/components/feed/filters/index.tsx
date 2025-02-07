@@ -127,13 +127,13 @@ export const ResourceFilters = ({
                         }
                         key={k}
                       />
-                      {item.ocorrences ? (
+                      {/* {item.ocorrences ? (
                         <span>({item.ocorrences})</span>
                       ) : item.ocorrences == 0 ? (
                         <span>({item.ocorrences})</span>
                       ) : (
                         <></>
-                      )}
+                      )} */}
                     </Flex>
                   ))}
               </Accordion.Panel>

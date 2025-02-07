@@ -9,6 +9,8 @@ import styles from "../../styles/pages/home.module.scss";
 
 export default function EvidenceMaps() {
   const { globalConfig } = useContext(GlobalContext);
+  //const router = useRouter();
+  // const [country, region, thematic-area] = router.query;
   const [displayType, setDisplayType] = useState<string>("column");
   return (
     <>
@@ -23,7 +25,7 @@ export default function EvidenceMaps() {
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
             <img src={"/local/svg/simbol.svg"} />
-            Evidence Maps Platform
+            Evidence Maps
           </h3>
 
           <div>

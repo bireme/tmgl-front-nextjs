@@ -44,6 +44,7 @@ export const ShareModal = ({ link, open, setOpen }: ShareModalProps) => {
               router.push(`https://twitter.com/intent/tweet?text=${link}`);
             }}
           />
+
           <IconBrandLinkedin
             stroke={1.5}
             size={33}
