@@ -34,6 +34,10 @@ export const ResourceCard = ({
     region: "#3F6114",
   };
 
+  const applyTag = (tagType: string, tagName: string) => {
+    window.location.href = `${window.location.pathname}?${tagType}=${tagName}`;
+  };
+
   return (
     <Flex
       direction={displayType == "column" ? "column" : "row"}
@@ -65,21 +69,36 @@ export const ResourceCard = ({
           {tags
             ?.filter((tag) => tag.type == "descriptor")
             .map((tag) => (
-              <Badge size={"md"} key={tag.name} color={colors.descriptor}>
+              <Badge
+                onClick={() => applyTag("thematicArea", tag.name)}
+                size={"md"}
+                key={tag.name}
+                color={colors.descriptor}
+              >
                 {tag.name}
               </Badge>
             ))}
           {tags
             ?.filter((tag) => tag.type == "region")
             .map((tag) => (
-              <Badge size={"md"} key={tag.name} color={colors.region}>
+              <Badge
+                onClick={() => applyTag("region", tag.name)}
+                size={"md"}
+                key={tag.name}
+                color={colors.region}
+              >
                 {tag.name}
               </Badge>
             ))}
           {tags
             ?.filter((tag) => tag.type == "country")
             .map((tag) => (
-              <Badge size={"md"} key={tag.name} color={colors.country}>
+              <Badge
+                onClick={() => applyTag("country", tag.name)}
+                size={"md"}
+                key={tag.name}
+                color={colors.country}
+              >
                 {tag.name}
               </Badge>
             ))}

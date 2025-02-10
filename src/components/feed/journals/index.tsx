@@ -1,13 +1,8 @@
-import {
-  EvidenceMapItemDto,
-  EvidenceMapsServiceDto,
-} from "@/services/types/evidenceMapsDto";
 import { Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
   JournalItemDto,
   JournalServiceDto,
 } from "@/services/types/JournalsDto";
-import { getCountryTags, groupOccurrencesByRegion } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
@@ -15,11 +10,22 @@ import { JournalsService } from "@/services/apiRepositories/JournalsService";
 import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
+import { groupOccurrencesByRegion } from "../utils";
 import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const JournalsFeed = ({ displayType }: { displayType: string }) => {
+export const JournalsFeed = ({
+  displayType,
+  country,
+  region,
+  thematicArea,
+}: {
+  displayType: string;
+  country?: string;
+  region?: string;
+  thematicArea?: string;
+}) => {
   const [loading, setLoading] = useState(false);
   const _service = new JournalsService();
   const count = 12;
@@ -34,6 +40,37 @@ export const JournalsFeed = ({ displayType }: { displayType: string }) => {
     setFilter(queryList ? queryList : []);
     setPage(1);
   };
+
+  const initialFilters = () => {
+    if (country) {
+      applyFilters([
+        {
+          parameter: "publication_country",
+          query: country,
+        },
+      ]);
+    }
+    if (region) {
+      applyFilters([
+        {
+          parameter: "region",
+          query: region,
+        },
+      ]);
+    }
+    if (thematicArea) {
+      applyFilters([
+        {
+          parameter: "descriptor",
+          query: thematicArea,
+        },
+      ]);
+    }
+  };
+
+  useEffect(() => {
+    initialFilters();
+  }, [region, thematicArea, country]);
   const getJournals = async () => {
     setLoading(true);
     try {
@@ -50,6 +87,22 @@ export const JournalsFeed = ({ displayType }: { displayType: string }) => {
       console.log("Error while fetching journals");
     }
     setLoading(false);
+  };
+
+  const getJournalDescription = (item: JournalItemDto) => {
+    const lang = language ? language : "en";
+    let desc = "";
+    if (item.description) {
+      if (item.description.length > 0) {
+        let auxDesc = item.description.find((d) => d.lang == language)?.content;
+        if (auxDesc) {
+          desc = removeHTMLTagsAndLimit(auxDesc, 180);
+        } else {
+          desc = "";
+        }
+      }
+    }
+    return desc;
   };
 
   useEffect(() => {
@@ -74,7 +127,7 @@ export const JournalsFeed = ({ displayType }: { displayType: string }) => {
                   })),
                 },
                 {
-                  queryType: "Region",
+                  queryType: "region",
                   label: "Region",
                   items: groupOccurrencesByRegion(
                     apiResponse?.countryFilters.map((c) => ({
@@ -116,12 +169,11 @@ export const JournalsFeed = ({ displayType }: { displayType: string }) => {
                     <ResourceCard
                       size={"Small"}
                       displayType={displayType}
+                      image={i.logo ? i.logo : undefined}
                       key={k}
                       title={i.title}
                       tags={_service.formatTags(i, language)}
-                      excerpt={
-                        i.excerpt ? removeHTMLTagsAndLimit(i.excerpt, 140) : ""
-                      }
+                      excerpt={getJournalDescription(i)}
                       link={`/journals/${i.id}`}
                     />
                   );

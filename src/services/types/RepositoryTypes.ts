@@ -73,6 +73,8 @@ export interface LisDocuments {
   country?: string;
   django_id: string;
   id: string;
+  logo_image_file?: string;
+  description?: string[];
   language: string[];
   link: string[];
   mh: string[];

@@ -15,7 +15,17 @@ import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const EvidenceMapsFeed = ({ displayType }: { displayType: string }) => {
+export const EvidenceMapsFeed = ({
+  displayType,
+  country,
+  region,
+  thematicArea,
+}: {
+  displayType: string;
+  country?: string;
+  region?: string;
+  thematicArea?: string;
+}) => {
   const [loading, setLoading] = useState(false);
   const _service = new EvidenceMapsService();
   const count = 12;
@@ -32,6 +42,7 @@ export const EvidenceMapsFeed = ({ displayType }: { displayType: string }) => {
   };
   const getEvidencemaps = async () => {
     setLoading(true);
+    initialFilters();
     try {
       const response = await _service.getResources(
         count,
@@ -48,9 +59,36 @@ export const EvidenceMapsFeed = ({ displayType }: { displayType: string }) => {
     setLoading(false);
   };
 
+  const initialFilters = () => {
+    if (country) {
+      applyFilters([
+        {
+          parameter: "publication_country",
+          query: country,
+        },
+      ]);
+    }
+    if (region) {
+      applyFilters([
+        {
+          parameter: "region",
+          query: region,
+        },
+      ]);
+    }
+    if (thematicArea) {
+      applyFilters([
+        {
+          parameter: "descriptor",
+          query: thematicArea,
+        },
+      ]);
+    }
+  };
+
   useEffect(() => {
     getEvidencemaps();
-  }, [page, filter]);
+  }, [page, filter, thematicArea, region, country]);
 
   return (
     <>
@@ -80,7 +118,7 @@ export const EvidenceMapsFeed = ({ displayType }: { displayType: string }) => {
                   })),
                 },
                 {
-                  queryType: "Region",
+                  queryType: "region",
                   label: "Region",
                   items: groupOccurrencesByRegion(
                     apiResponse?.countryFilters
@@ -116,6 +154,7 @@ export const EvidenceMapsFeed = ({ displayType }: { displayType: string }) => {
                       key={k}
                       title={i.title}
                       tags={_service.formatTags(i, language)}
+                      image={i.image ? i.image : ""}
                       excerpt={
                         removeHTMLTagsAndLimit(i.excerpt, 180) +
                         `${i.excerpt.length > 180 ? "..." : ""}`

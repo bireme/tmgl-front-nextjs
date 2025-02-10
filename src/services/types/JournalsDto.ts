@@ -1,4 +1,9 @@
-import { Country, FilterItem, MultLangFilter } from "./resources";
+import {
+  Country,
+  FilterItem,
+  MultLangFilter,
+  MultLangStringAttr,
+} from "./resources";
 
 export interface JournalServiceDto {
   data: JournalItemDto[];
@@ -15,6 +20,8 @@ export interface JournalItemDto {
   links?: string[];
   created_at: Date;
   updated_at: Date;
+  logo?: string;
   countries?: Country[];
   descriptors?: string[];
+  description?: MultLangStringAttr[];
 }

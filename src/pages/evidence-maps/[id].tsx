@@ -35,11 +35,11 @@ export default function EvidenceMap() {
     try {
       if (id) {
         const response = await _service.getItem(id.toString());
-        setItem(response.data[0]);
-        setTags(_service.formatTags(response.data[0], language));
+        setItem(response);
+        setTags(_service.formatTags(response, language));
       }
     } catch (e) {
-      console.log("Error while trying to get Evidence Map");
+      console.log("Error while trying to get Evidence Map", e);
     }
   };
 
@@ -88,7 +88,11 @@ export default function EvidenceMap() {
                   <Badge
                     size={"lg"}
                     key={tag.name}
+                    style={{ cursor: "pointer" }}
                     color={tagColors.descriptor}
+                    onClick={() =>
+                      router.push(`/evidence-maps?thematicArea=${tag.name}`)
+                    }
                   >
                     {tag.name}
                   </Badge>
@@ -96,14 +100,30 @@ export default function EvidenceMap() {
               {tags
                 ?.filter((tag) => tag.type == "region")
                 .map((tag) => (
-                  <Badge size={"lg"} key={tag.name} color={tagColors.region}>
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      router.push(`/evidence-maps?region=${tag.name}`)
+                    }
+                    size={"lg"}
+                    key={tag.name}
+                    color={tagColors.region}
+                  >
                     {tag.name}
                   </Badge>
                 ))}
               {tags
                 ?.filter((tag) => tag.type == "country")
                 .map((tag) => (
-                  <Badge size={"lg"} key={tag.name} color={tagColors.country}>
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    onClick={() =>
+                      router.push(`/evidence-maps?country=${tag.name}`)
+                    }
+                    size={"lg"}
+                    key={tag.name}
+                    color={tagColors.country}
+                  >
                     {tag.name}
                   </Badge>
                 ))}
@@ -147,10 +167,28 @@ export default function EvidenceMap() {
           <Grid.Col span={{ md: 2.5, base: 12 }}>
             <div className={pageStyles.MapDetails}>
               <h5>Map Details</h5>
-              {/* <p>
-                <b>Related Documents</b>
-              </p> */}
-              <hr />
+              {item?.releatedDocuments ? (
+                <>
+                  <p>
+                    <b>Related Documents</b>
+                  </p>
+                  {item?.releatedDocuments?.map((doc, key) => (
+                    <a
+                      className={pageStyles.RelatedDocuments}
+                      href={doc.content}
+                      key={key}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      {doc.label}
+                    </a>
+                  ))}
+                  <hr />
+                </>
+              ) : (
+                <></>
+              )}
+
               <p>
                 <b>Publication Date</b>
                 <br />

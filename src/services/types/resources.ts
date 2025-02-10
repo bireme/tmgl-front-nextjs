@@ -27,6 +27,11 @@ export interface MultLangFilter {
   type: string;
 }
 
+export interface MultLangStringAttr {
+  lang: string;
+  content: string;
+}
+
 export interface queryType {
   parameter: string;
   query: string;

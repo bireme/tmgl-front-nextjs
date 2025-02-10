@@ -1,9 +1,17 @@
-import { Area, Country, MultLangFilter } from "../types/resources";
+import {
+  Area,
+  Country,
+  MultLangFilter,
+  MultLangStringAttr,
+} from "../types/resources";
 import {
   FacetField,
   FacetFields,
   LisDocuments,
 } from "../types/RepositoryTypes";
+
+import { ThematicAreaApiDto } from "../types/evidenceMapsDto";
+import { count } from "console";
 
 export function parseCountry(item: string): Country {
   let items = item.split("|");
@@ -30,6 +38,27 @@ export function parseCountries(item: LisDocuments): Country[] {
   return countries;
 }
 
+export function parseCountriesByAttr(item: string[]): Country[] {
+  let countries: Country[] = [];
+  item?.forEach((country) => {
+    let countryLangs = parseCountry(country);
+    countries.push(countryLangs);
+  });
+  return countries;
+}
+export function parseMultLangStringAttr(
+  items: Array<String>
+): MultLangStringAttr[] {
+  let langItems: MultLangStringAttr[] = [];
+  langItems = items.map((i) => {
+    let attrs = i.split("|");
+    return {
+      lang: attrs[0],
+      content: attrs[1],
+    };
+  });
+  return langItems;
+}
 export function parseJournalCountries(item: LisDocuments): Country[] {
   let countries: Country[] = [];
   if (item.country) {
@@ -44,6 +73,22 @@ export function parseTematicAreas(item: LisDocuments): Area[] {
   let areas: Area[] = [];
   item.thematic_area_display?.forEach((desc) => {
     let areaLangs = parseTematicArea(desc);
+    areas.push(areaLangs);
+  });
+  return areas;
+}
+
+export function parseThematicAreabyAttr(item: ThematicAreaApiDto[]): Area[] {
+  let areas: Area[] = [];
+  item?.forEach((desc) => {
+    let areaLangs = {
+      areaLangs: [
+        {
+          lang: "pt",
+          countryName: desc.text,
+        },
+      ],
+    };
     areas.push(areaLangs);
   });
   return areas;

@@ -5,10 +5,9 @@ import {
   getRegionByCountry,
 } from "@/components/feed/utils";
 import {
-  parseCountries,
   parseJournalCountries,
   parseMultLangFilter,
-  parseTematicAreas,
+  parseMultLangStringAttr,
 } from "./utils";
 
 import { EvidenceMapItemDto } from "../types/evidenceMapsDto";
@@ -53,10 +52,14 @@ export class JournalsService {
             title: item.title,
             excerpt: item.abstract,
             links: item.link,
+            logo: item.logo_image_file,
             descriptors: item.descriptor,
             countries: parseJournalCountries(item),
             created_at: moment(item?.created_date, "YYYYMMDD").toDate(),
             updated_at: moment(item?.updated_date, "YYYYMMDD").toDate(),
+            description: item.description
+              ? parseMultLangStringAttr(item.description)
+              : undefined,
           };
         }
       );

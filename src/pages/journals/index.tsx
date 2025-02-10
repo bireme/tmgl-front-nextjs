@@ -7,9 +7,12 @@ import { EvidenceMapsFeed } from "@/components/feed/evidencemaps";
 import { GlobalContext } from "@/contexts/globalContext";
 import { JournalsFeed } from "@/components/feed/journals";
 import styles from "../../styles/pages/home.module.scss";
+import { useRouter } from "next/router";
 
 export default function Journals() {
   const { globalConfig } = useContext(GlobalContext);
+  const router = useRouter();
+  const { country, region, thematicArea } = router.query;
   const [displayType, setDisplayType] = useState<string>("column");
   return (
     <>
@@ -48,7 +51,12 @@ export default function Journals() {
           </p>
         </Flex>
 
-        <JournalsFeed displayType={displayType} />
+        <JournalsFeed
+          thematicArea={thematicArea ? thematicArea.toString() : undefined}
+          country={country ? country.toString() : undefined}
+          region={region ? region.toString() : undefined}
+          displayType={displayType}
+        />
       </Container>
     </>
   );

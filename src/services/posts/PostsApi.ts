@@ -143,6 +143,17 @@ export class PostsApi extends BaseUnauthenticatedApi {
     return countryTags.concat(regionTags).concat(tagsTags);
   }
 
+  public async getPostByAcfMetaKey(
+    postTypeSlug: string,
+    metavalue: string,
+    metakey: string
+  ) {
+    const { data } = await this._api.get(
+      `${postTypeSlug}?meta_key=${metakey}&meta_value=${metavalue}&_embed&acf_format=standard`
+    );
+    return data;
+  }
+
   public async getPost(postTypeSlug: string, slug: string) {
     const { data } = await this._api.get(
       `${postTypeSlug}?slug=${slug}&_embed&acf_format=standard`
@@ -152,13 +163,16 @@ export class PostsApi extends BaseUnauthenticatedApi {
     if (foundPost.lang != this._lang) {
       //In that case the lang returned is not the same as the user is trying to access, may because de slug is in a diferent language
       //Lets see if there is any translation to this post
-      if (Object.keys(foundPost.translations).length > 0) {
-        if (foundPost.translations[this._lang]) {
-          const translated_postId: number = foundPost.translations[this._lang];
-          const transalated_response = await this._api.get(
-            `${postTypeSlug}/${translated_postId}?_embed&acf_format=standard`
-          );
-          return [transalated_response.data];
+      if (foundPost.translations) {
+        if (Object.keys(foundPost.translations).length > 0) {
+          if (foundPost.translations[this._lang]) {
+            const translated_postId: number =
+              foundPost.translations[this._lang];
+            const transalated_response = await this._api.get(
+              `${postTypeSlug}/${translated_postId}?_embed&acf_format=standard`
+            );
+            return [transalated_response.data];
+          }
         }
       }
     }

@@ -6,11 +6,12 @@ import { BreadCrumbs } from "@/components/breadcrumbs";
 import { EvidenceMapsFeed } from "@/components/feed/evidencemaps";
 import { GlobalContext } from "@/contexts/globalContext";
 import styles from "../../styles/pages/home.module.scss";
+import { useRouter } from "next/router";
 
 export default function EvidenceMaps() {
   const { globalConfig } = useContext(GlobalContext);
-  //const router = useRouter();
-  // const [country, region, thematic-area] = router.query;
+  const router = useRouter();
+  const { country, region, thematicArea } = router.query;
   const [displayType, setDisplayType] = useState<string>("column");
   return (
     <>
@@ -49,7 +50,12 @@ export default function EvidenceMaps() {
           </p>
         </Flex>
 
-        <EvidenceMapsFeed displayType={displayType} />
+        <EvidenceMapsFeed
+          thematicArea={thematicArea ? thematicArea.toString() : undefined}
+          country={country ? country.toString() : undefined}
+          region={region ? region.toString() : undefined}
+          displayType={displayType}
+        />
       </Container>
     </>
   );
