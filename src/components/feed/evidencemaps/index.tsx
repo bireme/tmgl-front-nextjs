@@ -100,6 +100,18 @@ export const EvidenceMapsFeed = ({
               callBack={applyFilters}
               filters={[
                 {
+                  queryType: "region",
+                  label: "Region",
+                  items: groupOccurrencesByRegion(
+                    apiResponse?.countryFilters
+                      .filter((c) => c.lang == "en")
+                      .map((c) => ({
+                        label: c.type,
+                        ocorrences: c.count,
+                      }))
+                  ),
+                },
+                {
                   queryType: "publication_country",
                   label: "Countries",
                   items: apiResponse?.countryFilters

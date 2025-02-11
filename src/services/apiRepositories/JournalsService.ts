@@ -26,7 +26,7 @@ export class JournalsService {
     let query = undefined;
     let q = undefined;
 
-    query = `${
+    query = `thematic_area:"TMGL"${
       queryItems
         ? queryItems
             .map((k) => {

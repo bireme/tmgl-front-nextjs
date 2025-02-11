@@ -138,9 +138,6 @@ export default function EvidenceMap() {
             >
               <IconShare /> Share
             </span>
-            <span style={{ cursor: "pointer" }} onClick={() => window.print()}>
-              <IconPrinter /> Print
-            </span>
           </Flex>
         </Flex>
         <hr />
