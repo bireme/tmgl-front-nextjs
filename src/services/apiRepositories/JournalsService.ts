@@ -21,7 +21,8 @@ export class JournalsService {
   public getResources = async (
     count: number,
     start: number,
-    queryItems?: Array<queryType>
+    queryItems?: Array<queryType>,
+    lang?: string
   ): Promise<JournalServiceDto> => {
     let query = undefined;
     let q = undefined;
@@ -41,6 +42,7 @@ export class JournalsService {
       count,
       start,
       q,
+      lang,
     });
 
     let responseItems: JournalItemDto[] = [];
@@ -48,7 +50,7 @@ export class JournalsService {
       responseItems = data.data.diaServerResponse[0].response.docs.map(
         (item) => {
           return {
-            id: item.id,
+            id: item.django_id,
             title: item.title,
             excerpt: item.abstract,
             links: item.link,
@@ -85,6 +87,13 @@ export class JournalsService {
         ),
     };
     return responseDto;
+  };
+
+  public getItem = async (id: string): Promise<void> => {
+    const { data } = await axios.post<any>(`/api/journals`, { id });
+    if (data) {
+      console.log(data);
+    }
   };
 
   public formatTags = (item: EvidenceMapItemDto, language: string) => {

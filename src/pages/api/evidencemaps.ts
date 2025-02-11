@@ -11,7 +11,7 @@ export default async function handler(
     return res.status(405).json({ message: "Method not permited" });
   }
 
-  const { query, count, q, start, id } = req.body;
+  const { query, count, q, start, id, lang } = req.body;
   const apiKey = decryptFromEnv(
     process.env.BVSALUD_API_KEY ? process.env.BVSALUD_API_KEY : ""
   );
@@ -20,7 +20,12 @@ export default async function handler(
     if (!process.env.BVSALUD_URL) throw new Error("BVSALUD_URL not defined");
     let baseUrl = process.env.BVSALUD_URL;
     if (id) {
-      let response = await getEvidencesMapItem(id, baseUrl, apiKey);
+      let response = await getEvidencesMapItem(
+        id,
+        baseUrl,
+        apiKey,
+        lang ? lang : "en"
+      );
       if (response)
         return res.status(200).json({ data: response.data, status: true });
       return res.status(404).json({ data: {}, status: false });
@@ -31,7 +36,8 @@ export default async function handler(
         q,
         start,
         baseUrl,
-        apiKey
+        apiKey,
+        lang ? lang : "en"
       );
       if (response)
         return res.status(200).json({ data: response.data, status: true });
@@ -46,9 +52,10 @@ export default async function handler(
 async function getEvidencesMapItem(
   id: string,
   baseUrl: string,
-  apiKey: string
+  apiKey: string,
+  lang: string
 ) {
-  baseUrl += `resource/v1/${id}/?format=json`;
+  baseUrl += `resource/v1/${id}/?format=json&lang=${lang}`;
   const response = await axios.get(baseUrl, { headers: { apiKey: apiKey } });
   return response;
 }
@@ -58,13 +65,14 @@ async function getEvidencesMaps(
   q: string,
   start: number,
   baseUrl: string,
-  apiKey: string
+  apiKey: string,
+  lang: string
 ) {
   baseUrl += "resource/v1/";
 
   const url = `${baseUrl}search/${query ? `?fq=${query}&` : "?"}${
     count ? `count=${count}` : ""
-  }${q ? `&q=${q}` : ""}${start ? `&start=${start}` : ""}`;
+  }${q ? `&q=${q}` : ""}${start ? `&start=${start}` : ""}&lang=${lang}`;
 
   const response = await axios.get(url, { headers: { apiKey: apiKey } });
   return response;

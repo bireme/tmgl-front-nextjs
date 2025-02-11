@@ -2,6 +2,7 @@ import { Container, Flex, Grid } from "@mantine/core";
 import { useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import { JournalItemDto } from "@/services/types/JournalsDto";
 import { JournalsService } from "@/services/apiRepositories/JournalsService";
 import { LisDocuments } from "@/services/types/RepositoryTypes";
 import pageStyles from "../../styles/pages/pages.module.scss";
@@ -10,7 +11,7 @@ import { useRouter } from "next/router";
 
 export default function Journal() {
   const router = useRouter();
-  const [item, setItem] = useState<LisDocuments>();
+  const [item, setItem] = useState<JournalItemDto>();
   const {
     query: { id },
   } = router;
@@ -19,8 +20,7 @@ export default function Journal() {
   const getItem = async () => {
     try {
       if (id) {
-        // const response = await _service.getItem(id.toString(), "journals");
-        // setItem(response.data.diaServerResponse[0]?.response.docs[0]);
+        const response = await _service.getItem(id.toString());
       }
     } catch (e) {
       console.log("Error while trying to get Evidence Map");
@@ -61,7 +61,7 @@ export default function Journal() {
               className={pageStyles.JournalTitleContent}
             >
               <h1>{item?.title}</h1>
-              <p>{item?.abstract}</p>
+              <p>{item?.excerpt}</p>
             </Flex>
           </Grid.Col>
         </Grid>
@@ -74,13 +74,13 @@ export default function Journal() {
               <b>URL</b>
             </p>
             <p>
-              {item?.link.map((link, k) => {
+              {/* {item?.link.map((link, k) => {
                 return (
                   <a href={link} key={k}>
                     {link}
                   </a>
                 );
-              })}
+              })} */}
             </p>
             <p>
               <b>ISSN</b>

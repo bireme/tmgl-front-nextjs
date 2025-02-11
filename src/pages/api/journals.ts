@@ -11,7 +11,7 @@ export default async function handler(
     return res.status(405).json({ message: "Method not permited" });
   }
 
-  const { query, count, q, start } = req.body;
+  const { query, count, q, start, lang, id } = req.body;
   const apiKey = decryptFromEnv(
     process.env.BVSALUD_API_KEY ? process.env.BVSALUD_API_KEY : ""
   );
@@ -19,15 +19,58 @@ export default async function handler(
   try {
     if (!process.env.BVSALUD_URL) throw new Error("BVSALUD_URL not defined");
     let baseUrl = process.env.BVSALUD_URL;
-    baseUrl += "title/v1/";
-
-    const url = `${baseUrl}search/${query ? `?fq=${query}&` : "?"}${
-      count ? `count=${count}` : ""
-    }${q ? `&q=${q}` : ""}${start ? `&start=${start}` : ""}`;
-
-    const response = await axios.get(url, { headers: { apiKey: apiKey } });
-    return res.status(200).json({ data: response.data, status: true });
+    if (!id) {
+      const response = await getJournals(
+        query,
+        count,
+        q,
+        start,
+        baseUrl,
+        apiKey,
+        lang ? lang : "en"
+      );
+      return res.status(200).json({ data: response.data, status: true });
+    } else {
+      let response = await getJournalItem(
+        id,
+        baseUrl,
+        apiKey,
+        lang ? lang : "en"
+      );
+      if (response)
+        return res.status(200).json({ data: response.data, status: true });
+      return res.status(404).json({ data: {}, status: false });
+    }
   } catch (error) {
-    console.error("Error while fecthing LIS resources:");
+    console.error("Error while fecthing TITLE resources:", error);
+    return res.status(400).json({ data: { error }, status: false });
   }
+}
+
+async function getJournals(
+  query: string,
+  count: number,
+  q: string,
+  start: number,
+  baseUrl: string,
+  apiKey: string,
+  lang: string
+) {
+  baseUrl += "title/v1/";
+  const url = `${baseUrl}search/${query ? `?fq=${query}&` : "?"}${
+    count ? `count=${count}` : ""
+  }${q ? `&q=${q}` : ""}${start ? `&start=${start}` : ""}&lang=${lang}`;
+  const response = await axios.get(url, { headers: { apiKey: apiKey } });
+  return response;
+}
+
+async function getJournalItem(
+  id: string,
+  baseUrl: string,
+  apiKey: string,
+  lang: string
+) {
+  baseUrl += `title/v1/${id}/?format=json&lang=${lang}`;
+  const response = await axios.get(baseUrl, { headers: { apiKey: apiKey } });
+  return response;
 }
