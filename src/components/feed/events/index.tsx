@@ -63,7 +63,7 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
               filters={[
                 {
                   queryType: "country",
-                  label: "Countries",
+                  label: "Publication Country",
                   items: apiResponse?.countryFilters.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
@@ -79,7 +79,7 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
                 },
                 {
                   queryType: "Region",
-                  label: "Who Regions",
+                  label: "WHO Regions",
                   items: groupOccurrencesByRegion(
                     apiResponse?.countryFilters.map((c) => ({
                       label: c.type,

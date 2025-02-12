@@ -100,20 +100,8 @@ export const EvidenceMapsFeed = ({
               callBack={applyFilters}
               filters={[
                 {
-                  queryType: "region",
-                  label: "Region",
-                  items: groupOccurrencesByRegion(
-                    apiResponse?.countryFilters
-                      .filter((c) => c.lang == "en")
-                      .map((c) => ({
-                        label: c.type,
-                        ocorrences: c.count,
-                      }))
-                  ),
-                },
-                {
                   queryType: "publication_country",
-                  label: "Countries",
+                  label: "Publication Country",
                   items: apiResponse?.countryFilters
                     .filter((c) => c.lang == language)
                     .map((c) => ({
@@ -131,7 +119,7 @@ export const EvidenceMapsFeed = ({
                 },
                 {
                   queryType: "region",
-                  label: "Who Regions",
+                  label: "WHO Regions",
                   items: groupOccurrencesByRegion(
                     apiResponse?.countryFilters
                       .filter((c) => c.lang == "en")

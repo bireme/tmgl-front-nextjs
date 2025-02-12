@@ -119,8 +119,16 @@ export const JournalsFeed = ({
               callBack={applyFilters}
               filters={[
                 {
+                  queryType: "descriptor",
+                  label: "Thematic Area",
+                  items: apiResponse?.thematicAreaFilters.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                  })),
+                },
+                {
                   queryType: "region",
-                  label: "Who Regions",
+                  label: "WHO Regions",
                   items: groupOccurrencesByRegion(
                     apiResponse?.countryFilters.map((c) => ({
                       label: c.type,
@@ -130,7 +138,7 @@ export const JournalsFeed = ({
                 },
                 {
                   queryType: "publication_country",
-                  label: "Countries",
+                  label: "Publication Country",
                   items: apiResponse?.countryFilters
                     .filter((c) => c.lang == language)
                     .map((c) => ({
