@@ -131,7 +131,7 @@ export const EvidenceMapsFeed = ({
                 },
                 {
                   queryType: "region",
-                  label: "Region",
+                  label: "Who Regions",
                   items: groupOccurrencesByRegion(
                     apiResponse?.countryFilters
                       .filter((c) => c.lang == "en")

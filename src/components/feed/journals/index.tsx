@@ -119,16 +119,8 @@ export const JournalsFeed = ({
               callBack={applyFilters}
               filters={[
                 {
-                  queryType: "descriptor",
-                  label: "TM Dimensions",
-                  items: apiResponse?.thematicAreaFilters.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
-                },
-                {
                   queryType: "region",
-                  label: "Region",
+                  label: "Who Regions",
                   items: groupOccurrencesByRegion(
                     apiResponse?.countryFilters.map((c) => ({
                       label: c.type,

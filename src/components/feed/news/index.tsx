@@ -81,7 +81,7 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                 },
                 {
                   queryType: "region",
-                  label: "Regions",
+                  label: "Who Regions",
                   items: apiResponse
                     ? apiResponse?.regions.map((c) => ({
                         label: c.name,
