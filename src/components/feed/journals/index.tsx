@@ -138,7 +138,7 @@ export const JournalsFeed = ({
                 },
                 {
                   queryType: "publication_country",
-                  label: "Publication Country",
+                  label: "Country o Publication",
                   items: apiResponse?.countryFilters
                     .filter((c) => c.lang == language)
                     .map((c) => ({
