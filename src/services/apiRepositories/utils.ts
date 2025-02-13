@@ -4,15 +4,18 @@ import {
   MultLangFilter,
   MultLangStringAttr,
 } from "../types/resources";
-import {
-  FacetField,
-  FacetFields,
-  LisDocuments,
-} from "../types/RepositoryTypes";
 
+import { JournalDescription } from "../types/JournalsDto";
+import { LisDocuments } from "../types/repositoryTypes";
 import { ThematicAreaApiDto } from "../types/evidenceMapsDto";
-import { count } from "console";
 
+export const findDescription = (
+  descriptions: JournalDescription[],
+  searchLang: string
+) => {
+  const description = descriptions.find((e) => e._i == searchLang)?.text;
+  return description ? description : "";
+};
 export function parseCountry(item: string): Country {
   let items = item.split("|");
   let countryLangs: Country = {
@@ -121,6 +124,7 @@ export function parseMultLangFilter(items: Array<String>): MultLangFilter[] {
             lang: lang.split("^")[0],
             count: parseInt(items[i][1]),
             type: lang.split("^")[1],
+            queryString: items[i][0],
           });
         }
       });

@@ -7,7 +7,12 @@ export class GlobalConfigApi extends BaseUnauthenticatedApi {
   }
 
   public async getGlobalConfig(): Promise<GlobalConfigAcf> {
-    const { data } = await this._api.get("");
-    return data;
+    try {
+      const { data } = await this._api.get("");
+      return data;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Error while connecting to wp");
+    }
   }
 }

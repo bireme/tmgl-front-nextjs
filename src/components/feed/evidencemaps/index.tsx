@@ -101,7 +101,7 @@ export const EvidenceMapsFeed = ({
               filters={[
                 {
                   queryType: "publication_country",
-                  label: "Country o Publication",
+                  label: "Country of Publication",
                   items: apiResponse?.countryFilters
                     .filter((c) => c.lang == language)
                     .map((c) => ({

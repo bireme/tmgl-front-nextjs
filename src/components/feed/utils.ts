@@ -38,10 +38,16 @@ export function groupOccurrencesByRegion(
       .filter((option) => countriesInRegion.includes(option.label))
       .reduce((sum, option) => sum + (option.ocorrences || 0), 0);
 
+    const queryStrings = filterOptions
+      .filter((option) => countriesInRegion.includes(option.label))
+      .map((q) => q.id)
+      .join(",");
+
     // Retornar um novo FilterOption para a região
     return {
       label: region.region,
       ocorrences: totalOccurrences,
+      id: "qsCountry-" + queryStrings,
     };
   });
 }
@@ -86,7 +92,9 @@ export function getTematicAreaTags(
 }
 
 export function getDescriptorTags(descriptorList: string[]): Array<TagItem> {
-  return descriptorList.map((c) => {
-    return { name: c, type: "descriptor" };
-  });
+  return descriptorList
+    .filter((c) => c != "")
+    .map((c) => {
+      return { name: c, type: "descriptor" };
+    });
 }

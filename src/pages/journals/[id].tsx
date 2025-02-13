@@ -1,10 +1,13 @@
-import { Container, Flex, Grid } from "@mantine/core";
-import { useEffect, useState } from "react";
+import { Badge, Container, Divider, Flex, Grid } from "@mantine/core";
+import { IconPrinter, IconShare } from "@tabler/icons-react";
+import { useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import { GlobalContext } from "@/contexts/globalContext";
 import { JournalItemDto } from "@/services/types/JournalsDto";
 import { JournalsService } from "@/services/apiRepositories/JournalsService";
-import { LisDocuments } from "@/services/types/RepositoryTypes";
+import { ShareModal } from "@/components/share";
+import { TagItem } from "@/components/feed/resourceitem";
 import pageStyles from "../../styles/pages/pages.module.scss";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
@@ -12,22 +15,36 @@ import { useRouter } from "next/router";
 export default function Journal() {
   const router = useRouter();
   const [item, setItem] = useState<JournalItemDto>();
+  const [fullUrl, setFullUrl] = useState<string | null>(null);
   const {
     query: { id },
   } = router;
+  const [openShareModal, setOpenShareModal] = useState(false);
   const _service = new JournalsService();
-
+  const { language } = useContext(GlobalContext);
+  const [tags, setTags] = useState<Array<TagItem>>([]);
+  const tagColors = {
+    country: "#69A221",
+    descriptor: "#8B142A",
+    region: "#3F6114",
+  };
   const getItem = async () => {
     try {
       if (id) {
         const response = await _service.getItem(id.toString());
+        setItem(response);
+        setTags(_service.formatTags(response, language));
+        console.log(_service.formatTags(response, language));
       }
     } catch (e) {
-      console.log("Error while trying to get Evidence Map");
+      console.log("Error while trying to get Journal");
     }
   };
 
   useEffect(() => {
+    if (window) {
+      setFullUrl(window.location.href);
+    }
     getItem();
   }, [id]);
 
@@ -51,47 +68,158 @@ export default function Journal() {
           <img src={"/local/svg/simbol.svg"} />
           Journals
         </h5>
-        <Grid mt={30} mb={30}>
-          <Grid.Col span={{ base: 12, md: 3.5 }} pr={{ md: 15 }}>
-            <img src={"/local/jpeg/journal.jpeg"} width={"100%"} />
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 8.5 }} pl={{ md: 10 }}>
+        <Grid mt={30} mb={0}>
+          {item?.logo ? (
+            <>
+              <Grid.Col span={{ base: 12, md: 3.5 }} pr={{ md: 15 }}>
+                <img src={"/local/jpeg/journal.jpeg"} width={"100%"} />
+              </Grid.Col>
+            </>
+          ) : (
+            <></>
+          )}
+
+          <Grid.Col
+            span={{ base: 12, md: item?.logo ? 8.5 : 12 }}
+            pl={{ md: 10 }}
+          >
             <Flex
               direction={"column"}
               className={pageStyles.JournalTitleContent}
             >
               <h1>{item?.title}</h1>
-              <p>{item?.excerpt}</p>
+              <p>
+                {item?.description?.find((d) => d.lang == language)?.content}
+              </p>
             </Flex>
           </Grid.Col>
         </Grid>
+        <Flex wrap={"wrap"} gap={5} mb={40} className={styles.Tags}>
+          {tags
+            ?.filter((tag) => tag.type == "descriptor")
+            .map((tag) => (
+              <Badge
+                size={"lg"}
+                key={tag.name}
+                style={{ cursor: "pointer" }}
+                color={tagColors.descriptor}
+                onClick={() =>
+                  router.push(`/journals?thematicArea=${tag.name}`)
+                }
+              >
+                {tag.name}
+              </Badge>
+            ))}
+          {tags
+            ?.filter((tag) => tag.type == "region")
+            .map((tag) => (
+              <Badge
+                style={{ cursor: "pointer" }}
+                onClick={() => router.push(`/journals?region=${tag.name}`)}
+                size={"lg"}
+                key={tag.name}
+                color={tagColors.region}
+              >
+                {tag.name}
+              </Badge>
+            ))}
+          {tags
+            ?.filter((tag) => tag.type == "country")
+            .map((tag) => (
+              <Badge
+                style={{ cursor: "pointer" }}
+                onClick={() => router.push(`/journals?country=${tag.name}`)}
+                size={"lg"}
+                key={tag.name}
+                color={tagColors.country}
+              >
+                {tag.name}
+              </Badge>
+            ))}
+        </Flex>
         <h4 className={`${styles.BlueTitle} ${styles.small}`}>
           Journal Details
         </h4>
-        <Grid className={pageStyles.JournalDetails}>
-          <Grid.Col span={{ base: 12, md: 4 }} pr={{ md: 15 }}>
+        <Grid className={pageStyles.JournalDetails} mt={-40}>
+          <Grid.Col span={{ base: 12, md: 6 }} pr={{ md: 15 }}>
             <p>
               <b>URL</b>
             </p>
-            <p>
-              {/* {item?.link.map((link, k) => {
+            <p className={pageStyles.JournalDetail}>
+              {item?.links?.map((link, k) => {
                 return (
                   <a href={link} key={k}>
                     {link}
                   </a>
                 );
-              })} */}
+              })}
             </p>
             <p>
               <b>ISSN</b>
             </p>
-            <p>
-              <b>Language</b>
-            </p>
+            <p className={pageStyles.JournalDetail}>{item?.issn}</p>
+            {item?.language ? (
+              <>
+                <p>
+                  <b>Language</b>
+                </p>
+                <p className={pageStyles.JournalDetail}>
+                  {item?.language
+                    ? item.language.find((i) => i.lang == language)?.content
+                    : ""}
+                </p>{" "}
+              </>
+            ) : (
+              <></>
+            )}
+            {item?.coverage ? (
+              <p>
+                <b>Coverage</b>
+              </p>
+            ) : (
+              <></>
+            )}
+            {item?.coverage ? (
+              <p className={pageStyles.JournalDetail}>{item?.coverage}</p>
+            ) : (
+              <></>
+            )}
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 8 }} pl={{ md: 10 }}></Grid.Col>
         </Grid>
+        <Flex
+          className={pageStyles.functions}
+          mb={20}
+          gap={20}
+          align={"flex-end"}
+          justify={"flex-end"}
+        >
+          <Flex
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              setOpenShareModal(true);
+            }}
+            gap={5}
+          >
+            <IconShare /> Share
+          </Flex>
+          <Flex
+            style={{ cursor: "pointer" }}
+            onClick={() => {
+              () => window.print();
+            }}
+            gap={5}
+          >
+            <IconPrinter /> Print
+          </Flex>
+        </Flex>
+        <Divider />
       </Container>
+      <ShareModal
+        open={openShareModal}
+        setOpen={setOpenShareModal}
+        link={fullUrl ? fullUrl : ""}
+      />
     </>
   );
 }

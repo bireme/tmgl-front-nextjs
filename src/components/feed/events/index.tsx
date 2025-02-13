@@ -63,7 +63,7 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
               filters={[
                 {
                   queryType: "country",
-                  label: "Country o Publication",
+                  label: "Country of Publication",
                   items: apiResponse?.countryFilters.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,

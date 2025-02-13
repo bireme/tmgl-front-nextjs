@@ -12,7 +12,7 @@ export abstract class BaseUnauthenticatedApi {
   public constructor(endpoint: string, region?: string) {
     const cookieLang = Cookies.get("lang");
     this._lang = cookieLang ? cookieLang : "en";
-    if (!process.env.NEXT_PUBLIC_API_BASE_URL) {
+    if (!process.env.WP_BASE_URL) {
       throw new Error("env variable NEXT_PUBLIC_API_BASE_URL not set");
     }
     this._api = axios.create({

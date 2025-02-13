@@ -233,6 +233,12 @@
 
 .JournalDetails{
   p{
+    margin-bottom: 0px;
+    margin-top: 15px;
+    &.JournalDetail{
+      margin-top: 0px;
+      margin-bottom: 0px;
+    }
     b{
       font-family: Roboto;
       font-size: 1.3rem;
@@ -246,6 +252,7 @@
       color: #0093D5;
     }
   }
+  
 }
 
 @media print {

@@ -1,7 +1,5 @@
 import { Area, Country, FilterItem, MultLangFilter } from "./resources";
 
-import EvidenceMap from "@/pages/evidence-maps/[id]";
-
 export interface EvidenceMapApiDto {
   data: EvidenceMapApiResponseDto;
 }

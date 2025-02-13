@@ -1,8 +1,8 @@
 import { Accordion, Button, Checkbox, Flex, Input } from "@mantine/core";
+import { useEffect, useState } from "react";
 
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
-import { useState } from "react";
 
 export interface FilterType {
   label: string;
@@ -30,6 +30,15 @@ export const ResourceFilters = ({
     [key: string]: string[];
   }>({});
 
+  /**
+   * Handles changes in the state of a checkbox, updating the selectedFilters state
+   * accordingly.
+   *
+   * @param {string} filterLabel - The label of the filter group
+   * @param {string} itemLabel - The label of the item
+   * @param {boolean} checked - Whether the checkbox is checked
+   * @param {string} [itemId] - Optional ID of the item
+   */
   const handleCheckboxChange = (
     filterLabel: string,
     itemLabel: string,
@@ -53,6 +62,10 @@ export const ResourceFilters = ({
     }
   };
 
+  /**
+   * Submits the filters to the callback function, converting the state into a array of queryType
+   * @returns {void}
+   */
   const submit = () => {
     let queryItems: queryType[] = [];
 
@@ -62,7 +75,14 @@ export const ResourceFilters = ({
 
     Object.entries(selectedFilters).forEach(([filterLabel, items]) => {
       items.forEach((item) => {
-        queryItems.push({ parameter: filterLabel, query: item });
+        if (!item.includes("qsCountry"))
+          queryItems.push({ parameter: filterLabel, query: item });
+        else {
+          let qsCountries = item.replace("qsCountry-", "").split(",");
+          qsCountries.forEach((q) => {
+            queryItems.push({ parameter: filterLabel, query: q });
+          });
+        }
       });
     });
     callBack(queryItems.length > 0 ? queryItems : undefined);

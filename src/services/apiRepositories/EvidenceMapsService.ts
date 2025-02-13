@@ -17,7 +17,7 @@ import {
 } from "./utils";
 
 import { PostsApi } from "../posts/PostsApi";
-import { RepositoryApiResponse } from "../types/RepositoryTypes";
+import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
 import moment from "moment";

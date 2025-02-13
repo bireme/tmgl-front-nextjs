@@ -81,7 +81,9 @@ export const JournalsFeed = ({
       );
       setTotalPages(response.totalFound / count);
       setItems(response.data);
-      setApiResponse(response);
+      if (!apiResponse) {
+        setApiResponse(response);
+      }
     } catch (error) {
       console.log(error);
       console.log("Error while fetching journals");
@@ -119,6 +121,28 @@ export const JournalsFeed = ({
               callBack={applyFilters}
               filters={[
                 {
+                  queryType: "country",
+                  label: "WHO Regions",
+                  items: groupOccurrencesByRegion(
+                    apiResponse?.countryFilters.map((c) => ({
+                      label: c.type,
+                      ocorrences: c.count,
+                      id: c.queryString,
+                    }))
+                  ),
+                },
+                {
+                  queryType: "country",
+                  label: "Country of Publication",
+                  items: apiResponse?.countryFilters
+                    .filter((c) => c.lang == language)
+                    .map((c) => ({
+                      label: c.type,
+                      ocorrences: c.count,
+                      id: c.queryString,
+                    })),
+                },
+                {
                   queryType: "descriptor",
                   label: "Thematic Area",
                   items: apiResponse?.thematicAreaFilters.map((c) => ({
@@ -127,24 +151,22 @@ export const JournalsFeed = ({
                   })),
                 },
                 {
-                  queryType: "region",
-                  label: "WHO Regions",
-                  items: groupOccurrencesByRegion(
-                    apiResponse?.countryFilters.map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                    }))
-                  ),
-                },
-                {
-                  queryType: "publication_country",
-                  label: "Country o Publication",
-                  items: apiResponse?.countryFilters
-                    .filter((c) => c.lang == language)
+                  queryType: "language",
+                  label: "Language",
+                  items: apiResponse?.languageFilters
+                    .filter((l) => l.lang == language)
                     .map((c) => ({
                       label: c.type,
                       ocorrences: c.count,
                     })),
+                },
+                {
+                  queryType: "indexed_database",
+                  label: "Indexed by",
+                  items: apiResponse?.indexFilters.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                  })),
                 },
               ]}
             />
@@ -180,7 +202,7 @@ export const JournalsFeed = ({
                 })}
               </>
             ) : (
-              <LoadingOverlay visible={true} />
+              <LoadingOverlay visible={true} style={{ position: "fixed" }} />
             )}
           </Flex>
           <div className={styles.PaginationContainer}>

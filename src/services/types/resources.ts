@@ -25,6 +25,7 @@ export interface MultLangFilter {
   lang: string;
   count: number;
   type: string;
+  queryString?: string;
 }
 
 export interface MultLangStringAttr {

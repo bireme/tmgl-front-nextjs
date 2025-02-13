@@ -1,5 +1,5 @@
 import { EventsItemsDto, EventsServiceDto } from "../types/eventsDto";
-import { LisDocuments, RepositoryApiResponse } from "../types/RepositoryTypes";
+import { LisDocuments, RepositoryApiResponse } from "../types/repositoryTypes";
 import {
   getCountryTags,
   getDescriptorTags,

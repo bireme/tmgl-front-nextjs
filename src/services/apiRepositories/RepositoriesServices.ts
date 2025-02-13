@@ -13,7 +13,7 @@ import {
   parseTematicAreas,
 } from "./utils";
 
-import { RepositoryApiResponse } from "../types/RepositoryTypes";
+import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
 import moment from "moment";
