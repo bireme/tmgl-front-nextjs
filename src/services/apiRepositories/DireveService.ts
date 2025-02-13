@@ -1,16 +1,10 @@
 import { EventsItemsDto, EventsServiceDto } from "../types/eventsDto";
-import { LisDocuments, RepositoryApiResponse } from "../types/repositoryTypes";
-import {
-  getCountryTags,
-  getDescriptorTags,
-  getRegionByCountry,
-} from "@/components/feed/utils";
-import { parseCountries, parseMultLangFilter } from "./utils";
+import { getDescriptorTags, getRegionByCountry } from "@/components/feed/utils";
 
-import { EvidenceMapItemDto } from "../types/evidenceMapsDto";
+import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
-import { count } from "console";
+import { parseMultLangFilter } from "./utils";
 import { queryType } from "../types/resources";
 
 export class DireveService {
