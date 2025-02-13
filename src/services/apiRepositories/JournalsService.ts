@@ -2,7 +2,7 @@ import {
   JournalApiDto,
   JournalItemDto,
   JournalServiceDto,
-} from "../types/JournalsDto";
+} from "../types/journalsDto";
 import {
   findDescription,
   parseJournalCountries,

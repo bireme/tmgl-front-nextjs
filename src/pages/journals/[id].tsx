@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
-import { JournalItemDto } from "@/services/types/JournalsDto";
+import { JournalItemDto } from "@/services/types/journalsDto";
 import { JournalsService } from "@/services/apiRepositories/JournalsService";
 import { ShareModal } from "@/components/share";
 import { TagItem } from "@/components/feed/resourceitem";

@@ -5,7 +5,7 @@ import {
   MultLangStringAttr,
 } from "../types/resources";
 
-import { JournalDescription } from "../types/JournalsDto";
+import { JournalDescription } from "../types/journalsDto";
 import { LisDocuments } from "../types/repositoryTypes";
 import { ThematicAreaApiDto } from "../types/evidenceMapsDto";
 

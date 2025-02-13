@@ -2,7 +2,7 @@ import { Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
   JournalItemDto,
   JournalServiceDto,
-} from "@/services/types/JournalsDto";
+} from "@/services/types/journalsDto";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
