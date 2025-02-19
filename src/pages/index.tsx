@@ -139,13 +139,7 @@ export default function Home() {
           </h2>
         </Container>
       </div>
-      <EventsSection
-        title={acf?.events.title ? acf.events.title : ""}
-        subtitle={acf?.events.subtitle ? acf.events.subtitle : ""}
-        webcast={acf?.events.webcast}
-        meeting={acf?.events.meeting}
-        repport={acf?.events.repport}
-      />
+      <EventsSection />
       <div className={styles.NewsContainer}>
         <NewsSection title={true} />
         <NewsletterSection />
