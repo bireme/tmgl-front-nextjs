@@ -95,7 +95,7 @@ export const TrendingSlider = () => {
         </div>
       ) : (
         <>
-          <Loader color="white" />;
+          <Loader color="white" />
         </>
       )}
     </div>

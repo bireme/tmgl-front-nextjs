@@ -19,7 +19,7 @@ export default function News() {
           blackColor
           path={[
             { path: "/", name: "HOME" },
-            { path: "/evidence-maps", name: "Evidence Maps" },
+            { path: "/news", name: "News" },
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>

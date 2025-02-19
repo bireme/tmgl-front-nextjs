@@ -99,7 +99,7 @@ export const HeaderLayout = () => {
     } else {
       return (
         <>
-          <Grid mt={40}>
+          <Grid mt={0}>
             <Grid.Col span={{ base: 12, md: 4 }}>
               <img
                 alt={"menu-image"}
@@ -301,7 +301,7 @@ export const HeaderLayout = () => {
             }}
           >
             <Grid>
-              <Grid.Col span={{ base: 12, md: 4 }}>
+              <Grid.Col span={5}>
                 <h2
                   style={{
                     cursor: prevSelectedSubItem ? "pointer" : "default",
@@ -325,6 +325,11 @@ export const HeaderLayout = () => {
                     selectedMenuItem?.title ? selectedMenuItem.title : ""
                   )}
                 </h2>
+              </Grid.Col>
+            </Grid>
+
+            <Grid>
+              <Grid.Col span={{ base: 12, md: 4 }}>
                 <nav>
                   {selectedMenuItem?.children.map((item, key) => {
                     return (
@@ -366,11 +371,7 @@ export const HeaderLayout = () => {
                 span={{ base: 12, md: 8 }}
                 className={styles.MegaMenuRightSection}
               >
-                <Flex
-                  justify={"center"}
-                  align={"center"}
-                  style={{ height: "100%" }}
-                >
+                <Flex mt={20} style={{ height: "100%" }}>
                   {selectedSubItem ? (
                     renderMegaMenuItem(selectedSubItem)
                   ) : selectedMenuItem?.children[0] ? (

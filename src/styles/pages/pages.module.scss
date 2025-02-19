@@ -25,6 +25,11 @@
     font-size: 28px;
   }
 }
+.EventImg{
+  img{
+    width: 100%;
+  height: auto !important;}
+}
 .PostSubtitle{
   color: var(--Colors-Pure-Black, #000);
   font-family: Roboto;
