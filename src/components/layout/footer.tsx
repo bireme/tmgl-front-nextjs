@@ -146,7 +146,7 @@ export const FooterLayout = () => {
         <Container size={"xl"}>
           <center>
             <a href={globalConfig?.acf.terms_and_conditions_url}>
-            Privacy Policy, Terms, and Conditions of Use
+              Privacy Policy, Terms, and Conditions of Use
             </a>
           </center>
         </Container>

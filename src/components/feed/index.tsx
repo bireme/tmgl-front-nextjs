@@ -34,6 +34,7 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
       regionsFilter
     );
     setPosts(data);
+    setPosts(data);
   };
 
   useEffect(() => {
