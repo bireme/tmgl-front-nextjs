@@ -65,7 +65,7 @@ export const StoriesSection = ({ region }: StoriesSectionProps) => {
   const getFeaturedStories = useCallback(async () => {
     try {
       const result = await _api.getCustomPost("featured_stories", 3);
-      console.log(result);
+      setPosts(result);
     } catch (error: any) {
       console.log("Error while trying to get Featured Stories: ", error);
     }
