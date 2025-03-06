@@ -63,7 +63,7 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
               filters={[
                 {
                   queryType: "country",
-                  label: "Country of Publication",
+                  label: "Country",
                   items: apiResponse?.countryFilters.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
@@ -71,7 +71,7 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
                 },
                 {
                   queryType: "descriptor_filter",
-                  label: "TM Dimensions",
+                  label: "Thematic area",
                   items: apiResponse?.descriptorFilter.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
@@ -120,6 +120,7 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
                         180
                       )} ${i.observations?.length > 180 ? "..." : ""}`}
                       link={i.links ? i.links[0].url : ""}
+                      target="_blank"
                     />
                   );
                 })}

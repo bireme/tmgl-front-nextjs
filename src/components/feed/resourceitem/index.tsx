@@ -12,6 +12,7 @@ export interface ResourceCardProps {
   tags?: Array<TagItem>;
   resourceType?: string;
   size?: string;
+  target?: string;
 }
 
 export interface TagItem {
@@ -27,6 +28,7 @@ export const ResourceCard = ({
   image,
   tags,
   size,
+  target = "_self",
 }: ResourceCardProps) => {
   const colors = {
     country: "#69A221",
@@ -108,7 +110,7 @@ export const ResourceCard = ({
           justify={"flex-end"}
           style={{ height: displayType == "column" ? "auto" : "100%" }}
         >
-          <a href={link}>
+          <a href={link} target={target}>
             {" "}
             <IconArrowRight />{" "}
           </a>

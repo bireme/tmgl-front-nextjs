@@ -99,19 +99,19 @@ export const EvidenceMapsFeed = ({
             <ResourceFilters
               callBack={applyFilters}
               filters={[
-                {
-                  queryType: "publication_country",
-                  label: "Country of Publication",
-                  items: apiResponse?.countryFilters
-                    .filter((c) => c.lang == language)
-                    .map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                    })),
-                },
+                // {
+                //   queryType: "publication_country",
+                //   label: "Country of Publication",
+                //   items: apiResponse?.countryFilters
+                //     .filter((c) => c.lang == language)
+                //     .map((c) => ({
+                //       label: c.type,
+                //       ocorrences: c.count,
+                //     })),
+                // },
                 {
                   queryType: "descriptor",
-                  label: "Thematic Area",
+                  label: "Thematic area",
                   items: apiResponse?.thematicAreaFilters.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
