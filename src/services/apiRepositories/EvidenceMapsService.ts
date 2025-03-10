@@ -81,14 +81,15 @@ export class EvidenceMapsService {
             updated_at: moment(item?.updated_date, "YYYYMMDD").toDate(),
             areas: parseTematicAreas(item),
             descriptors: item.descriptor,
-            releatedDocuments: resources
-              ? resources.acf?.links?.map((l: any) => {
-                  return {
-                    label: l.label,
-                    content: l.type == "link" ? l.link : l.file,
-                  };
-                })
-              : [],
+            releatedDocuments:
+              resources && resources.acf?.links
+                ? resources.acf?.links?.map((l: any) => {
+                    return {
+                      label: l.label,
+                      content: l.type == "link" ? l.link : l.file,
+                    };
+                  })
+                : [],
             image: itemResources
               ? postsApi.findFeaturedMedia(itemResources, "thumbnail")
               : "",
@@ -125,6 +126,7 @@ export class EvidenceMapsService {
       id,
     });
 
+    console.log(data);
     if (data) {
       let item = data.data;
       let responseItem: EvidenceMapItemDto;
@@ -142,14 +144,15 @@ export class EvidenceMapsService {
         title: item.title,
         excerpt: item.abstract,
         links: item.link,
-        releatedDocuments: resources
-          ? resources.acf.links.map((l: any) => {
-              return {
-                label: l.label,
-                content: l.type == "link" ? l.link : l.file,
-              };
-            })
-          : [],
+        releatedDocuments:
+          resources && resources.acf?.links
+            ? resources.acf?.links?.map((l: any) => {
+                return {
+                  label: l.label,
+                  content: l.type == "link" ? l.link : l.file,
+                };
+              })
+            : [],
         countries: parseCountriesByAttr(item.publication_country),
         areas: parseThematicAreabyAttr(item.thematic_areas),
         descriptors: item.descriptors?.map((i) => i.text),

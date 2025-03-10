@@ -152,10 +152,26 @@ export default function EvidenceMap() {
                 flexDirection: "column",
               }}
             >
-              {item?.links ? (
+              {item?.links && _service.getTableauVixLink(item.links) ? (
                 <TableauEmbed
                   sourceUrl={_service.getTableauVixLink(item.links)}
                 />
+              ) : item?.links ? (
+                <>
+                  {item.links.map((link: any, key) => (
+                    <div key={key}>
+                      <a
+                        href={link.content}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ color: "blue" }}
+                      >
+                        {link.label}
+                      </a>
+                      <br />
+                    </div>
+                  ))}
+                </>
               ) : (
                 <></>
               )}
