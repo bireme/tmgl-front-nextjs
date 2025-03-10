@@ -81,7 +81,7 @@ export const RepositoriesFeed = ({ displayType }: { displayType: string }) => {
                 },
                 {
                   queryType: "region",
-                  label: "Region",
+                  label: "WHO Region",
                   items: groupOccurrencesByRegion(
                     apiResponse?.countryFilters
                       .filter((c) => c.lang == "en")
