@@ -163,9 +163,9 @@ export class EvidenceMapsService {
   };
 
   public formatTags = (item: EvidenceMapItemDto, language: string) => {
-    const countries = item.countries
-      ? getCountryTags(item.countries, language)
-      : [];
+    // const countries = item.countries
+    //   ? getCountryTags(item.countries, language)
+    //   : [];
 
     let descriptors = item.descriptors
       ? getDescriptorTags(item.descriptors)
@@ -173,26 +173,27 @@ export class EvidenceMapsService {
 
     if (descriptors.length > 0) descriptors = descriptors.slice(0, 1);
 
-    let engCountries = item.countries?.map((c) => {
-      const item = c.countryLangs.find((cl) => cl.lang == "en");
-      if (item && item.countryName) {
-        return item.countryName;
-      } else return "";
-    });
-    let regions: Array<TagItem> = [];
-    if (engCountries) {
-      regions = item.countries
-        ? getRegionByCountry(engCountries).map((c) => ({
-            name: c,
-            type: "region",
-          }))
-        : [];
-    }
+    // let engCountries = item.countries?.map((c) => {
+    //   const item = c.countryLangs.find((cl) => cl.lang == "en");
+    //   if (item && item.countryName) {
+    //     return item.countryName;
+    //   } else return "";
+    // });
+    // let regions: Array<TagItem> = [];
+    // if (engCountries) {
+    //   regions = item.countries
+    //     ? getRegionByCountry(engCountries).map((c) => ({
+    //         name: c,
+    //         type: "region",
+    //       }))
+    //     : [];
+    // }
 
-    let tags = countries.concat(descriptors);
-    if (regions.length > 0) {
-      tags = tags.concat(regions);
-    }
+    // let tags = countries.concat(descriptors);
+    let tags = descriptors;
+    // if (regions.length > 0) {
+    //   tags = tags.concat(regions);
+    // }
     return tags;
   };
 
