@@ -4,10 +4,8 @@ import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { EvidenceMapsService } from "@/services/apiRepositories/EvidenceMapsService";
-import { GlobalContext } from "@/contexts/globalContext";
 import { Pagination } from "../pagination";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { ResourceCard } from "../resourceitem";
@@ -70,7 +68,7 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                 },
                 {
                   queryType: "country",
-                  label: "Countries",
+                  label: "Country",
                   items: apiResponse
                     ? apiResponse?.countries.map((c) => ({
                         label: c.name,
@@ -90,17 +88,17 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                       }))
                     : [],
                 },
-                {
-                  queryType: "tm-dimension",
-                  label: "Dimension",
-                  items: apiResponse
-                    ? apiResponse?.dimensions.map((c) => ({
-                        label: decodeHtmlEntities(c.name),
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
-                    : [],
-                },
+                // {
+                //   queryType: "tm-dimension",
+                //   label: "Dimension",
+                //   items: apiResponse
+                //     ? apiResponse?.dimensions.map((c) => ({
+                //         label: decodeHtmlEntities(c.name),
+                //         ocorrences: undefined,
+                //         id: c.id.toString(),
+                //       }))
+                //     : [],
+                // },
               ]}
             />
           ) : (

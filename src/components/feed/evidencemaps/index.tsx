@@ -117,18 +117,18 @@ export const EvidenceMapsFeed = ({
                     ocorrences: c.count,
                   })),
                 },
-                {
-                  queryType: "region",
-                  label: "WHO Regions",
-                  items: groupOccurrencesByRegion(
-                    apiResponse?.countryFilters
-                      .filter((c) => c.lang == "en")
-                      .map((c) => ({
-                        label: c.type,
-                        ocorrences: c.count,
-                      }))
-                  ),
-                },
+                // {
+                //   queryType: "region",
+                //   label: "WHO Regions",
+                //   items: groupOccurrencesByRegion(
+                //     apiResponse?.countryFilters
+                //       .filter((c) => c.lang == "en")
+                //       .map((c) => ({
+                //         label: c.type,
+                //         ocorrences: c.count,
+                //       }))
+                //   ),
+                // },
               ]}
             />
           ) : (

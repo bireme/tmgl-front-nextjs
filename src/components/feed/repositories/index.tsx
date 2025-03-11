@@ -63,21 +63,13 @@ export const RepositoriesFeed = ({ displayType }: { displayType: string }) => {
               filters={[
                 {
                   queryType: "publication_country",
-                  label: "Countries",
+                  label: "Country",
                   items: apiResponse?.countryFilters
                     .filter((c) => c.lang == language)
                     .map((c) => ({
                       label: c.type,
                       ocorrences: c.count,
                     })),
-                },
-                {
-                  queryType: "descriptor",
-                  label: "Thematic Area",
-                  items: apiResponse?.thematicAreaFilters.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
                 },
                 {
                   queryType: "region",
@@ -90,6 +82,14 @@ export const RepositoriesFeed = ({ displayType }: { displayType: string }) => {
                         ocorrences: c.count,
                       }))
                   ),
+                },
+                {
+                  queryType: "descriptor",
+                  label: "Thematic Area",
+                  items: apiResponse?.thematicAreaFilters.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                  })),
                 },
               ]}
             />
@@ -112,6 +112,7 @@ export const RepositoriesFeed = ({ displayType }: { displayType: string }) => {
                 {items.map((i, k) => {
                   return (
                     <ResourceCard
+                      target="_blank"
                       displayType={displayType}
                       key={k}
                       title={i.title}

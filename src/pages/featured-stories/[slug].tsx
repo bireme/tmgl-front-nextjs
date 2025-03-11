@@ -11,13 +11,9 @@ import {
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { FeaturedStoriesAcf } from "@/services/types/featuredStoriesAcf";
-import { GlobalContext } from "@/contexts/globalContext";
 import { HeroHeader } from "@/components/sections/hero";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
-import { RecomendedArticlesSection } from "@/components/sections/recomended";
-import { RelatedVideosSection } from "@/components/videos";
-import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
 export default function FeaturedStories() {
@@ -60,7 +56,7 @@ export default function FeaturedStories() {
             <>
               <FirstSection acf={acf} />
               <SecondSection acf={acf} />
-              <EvidenceMapsSection />
+              {/* <EvidenceMapsSection /> */}
               <ThirdSection acf={acf} />
               {/* <div className={styles.Float}>
                 <RelatedVideosSection />

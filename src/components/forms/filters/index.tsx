@@ -52,7 +52,7 @@ export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
         <h5>Search</h5>
         <Input size={"md"} placeholder="Search for something" />
 
-        <div className={styles.FilterGroup}>
+        {/* <div className={styles.FilterGroup}>
           <h5>
             <img src={"/local/svg/arrowup.svg"} /> TM Dimensions{" "}
           </h5>
@@ -137,7 +137,7 @@ export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
           <h5>
             <img src={"/local/svg/arrowup.svg"} /> Content Type{" "}
           </h5>
-        </div>
+        </div> */}
 
         <Button type="submit" size={"md"} fullWidth>
           {" "}
