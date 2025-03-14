@@ -61,159 +61,167 @@ export default function Journal() {
         />
         <br />
         <br />
-        <h5
-          className={`${styles.TitleWithIcon} ${styles.small}`}
-          style={{ margin: "5px" }}
-        >
-          <img src={"/local/svg/simbol.svg"} />
-          Journals
-        </h5>
-        <Grid mt={30} mb={0}>
-          {item?.logo ? (
-            <>
-              <Grid.Col span={{ base: 12, md: 3.5 }} pr={{ md: 15 }}>
-                <img src={"/local/jpeg/journal.jpeg"} width={"100%"} />
-              </Grid.Col>
-            </>
-          ) : (
-            <></>
-          )}
-
-          <Grid.Col
-            span={{ base: 12, md: item?.logo ? 8.5 : 12 }}
-            pl={{ md: 10 }}
-          >
-            <Flex
-              direction={"column"}
-              className={pageStyles.JournalTitleContent}
+        <Grid>
+          <Grid.Col pr={{ md: 30 }} span={{ md: 9, xs: 12, base: 12 }}>
+            <h5
+              className={`${styles.TitleWithIcon} ${styles.small}`}
+              style={{ margin: "5px" }}
             >
-              <h1>{item?.title}</h1>
-              <p>
-                {item?.description?.find((d) => d.lang == language)?.content}
-              </p>
+              <img src={"/local/svg/simbol.svg"} />
+              Journals
+            </h5>
+            <Grid mt={30} mb={0}>
+              {item?.logo ? (
+                <>
+                  <Grid.Col span={{ base: 12, md: 3.5 }} pr={{ md: 15 }}>
+                    <img src={"/local/jpeg/journal.jpeg"} width={"100%"} />
+                  </Grid.Col>
+                </>
+              ) : (
+                <></>
+              )}
+
+              <Grid.Col
+                span={{ base: 12, md: item?.logo ? 8.5 : 12 }}
+                pl={{ md: 10 }}
+              >
+                <Flex
+                  direction={"column"}
+                  className={pageStyles.JournalTitleContent}
+                >
+                  <h1>{item?.title}</h1>
+                  <p>
+                    {
+                      item?.description?.find((d) => d.lang == language)
+                        ?.content
+                    }
+                  </p>
+                </Flex>
+              </Grid.Col>
+            </Grid>
+            <Flex wrap={"wrap"} gap={5} mb={40} className={styles.Tags}>
+              {tags
+                ?.filter((tag) => tag.type == "descriptor")
+                .map((tag) => (
+                  <Badge
+                    size={"lg"}
+                    key={tag.name}
+                    style={{ cursor: "pointer" }}
+                    color={tagColors.descriptor}
+                    onClick={() =>
+                      router.push(`/journals?thematicArea=${tag.name}`)
+                    }
+                  >
+                    {tag.name}
+                  </Badge>
+                ))}
+              {tags
+                ?.filter((tag) => tag.type == "region")
+                .map((tag) => (
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    onClick={() => router.push(`/journals?region=${tag.name}`)}
+                    size={"lg"}
+                    key={tag.name}
+                    color={tagColors.region}
+                  >
+                    {tag.name}
+                  </Badge>
+                ))}
+              {tags
+                ?.filter((tag) => tag.type == "country")
+                .map((tag) => (
+                  <Badge
+                    style={{ cursor: "pointer" }}
+                    onClick={() => router.push(`/journals?country=${tag.name}`)}
+                    size={"lg"}
+                    key={tag.name}
+                    color={tagColors.country}
+                  >
+                    {tag.name}
+                  </Badge>
+                ))}
+            </Flex>
+          </Grid.Col>
+          <Grid.Col pt={{ md: 65 }} span={{ md: 3, sm: 12, base: 12 }}>
+            <h4 className={`${styles.BlueTitle} ${styles.small}`}>
+              Journal Details
+            </h4>
+            <Grid className={pageStyles.JournalDetails} mt={-40}>
+              <Grid.Col span={{ base: 12, md: 6 }} pr={{ md: 15 }}>
+                <p>
+                  <b>URL</b>
+                </p>
+                <p className={pageStyles.JournalDetail}>
+                  {item?.links?.map((link, k) => {
+                    return (
+                      <a href={link} key={k}>
+                        {link}
+                      </a>
+                    );
+                  })}
+                </p>
+                <p>
+                  <b>ISSN</b>
+                </p>
+                <p className={pageStyles.JournalDetail}>{item?.issn}</p>
+                {item?.language ? (
+                  <>
+                    <p>
+                      <b>Language</b>
+                    </p>
+                    <p className={pageStyles.JournalDetail}>
+                      {item?.language
+                        ? item.language.find((i) => i.lang == language)?.content
+                        : ""}
+                    </p>{" "}
+                  </>
+                ) : (
+                  <></>
+                )}
+                {item?.coverage ? (
+                  <p>
+                    <b>Coverage</b>
+                  </p>
+                ) : (
+                  <></>
+                )}
+                {item?.coverage ? (
+                  <p className={pageStyles.JournalDetail}>{item?.coverage}</p>
+                ) : (
+                  <></>
+                )}
+              </Grid.Col>
+              <Grid.Col span={{ base: 12, md: 8 }} pl={{ md: 10 }}></Grid.Col>
+            </Grid>
+            <Flex
+              className={pageStyles.functions}
+              mb={20}
+              gap={20}
+              align={"flex-end"}
+              justify={"flex-end"}
+            >
+              <Flex
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  setOpenShareModal(true);
+                }}
+                gap={5}
+              >
+                <IconShare /> Share
+              </Flex>
+              <Flex
+                style={{ cursor: "pointer" }}
+                onClick={() => {
+                  () => window.print();
+                }}
+                gap={5}
+              >
+                <IconPrinter /> Print
+              </Flex>
             </Flex>
           </Grid.Col>
         </Grid>
-        <Flex wrap={"wrap"} gap={5} mb={40} className={styles.Tags}>
-          {tags
-            ?.filter((tag) => tag.type == "descriptor")
-            .map((tag) => (
-              <Badge
-                size={"lg"}
-                key={tag.name}
-                style={{ cursor: "pointer" }}
-                color={tagColors.descriptor}
-                onClick={() =>
-                  router.push(`/journals?thematicArea=${tag.name}`)
-                }
-              >
-                {tag.name}
-              </Badge>
-            ))}
-          {tags
-            ?.filter((tag) => tag.type == "region")
-            .map((tag) => (
-              <Badge
-                style={{ cursor: "pointer" }}
-                onClick={() => router.push(`/journals?region=${tag.name}`)}
-                size={"lg"}
-                key={tag.name}
-                color={tagColors.region}
-              >
-                {tag.name}
-              </Badge>
-            ))}
-          {tags
-            ?.filter((tag) => tag.type == "country")
-            .map((tag) => (
-              <Badge
-                style={{ cursor: "pointer" }}
-                onClick={() => router.push(`/journals?country=${tag.name}`)}
-                size={"lg"}
-                key={tag.name}
-                color={tagColors.country}
-              >
-                {tag.name}
-              </Badge>
-            ))}
-        </Flex>
-        <h4 className={`${styles.BlueTitle} ${styles.small}`}>
-          Journal Details
-        </h4>
-        <Grid className={pageStyles.JournalDetails} mt={-40}>
-          <Grid.Col span={{ base: 12, md: 6 }} pr={{ md: 15 }}>
-            <p>
-              <b>URL</b>
-            </p>
-            <p className={pageStyles.JournalDetail}>
-              {item?.links?.map((link, k) => {
-                return (
-                  <a href={link} key={k}>
-                    {link}
-                  </a>
-                );
-              })}
-            </p>
-            <p>
-              <b>ISSN</b>
-            </p>
-            <p className={pageStyles.JournalDetail}>{item?.issn}</p>
-            {item?.language ? (
-              <>
-                <p>
-                  <b>Language</b>
-                </p>
-                <p className={pageStyles.JournalDetail}>
-                  {item?.language
-                    ? item.language.find((i) => i.lang == language)?.content
-                    : ""}
-                </p>{" "}
-              </>
-            ) : (
-              <></>
-            )}
-            {item?.coverage ? (
-              <p>
-                <b>Coverage</b>
-              </p>
-            ) : (
-              <></>
-            )}
-            {item?.coverage ? (
-              <p className={pageStyles.JournalDetail}>{item?.coverage}</p>
-            ) : (
-              <></>
-            )}
-          </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 8 }} pl={{ md: 10 }}></Grid.Col>
-        </Grid>
-        <Flex
-          className={pageStyles.functions}
-          mb={20}
-          gap={20}
-          align={"flex-end"}
-          justify={"flex-end"}
-        >
-          <Flex
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              setOpenShareModal(true);
-            }}
-            gap={5}
-          >
-            <IconShare /> Share
-          </Flex>
-          <Flex
-            style={{ cursor: "pointer" }}
-            onClick={() => {
-              () => window.print();
-            }}
-            gap={5}
-          >
-            <IconPrinter /> Print
-          </Flex>
-        </Flex>
-        <Divider />
       </Container>
       <ShareModal
         open={openShareModal}

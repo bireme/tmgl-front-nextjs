@@ -25,6 +25,8 @@
     align-content: center;
     justify-content: flex-end;
     &.HeaderActionOpened{
+      width: 10%;
+      right: 0px;
       position: absolute;
       top: 5px;
     }
@@ -277,12 +279,12 @@
     .FooterRight{
       a{
         cursor: pointer;
-        color: black;
+        color: #53524B;
         padding: 0;
         font-family: Roboto;
         font-size: 15px;
         font-style: normal;
-        font-weight: 400;
+        font-weight: 300;
         line-height: normal;
         margin-top: 8px;
         text-decoration: none;

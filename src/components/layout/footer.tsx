@@ -95,7 +95,9 @@ export const FooterLayout = () => {
             >
               {globalConfig?.acf?.footerimages?.map((item, index) => {
                 return (
-                  <img src={item.image + ".webp"} key={index} width={"80%"} />
+                  <a href={item.url} key={index}>
+                    <img src={item.image + ".webp"} key={index} width={"80%"} />
+                  </a>
                 );
               })}
             </Flex>

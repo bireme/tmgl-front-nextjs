@@ -63,121 +63,87 @@ export default function EvidenceMap() {
         />
         <br />
         <br />
-        <h5
-          className={`${styles.TitleWithIcon} ${styles.small}`}
-          style={{ margin: "5px" }}
-        >
-          <img src={"/local/svg/simbol.svg"} />
-          Evidence Maps
-        </h5>
-        <h3 className={`${styles.BlueTitle}`}>{item?.title}</h3>
-        <p className={`${styles.Description}`}>{item?.excerpt}</p>
-        <Flex
-          className={styles.CatAndFunctions}
-          direction={"row"}
-          align={"center"}
-          justify={"space-between"}
-          py={20}
-          mb={10}
-        >
-          <div>
-            <Flex wrap={"wrap"} gap={5} className={styles.Tags}>
-              {tags
-                ?.filter((tag) => tag.type == "descriptor")
-                .map((tag) => (
-                  <Badge
-                    size={"lg"}
-                    key={tag.name}
-                    style={{ cursor: "pointer" }}
-                    color={tagColors.descriptor}
-                    onClick={() =>
-                      router.push(`/evidence-maps?thematicArea=${tag.name}`)
-                    }
-                  >
-                    {tag.name}
-                  </Badge>
-                ))}
-              {tags
-                ?.filter((tag) => tag.type == "region")
-                .map((tag) => (
-                  <Badge
-                    style={{ cursor: "pointer" }}
-                    onClick={() =>
-                      router.push(`/evidence-maps?region=${tag.name}`)
-                    }
-                    size={"lg"}
-                    key={tag.name}
-                    color={tagColors.region}
-                  >
-                    {tag.name}
-                  </Badge>
-                ))}
-              {tags
-                ?.filter((tag) => tag.type == "country")
-                .map((tag) => (
-                  <Badge
-                    style={{ cursor: "pointer" }}
-                    onClick={() =>
-                      router.push(`/evidence-maps?country=${tag.name}`)
-                    }
-                    size={"lg"}
-                    key={tag.name}
-                    color={tagColors.country}
-                  >
-                    {tag.name}
-                  </Badge>
-                ))}
-            </Flex>
-          </div>
-          <Flex className={pageStyles.functions} mb={20} gap={20}>
-            <span
-              style={{ cursor: "pointer" }}
-              onClick={() => {
-                setOpenShareModal(true);
-              }}
+        <Grid>
+          <Grid.Col pr={{ md: 30 }} span={{ md: 9, xs: 12, base: 12 }}>
+            <h5
+              className={`${styles.TitleWithIcon} ${styles.small}`}
+              style={{ margin: "5px" }}
             >
-              <IconShare /> Share
-            </span>
-          </Flex>
-        </Flex>
-        <hr />
-        <Grid mt={40}>
-          <Grid.Col span={{ md: 9.5, base: 12 }}>
-            <div
-              className="App"
-              style={{
-                alignItems: "center",
-                display: "flex",
-                justifyContent: "center",
-                flexDirection: "column",
-              }}
+              <img src={"/local/svg/simbol.svg"} />
+              Evidence Maps
+            </h5>
+            <h3 className={`${styles.BlueTitle}`}>{item?.title}</h3>
+            <p className={`${styles.Description}`}>{item?.excerpt}</p>
+            <Flex
+              className={styles.CatAndFunctions}
+              direction={"row"}
+              align={"center"}
+              justify={"space-between"}
+              py={20}
+              mb={10}
             >
-              {item?.links && _service.getTableauVixLink(item.links) ? (
-                <TableauEmbed
-                  sourceUrl={_service.getTableauVixLink(item.links)}
-                />
-              ) : item?.links ? (
-                <>
-                  {item.links.map((link: any, key) => (
-                    <div key={key}>
-                      <a
-                        href={link.content}
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{ color: "blue" }}
+              <div>
+                <Flex wrap={"wrap"} gap={5} className={styles.Tags}>
+                  {tags
+                    ?.filter((tag) => tag.type == "descriptor")
+                    .map((tag) => (
+                      <Badge
+                        size={"lg"}
+                        key={tag.name}
+                        style={{ cursor: "pointer" }}
+                        color={tagColors.descriptor}
+                        onClick={() =>
+                          router.push(`/evidence-maps?thematicArea=${tag.name}`)
+                        }
                       >
-                        {link.label}
-                      </a>
-                      <br />
-                    </div>
-                  ))}
-                </>
-              ) : (
-                <></>
-              )}
-            </div>
+                        {tag.name}
+                      </Badge>
+                    ))}
+                  {tags
+                    ?.filter((tag) => tag.type == "region")
+                    .map((tag) => (
+                      <Badge
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          router.push(`/evidence-maps?region=${tag.name}`)
+                        }
+                        size={"lg"}
+                        key={tag.name}
+                        color={tagColors.region}
+                      >
+                        {tag.name}
+                      </Badge>
+                    ))}
+                  {tags
+                    ?.filter((tag) => tag.type == "country")
+                    .map((tag) => (
+                      <Badge
+                        style={{ cursor: "pointer" }}
+                        onClick={() =>
+                          router.push(`/evidence-maps?country=${tag.name}`)
+                        }
+                        size={"lg"}
+                        key={tag.name}
+                        color={tagColors.country}
+                      >
+                        {tag.name}
+                      </Badge>
+                    ))}
+                </Flex>
+              </div>
+              <Flex className={pageStyles.functions} mb={20} gap={20}>
+                <span
+                  style={{ cursor: "pointer" }}
+                  onClick={() => {
+                    setOpenShareModal(true);
+                  }}
+                >
+                  <IconShare /> Share
+                </span>
+              </Flex>
+            </Flex>
           </Grid.Col>
-          <Grid.Col span={{ md: 2.5, base: 12 }}>
+          <Grid.Col pt={{ md: 60 }} span={{ md: 3, xs: 12, base: 12 }}>
             <div className={pageStyles.MapDetails}>
               <h5>Map Details</h5>
               {item?.releatedDocuments ? (
@@ -215,6 +181,38 @@ export default function EvidenceMap() {
             </div>
           </Grid.Col>
         </Grid>
+        <hr />
+        <div
+          className="App"
+          style={{
+            alignItems: "center",
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+          }}
+        >
+          {item?.links && _service.getTableauVixLink(item.links) ? (
+            <TableauEmbed sourceUrl={_service.getTableauVixLink(item.links)} />
+          ) : item?.links ? (
+            <>
+              {item.links.map((link: any, key) => (
+                <div key={key}>
+                  <a
+                    href={link.content}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{ color: "blue" }}
+                  >
+                    {link.label}
+                  </a>
+                  <br />
+                </div>
+              ))}
+            </>
+          ) : (
+            <></>
+          )}
+        </div>
       </Container>
       <ShareModal
         open={openShareModal}
