@@ -148,19 +148,19 @@ export default function Journal() {
               Journal Details
             </h4>
             <Grid className={pageStyles.JournalDetails} mt={-40}>
-              <Grid.Col span={{ base: 12, md: 6 }} pr={{ md: 15 }}>
+              <Grid.Col span={{ base: 12, md: 12 }} pr={{ md: 15 }}>
                 <p>
                   <b>URL</b>
                 </p>
-                <p className={pageStyles.JournalDetail}>
-                  {item?.links?.map((link, k) => {
-                    return (
-                      <a href={link} key={k}>
-                        {link}
-                      </a>
-                    );
-                  })}
-                </p>
+
+                {item?.links?.map((link, k) => {
+                  return (
+                    <p key={k} className={pageStyles.JournalDetail}>
+                      <a href={link}>{link}</a>
+                    </p>
+                  );
+                })}
+
                 <p>
                   <b>ISSN</b>
                 </p>
@@ -188,6 +188,17 @@ export default function Journal() {
                 )}
                 {item?.coverage ? (
                   <p className={pageStyles.JournalDetail}>{item?.coverage}</p>
+                ) : (
+                  <></>
+                )}
+
+                <p>
+                  <b>Responsibility Mention</b>
+                </p>
+                {item?.responsibility_mention ? (
+                  <p className={pageStyles.JournalDetail}>
+                    {item?.responsibility_mention}
+                  </p>
                 ) : (
                   <></>
                 )}

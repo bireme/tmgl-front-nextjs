@@ -59,4 +59,5 @@ export interface EvidenceMapItemDto {
 export interface releatedDocument {
   label: string;
   content: string;
+  url: string;
 }

@@ -22,6 +22,7 @@ import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
 import moment from "moment";
 import { queryType } from "../types/resources";
+import { url } from "inspector";
 
 export class EvidenceMapsService {
   public getResources = async (
@@ -126,7 +127,6 @@ export class EvidenceMapsService {
       id,
     });
 
-    console.log(data);
     if (data) {
       let item = data.data;
       let responseItem: EvidenceMapItemDto;
@@ -136,6 +136,7 @@ export class EvidenceMapsService {
         "resource_id",
         item.id.toString()
       );
+      console.log(resources);
       if (resources.length > 0) resources = resources[0];
       responseItem = {
         id: item.id.toString(),
@@ -149,7 +150,8 @@ export class EvidenceMapsService {
             ? resources.acf?.links?.map((l: any) => {
                 return {
                   label: l.label,
-                  content: l.type == "link" ? l.link : l.file,
+                  content: l.tipo == "Link" ? l.link : l.file,
+                  url: l.tipo == "Link" ? l.link : l.file,
                 };
               })
             : [],

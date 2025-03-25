@@ -169,7 +169,7 @@ export const ResourceFilters = ({
           submit();
         }}
       >
-        Apply Filters
+        Apply
       </Button>
     </div>
   );

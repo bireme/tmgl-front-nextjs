@@ -152,15 +152,16 @@ export default function EvidenceMap() {
                     <b>Related Documents</b>
                   </p>
                   {item?.releatedDocuments?.map((doc, key) => (
-                    <a
-                      className={pageStyles.RelatedDocuments}
-                      href={doc.content}
-                      key={key}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      {doc.label}
-                    </a>
+                    <p key={key}>
+                      <a
+                        className={pageStyles.RelatedDocuments}
+                        href={doc.url}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {doc.label}
+                      </a>
+                    </p>
                   ))}
                   <hr />
                 </>
@@ -196,17 +197,14 @@ export default function EvidenceMap() {
           ) : item?.links ? (
             <>
               {item.links.map((link: any, key) => (
-                <div key={key}>
-                  <a
-                    href={link.content}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{ color: "blue" }}
-                  >
-                    {link.label}
-                  </a>
-                  <br />
-                </div>
+                <iframe
+                  src={link}
+                  key={key}
+                  style={{ marginBottom: "40px" }}
+                  width={"100%"}
+                  frameBorder={0}
+                  height={"1050px"}
+                />
               ))}
             </>
           ) : (

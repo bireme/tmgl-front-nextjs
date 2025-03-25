@@ -182,6 +182,7 @@ export class JournalsService {
         links: multSearchItem[0].link,
         logo: multSearchItem[0].logo_image_file,
         issn: item.issn,
+        responsibility_mention: item.responsibility_mention,
         coverage:
           item.initial_date || item.final_date
             ? item.initial_date + "-" + item.final_date

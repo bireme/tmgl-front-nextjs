@@ -25,6 +25,7 @@ export interface JournalItemDto {
   countries?: Country[];
   descriptors?: string[];
   onlineResource?: ApiOnlineResource[];
+  responsibility_mention?: string;
   description?: MultLangStringAttr[];
   issn?: string;
   language?: MultLangStringAttr[];
