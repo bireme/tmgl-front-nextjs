@@ -3,10 +3,13 @@ import {
   RecomendedArticlesSection,
   RelatedArticlesSection,
 } from "@/components/sections/recomended";
+import { TrendingCarrocel, TrendingSlider } from "@/components/slider/trending";
 import { useCallback, useContext, useEffect, useState } from "react";
 
+import { DimensionMultitab } from "@/components/multitab/dimension";
 import { GlobalContext } from "@/contexts/globalContext";
 import { HeroHeader } from "@/components/sections/hero";
+import { MediaApi } from "@/services/media/MediaApi";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { RelatedVideosSection } from "@/components/videos";
@@ -21,14 +24,25 @@ export default function Dimensions() {
   } = router;
   const [post, setPost] = useState<Post>();
   const { globalConfig } = useContext(GlobalContext);
+  const [children, setChildren] = useState<Array<Post>>([]);
   const [releatedNumber, setReleatedNumber] = useState(0);
+  const _mediaApi = new MediaApi();
   const _api = new PostsApi();
+
+  const getArticles = async (fatherId?: number) => {
+    try {
+      const resp = await _api.getCustomPost("dimensions", 10, fatherId);
+      setChildren(resp);
+    } catch (error: any) {
+      console.log("Error while getting Childrens", error);
+    }
+  };
 
   const getPost = useCallback(async (slug: string) => {
     try {
       const resp = await _api.getPost("dimensions", slug);
-
       setPost(resp[0]);
+      await getArticles(resp[0].id);
     } catch {
       console.log("Error while trying to get dimension");
     }
@@ -54,37 +68,42 @@ export default function Dimensions() {
             ]}
             type="TM Dimensions"
           />
+          <DimensionMultitab content={post.content.rendered} />
           <Container py={100} size={"xl"}>
-            <Grid>
-              <Grid.Col
-                span={{ base: 12, md: releatedNumber > 0 ? 8 : 12 }}
-                p={40}
-              >
-                <div
-                  className={styles.PostContent}
-                  dangerouslySetInnerHTML={{ __html: post.content.rendered }}
-                />
-              </Grid.Col>
-              <Grid.Col span={{ base: 12, md: 4 }} p={40}>
-                {releatedNumber > 0 ? (
-                  <h3 className={styles.PostPageSubtitle}>
-                    {globalConfig?.acf.aside_tab_title}
-                  </h3>
-                ) : (
-                  <></>
-                )}
-
-                <RelatedArticlesSection
-                  callBack={setReleatedNumber}
-                  postTypeSlug="dimensions"
-                  limit={4}
-                  parent={post.id}
-                />
-              </Grid.Col>
-            </Grid>
+            {children.length > 0 ? (
+              <>
+                {children.map((child, index) => {
+                  return (
+                    <Grid key={index}>
+                      <Grid.Col span={{ base: 12, md: 8 }} p={40}>
+                        <h3 className={styles.PostPageSubtitle}>
+                          {child.title.rendered}
+                        </h3>
+                        <div
+                          className={styles.PostContent}
+                          dangerouslySetInnerHTML={{
+                            __html: child.content.rendered,
+                          }}
+                        />
+                      </Grid.Col>
+                      <Grid.Col span={{ base: 12, md: 4 }}>
+                        <img
+                          src={_mediaApi.findFeaturedMedia(child, "full")}
+                          width={"100%"}
+                        />
+                      </Grid.Col>
+                    </Grid>
+                  );
+                })}
+              </>
+            ) : (
+              <></>
+            )}
           </Container>
-          {/* <RelatedVideosSection />
-          <RecomendedArticlesSection callBack={setReleatedNumber} limit={3} /> */}
+          <Container py={100} size={"xl"}>
+            {/* <TrendingCarrocel /> */}
+          </Container>
+          <RelatedVideosSection />
         </>
       ) : (
         <LoadingOverlay visible={true} />

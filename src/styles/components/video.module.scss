@@ -60,7 +60,15 @@
 .RelatedVideosSection{
   width: 100%;
   padding: 60px 0px;
-  background: #D5D5D5;
+  background: #fafafa;
+  .RelatedVideosSectionFlex{
+    .MainVideo{
+      width: 60%;
+    }
+    .SideVideos{
+      width: 40%;
+    }
+  }
 }
 
 .LinkVideoItem{
@@ -68,26 +76,16 @@
   color:black;
 }
 .VideoItem{
-  background-color: white;
+  background-color: #F3F3F2;
   padding:24px;
   border-radius:16px ;
+  box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
+  height: 100%;
   gap: 20px;
   position: relative;
   &.Main{
-    &::before{
-      content: "";
-      width: 70px;
-      height: 70px;
-      z-index: 99999;
-      background-image: url('../../../public/local/svg/play.svg');
-      background-size: 100%;
-      background-repeat: no-repeat;
-      background-position: center center;
-      position: absolute;
-      left: 50%;
-      top: 45%;
-      transform: translate(-50%, -50%);
-    }
+    min-height: 450px;
+    
     gap:0;
     .VideoThumb{
       width: 100%;
@@ -109,14 +107,30 @@
     }
   }
   .VideoThumb{
-    width: 400px;
-    height: 175px;
+    width: 40%;
+    min-width: 40%;
+    height: 100%;
     border-radius: 8px;
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center center;
+    position: relative;
     @media (max-width: '750px') {
       width: 100%;
+    }
+    &::before{
+      content: "";
+      width: 3rem;
+      height: 3rem;
+      z-index: 99999;
+      background-image: url('../../../public/local/svg/play.svg');
+      background-size: 100%;
+      background-repeat: no-repeat;
+      background-position: center center;
+      position: absolute;
+      left: 50%;
+      top: 45%;
+      transform: translate(-50%, -50%);
     }
   }
   

@@ -4,16 +4,15 @@ import {
   JournalServiceDto,
 } from "../types/journalsDto";
 import {
-  findDescription,
-  parseJournalCountries,
-  parseMultLangFilter,
-  parseMultLangStringAttr,
-} from "./utils";
-import {
   getCountryTags,
   getDescriptorTags,
   getRegionByCountry,
 } from "@/components/feed/utils";
+import {
+  parseJournalCountries,
+  parseMultLangFilter,
+  parseMultLangStringAttr,
+} from "./utils";
 
 import { EvidenceMapItemDto } from "../types/evidenceMapsDto";
 import { RepositoryApiResponse } from "../types/repositoryTypes";

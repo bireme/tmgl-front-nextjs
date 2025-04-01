@@ -1,6 +1,5 @@
-import { Badge, Button, Flex } from "@mantine/core";
+import { Badge, Flex } from "@mantine/core";
 
-import { IconArrowRight } from "@tabler/icons-react";
 import styles from "../../../styles/components/feed.module.scss";
 import { useRouter } from "next/router";
 

@@ -52,6 +52,16 @@
     margin-top: 300px;
   }
 }
+
+.TrandingCarrocelContainer{
+  padding: 10px;
+  width: 100%;
+  .SliderItemContainer{
+    overflow: visible;
+    padding: 0px;
+  }
+}
+
 .TrandingSlider{
   position: absolute;
   left: 0px;

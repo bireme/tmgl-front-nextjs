@@ -101,3 +101,75 @@ export const TrendingSlider = () => {
     </div>
   );
 };
+
+export const TrendingCarrocel = () => {
+  const [embla, setEmbla] = useState<any>(null);
+  const handleNext = () => embla?.scrollNext();
+  const handlePrev = () => embla?.scrollPrev();
+  const { globalConfig, regionName } = useContext(GlobalContext);
+  const [posts, setPosts] = useState<Array<ArticleDTO>>([]);
+
+  const getTrendingTopics = useCallback(async () => {
+    let filter = globalConfig?.acf.filter_rss;
+    if (regionName) {
+      let regionalFilter = globalConfig?.acf.region_filters.filter(
+        (f) => f.region_prefix.toLowerCase() == regionName.toLowerCase()
+      );
+      if (regionalFilter)
+        if (regionalFilter.length > 0) {
+          filter = regionalFilter[0].region_filter;
+        }
+    }
+
+    if (globalConfig?.acf.filter_rss) {
+      const articlesResponse = await FetchRSSFeed(0, 10, 1, undefined, filter);
+      setPosts(articlesResponse);
+    }
+  }, [globalConfig]);
+
+  useEffect(() => {
+    getTrendingTopics();
+  }, [getTrendingTopics, globalConfig]);
+
+  return (
+    <div>
+      {posts.length > 0 ? (
+        <Carousel
+          withControls={false}
+          slideSize="15%"
+          slideGap="sm"
+          align={"start"}
+          loop={false}
+          getEmblaApi={setEmbla}
+        >
+          {posts?.length > 0 ? (
+            posts?.map((item, key) => {
+              return (
+                <div key={key}>
+                  <Carousel.Slide
+                    key={key}
+                    className={styles.SliderItemContainer}
+                  >
+                    <TrendingTopicSection
+                      href={item.link}
+                      title={`${item.title.slice(0, 150)} ${
+                        item.title.length > 150 ? "..." : ""
+                      }`}
+                      excerpt={`${item.description.trim().slice(0, 120)}...`}
+                    />
+                  </Carousel.Slide>
+                </div>
+              );
+            })
+          ) : (
+            <></>
+          )}
+        </Carousel>
+      ) : (
+        <>
+          <Loader color="white" />
+        </>
+      )}
+    </div>
+  );
+};

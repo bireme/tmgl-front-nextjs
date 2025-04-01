@@ -20,7 +20,7 @@ const nextConfig = {
     LIS_API_URL: process.env.LIS_API_URL,
     JOURNALS_API_URL: process.env.JOURNALS_API_URL,
     MULTIMEDIA_API_URL: process.env.MULTIMEDIA_API_URL,
-    
+    FIADMIN_URL: process.env.FIADMIN_URL
   },
 };
 
