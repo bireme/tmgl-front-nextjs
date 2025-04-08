@@ -102,7 +102,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
 
   public formatTags(item: Post): TagItem[] {
     const countries = item._embedded?.["wp:term"]
-      .flat()
+      ?.flat()
       .filter((term) => term.taxonomy === "country");
 
     let countryTags: TagItem[] = [];
@@ -115,7 +115,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
     }
 
     const regions = item._embedded?.["wp:term"]
-      .flat()
+      ?.flat()
       .filter((term) => term.taxonomy === "region");
 
     let regionTags: TagItem[] = [];
@@ -128,7 +128,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
     }
 
     const tags = item._embedded?.["wp:term"]
-      .flat()
+      ?.flat()
       .filter((term) => term.taxonomy === "tm-dimension");
 
     let tagsTags: TagItem[] = [];
