@@ -1,4 +1,4 @@
-import { Button, Container, Grid, LoadingOverlay } from "@mantine/core";
+import { Button, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
   RecomendedArticlesSection,
   RelatedArticlesSection,
@@ -7,9 +7,11 @@ import { TrendingCarrocel, TrendingSlider } from "@/components/rss/slider";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { DimensionMultitab } from "@/components/multitab/dimension";
+import { DimensionRelatedResources } from "@/services/types/dimensionsAcf";
 import { GlobalContext } from "@/contexts/globalContext";
 import { HeroHeader } from "@/components/sections/hero";
 import { IconArrowRight } from "@tabler/icons-react";
+import { IconCard } from "@/components/cards";
 import { MediaApi } from "@/services/media/MediaApi";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -24,9 +26,7 @@ export default function Dimensions() {
     query: { slug },
   } = router;
   const [post, setPost] = useState<Post>();
-  const { globalConfig } = useContext(GlobalContext);
   const [children, setChildren] = useState<Array<Post>>([]);
-  const [releatedNumber, setReleatedNumber] = useState(0);
   const _mediaApi = new MediaApi();
   const _api = new PostsApi();
 
@@ -70,24 +70,24 @@ export default function Dimensions() {
             type="TM Dimensions"
           />
           <DimensionMultitab content={post.content.rendered} />
-          <Container py={100} size={"xl"}>
+          <Container size={"xl"}>
             {children.length > 0 ? (
               <>
                 {children.map((child, index) => {
                   return (
                     <Grid key={index}>
-                      <Grid.Col span={{ base: 12, md: 8 }} p={40}>
+                      <Grid.Col span={{ base: 12, md: 8 }}>
                         <h3 className={styles.PostPageSubtitle}>
                           {child.title.rendered}
                         </h3>
                         <div
-                          className={styles.PostContent}
+                          className={styles.PostContentFragment}
                           dangerouslySetInnerHTML={{
                             __html: child.content.rendered,
                           }}
                         />
                       </Grid.Col>
-                      <Grid.Col span={{ base: 12, md: 4 }}>
+                      <Grid.Col span={{ base: 12, md: 4 }} px={20} py={60}>
                         <img
                           src={_mediaApi.findFeaturedMedia(child, "full")}
                           width={"100%"}
@@ -102,9 +102,40 @@ export default function Dimensions() {
             )}
           </Container>
           <div style={{ background: "#FBFBFB" }}>
-            <Container py={100} size={"xl"}>
+            <Container py={40} size={"xl"}>
+              <h1>Related Resources</h1>
+              <Flex mt={50} gap={"3%"} justify={"space-around"}>
+                {post.acf.related_resources.map(
+                  (resource: DimensionRelatedResources, index: number) => {
+                    return (
+                      <IconCard
+                        title={resource.title}
+                        icon={
+                          <>
+                            <img src={resource.icon} />
+                          </>
+                        }
+                        callBack={() =>
+                          (window.location.href = resource.target)
+                        }
+                        key={index}
+                      />
+                    );
+                  }
+                )}
+              </Flex>
+            </Container>
+            <Container py={40} size={"xl"}>
               <h2>Recent literature reviews</h2>
-              <TrendingCarrocel />
+              <TrendingCarrocel
+                rssString={
+                  post.acf.trending_rss
+                    ? post.acf.trending_rss != ""
+                      ? post.acf.trending_rss
+                      : undefined
+                    : undefined
+                }
+              />
               <div className={styles.More}>
                 {" "}
                 <a href={`/literature-reviews`}>

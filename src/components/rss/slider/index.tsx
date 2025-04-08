@@ -109,15 +109,13 @@ export const TrendingSlider = () => {
   );
 };
 
-export const TrendingCarrocel = () => {
-  const [embla, setEmbla] = useState<any>(null);
-  const handleNext = () => embla?.scrollNext();
-  const handlePrev = () => embla?.scrollPrev();
+export const TrendingCarrocel = ({ rssString }: { rssString?: string }) => {
+  const [setEmbla] = useState<any>(null);
   const { globalConfig, regionName } = useContext(GlobalContext);
   const [posts, setPosts] = useState<Array<ArticleDTO>>([]);
 
   const getTrendingTopics = useCallback(async () => {
-    let filter = globalConfig?.acf.filter_rss;
+    let filter = rssString ? rssString : globalConfig?.acf.filter_rss;
     if (regionName) {
       let regionalFilter = globalConfig?.acf.region_filters.filter(
         (f) => f.region_prefix.toLowerCase() == regionName.toLowerCase()
@@ -173,7 +171,7 @@ export const TrendingCarrocel = () => {
         </Carousel>
       ) : (
         <>
-          <Loader color="white" />
+          <Loader />
         </>
       )}
     </>

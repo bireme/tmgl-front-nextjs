@@ -148,6 +148,40 @@
   }
 }
 
+.PostContentFragment{
+  img{
+    max-width: 100%;
+    height: auto;
+  }
+  figure{
+    max-width: 100% ;
+  }
+  a{
+    max-width: 100%;
+    color: light-dark(var(--mantine-color-blue-5));
+  }
+  font-family: Roboto;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 180%; 
+  p{
+    font-family: Roboto;
+    font-weight: 300;
+    font-size: 18px;
+    line-height: 180%;
+    letter-spacing: 0%;
+  }
+  h3{
+    color: #006CB0;
+    font-family: "Roboto Serif";
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: 150%; /* 45px */
+  }
+}
+
 .PostContent{
   img{
     max-width: 100%;
