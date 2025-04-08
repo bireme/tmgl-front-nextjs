@@ -103,7 +103,7 @@ export default function Dimensions() {
           </Container>
 
           <div style={{ background: "#FBFBFB" }}>
-            {post.acf?.releated_resources?.length > 0 ? (
+            {post.acf?.related_resources?.length > 0 ? (
               <Container py={40} size={"xl"}>
                 <h1>Related Resources</h1>
                 <Flex mt={50} gap={"3%"} justify={"space-around"}>
