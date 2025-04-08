@@ -73,7 +73,7 @@ export default function Dimensions() {
           <Container size={"xl"}>
             {children.length > 0 ? (
               <>
-                {children.map((child, index) => {
+                {children?.map((child, index) => {
                   return (
                     <Grid key={index}>
                       <Grid.Col span={{ base: 12, md: 8 }}>
@@ -101,30 +101,36 @@ export default function Dimensions() {
               <></>
             )}
           </Container>
+
           <div style={{ background: "#FBFBFB" }}>
-            <Container py={40} size={"xl"}>
-              <h1>Related Resources</h1>
-              <Flex mt={50} gap={"3%"} justify={"space-around"}>
-                {post.acf.related_resources.map(
-                  (resource: DimensionRelatedResources, index: number) => {
-                    return (
-                      <IconCard
-                        title={resource.title}
-                        icon={
-                          <>
-                            <img src={resource.icon} />
-                          </>
-                        }
-                        callBack={() =>
-                          (window.location.href = resource.target)
-                        }
-                        key={index}
-                      />
-                    );
-                  }
-                )}
-              </Flex>
-            </Container>
+            {post.acf?.releated_resources?.lenght > 0 ? (
+              <Container py={40} size={"xl"}>
+                <h1>Related Resources</h1>
+                <Flex mt={50} gap={"3%"} justify={"space-around"}>
+                  {post.acf.related_resources.map(
+                    (resource: DimensionRelatedResources, index: number) => {
+                      return (
+                        <IconCard
+                          title={resource.title}
+                          icon={
+                            <>
+                              <img src={resource.icon} />
+                            </>
+                          }
+                          callBack={() =>
+                            (window.location.href = resource.target)
+                          }
+                          key={index}
+                        />
+                      );
+                    }
+                  )}
+                </Flex>
+              </Container>
+            ) : (
+              <></>
+            )}
+
             <Container py={40} size={"xl"}>
               <h2>Recent literature reviews</h2>
               <TrendingCarrocel
