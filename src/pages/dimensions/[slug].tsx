@@ -1,14 +1,15 @@
-import { Container, Grid, LoadingOverlay } from "@mantine/core";
+import { Button, Container, Grid, LoadingOverlay } from "@mantine/core";
 import {
   RecomendedArticlesSection,
   RelatedArticlesSection,
 } from "@/components/sections/recomended";
-import { TrendingCarrocel, TrendingSlider } from "@/components/slider/trending";
+import { TrendingCarrocel, TrendingSlider } from "@/components/rss/slider";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { DimensionMultitab } from "@/components/multitab/dimension";
 import { GlobalContext } from "@/contexts/globalContext";
 import { HeroHeader } from "@/components/sections/hero";
+import { IconArrowRight } from "@tabler/icons-react";
 import { MediaApi } from "@/services/media/MediaApi";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -100,10 +101,23 @@ export default function Dimensions() {
               <></>
             )}
           </Container>
-          <Container py={100} size={"xl"}>
-            {/* <TrendingCarrocel /> */}
-          </Container>
-          <RelatedVideosSection />
+          <div style={{ background: "#FBFBFB" }}>
+            <Container py={100} size={"xl"}>
+              <h2>Recent literature reviews</h2>
+              <TrendingCarrocel />
+              <div className={styles.More}>
+                {" "}
+                <a href={`/literature-reviews`}>
+                  More Literature Reviews{" "}
+                  <Button p={8} radius={"md"} size={"sm"}>
+                    <IconArrowRight size={19} stroke={1.5} />
+                  </Button>
+                </a>
+              </div>
+            </Container>
+
+            <RelatedVideosSection />
+          </div>
         </>
       ) : (
         <LoadingOverlay visible={true} />

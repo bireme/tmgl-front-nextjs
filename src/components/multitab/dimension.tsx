@@ -13,16 +13,23 @@ export const DimensionMultitab = ({ content }: DimensionMultitabProps) => {
         <Grid>
           <Grid.Col span={{ base: 12, md: 8 }}>
             <Tabs defaultValue="index0">
-              <Tabs.List>
+              <Tabs.List className={styles.TabList}>
                 {sections?.map((item, k) => (
-                  <Tabs.Tab key={k} value={"index" + k}>
-                    {item.split(/<\/h3>/)[0]}
+                  <Tabs.Tab
+                    key={k}
+                    value={"index" + k}
+                    className={styles.TabButton}
+                  >
+                    <h3 className={styles.MultitabItemTitle}>
+                      {item.split(/<\/h3>/)[0]}
+                    </h3>
                   </Tabs.Tab>
                 ))}
               </Tabs.List>
               {sections?.map((item, k) => (
                 <Tabs.Panel key={k} value={"index" + k}>
                   <div
+                    className={styles.TabContent}
                     dangerouslySetInnerHTML={{
                       __html: item.split(/<\/h3>/)[1],
                     }}

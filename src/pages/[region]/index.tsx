@@ -12,7 +12,7 @@ import { PagesApi } from "@/services/pages/PagesApi";
 import { RegionalDimensions } from "@/components/sections/dimensions";
 import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
-import { TrendingSlider } from "@/components/slider/trending";
+import { TrendingSlider } from "@/components/rss/slider";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 

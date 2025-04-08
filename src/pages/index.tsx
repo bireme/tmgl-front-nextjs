@@ -1,34 +1,21 @@
-import {
-  Button,
-  Center,
-  Container,
-  Flex,
-  Grid,
-  LoadingOverlay,
-  Modal,
-  Text,
-} from "@mantine/core";
-import {
-  DimensionsSection,
-  TraditionalSectionCard,
-} from "@/components/sections";
+import { Button, Center, Container, Flex, Modal } from "@mantine/core";
 import { ImageSection, VideoSection } from "@/components/video";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
+import { DimensionsSection } from "@/components/sections";
 import { EventsSection } from "@/components/sections/events";
 import { GlobalContext } from "@/contexts/globalContext";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
-import { MediaApi } from "@/services/media/MediaApi";
 import { NewsSection } from "@/components/sections/news";
 import { NewsletterSection } from "@/components/sections/newsletter";
 import { PagesApi } from "@/services/pages/PagesApi";
 import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
-import { TrendingSlider } from "@/components/slider/trending";
+import { TrendingSlider } from "@/components/rss/slider";
 import styles from "../styles/pages/home.module.scss";
 
 export default function Home() {

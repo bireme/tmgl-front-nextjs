@@ -1,4 +1,11 @@
-import { ActionIcon, Group, Loader, LoadingOverlay } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Flex,
+  Group,
+  Loader,
+  LoadingOverlay,
+} from "@mantine/core";
 import { Carousel, Embla } from "@mantine/carousel";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { useCallback, useContext, useEffect, useState } from "react";
@@ -132,33 +139,32 @@ export const TrendingCarrocel = () => {
   }, [getTrendingTopics, globalConfig]);
 
   return (
-    <div>
+    <>
       {posts.length > 0 ? (
         <Carousel
           withControls={false}
-          slideSize="15%"
-          slideGap="sm"
+          slideSize="24.5%"
+          slideGap={"lg"}
           align={"start"}
           loop={false}
           getEmblaApi={setEmbla}
+          className={styles.TrandingCarrocelContainer}
         >
           {posts?.length > 0 ? (
             posts?.map((item, key) => {
               return (
-                <div key={key}>
-                  <Carousel.Slide
-                    key={key}
-                    className={styles.SliderItemContainer}
-                  >
-                    <TrendingTopicSection
-                      href={item.link}
-                      title={`${item.title.slice(0, 150)} ${
-                        item.title.length > 150 ? "..." : ""
-                      }`}
-                      excerpt={`${item.description.trim().slice(0, 120)}...`}
-                    />
-                  </Carousel.Slide>
-                </div>
+                <Carousel.Slide
+                  key={key}
+                  className={styles.SliderItemContainer}
+                >
+                  <TrendingTopicCard
+                    href={item.link}
+                    title={`${item.title.slice(0, 150)} ${
+                      item.title.length > 150 ? "..." : ""
+                    }`}
+                    excerpt={`${item.description.trim().slice(0, 120)}...`}
+                  />
+                </Carousel.Slide>
               );
             })
           ) : (
@@ -170,6 +176,37 @@ export const TrendingCarrocel = () => {
           <Loader color="white" />
         </>
       )}
-    </div>
+    </>
+  );
+};
+
+export interface TrentingTopicCardProps {
+  title: string;
+  excerpt: string;
+  href: string;
+}
+export const TrendingTopicCard = ({
+  title,
+  excerpt,
+  href,
+}: TrentingTopicCardProps) => {
+  return (
+    <Flex
+      className={styles.TrendingTopicSection}
+      direction={"column"}
+      justify={"space-between"}
+    >
+      <div className={styles.TrendingText}>
+        <h3>{title}</h3>
+        <div dangerouslySetInnerHTML={{ __html: excerpt }} />
+      </div>
+      <div className={styles.TrendingLink}>
+        <a href={href} className={styles.TrendingButton}>
+          <Button p={8} radius={"md"} size={"sm"}>
+            <IconArrowRight size={19} stroke={1.5} />
+          </Button>
+        </a>
+      </div>
+    </Flex>
   );
 };

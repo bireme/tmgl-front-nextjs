@@ -131,6 +131,23 @@
     line-height: 150%; /* 45px */
 }
 
+.More{
+  float: right;
+  padding: 10px 30px;
+  display: flex;
+  a{
+    color: black;
+    text-decoration: none;
+    font-family: Roboto;
+    font-weight: 400;
+    font-size: 17px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+
+  }
+}
+
 .PostContent{
   img{
     max-width: 100%;
