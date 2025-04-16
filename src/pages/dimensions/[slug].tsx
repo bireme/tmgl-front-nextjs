@@ -115,7 +115,7 @@ export default function Dimensions() {
                                       </>
                                     }
                                     callBack={() =>
-                                      (window.location.href = resource.target)
+                                      window.open(resource.target, "_blank")
                                     }
                                     key={index}
                                   />
@@ -150,7 +150,7 @@ export default function Dimensions() {
                             </>
                           }
                           callBack={() =>
-                            (window.location.href = resource.target)
+                            window.open(resource.target, "_blank")
                           }
                           key={index}
                         />
