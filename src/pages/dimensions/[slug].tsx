@@ -76,7 +76,7 @@ export default function Dimensions() {
                 {children?.map((child, index) => {
                   return (
                     <Grid key={index}>
-                      <Grid.Col span={{ base: 12, md: 8 }}>
+                      <Grid.Col span={{ base: 12, md: 9 }}>
                         <h3 className={styles.PostPageSubtitle}>
                           {child.title.rendered}
                         </h3>
@@ -87,11 +87,43 @@ export default function Dimensions() {
                           }}
                         />
                       </Grid.Col>
-                      <Grid.Col span={{ base: 12, md: 4 }} px={20} py={60}>
+                      <Grid.Col span={{ base: 12, md: 3 }} px={20} py={60}>
                         <img
                           src={_mediaApi.findFeaturedMedia(child, "full")}
                           width={"100%"}
                         />
+                        {child.acf?.related_resources?.length > 0 && (
+                          <Flex
+                            mt={50}
+                            direction={"column"}
+                            gap={"25px"}
+                            justify={"center"}
+                            align={"center"}
+                          >
+                            {child.acf.related_resources.map(
+                              (
+                                resource: DimensionRelatedResources,
+                                index: number
+                              ) => {
+                                return (
+                                  <IconCard
+                                    small={true}
+                                    title={resource.title}
+                                    icon={
+                                      <>
+                                        <img src={resource.icon} />
+                                      </>
+                                    }
+                                    callBack={() =>
+                                      (window.location.href = resource.target)
+                                    }
+                                    key={index}
+                                  />
+                                );
+                              }
+                            )}
+                          </Flex>
+                        )}
                       </Grid.Col>
                     </Grid>
                   );
@@ -135,9 +167,9 @@ export default function Dimensions() {
               <h2>Recent literature reviews</h2>
               <TrendingCarrocel
                 rssString={
-                  post.acf.trending_rss
-                    ? post.acf.trending_rss != ""
-                      ? post.acf.trending_rss
+                  post.acf?.rss_feed
+                    ? post.acf.rss_feed != ""
+                      ? post.acf.rss_feed
                       : undefined
                     : undefined
                 }

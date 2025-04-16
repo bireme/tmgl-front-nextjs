@@ -1,5 +1,18 @@
 .IconCard{
   flex: 2;
+  &.Small{
+    max-width: 80%;
+    width: 80%;
+    .cardContent{
+      font-size: 20px;
+    }
+    .cardIcon{
+      padding: 5px;
+      img{
+        width: 50%;
+      }
+    }
+  }
   max-width: 30%;
   background-color: #F3F3F2;
   border-radius: 16px;

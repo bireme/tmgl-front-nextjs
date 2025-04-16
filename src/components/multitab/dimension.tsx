@@ -11,7 +11,7 @@ export const DimensionMultitab = ({ content }: DimensionMultitabProps) => {
     <div className={styles.DimensionsMultitabContainer}>
       <Container py={40} size={"xl"}>
         <Grid>
-          <Grid.Col span={{ base: 12, md: 8 }}>
+          <Grid.Col span={{ base: 12, md: 12 }}>
             <Tabs defaultValue="index0">
               <Tabs.List className={styles.TabList}>
                 {sections?.map((item, k) => (

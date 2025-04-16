@@ -7,11 +7,12 @@ export interface IconCardProps {
   title: string;
   icon: ReactNode;
   callBack?: Function;
+  small?: boolean;
 }
-export const IconCard = ({ callBack, title, icon }: IconCardProps) => {
+export const IconCard = ({ callBack, title, icon, small }: IconCardProps) => {
   return (
     <Flex
-      className={styles.IconCard}
+      className={`${styles.IconCard} ${small ? styles.Small : ""}`}
       onClick={() => {
         callBack ? callBack() : null;
       }}
