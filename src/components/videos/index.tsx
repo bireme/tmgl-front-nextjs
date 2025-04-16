@@ -37,7 +37,10 @@ export const VideoItem = ({ title, href, main, thumbnail }: VideoItemProps) => {
   );
 };
 
-export const RelatedVideosSection = () => {
+export interface RelatedVideosSectionProps {
+  filter?: string;
+}
+export const RelatedVideosSection = ({ filter }: RelatedVideosSectionProps) => {
   const _service = new MultimediaService();
   const [items, setItems] = useState<MultimediaObject[]>([]);
   const { language } = useContext(GlobalContext);
@@ -46,7 +49,7 @@ export const RelatedVideosSection = () => {
     try {
       const response = await _service.getResources(
         language,
-        "media_type:video",
+        'media_type:"video"' + filter,
         "*:*"
       );
       if (response) setItems(response.response.docs);

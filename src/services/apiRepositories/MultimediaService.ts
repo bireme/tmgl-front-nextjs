@@ -56,7 +56,14 @@ export class MultimediaService {
     }
     if (obj.link[0].includes("youtube")) {
       videoId = obj.link[0].split("v=")[1];
-      return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+      if (videoId) return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+      else {
+        let videoPaths = obj.link[0].split("/");
+
+        videoId = videoPaths[videoPaths.length - 1];
+        if (videoId.includes("?")) videoId = videoId.split("?")[0];
+        return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+      }
     }
     return "/local/jpeg/multimedia.jpg";
   };

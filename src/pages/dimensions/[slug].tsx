@@ -153,7 +153,7 @@ export default function Dimensions() {
               </div>
             </Container>
 
-            <RelatedVideosSection />
+            <RelatedVideosSection filter={'thematic_area:"TMGL"'} />
           </div>
         </>
       ) : (
