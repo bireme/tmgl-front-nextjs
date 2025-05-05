@@ -81,8 +81,6 @@ export class PostsApi extends BaseUnauthenticatedApi {
       }`
     );
 
-    console.log(createUrlParametersFilter(queryItems ? queryItems : []));
-
     const [regions, tags, dimensions, countries] = await Promise.all([
       this._api.get("/region?per_page=100"),
       this._api.get("/tags?per_page=100"),

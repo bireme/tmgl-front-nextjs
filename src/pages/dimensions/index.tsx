@@ -11,6 +11,7 @@ import styles from "../../styles/pages/home.module.scss";
 export default function News() {
   const { globalConfig } = useContext(GlobalContext);
   const [displayType, setDisplayType] = useState<string>("column");
+  49851;
 
   return (
     <>
@@ -19,7 +20,7 @@ export default function News() {
           blackColor
           path={[
             { path: "/", name: "HOME" },
-            { path: "/dimensions", name: "News" },
+            { path: "/dimensions", name: "Dimensions" },
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>

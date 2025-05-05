@@ -71,7 +71,6 @@ export class EvidenceMapsService {
               ? itemResources[0]
               : null
             : null;
-          console.log(itemResources);
           return {
             id: item.django_id,
             title: item.title,
@@ -136,7 +135,6 @@ export class EvidenceMapsService {
         "resource_id",
         item.id.toString()
       );
-      console.log(resources);
       if (resources.length > 0) resources = resources[0];
       responseItem = {
         id: item.id.toString(),

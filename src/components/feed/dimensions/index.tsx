@@ -54,41 +54,7 @@ export const DimensionsFeed = ({ displayType }: { displayType: string }) => {
             <ResourceFilters
               stringParameter="search"
               callBack={applyFilters}
-              filters={[
-                {
-                  queryType: "tags",
-                  label: "Thematic Area",
-                  items: apiResponse
-                    ? apiResponse?.tags.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
-                    : [],
-                },
-                {
-                  queryType: "country",
-                  label: "Country",
-                  items: apiResponse
-                    ? apiResponse?.countries.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
-                    : [],
-                },
-                {
-                  queryType: "region",
-                  label: "WHO Regions",
-                  items: apiResponse
-                    ? apiResponse?.regions.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
-                    : [],
-                },
-              ]}
+              filters={[]}
             />
           ) : (
             <></>
