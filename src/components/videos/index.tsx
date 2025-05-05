@@ -37,9 +37,60 @@ export const VideoItem = ({ title, href, main, thumbnail }: VideoItemProps) => {
   );
 };
 
+export interface FixedRelatedVideosSectionProps {
+  items: VideoItemProps[];
+}
+
+export const FixedRelatedVideosSection = ({
+  items,
+}: FixedRelatedVideosSectionProps) => {
+  return (
+    <div className={styles.RelatedVideosSection}>
+      <Container size={"xl"}>
+        {items?.length > 0 ? (
+          <>
+            <h2>Related videos</h2>
+            <Flex className={styles.RelatedVideosSectionFlex} gap={20}>
+              <div className={styles.MainVideo}>
+                <VideoItem
+                  title={items[0].title}
+                  href={items[0].href}
+                  main={true}
+                  thumbnail={items[0].thumbnail ? items[0].thumbnail : ""}
+                />
+              </div>
+              <div className={styles.SideVideos}>
+                <Flex
+                  style={{ height: "100%" }}
+                  direction={{ base: "column" }}
+                  justify={"space-between"}
+                >
+                  <VideoItem
+                    title={items[1].title}
+                    href={items[1].href}
+                    thumbnail={items[1].thumbnail ? items[1].thumbnail : ""}
+                  />
+                  <VideoItem
+                    title={items[2].title}
+                    href={items[2].href}
+                    thumbnail={items[2].thumbnail ? items[2].thumbnail : ""}
+                  />
+                </Flex>
+              </div>
+            </Flex>{" "}
+          </>
+        ) : (
+          <></>
+        )}
+      </Container>
+    </div>
+  );
+};
+
 export interface RelatedVideosSectionProps {
   filter?: string;
 }
+
 export const RelatedVideosSection = ({ filter }: RelatedVideosSectionProps) => {
   const _service = new MultimediaService();
   const [items, setItems] = useState<MultimediaObject[]>([]);

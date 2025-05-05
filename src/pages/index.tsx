@@ -5,6 +5,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
 import { DimensionsSection } from "@/components/sections";
 import { EventsSection } from "@/components/sections/events";
+import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
@@ -129,6 +130,27 @@ export default function Home() {
       <EventsSection />
       <div className={styles.NewsContainer}>
         <NewsSection title={true} />
+        <FixedRelatedVideosSection
+          items={[
+            {
+              title:
+                "Traditional medicine: WHO Director General addresses the Group of Friends of Traditional Medicine ",
+              href: "https://www.youtube.com/watch?v=xEaxxGiyANM&t=1s",
+              thumbnail: "https://img.youtube.com/vi/xEaxxGiyANM/sddefault.jpg",
+            },
+            {
+              title: "The WHO Global Centre for Traditional Medicine ",
+              href: "https://www.youtube.com/watch?v=wsMwFRMfe1I",
+              thumbnail: "https://img.youtube.com/vi/wsMwFRMfe1I/sddefault.jpg",
+            },
+            {
+              title:
+                "Traditional Medicine: five areas of work of the WHO Global Centre for Traditional Medicine (GCTM)",
+              href: "https://www.youtube.com/watch?v=F6_qCT5T1ys",
+              thumbnail: "https://img.youtube.com/vi/F6_qCT5T1ys/sddefault.jpg",
+            },
+          ]}
+        />
         <NewsletterSection />
       </div>
     </>
