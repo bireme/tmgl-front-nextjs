@@ -87,7 +87,7 @@ export default function Dimensions() {
                           }}
                         />
                       </Grid.Col>
-                      {/* <Grid.Col span={{ base: 12, md: 3 }} px={20} py={60}>
+                      <Grid.Col span={{ base: 12, md: 3 }} px={20} py={60}>
                         <img
                           src={_mediaApi.findFeaturedMedia(child, "full")}
                           width={"100%"}
@@ -124,7 +124,7 @@ export default function Dimensions() {
                             )}
                           </Flex>
                         )}
-                      </Grid.Col> */}
+                      </Grid.Col>
                     </Grid>
                   );
                 })}
@@ -185,7 +185,7 @@ export default function Dimensions() {
               </div>
             </Container>
 
-            <RelatedVideosSection filter={'thematic_area:"TMGL"'} />
+            {/* <RelatedVideosSection filter={'thematic_area:"TMGL"'} /> */}
           </div>
         </>
       ) : (
