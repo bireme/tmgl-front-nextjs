@@ -86,7 +86,7 @@ export const DimensionsFeed = ({ displayType }: { displayType: string }) => {
                           180
                         ) + `${i.excerpt.rendered.length > 180 ? "..." : ""}`
                       }
-                      link={`/news/${i.slug}`}
+                      link={`/dimensions/${i.slug}`}
                     />
                   );
                 })}
