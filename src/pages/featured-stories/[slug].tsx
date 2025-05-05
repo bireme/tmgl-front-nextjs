@@ -54,14 +54,9 @@ export default function FeaturedStories() {
           />
           {acf ? (
             <>
-              <FirstSection acf={acf} />
-              <SecondSection acf={acf} />
-              {/* <EvidenceMapsSection /> */}
-              <ThirdSection acf={acf} />
-              {/* <div className={styles.Float}>
-                <RelatedVideosSection />
-                <RecomendedArticlesSection limit={3} />
-              </div> */}
+              {acf.first_session ? <FirstSection acf={acf} /> : <></>}
+              {acf.second_session ? <SecondSection acf={acf} /> : <></>}
+              {acf.third_session ? <ThirdSection acf={acf} /> : <></>}
             </>
           ) : (
             <></>
