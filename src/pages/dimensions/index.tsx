@@ -4,9 +4,7 @@ import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { DimensionsFeed } from "@/components/feed/dimensions";
-import { FeedSection } from "@/components/feed";
 import { GlobalContext } from "@/contexts/globalContext";
-import { NewsFeed } from "@/components/feed/news";
 import styles from "../../styles/pages/home.module.scss";
 
 export default function Dimensions() {
