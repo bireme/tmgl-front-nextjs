@@ -66,6 +66,7 @@ export const EventsSection = () => {
                 <a
                   key={0}
                   style={{ color: "white", textDecoration: "none" }}
+                  target="_blank"
                   href={"/events/" + event?.slug}
                 >
                   <Button>Event Page</Button>
@@ -75,6 +76,7 @@ export const EventsSection = () => {
                     <a
                       key={key}
                       style={{ color: "white", textDecoration: "none" }}
+                      target="_blank"
                       href={item.type == "Link" ? item.link : item.file}
                     >
                       <Button>{item.label}</Button>
