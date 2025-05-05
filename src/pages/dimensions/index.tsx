@@ -4,14 +4,14 @@ import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { DimensionsFeed } from "@/components/feed/dimensions";
+import { FeedSection } from "@/components/feed";
 import { GlobalContext } from "@/contexts/globalContext";
 import { NewsFeed } from "@/components/feed/news";
 import styles from "../../styles/pages/home.module.scss";
 
-export default function News() {
+export default function Dimensions() {
   const { globalConfig } = useContext(GlobalContext);
   const [displayType, setDisplayType] = useState<string>("column");
-  49851;
 
   return (
     <>
@@ -23,7 +23,13 @@ export default function News() {
             { path: "/dimensions", name: "Dimensions" },
           ]}
         />
-        <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
+        <Flex
+          mb={100}
+          justify={"space-between"}
+          align={"center"}
+          px={15}
+          mt={30}
+        >
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
             <img src={"/local/svg/simbol.svg"} />
             Dimensions
@@ -44,11 +50,7 @@ export default function News() {
             />
           </div>
         </Flex>
-        <Flex px={15} mb={40}>
-          <p className={styles.DescriptionThin}>
-            {globalConfig?.acf.dimensions_description}
-          </p>
-        </Flex>
+
         <DimensionsFeed displayType={displayType} />
       </Container>
     </>

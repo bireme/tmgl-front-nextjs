@@ -1,5 +1,4 @@
 import { Button, Center, Container, Flex, Modal } from "@mantine/core";
-import { ImageSection, VideoSection } from "@/components/video";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
@@ -10,6 +9,7 @@ import { GlobalContext } from "@/contexts/globalContext";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { IconArrowRight } from "@tabler/icons-react";
+import { ImageSection } from "@/components/video";
 import Link from "next/link";
 import { NewsSection } from "@/components/sections/news";
 import { NewsletterSection } from "@/components/sections/newsletter";

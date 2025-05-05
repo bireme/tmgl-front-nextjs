@@ -147,7 +147,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
     metakey: string
   ) {
     const { data } = await this._api.get(
-      `${postTypeSlug}?meta_key=${metakey}&meta_value=${metavalue}&_embed&acf_format=standard`
+      `${postTypeSlug}?meta_key=${metakey}&meta_value=${metavalue}&_embed&acf_format=standard&per_page=100`
     );
     return data;
   }

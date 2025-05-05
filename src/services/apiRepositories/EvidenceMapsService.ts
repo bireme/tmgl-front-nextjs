@@ -92,6 +92,12 @@ export class EvidenceMapsService {
                 : [],
             image: itemResources
               ? postsApi.findFeaturedMedia(itemResources, "medium")
+                ? postsApi.findFeaturedMedia(itemResources, "medium")
+                : postsApi.findFeaturedMedia(itemResources, "full")
+                ? postsApi.findFeaturedMedia(itemResources, "full")
+                : postsApi.findFeaturedMedia(itemResources, "thumbnail")
+                ? postsApi.findFeaturedMedia(itemResources, "thumbnail")
+                : ""
               : "",
           };
         }
