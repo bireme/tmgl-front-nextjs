@@ -87,6 +87,22 @@ export interface ListPostsDto {
   countries: Term[];
 }
 
+export interface CountryAcfProps {
+  content: string;
+  side_image: string;
+  resources: CountryAcfResource[];
+  key_resources: string;
+  embed_content: string;
+  rss_filter: string;
+  multimedia_filter: string;
+}
+
+export interface CountryAcfResource {
+  icon: string;
+  title: string;
+  url: string;
+}
+
 export interface Post {
   id: number;
   date: string;
