@@ -49,7 +49,7 @@ export const FixedRelatedVideosSection = ({
       <Container size={"xl"}>
         {items?.length > 0 ? (
           <>
-            <h2>Related videos</h2>
+            <h3 className={styles.TitleWithIcon}>Related videos</h3>
             <Flex className={styles.RelatedVideosSectionFlex} gap={20}>
               <div className={styles.MainVideo}>
                 <VideoItem

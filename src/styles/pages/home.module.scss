@@ -147,3 +147,101 @@
   float: left;
   width: 100%;
 }
+
+
+
+
+.CountryContent{
+  background-color: #F3F3F3;
+  margin-top: -40px;
+  padding: 40px 0px;
+  h2{
+    color: #006CB0;
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: "Roboto Serif";
+  }
+  
+  p{
+    color: #000;
+    font-size: 1.2rem;
+    font-weight: 300;
+    font-family: "Roboto";
+    margin-top: 10px ;
+    margin-bottom: 20px;
+    text-align: justify;
+    line-height: 2rem;
+  }
+  .SideContent{
+    position:sticky;
+    margin-top: 40px;
+    top: 80px;
+    .SideImage{
+      max-width: 100%;
+      width: 100%;
+      border-radius: 8px;
+    }
+    .KeyResources{
+      margin-top: 20px;
+      font-size: 1rem;
+      font-weight: 300;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: #0000002e 0px 4px 16px 0px;
+      h3{
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 5px;
+        margin-top: 0px;
+        font-family: "Roboto Serif";
+      }
+      p{
+        font-size: 1rem;
+        font-weight: 300;
+      }
+    }
+  }
+  
+}
+
+.CountryRersources{
+  h4{
+    font-family: "Roboto Serif";
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    margin-top: 0px;
+  }
+}
+
+.TitleWithIcon{
+  text-transform: capitalize;
+  padding-left: 40px;
+  background-image: url('../../../public/local/svg/simbol.svg');
+  background-position: left center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  font-family: "Roboto Serif";
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+  max-width: 50vw;
+  @media (max-width: '750px') {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+
+.CountryRss{
+  padding:40px 0px;
+  background-color: #cdd3e7;
+  h4{
+    font-family: "Roboto Serif";
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 10px;
+    margin-top: 0px;
+  }
+}
