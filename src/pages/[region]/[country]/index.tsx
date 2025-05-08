@@ -8,6 +8,7 @@ import { HeroImage, HeroSlider } from "@/components/slider";
 import { TrendingCarrocel, TrendingSlider } from "@/components/rss/slider";
 import { useCallback, useContext, useEffect, useState } from "react";
 
+import { BreadCrumbs } from "@/components/breadcrumbs";
 import { DimensionRelatedResources } from "@/services/types/dimensionsAcf";
 import { GlobalContext } from "@/contexts/globalContext";
 import { IconCard } from "@/components/cards";
@@ -45,12 +46,30 @@ export default function CountryHome() {
       {postProps ? (
         <>
           <div className={styles.HeroSearch}>
-            <HeroImage
-              image={_postApiHelper.findFeaturedMedia(postProps, "full")}
-            />
+            {properties?.slide_images ? (
+              <HeroSlider images={properties.slide_images} />
+            ) : (
+              <HeroImage
+                image={_postApiHelper.findFeaturedMedia(postProps, "full")}
+              />
+            )}
 
             <div className={styles.FullContainer}>
               <Container size={"xl"}>
+                <br />
+                <BreadCrumbs
+                  path={[
+                    {
+                      path: `/${region}`,
+                      name: region ? region?.toString().toUpperCase() : "",
+                    },
+                    {
+                      path: `/${country}`,
+                      name: country ? country.toString() : "",
+                    },
+                  ]}
+                  blackColor={false}
+                />
                 <SearchForm
                   title="Discover a comprehensive resource for traditional medicine."
                   subtitle="Access a wealth of scientific and technical information, regional insights, and global strategies."
@@ -71,20 +90,16 @@ export default function CountryHome() {
                 </Grid.Col>
                 <Grid.Col span={{ md: 3, base: 12 }} px={20}>
                   <div className={styles.SideContent}>
-                    {properties?.side_image && (
-                      <img
-                        src={properties?.side_image}
-                        className={styles.SideImage}
-                      />
-                    )}
                     {properties?.key_resources && (
                       <div className={styles.KeyResources}>
                         <h3>Links to key resources</h3>
-                        <div
-                          dangerouslySetInnerHTML={{
-                            __html: properties?.key_resources,
-                          }}
-                        />
+                        {properties?.key_resources.map((keyR, key) => {
+                          return (
+                            <a key={key} href={keyR.url} target={"_blank"}>
+                              {keyR.text}
+                            </a>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
@@ -96,7 +111,7 @@ export default function CountryHome() {
             {properties ? (
               properties?.resources?.length > 0 ? (
                 <Container py={40} size={"xl"}>
-                  <h4>Resources</h4>
+                  <h3 className={styles.TitleWithIcon}>Resources</h3>
                   <Flex mt={50} gap={"3%"} justify={"space-around"}>
                     {properties?.resources.map(
                       (resource: CountryAcfResource, index: number) => {
@@ -125,7 +140,9 @@ export default function CountryHome() {
           </div>
           <div className={styles.CountryRss}>
             <Container py={10} size={"xl"}>
-              <h4>Recent literature reviews</h4>
+              <h3 className={styles.TitleWithIcon}>
+                Recent literature reviews
+              </h3>
               <TrendingCarrocel />
             </Container>
           </div>

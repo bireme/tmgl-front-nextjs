@@ -1,3 +1,5 @@
+import { AcfImageArray } from "./featuredStoriesAcf";
+
 interface Guid {
   rendered: string;
 }
@@ -89,9 +91,9 @@ export interface ListPostsDto {
 
 export interface CountryAcfProps {
   content: string;
-  side_image: string;
+  slide_images: AcfImageArray[];
   resources: CountryAcfResource[];
-  key_resources: string;
+  key_resources: Array<KeyResource>;
   embed_content: string;
   rss_filter: string;
   multimedia_filter: string;
@@ -100,6 +102,11 @@ export interface CountryAcfProps {
 export interface CountryAcfResource {
   icon: string;
   title: string;
+  url: string;
+}
+
+export interface KeyResource {
+  text: string;
   url: string;
 }
 
