@@ -29,7 +29,7 @@ export default function CountryHome() {
   const getPageProperties = useCallback(async () => {
     const _api = new PostsApi(region ? region.toString() : "");
     if (country) {
-      const postResponse = await _api.getPost("country", country.toString());
+      const postResponse = await _api.getPost("countries", country.toString());
       if (postResponse.length > 0) {
         setPostProps(postResponse[0]);
         setProperties(postResponse[0].acf);
@@ -95,9 +95,11 @@ export default function CountryHome() {
                         <h3>Links to key resources</h3>
                         {properties?.key_resources.map((keyR, key) => {
                           return (
-                            <a key={key} href={keyR.url} target={"_blank"}>
-                              {keyR.text}
-                            </a>
+                            <p key={key}>
+                              <a href={keyR.url} target={"_blank"}>
+                                {keyR.text}
+                              </a>
+                            </p>
                           );
                         })}
                       </div>
@@ -107,6 +109,24 @@ export default function CountryHome() {
               </Grid>
             </Container>
           </div>
+          {properties?.embed_content ? (
+            <>
+              <div className={styles.EmbedContent}>
+                {properties?.embed_content ? (
+                  <iframe
+                    src={properties?.embed_content}
+                    width="100%"
+                    height="600"
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+
           <div className={styles.CountryRersources}>
             {properties ? (
               properties?.resources?.length > 0 ? (
