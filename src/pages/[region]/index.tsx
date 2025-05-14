@@ -97,9 +97,7 @@ export default function RegionHome() {
               </Container>
               <Container size={"xl"}>
                 <StoriesSection region={region ? region.toString() : ""} />
-                <h2 className={styles.TitleWithIcon}>
-                  <img src={"/local/svg/simbol.svg"} /> Events
-                </h2>
+                <h2 className={styles.TitleWithIcon}> Events</h2>
               </Container>
             </div>
             <EventsSection />
