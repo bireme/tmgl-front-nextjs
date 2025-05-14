@@ -21,10 +21,7 @@ export default function DatabaseRepositories() {
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
-          <h3 className={styles.TitleWithIcon}>
-            <img src={"/local/svg/simbol.svg"} />
-            Database & Repositories
-          </h3>
+          <h3 className={styles.TitleWithIcon}>Database & Repositories</h3>
 
           <div>
             <IconLayoutGrid

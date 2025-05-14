@@ -153,6 +153,11 @@ export function stringContainsSubstring(mainString: string, substring: string) {
 }
 
 export function removeHtmlTags(inputString: string): string {
-  const regex = /<[^>]*>/g;
-  return inputString.replace(regex, "");
+  // Remove tags HTML
+  const noTags = inputString.replace(/<[^>]*>/g, "");
+
+  // Remove entidades HTML como &nbsp;, &hellip;, etc.
+  const noEntities = noTags.replace(/&[a-zA-Z0-9#]+;/g, "");
+
+  return noEntities.trim();
 }

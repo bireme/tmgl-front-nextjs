@@ -38,7 +38,7 @@ export const HeaderLayout = () => {
   const [prevSelectedSubItem, setPrevSelectedSubItem] = useState<MenuItemDTO>();
   const router = useRouter();
   const menuApi = new MenusApi();
-  const { regionName } = useContext(GlobalContext);
+  const { regionName, countryName } = useContext(GlobalContext);
   const mediaQueryMatches = useMediaQuery("(max-width: 750px)");
 
   const getMenus = async () => {
@@ -188,7 +188,10 @@ export const HeaderLayout = () => {
             >
               <a href={`/${regionName ? regionName : ""}`}>
                 <p>
-                  TMGL <span>{getRegionName(regionName)}</span>
+                  TMGL{" "}
+                  <span>
+                    {countryName ? countryName : getRegionName(regionName)}
+                  </span>
                 </p>
               </a>
               <div className={styles.ResponsiveMenuButton}>

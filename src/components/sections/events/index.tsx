@@ -17,19 +17,26 @@ import { PostsApi } from "@/services/posts/PostsApi";
 import styles from "../../../styles/components/sections.module.scss";
 import { useRouter } from "next/router";
 
-export const EventsSection = () => {
+interface EventsSectionProps {
+  region?: string;
+}
+
+export const EventsSection = ({ region }: EventsSectionProps) => {
+  //DefaultImage if event has no image
   const eventImage = "/local/png/img-events.png";
   const router = useRouter();
   const [event, setEvent] = useState<Post>();
-  const _api = new PostsApi();
+  let _api = new PostsApi();
+
   const getEvents = async () => {
+    if (region) _api = new PostsApi(region);
     try {
       const resp = await _api.listPosts("event", 10, 1);
       if (resp.data.length > 0) {
         setEvent(resp.data[0]);
       }
-    } catch {
-      console.log("Error while trying to get dimension");
+    } catch (error) {
+      console.log("Error while trying to get events");
     }
   };
 
@@ -45,7 +52,7 @@ export const EventsSection = () => {
           backgroundImage: `linear-gradient(90deg, rgb(5 29 97 / 88%) 5.19%, rgba(12, 43, 100, 0) 100%), url('${
             _api.findFeaturedMedia(event, "full")
               ? _api.findFeaturedMedia(event, "full")
-              : eventImage
+              : _api.findFeaturedMedia(event, "full")
           }')`,
         }}
       >

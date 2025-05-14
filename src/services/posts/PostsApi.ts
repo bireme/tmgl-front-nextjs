@@ -13,6 +13,7 @@ import { queryType } from "../types/resources";
 export class PostsApi extends BaseUnauthenticatedApi {
   public constructor(region?: string) {
     super(`${region ? region + "/" : ""}wp-json/wp/v2/`);
+    if (region) this._region = region;
   }
 
   public async getTaxonomies(): Promise<TaxonomyDTO[]> {
@@ -81,21 +82,34 @@ export class PostsApi extends BaseUnauthenticatedApi {
       }`
     );
 
-    const [regions, tags, dimensions, countries] = await Promise.all([
-      this._api.get("/region?per_page=100"),
-      this._api.get("/tags?per_page=100"),
-      this._api.get("/tm-dimension?per_page=100"),
-      this._api.get("/country?per_page=100"),
-    ]);
-
-    return {
-      data: response.data,
-      totalItems: parseInt(response.headers["x-wp-total"], 10),
-      regions: regions.data,
-      tags: tags.data,
-      dimensions: dimensions.data,
-      countries: countries.data,
-    };
+    if (!this._region) {
+      const [regions, tags, dimensions, countries] = await Promise.all([
+        this._api.get("/region?per_page=100"),
+        this._api.get("/tags?per_page=100"),
+        this._api.get("/tm-dimension?per_page=100"),
+        this._api.get("/country?per_page=100"),
+      ]);
+      return {
+        data: response.data,
+        totalItems: parseInt(response.headers["x-wp-total"], 10),
+        regions: regions.data,
+        tags: tags.data,
+        dimensions: dimensions.data,
+        countries: countries.data,
+      };
+    } else {
+      const [regions] = await Promise.all([
+        this._api.get("/tags?per_page=100"),
+      ]);
+      return {
+        data: response.data,
+        totalItems: parseInt(response.headers["x-wp-total"], 10),
+        regions: regions.data,
+        tags: [],
+        dimensions: [],
+        countries: [],
+      };
+    }
   }
 
   public formatTags(item: Post): TagItem[] {
