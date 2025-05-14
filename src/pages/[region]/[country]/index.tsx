@@ -115,7 +115,7 @@ export default function CountryHome() {
           {properties?.embed_content ? (
             <>
               <div className={styles.EmbedContent}>
-                <Container>
+                <Container size={"xl"}>
                   <h3 className={styles.TitleWithIcon}>
                     TM Research Analytics{" "}
                   </h3>
