@@ -88,7 +88,7 @@ export default function RegionHome() {
                 className={styles.TrandingAndFeaturedContainer}
               >
                 <h2 className={styles.TitleWithIcon}>
-                  <img src={"/local/svg/simbol.svg"} /> Recent Literature Review
+                  Recent Literature Review
                 </h2>
                 <div className={styles.TrendingText}>
                   <p>{acf?.text_trending_topics}</p>

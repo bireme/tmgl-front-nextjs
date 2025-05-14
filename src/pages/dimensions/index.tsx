@@ -29,7 +29,6 @@ export default function Dimensions() {
           mt={30}
         >
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            <img src={"/local/svg/simbol.svg"} />
             Dimensions
           </h3>
 

@@ -8,10 +8,12 @@ import { Post } from "./types/posts.dto";
 export abstract class BaseUnauthenticatedApi {
   protected _api: AxiosInstance;
   protected _lang: string;
+  protected _region?: string;
 
   public constructor(endpoint: string, region?: string) {
     const cookieLang = Cookies.get("lang");
     this._lang = cookieLang ? cookieLang : "en";
+    if (region) this._region = region;
     if (!process.env.WP_BASE_URL) {
       throw new Error("env variable NEXT_PUBLIC_API_BASE_URL not set");
     }
@@ -58,7 +60,7 @@ export abstract class BaseUnauthenticatedApi {
         }
       }
     }
-    if (url) return url + ".webp";
+    if (url) return url + `${url.includes(".webp") ? "" : ".webp"}`;
     return "";
   }
 }

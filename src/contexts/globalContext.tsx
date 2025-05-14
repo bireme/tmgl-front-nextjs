@@ -11,6 +11,8 @@ import { GlobalConfigAcf } from "@/services/types/globalAcf";
 interface IGlobalContextData {
   regionName: string;
   setRegionName: Dispatch<SetStateAction<string>>;
+  countryName: string;
+  setCountryName: Dispatch<SetStateAction<string>>;
   globalConfig?: GlobalConfigAcf;
   setGlobalConfig: Dispatch<SetStateAction<GlobalConfigAcf | undefined>>;
   language: string;
@@ -31,10 +33,13 @@ export const GlobalProvider = ({ children }: IGlobalProviderProps) => {
     undefined
   );
   const [language, setLanguage] = useState<string>("en");
+  const [countryName, setCountryName] = useState<string>("");
   return (
     <GlobalContext.Provider
       value={{
         regionName,
+        countryName,
+        setCountryName,
         setRegionName,
         globalConfig,
         setGlobalConfig,

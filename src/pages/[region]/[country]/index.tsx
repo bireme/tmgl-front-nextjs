@@ -5,15 +5,15 @@ import {
   Post,
 } from "@/services/types/posts.dto";
 import { HeroImage, HeroSlider } from "@/components/slider";
-import { TrendingCarrocel, TrendingSlider } from "@/components/rss/slider";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
-import { DimensionRelatedResources } from "@/services/types/dimensionsAcf";
+import { EventsSection } from "@/components/sections/events";
 import { GlobalContext } from "@/contexts/globalContext";
 import { IconCard } from "@/components/cards";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
+import { TrendingCarrocel } from "@/components/rss/slider";
 import styles from "../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
@@ -21,15 +21,18 @@ export default function CountryHome() {
   const router = useRouter();
   const _postApiHelper = new PostsApi();
   const [properties, setProperties] = useState<CountryAcfProps>();
+  const { setRegionName, setCountryName } = useContext(GlobalContext);
   const [postProps, setPostProps] = useState<Post>();
   const {
     query: { country, region },
   } = router;
 
   const getPageProperties = useCallback(async () => {
+    setRegionName(region ? region.toString() : "");
+    setCountryName(country ? country.toString() : "");
     const _api = new PostsApi(region ? region.toString() : "");
     if (country) {
-      const postResponse = await _api.getPost("country", country.toString());
+      const postResponse = await _api.getPost("countries", country.toString());
       if (postResponse.length > 0) {
         setPostProps(postResponse[0]);
         setProperties(postResponse[0].acf);
@@ -95,9 +98,11 @@ export default function CountryHome() {
                         <h3>Links to key resources</h3>
                         {properties?.key_resources.map((keyR, key) => {
                           return (
-                            <a key={key} href={keyR.url} target={"_blank"}>
-                              {keyR.text}
-                            </a>
+                            <p key={key}>
+                              <a href={keyR.url} target={"_blank"}>
+                                {keyR.text}
+                              </a>
+                            </p>
                           );
                         })}
                       </div>
@@ -107,6 +112,24 @@ export default function CountryHome() {
               </Grid>
             </Container>
           </div>
+          {properties?.embed_content ? (
+            <>
+              <div className={styles.EmbedContent}>
+                {properties?.embed_content ? (
+                  <iframe
+                    src={properties?.embed_content}
+                    width="100%"
+                    height="600"
+                  />
+                ) : (
+                  <></>
+                )}
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
+
           <div className={styles.CountryRersources}>
             {properties ? (
               properties?.resources?.length > 0 ? (
@@ -146,11 +169,17 @@ export default function CountryHome() {
               <TrendingCarrocel />
             </Container>
           </div>
+
           {/* <div className={styles.CountryEvents}>
             <Container py={10} size={"xl"}>
               <h4>Recent literature reviews</h4>
             </Container>
           </div> */}
+          {region ? (
+            <EventsSection region={region ? region.toString() : ""} />
+          ) : (
+            <></>
+          )}
         </>
       ) : (
         <>
