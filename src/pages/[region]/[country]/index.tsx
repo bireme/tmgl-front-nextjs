@@ -115,6 +115,11 @@ export default function CountryHome() {
           {properties?.embed_content ? (
             <>
               <div className={styles.EmbedContent}>
+                <Container>
+                  <h3 className={styles.TitleWithIcon}>
+                    TM Research Analytics{" "}
+                  </h3>
+                </Container>
                 {properties?.embed_content ? (
                   <iframe
                     src={properties?.embed_content}
