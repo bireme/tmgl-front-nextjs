@@ -31,6 +31,7 @@ export const HeaderLayout = () => {
   const [opened, setOpened] = useState(false);
   const [globalMenu, setGlobalMenu] = useState<MenuItemDTO[]>();
   const [regMenu, setRegMenu] = useState<MenuItemDTO[]>();
+  const [originalMenuItem, setOriginalMenuItem] = useState<MenuItemDTO>();
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [responsiveMenuOpen, setResponsiveMenuOpen] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemDTO>();
@@ -74,6 +75,9 @@ export const HeaderLayout = () => {
   }, []);
 
   const renderMegaMenuWithItems = () => {
+    if (selectedSubItem?.children.length == 0) {
+      return renderMegaMenuItem(selectedSubItem);
+    }
     return (
       <div
         className={styles.MegaMenuContainerWithItems}
@@ -97,11 +101,12 @@ export const HeaderLayout = () => {
               handleCloseMegaMenu();
             } else {
               if (item.children.length > 0) {
-                setPrevSelectedSubItem(selectedMenuItem);
+                setPrevSelectedSubItem(originalMenuItem);
                 setSelectedMenuItem(item);
-                setSelectedSubItem(item.children[0]);
-              } else {
                 setSelectedSubItem(item);
+              } else {
+                setPrevSelectedSubItem(originalMenuItem);
+                setSelectedMenuItem(item);
                 //If the site is being displayed at a phone this need to act lile a link
                 if (mediaQueryMatches) {
                   router.push(item.url);
@@ -149,7 +154,7 @@ export const HeaderLayout = () => {
               if (item.children.length > 0) {
                 setPrevSelectedSubItem(selectedMenuItem);
                 setSelectedMenuItem(item);
-                setSelectedSubItem(item.children[0]);
+                setSelectedSubItem(item);
               } else {
                 setSelectedSubItem(item);
                 //If the site is being displayed at a phone this need to act lile a link
@@ -339,6 +344,7 @@ export const HeaderLayout = () => {
                           setSelectedMenuItem(undefined);
                         } else {
                           setMegaMenuOpen(true);
+                          setOriginalMenuItem(item);
                           setSelectedMenuItem(item);
                           setSelectedSubItem(undefined);
                         }
@@ -377,6 +383,7 @@ export const HeaderLayout = () => {
                             setSelectedMenuItem(undefined);
                           } else {
                             setMegaMenuOpen(true);
+                            setOriginalMenuItem(item);
                             setSelectedMenuItem(item);
                             setSelectedSubItem(undefined);
                           }
@@ -490,6 +497,7 @@ export const HeaderLayout = () => {
                       if (item.children?.length > 0) {
                         e.stopPropagation();
                         setMegaMenuOpen(true);
+                        setOriginalMenuItem(item);
                         setSelectedMenuItem(item);
                         setSelectedSubItem(undefined);
                         setResponsiveMenuOpen(false);
