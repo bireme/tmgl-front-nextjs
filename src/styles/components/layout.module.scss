@@ -1,3 +1,35 @@
+.MegaMenuContainerWithItems{
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  column-gap: 15px;
+  position: relative;
+    a{
+      display: flex;
+      cursor: pointer;
+      font-size: 1.3rem;
+      font-weight: 400;
+      z-index: 1;
+      &:hover{
+        font-weight: 800;
+      }
+    }
+  ::before{
+    content: '';
+    width: 100%;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    z-index: -1;
+    background-color: #f6f6f6ad;
+    position: absolute;
+  }
+    
+  
+}
+
 .HeaderContent{
   background-color: white;
   width: 100%;

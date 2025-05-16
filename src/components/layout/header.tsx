@@ -73,6 +73,111 @@ export const HeaderLayout = () => {
     getMenus();
   }, []);
 
+  const renderMegaMenuWithItems = () => {
+    return (
+      <div
+        className={styles.MegaMenuContainerWithItems}
+        style={{
+          backgroundImage: `url(${process.env.WP_BASE_URL}${selectedSubItem?.attr})`,
+        }}
+      >
+        {renderSubItemsNav(true)}
+      </div>
+    );
+  };
+
+  const renderSubItemsSubNav = (prev?: boolean) => {
+    return prevSelectedSubItem?.children.map((item, key) => {
+      return (
+        <a
+          key={key}
+          onClick={() => {
+            if (prev) {
+              router.push(item.url);
+              handleCloseMegaMenu();
+            } else {
+              if (item.children.length > 0) {
+                setPrevSelectedSubItem(selectedMenuItem);
+                setSelectedMenuItem(item);
+                setSelectedSubItem(item.children[0]);
+              } else {
+                setSelectedSubItem(item);
+                //If the site is being displayed at a phone this need to act lile a link
+                if (mediaQueryMatches) {
+                  router.push(item.url);
+                  handleCloseMegaMenu();
+                  setResponsiveMenuOpen(false);
+                }
+              }
+            }
+          }}
+          className={`${
+            selectedSubItem?.parent == item.ID && !prev ? styles.selected : ""
+          }`}
+        >
+          {decodeHtmlEntities(item.title ? item.title : "")}
+          {selectedSubItem?.parent == item.ID && !prev ? (
+            <div>
+              <IconChevronsRight />
+            </div>
+          ) : (
+            <></>
+          )}
+        </a>
+      );
+    });
+  };
+
+  const handleCloseMegaMenu = () => {
+    setMegaMenuOpen(false);
+    setResponsiveMenuOpen(false);
+    setSelectedMenuItem(undefined);
+    setSelectedSubItem(undefined);
+    setPrevSelectedSubItem(undefined);
+  };
+
+  const renderSubItemsNav = (prev?: boolean) => {
+    return selectedMenuItem?.children.map((item, key) => {
+      return (
+        <a
+          key={key}
+          onClick={() => {
+            if (prev) {
+              router.push(item.url);
+              handleCloseMegaMenu();
+            } else {
+              if (item.children.length > 0) {
+                setPrevSelectedSubItem(selectedMenuItem);
+                setSelectedMenuItem(item);
+                setSelectedSubItem(item.children[0]);
+              } else {
+                setSelectedSubItem(item);
+                //If the site is being displayed at a phone this need to act lile a link
+                if (mediaQueryMatches) {
+                  router.push(item.url);
+                  handleCloseMegaMenu();
+                  setResponsiveMenuOpen(false);
+                }
+              }
+            }
+          }}
+          className={`${
+            selectedSubItem?.ID == item.ID && !prev ? styles.selected : ""
+          }`}
+        >
+          {decodeHtmlEntities(item.title ? item.title : "")}
+          {selectedSubItem?.ID == item.ID && !prev ? (
+            <div>
+              <IconChevronsRight />
+            </div>
+          ) : (
+            <></>
+          )}
+        </a>
+      );
+    });
+  };
+
   const renderMegaMenuItem = (selectedSubItem: MenuItemDTO) => {
     if (!selectedSubItem.description || selectedSubItem.description == "") {
       return (
@@ -202,7 +307,7 @@ export const HeaderLayout = () => {
                       stroke={1.5}
                       onClick={() => {
                         setResponsiveMenuOpen(true);
-                        setMegaMenuOpen(false);
+                        handleCloseMegaMenu();
                       }}
                     />
                   </>
@@ -213,7 +318,7 @@ export const HeaderLayout = () => {
                       stroke={1.5}
                       onClick={() => {
                         setResponsiveMenuOpen(false);
-                        setMegaMenuOpen(false);
+                        handleCloseMegaMenu();
                       }}
                     />
                   </>
@@ -230,7 +335,7 @@ export const HeaderLayout = () => {
                       key={key}
                       onClick={() => {
                         if (selectedMenuItem?.ID == item.ID) {
-                          setMegaMenuOpen(false);
+                          handleCloseMegaMenu();
                           setSelectedMenuItem(undefined);
                         } else {
                           setMegaMenuOpen(true);
@@ -268,7 +373,7 @@ export const HeaderLayout = () => {
                       onClick={() => {
                         if (item.children?.length > 0) {
                           if (selectedMenuItem?.ID == item.ID) {
-                            setMegaMenuOpen(false);
+                            handleCloseMegaMenu();
                             setSelectedMenuItem(undefined);
                           } else {
                             setMegaMenuOpen(true);
@@ -295,7 +400,7 @@ export const HeaderLayout = () => {
       {megaMenuOpen ? (
         <div
           className={`${styles.MegaMenuOverlay} ${styles.Main}`}
-          onClick={() => setMegaMenuOpen(false)}
+          onClick={() => handleCloseMegaMenu()}
         >
           <div
             className={styles.MegaMenu}
@@ -334,40 +439,9 @@ export const HeaderLayout = () => {
             <Grid>
               <Grid.Col span={{ base: 12, md: 4 }}>
                 <nav>
-                  {selectedMenuItem?.children.map((item, key) => {
-                    return (
-                      <a
-                        key={key}
-                        onClick={() => {
-                          if (item.children.length > 0) {
-                            setPrevSelectedSubItem(selectedMenuItem);
-                            setSelectedMenuItem(item);
-                            setSelectedSubItem(item.children[0]);
-                          } else {
-                            setSelectedSubItem(item);
-                            //If the site is being displayed at a phone this need to act lile a link
-                            if (mediaQueryMatches) {
-                              router.push(item.url);
-                              setMegaMenuOpen(false);
-                              setResponsiveMenuOpen(false);
-                            }
-                          }
-                        }}
-                        className={`${
-                          selectedSubItem?.ID == item.ID ? styles.selected : ""
-                        }`}
-                      >
-                        {decodeHtmlEntities(item.title ? item.title : "")}
-                        {selectedSubItem?.ID == item.ID ? (
-                          <div>
-                            <IconChevronsRight />
-                          </div>
-                        ) : (
-                          <></>
-                        )}
-                      </a>
-                    );
-                  })}
+                  {prevSelectedSubItem
+                    ? renderSubItemsSubNav()
+                    : renderSubItemsNav()}
                 </nav>
               </Grid.Col>
               <Grid.Col
@@ -376,9 +450,17 @@ export const HeaderLayout = () => {
               >
                 <Flex mt={20} style={{ height: "100%" }}>
                   {selectedSubItem ? (
-                    renderMegaMenuItem(selectedSubItem)
+                    prevSelectedSubItem ? (
+                      renderMegaMenuWithItems()
+                    ) : (
+                      renderMegaMenuItem(selectedSubItem)
+                    )
                   ) : selectedMenuItem?.children[0] ? (
-                    renderMegaMenuItem(selectedMenuItem?.children[0])
+                    prevSelectedSubItem ? (
+                      renderMegaMenuWithItems()
+                    ) : (
+                      renderMegaMenuItem(selectedMenuItem?.children[0])
+                    )
                   ) : (
                     <></>
                   )}
@@ -395,7 +477,7 @@ export const HeaderLayout = () => {
         <div
           className={styles.MegaMenuOverlay}
           onClick={() => {
-            setMegaMenuOpen(false);
+            handleCloseMegaMenu();
             setResponsiveMenuOpen(false);
           }}
         >
