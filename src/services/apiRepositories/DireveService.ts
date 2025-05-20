@@ -80,6 +80,12 @@ export class DireveService {
         eventTypeFilter: parseMultLangFilter(
           data.data.diaServerResponse[0].facet_counts.facet_fields.event_type
         ),
+        publicationYearFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.publication_year.map(
+            (i) => {
+              return { count: parseInt(i[1]), type: i[0] };
+            }
+          ),
       };
 
       return responseDto;

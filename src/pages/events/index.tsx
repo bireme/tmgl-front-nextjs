@@ -6,10 +6,13 @@ import { BreadCrumbs } from "@/components/breadcrumbs";
 import { EventsFeed } from "@/components/feed/events";
 import { GlobalContext } from "@/contexts/globalContext";
 import styles from "../../styles/pages/home.module.scss";
+import { useRouter } from "next/router";
 
 export default function Events() {
   const { globalConfig } = useContext(GlobalContext);
   const [displayType, setDisplayType] = useState<string>("column");
+  const router = useRouter();
+  const { country, region, thematicArea } = router.query;
   return (
     <>
       <Container size={"xl"} py={40}>
@@ -42,7 +45,12 @@ export default function Events() {
         <Flex px={15} mb={40}>
           <p>{globalConfig?.acf.events_description}</p>
         </Flex>
-        <EventsFeed displayType={displayType} />
+        <EventsFeed
+          thematicArea={thematicArea ? thematicArea.toString() : undefined}
+          country={country ? country.toString() : undefined}
+          region={region ? region.toString() : undefined}
+          displayType={displayType}
+        />
       </Container>
     </>
   );
