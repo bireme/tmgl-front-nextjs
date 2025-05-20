@@ -1,4 +1,4 @@
-import { Container, Flex, Grid, Loader } from "@mantine/core";
+import { Container, Flex, Grid, Loader, LoadingOverlay } from "@mantine/core";
 import {
   CountryAcfProps,
   CountryAcfResource,
@@ -9,6 +9,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { EventsSection } from "@/components/sections/events";
+import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
 import { IconCard } from "@/components/cards";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -185,11 +186,32 @@ export default function CountryHome() {
           ) : (
             <></>
           )}
+          {properties?.manual_media ? (
+            <>
+              <div style={{ float: "left", width: "100%" }}>
+                <FixedRelatedVideosSection
+                  items={
+                    properties?.manual_media
+                      ? properties?.manual_media?.map((item) => {
+                          return {
+                            title: item.title,
+                            href: item.url,
+                            thumbnail: item.image.sizes.medium_large,
+                          };
+                        })
+                      : []
+                  }
+                />
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
         </>
       ) : (
-        <>
-          <Loader color="blue" />
-        </>
+        <div style={{ height: "100vh" }}>
+          <LoadingOverlay visible={true} />
+        </div>
       )}
     </>
   );

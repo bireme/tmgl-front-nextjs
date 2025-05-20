@@ -97,6 +97,13 @@ export interface CountryAcfProps {
   embed_content: string;
   rss_filter: string;
   multimedia_filter: string;
+  manual_media: MediaItem[];
+}
+
+export interface MediaItem {
+  image: AcfImageArray;
+  title: string;
+  url: string;
 }
 
 export interface CountryAcfResource {

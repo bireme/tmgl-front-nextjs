@@ -36,6 +36,7 @@ export const HeaderLayout = () => {
   const [responsiveMenuOpen, setResponsiveMenuOpen] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItemDTO>();
   const [selectedSubItem, setSelectedSubItem] = useState<MenuItemDTO>();
+  const [thirdLevelItems, setThirdLevelItems] = useState<MenuItemDTO[]>();
   const [prevSelectedSubItem, setPrevSelectedSubItem] = useState<MenuItemDTO>();
   const router = useRouter();
   const menuApi = new MenusApi();
@@ -75,9 +76,6 @@ export const HeaderLayout = () => {
   }, []);
 
   const renderMegaMenuWithItems = () => {
-    if (selectedSubItem?.children.length == 0) {
-      return renderMegaMenuItem(selectedSubItem);
-    }
     return (
       <div
         className={styles.MegaMenuContainerWithItems}
@@ -85,53 +83,74 @@ export const HeaderLayout = () => {
           backgroundImage: `url(${process.env.WP_BASE_URL}${selectedSubItem?.attr})`,
         }}
       >
-        {renderSubItemsNav(true)}
+        {thirdLevelItems?.map((item, key) => {
+          return (
+            <a
+              className={styles.InternalItem}
+              href={parseWpLink(item ? item.url : "")}
+              key={key}
+            >
+              {decodeHtmlEntities(item.title)}
+            </a>
+          );
+        })}
+        <a
+          onClick={() => {}}
+          href={parseWpLink(selectedSubItem ? selectedSubItem.url : "")}
+          className={styles.FullImageSubItembBtn}
+        >
+          <Button>
+            {decodeHtmlEntities(selectedSubItem ? selectedSubItem.title : "")}{" "}
+            Portal
+          </Button>
+        </a>
       </div>
     );
   };
 
-  const renderSubItemsSubNav = (prev?: boolean) => {
-    return prevSelectedSubItem?.children.map((item, key) => {
-      return (
-        <a
-          key={key}
-          onClick={() => {
-            if (prev) {
-              router.push(item.url);
-              handleCloseMegaMenu();
-            } else {
-              if (item.children.length > 0) {
-                setPrevSelectedSubItem(originalMenuItem);
-                setSelectedMenuItem(item);
-                setSelectedSubItem(item);
-              } else {
-                setPrevSelectedSubItem(originalMenuItem);
-                setSelectedMenuItem(item);
-                //If the site is being displayed at a phone this need to act lile a link
-                if (mediaQueryMatches) {
-                  router.push(item.url);
-                  handleCloseMegaMenu();
-                  setResponsiveMenuOpen(false);
-                }
-              }
-            }
-          }}
-          className={`${
-            selectedSubItem?.parent == item.ID && !prev ? styles.selected : ""
-          }`}
-        >
-          {decodeHtmlEntities(item.title ? item.title : "")}
-          {selectedSubItem?.parent == item.ID && !prev ? (
-            <div>
-              <IconChevronsRight />
-            </div>
-          ) : (
-            <></>
-          )}
-        </a>
-      );
-    });
-  };
+  // const renderSubItemsSubNav = (prev?: boolean) => {
+  //   return prevSelectedSubItem?.children.map((item, key) => {
+  //     return (
+  //       <a
+  //         key={key}
+  //         onClick={() => {
+  //           if (prev) {
+  //             router.push(item.url);
+  //             handleCloseMegaMenu();
+  //           } else {
+  //             if (item.children.length > 0) {
+  //               setPrevSelectedSubItem(originalMenuItem);
+  //               setSelectedMenuItem(item);
+  //               setSelectedSubItem(item);
+  //             } else {
+  //               setSelectedMenuItem(originalMenuItem);
+  //               setPrevSelectedSubItem(item);
+  //               console.log(originalMenuItem);
+  //               //If the site is being displayed at a phone this need to act lile a link
+  //               if (mediaQueryMatches) {
+  //                 router.push(item.url);
+  //                 handleCloseMegaMenu();
+  //                 setResponsiveMenuOpen(false);
+  //               }
+  //             }
+  //           }
+  //         }}
+  //         className={`${
+  //           selectedMenuItem?.ID == item.ID && !prev ? styles.selected : ""
+  //         }`}
+  //       >
+  //         {decodeHtmlEntities(item.title ? item.title : "")}
+  //         {selectedMenuItem?.ID == item.ID && !prev ? (
+  //           <div>
+  //             <IconChevronsRight />
+  //           </div>
+  //         ) : (
+  //           <></>
+  //         )}
+  //       </a>
+  //     );
+  //   });
+  // };
 
   const handleCloseMegaMenu = () => {
     setMegaMenuOpen(false);
@@ -142,7 +161,11 @@ export const HeaderLayout = () => {
   };
 
   const renderSubItemsNav = (prev?: boolean) => {
-    return selectedMenuItem?.children.map((item, key) => {
+    const toIterate =
+      selectedMenuItem?.children.length != 0 && !prevSelectedSubItem
+        ? selectedMenuItem?.children
+        : prevSelectedSubItem?.children;
+    return toIterate?.map((item, key) => {
       return (
         <a
           key={key}
@@ -152,10 +175,10 @@ export const HeaderLayout = () => {
               handleCloseMegaMenu();
             } else {
               if (item.children.length > 0) {
-                setPrevSelectedSubItem(selectedMenuItem);
-                setSelectedMenuItem(item);
+                setThirdLevelItems(item.children);
                 setSelectedSubItem(item);
               } else {
+                setThirdLevelItems(undefined);
                 setSelectedSubItem(item);
                 //If the site is being displayed at a phone this need to act lile a link
                 if (mediaQueryMatches) {
@@ -445,32 +468,20 @@ export const HeaderLayout = () => {
 
             <Grid>
               <Grid.Col span={{ base: 12, md: 4 }}>
-                <nav>
-                  {prevSelectedSubItem
-                    ? renderSubItemsSubNav()
-                    : renderSubItemsNav()}
-                </nav>
+                <nav>{renderSubItemsNav()}</nav>
               </Grid.Col>
               <Grid.Col
                 span={{ base: 12, md: 8 }}
                 className={styles.MegaMenuRightSection}
               >
                 <Flex mt={20} style={{ height: "100%" }}>
-                  {selectedSubItem ? (
-                    prevSelectedSubItem ? (
-                      renderMegaMenuWithItems()
-                    ) : (
-                      renderMegaMenuItem(selectedSubItem)
-                    )
-                  ) : selectedMenuItem?.children[0] ? (
-                    prevSelectedSubItem ? (
-                      renderMegaMenuWithItems()
-                    ) : (
-                      renderMegaMenuItem(selectedMenuItem?.children[0])
-                    )
-                  ) : (
-                    <></>
-                  )}
+                  {selectedSubItem
+                    ? thirdLevelItems
+                      ? renderMegaMenuWithItems()
+                      : renderMegaMenuItem(selectedSubItem)
+                    : selectedMenuItem?.children[0]
+                    ? renderMegaMenuItem(selectedMenuItem?.children[0])
+                    : ""}
                 </Flex>
               </Grid.Col>
             </Grid>
