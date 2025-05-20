@@ -85,6 +85,7 @@ export interface ListPostsDto {
   data: Post[];
   regions: Term[];
   tags: Term[];
+  dates: string[];
   dimensions: Term[];
   countries: Term[];
 }

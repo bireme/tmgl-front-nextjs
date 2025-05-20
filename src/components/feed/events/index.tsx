@@ -1,5 +1,5 @@
+import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { EventsItemsDto, EventsServiceDto } from "@/services/types/eventsDto";
-import { Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
@@ -15,7 +15,17 @@ import { groupOccurrencesByRegion } from "../utils";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const EventsFeed = ({ displayType }: { displayType: string }) => {
+export const EventsFeed = ({
+  displayType,
+  country,
+  region,
+  thematicArea,
+}: {
+  displayType: string;
+  country?: string;
+  region?: string;
+  thematicArea?: string;
+}) => {
   const [loading, setLoading] = useState(false);
   const _service = new DireveService();
   const count = 12;
@@ -25,6 +35,40 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
   const [items, setItems] = useState<EventsItemsDto[]>([]);
   const [apiResponse, setApiResponse] = useState<EventsServiceDto>();
   const { language } = useContext(GlobalContext);
+  const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
+
+  const initialFilters = (apiResponse: EventsServiceDto) => {
+    if (country) {
+      applyFilters([
+        {
+          parameter: "country",
+          query: country,
+        },
+      ]);
+    }
+    if (region) {
+      applyFilters([
+        {
+          parameter: "region",
+          query: region,
+        },
+      ]);
+    }
+    if (thematicArea) {
+      applyFilters([
+        {
+          parameter: "descriptor",
+          query: thematicArea,
+        },
+      ]);
+    }
+    setLoading(false);
+    setInitialFilterDone(true);
+  };
+
+  useEffect(() => {
+    getEvents();
+  }, [country, region, thematicArea]);
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
@@ -41,6 +85,9 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
       setTotalPages(response.totalFound / count);
       setItems(response.data);
       setApiResponse(response);
+      if ((country || region || thematicArea) && !initialFilterDone) {
+        initialFilters(response);
+      }
     } catch (error) {
       console.log(error);
       console.log("Error while fetching Events");
@@ -61,6 +108,14 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
             <ResourceFilters
               callBack={applyFilters}
               filters={[
+                {
+                  queryType: "publication_year",
+                  label: "Publication Year",
+                  items: apiResponse?.publicationYearFilter?.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                  })),
+                },
                 {
                   queryType: "country",
                   label: "Country",
@@ -126,7 +181,13 @@ export const EventsFeed = ({ displayType }: { displayType: string }) => {
                 })}
               </>
             ) : (
-              <></>
+              <Flex
+                style={{ height: "400px", width: "100%" }}
+                justify={"center"}
+                align={"center"}
+              >
+                <Center>No results found!</Center>
+              </Flex>
             )}
           </Flex>
           <div className={styles.PaginationContainer}>

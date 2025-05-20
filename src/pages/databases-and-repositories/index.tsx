@@ -6,9 +6,13 @@ import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
 import { RepositoriesFeed } from "@/components/feed/repositories";
 import styles from "../../styles/pages/home.module.scss";
+import { useRouter } from "next/router";
 
 export default function DatabaseRepositories() {
   const { globalConfig } = useContext(GlobalContext);
+
+  const router = useRouter();
+  const { country, region, thematicArea } = router.query;
   const [displayType, setDisplayType] = useState<string>("column");
   return (
     <>
@@ -42,7 +46,12 @@ export default function DatabaseRepositories() {
           <p>{globalConfig?.acf.database_repositories_descriptions}</p>
         </Flex>
         {/* Precisa filtrar pelo database_source */}
-        <RepositoriesFeed displayType={displayType} />
+        <RepositoriesFeed
+          thematicArea={thematicArea ? thematicArea.toString() : undefined}
+          country={country ? country.toString() : undefined}
+          region={region ? region.toString() : undefined}
+          displayType={displayType}
+        />
       </Container>
     </>
   );
