@@ -335,7 +335,6 @@ export const HeaderLayout = () => {
                       stroke={1.5}
                       onClick={() => {
                         setResponsiveMenuOpen(true);
-                        handleCloseMegaMenu();
                       }}
                     />
                   </>

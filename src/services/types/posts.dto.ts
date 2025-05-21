@@ -99,6 +99,13 @@ export interface CountryAcfProps {
   rss_filter: string;
   multimedia_filter: string;
   manual_media: MediaItem[];
+  tms_items: TmsItem[];
+}
+
+export interface TmsItem {
+  title: string;
+  url: string;
+  image: string;
 }
 
 export interface MediaItem {

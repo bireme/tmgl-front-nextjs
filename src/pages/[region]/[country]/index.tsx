@@ -85,10 +85,12 @@ export default function CountryHome() {
                   ]}
                   blackColor={false}
                 />
-                <SearchForm
-                  title="Discover a comprehensive resource for traditional medicine."
-                  subtitle="Access a wealth of scientific and technical information, regional insights, and global strategies."
-                />
+                <div className={styles.fixSearchForm}>
+                  <SearchForm
+                    title="Discover a comprehensive resource for traditional medicine."
+                    subtitle="Access a wealth of scientific and technical information, regional insights, and global strategies."
+                  />
+                </div>
               </Container>
             </div>
           </div>
@@ -153,7 +155,13 @@ export default function CountryHome() {
               properties?.resources?.length > 0 ? (
                 <Container py={40} size={"xl"}>
                   <h3 className={styles.TitleWithIcon}>Resources</h3>
-                  <Flex mt={50} gap={"3%"} justify={"space-around"}>
+                  <Flex
+                    mt={50}
+                    gap={{ base: "20px", md: "3%" }}
+                    justify={"space-around"}
+                    direction={{ base: "column", sm: "row" }}
+                    wrap={"wrap"}
+                  >
                     {properties?.resources.map(
                       (resource: CountryAcfResource, index: number) => {
                         return (
@@ -179,6 +187,36 @@ export default function CountryHome() {
               <></>
             )}
           </div>
+          {properties?.tms_items?.length &&
+          properties?.tms_items?.length > 0 ? (
+            <div className={styles.Tms}>
+              <Container size={"xl"}>
+                <h3 className={styles.TitleWithIcon}>
+                  Traditional Medicine Systems
+                </h3>
+                <Flex
+                  justify={"center"}
+                  align={"center"}
+                  direction={{ base: "column", md: "row" }}
+                  gap={20}
+                >
+                  {properties?.tms_items?.map((item, index) => {
+                    return (
+                      <div className={styles.TmsItem} key={index}>
+                        <div
+                          className={styles.TmsImage}
+                          style={{ backgroundImage: `url(${item.image})  ` }}
+                        />
+                        <h4>{item.title}</h4>
+                      </div>
+                    );
+                  })}
+                </Flex>
+              </Container>
+            </div>
+          ) : (
+            <></>
+          )}
 
           <TrendingCarrocel
             allFilter={country ? country.toString() : undefined}

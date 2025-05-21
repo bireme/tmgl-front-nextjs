@@ -149,9 +149,10 @@ export const TrendingCarrocel = ({
         {posts.length > 0 ? (
           <>
             <Carousel
-              withControls={true}
-              slideSize="24.5%"
-              slideGap={"lg"}
+              nextControlIcon={<IconArrowRight size={16} />}
+              previousControlIcon={<IconArrowLeft size={16} />}
+              slideSize={{ base: "100%", md: "50%", lg: "32%" }}
+              slideGap={0}
               align={"start"}
               loop={false}
               getEmblaApi={setEmbla}
@@ -165,6 +166,7 @@ export const TrendingCarrocel = ({
                       className={styles.SliderItemContainer}
                     >
                       <TrendingTopicCard
+                        height="300px"
                         href={item.link}
                         title={`${item.title.slice(0, 150)} ${
                           item.title.length > 150 ? "..." : ""
@@ -212,17 +214,20 @@ export interface TrentingTopicCardProps {
   title: string;
   excerpt: string;
   href: string;
+  height?: string;
 }
 export const TrendingTopicCard = ({
   title,
   excerpt,
   href,
+  height,
 }: TrentingTopicCardProps) => {
   return (
     <Flex
       className={styles.TrendingTopicSection}
       direction={"column"}
       justify={"space-between"}
+      style={{ height: height }}
     >
       <div className={styles.TrendingText}>
         <h3>{title}</h3>
