@@ -18,7 +18,11 @@
     &::before{
       border-bottom: #006CB0 solid 2px;
     }
-   
+    @media (max-width: '950px') {
+       &::before{
+      border-bottom: none;
+      }
+    }
   }
   .TabContent{
     font-family: Roboto;

@@ -1,6 +1,7 @@
 import {
   ActionIcon,
   Button,
+  Container,
   Flex,
   Group,
   Loader,
@@ -13,11 +14,9 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { ArticleDTO } from "@/services/types/rssFeedTypes";
 import { FetchRSSFeed } from "@/services/rss/RssService";
 import { GlobalContext } from "@/contexts/globalContext";
-import { Post } from "@/services/types/posts.dto";
-import { PostsApi } from "@/services/posts/PostsApi";
 import { TrendingTopicSection } from "@/components/sections/topics";
-import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/slider.module.scss";
+import { useRouter } from "next/router";
 
 export const TrendingSlider = () => {
   const [embla, setEmbla] = useState<any>(null);
@@ -109,10 +108,17 @@ export const TrendingSlider = () => {
   );
 };
 
-export const TrendingCarrocel = ({ rssString }: { rssString?: string }) => {
+export const TrendingCarrocel = ({
+  rssString,
+  allFilter,
+}: {
+  rssString?: string;
+  allFilter?: string;
+}) => {
   const [setEmbla] = useState<any>(null);
   const { globalConfig, regionName } = useContext(GlobalContext);
   const [posts, setPosts] = useState<Array<ArticleDTO>>([]);
+  const router = useRouter();
 
   const getTrendingTopics = useCallback(async () => {
     let filter = rssString ? rssString : globalConfig?.acf.filter_rss;
@@ -137,44 +143,70 @@ export const TrendingCarrocel = ({ rssString }: { rssString?: string }) => {
   }, [getTrendingTopics, globalConfig]);
 
   return (
-    <>
-      {posts.length > 0 ? (
-        <Carousel
-          withControls={false}
-          slideSize="24.5%"
-          slideGap={"lg"}
-          align={"start"}
-          loop={false}
-          getEmblaApi={setEmbla}
-          className={styles.TrandingCarrocelContainer}
-        >
-          {posts?.length > 0 ? (
-            posts?.map((item, key) => {
-              return (
-                <Carousel.Slide
-                  key={key}
-                  className={styles.SliderItemContainer}
-                >
-                  <TrendingTopicCard
-                    href={item.link}
-                    title={`${item.title.slice(0, 150)} ${
-                      item.title.length > 150 ? "..." : ""
-                    }`}
-                    excerpt={`${item.description.trim().slice(0, 120)}...`}
-                  />
-                </Carousel.Slide>
-              );
-            })
-          ) : (
-            <></>
-          )}
-        </Carousel>
-      ) : (
-        <>
-          <Loader />
-        </>
-      )}
-    </>
+    <div className={styles.CountryRss}>
+      <Container py={10} size={"xl"}>
+        <h3 className={styles.TitleWithIcon}>Recent literature reviews</h3>
+        {posts.length > 0 ? (
+          <>
+            <Carousel
+              nextControlIcon={<IconArrowRight size={16} />}
+              previousControlIcon={<IconArrowLeft size={16} />}
+              slideSize={{ base: "100%", md: "50%", lg: "32%" }}
+              slideGap={0}
+              align={"start"}
+              loop={false}
+              getEmblaApi={setEmbla}
+              className={styles.TrandingCarrocelContainer}
+            >
+              {posts?.length > 0 ? (
+                posts?.map((item, key) => {
+                  return (
+                    <Carousel.Slide
+                      key={key}
+                      className={styles.SliderItemContainer}
+                    >
+                      <TrendingTopicCard
+                        height="300px"
+                        href={item.link}
+                        title={`${item.title.slice(0, 150)} ${
+                          item.title.length > 150 ? "..." : ""
+                        }`}
+                        excerpt={`${item.description.trim().slice(0, 120)}...`}
+                      />
+                    </Carousel.Slide>
+                  );
+                })
+              ) : (
+                <></>
+              )}
+            </Carousel>
+            <Flex
+              mt={25}
+              gap={10}
+              align={"center"}
+              onClick={() => {
+                router.push(
+                  `/recent-literature-reviews${
+                    allFilter ? "?country=" + allFilter : ""
+                  }`
+                );
+              }}
+              component="a"
+              style={{ cursor: "pointer" }}
+            >
+              Explore all{" "}
+              <Button size={"xs"} p={5}>
+                <IconArrowRight stroke={1} />
+              </Button>
+            </Flex>
+          </>
+        ) : (
+          <>
+            <Loader />
+          </>
+        )}
+      </Container>
+    </div>
   );
 };
 
@@ -182,17 +214,20 @@ export interface TrentingTopicCardProps {
   title: string;
   excerpt: string;
   href: string;
+  height?: string;
 }
 export const TrendingTopicCard = ({
   title,
   excerpt,
   href,
+  height,
 }: TrentingTopicCardProps) => {
   return (
     <Flex
       className={styles.TrendingTopicSection}
       direction={"column"}
       justify={"space-between"}
+      style={{ height: height }}
     >
       <div className={styles.TrendingText}>
         <h3>{title}</h3>

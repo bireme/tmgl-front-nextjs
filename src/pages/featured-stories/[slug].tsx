@@ -54,9 +54,21 @@ export default function FeaturedStories() {
           />
           {acf ? (
             <>
-              {acf.first_session ? <FirstSection acf={acf} /> : <></>}
-              {acf.second_session ? <SecondSection acf={acf} /> : <></>}
-              {acf.third_session ? <ThirdSection acf={acf} /> : <></>}
+              {acf.first_session && acf.first_session.content ? (
+                <FirstSection acf={acf} />
+              ) : (
+                <></>
+              )}
+              {acf.second_session && acf.second_session.content ? (
+                <SecondSection acf={acf} />
+              ) : (
+                <></>
+              )}
+              {acf.third_session && acf.third_session.content ? (
+                <ThirdSection acf={acf} />
+              ) : (
+                <></>
+              )}
             </>
           ) : (
             <></>

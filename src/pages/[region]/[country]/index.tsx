@@ -1,14 +1,15 @@
-import { Container, Flex, Grid, Loader } from "@mantine/core";
+import { Container, Flex, Grid, Loader, LoadingOverlay } from "@mantine/core";
 import {
   CountryAcfProps,
   CountryAcfResource,
   Post,
 } from "@/services/types/posts.dto";
 import { HeroImage, HeroSlider } from "@/components/slider";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { EventsSection } from "@/components/sections/events";
+import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
 import { IconCard } from "@/components/cards";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -26,6 +27,17 @@ export default function CountryHome() {
   const {
     query: { country, region },
   } = router;
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type === "resize" && iframeRef.current) {
+        iframeRef.current.style.height = `${event.data.height}px`;
+      }
+    };
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
 
   const getPageProperties = useCallback(async () => {
     setRegionName(region ? region.toString() : "");
@@ -73,10 +85,12 @@ export default function CountryHome() {
                   ]}
                   blackColor={false}
                 />
-                <SearchForm
-                  title="Discover a comprehensive resource for traditional medicine."
-                  subtitle="Access a wealth of scientific and technical information, regional insights, and global strategies."
-                />
+                <div className={styles.fixSearchForm}>
+                  <SearchForm
+                    title="Discover a comprehensive resource for traditional medicine."
+                    subtitle="Access a wealth of scientific and technical information, regional insights, and global strategies."
+                  />
+                </div>
               </Container>
             </div>
           </div>
@@ -122,6 +136,7 @@ export default function CountryHome() {
                 </Container>
                 {properties?.embed_content ? (
                   <iframe
+                    ref={iframeRef}
                     src={properties?.embed_content}
                     width="100%"
                     height="600"
@@ -140,7 +155,13 @@ export default function CountryHome() {
               properties?.resources?.length > 0 ? (
                 <Container py={40} size={"xl"}>
                   <h3 className={styles.TitleWithIcon}>Resources</h3>
-                  <Flex mt={50} gap={"3%"} justify={"space-around"}>
+                  <Flex
+                    mt={50}
+                    gap={{ base: "20px", md: "3%" }}
+                    justify={"space-around"}
+                    direction={{ base: "column", sm: "row" }}
+                    wrap={"wrap"}
+                  >
                     {properties?.resources.map(
                       (resource: CountryAcfResource, index: number) => {
                         return (
@@ -166,30 +187,71 @@ export default function CountryHome() {
               <></>
             )}
           </div>
-          <div className={styles.CountryRss}>
-            <Container py={10} size={"xl"}>
-              <h3 className={styles.TitleWithIcon}>
-                Recent literature reviews
-              </h3>
-              <TrendingCarrocel />
-            </Container>
-          </div>
+          {properties?.tms_items?.length &&
+          properties?.tms_items?.length > 0 ? (
+            <div className={styles.Tms}>
+              <Container size={"xl"}>
+                <h3 className={styles.TitleWithIcon}>
+                  Traditional Medicine Systems
+                </h3>
+                <Flex
+                  justify={"center"}
+                  align={"center"}
+                  direction={{ base: "column", md: "row" }}
+                  gap={20}
+                >
+                  {properties?.tms_items?.map((item, index) => {
+                    return (
+                      <div className={styles.TmsItem} key={index}>
+                        <div
+                          className={styles.TmsImage}
+                          style={{ backgroundImage: `url(${item.image})  ` }}
+                        />
+                        <h4>{item.title}</h4>
+                      </div>
+                    );
+                  })}
+                </Flex>
+              </Container>
+            </div>
+          ) : (
+            <></>
+          )}
 
-          {/* <div className={styles.CountryEvents}>
-            <Container py={10} size={"xl"}>
-              <h4>Recent literature reviews</h4>
-            </Container>
-          </div> */}
+          <TrendingCarrocel
+            allFilter={country ? country.toString() : undefined}
+          />
           {region ? (
             <EventsSection region={region ? region.toString() : ""} />
           ) : (
             <></>
           )}
+          {properties?.manual_media ? (
+            <>
+              <div style={{ float: "left", width: "100%" }}>
+                <FixedRelatedVideosSection
+                  items={
+                    properties?.manual_media
+                      ? properties?.manual_media?.map((item) => {
+                          return {
+                            title: item.title,
+                            href: item.url,
+                            thumbnail: item.image.sizes.medium_large,
+                          };
+                        })
+                      : []
+                  }
+                />
+              </div>
+            </>
+          ) : (
+            <></>
+          )}
         </>
       ) : (
-        <>
-          <Loader color="blue" />
-        </>
+        <div style={{ height: "100vh" }}>
+          <LoadingOverlay visible={true} />
+        </div>
       )}
     </>
   );
