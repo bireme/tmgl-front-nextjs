@@ -88,7 +88,7 @@ export default function RegionHome() {
                 className={styles.TrandingAndFeaturedContainer}
               >
                 <h2 className={styles.TitleWithIcon}>
-                  <img src={"/local/svg/simbol.svg"} /> Recent Literature Review
+                  Recent Literature Review
                 </h2>
                 <div className={styles.TrendingText}>
                   <p>{acf?.text_trending_topics}</p>
@@ -97,9 +97,7 @@ export default function RegionHome() {
               </Container>
               <Container size={"xl"}>
                 <StoriesSection region={region ? region.toString() : ""} />
-                <h2 className={styles.TitleWithIcon}>
-                  <img src={"/local/svg/simbol.svg"} /> Events
-                </h2>
+                <h2 className={styles.TitleWithIcon}> Events</h2>
               </Container>
             </div>
             <EventsSection />

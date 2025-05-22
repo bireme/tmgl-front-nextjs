@@ -84,7 +84,7 @@ export const FooterLayout = () => {
     <>
       <div className={styles.FooterLayout}>
         <Container size={"xl"}>
-          <Flex direction={{ base: "column-reverse", md: "row" }}>
+          <Flex direction={{ base: "column", md: "row" }}>
             <Flex
               justify={"center"}
               align={"center"}

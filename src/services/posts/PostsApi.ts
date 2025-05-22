@@ -13,6 +13,7 @@ import { queryType } from "../types/resources";
 export class PostsApi extends BaseUnauthenticatedApi {
   public constructor(region?: string) {
     super(`${region ? region + "/" : ""}wp-json/wp/v2/`);
+    if (region) this._region = region;
   }
 
   public async getTaxonomies(): Promise<TaxonomyDTO[]> {
@@ -81,21 +82,36 @@ export class PostsApi extends BaseUnauthenticatedApi {
       }`
     );
 
-    const [regions, tags, dimensions, countries] = await Promise.all([
-      this._api.get("/region?per_page=100"),
-      this._api.get("/tags?per_page=100"),
-      this._api.get("/tm-dimension?per_page=100"),
-      this._api.get("/country?per_page=100"),
-    ]);
-
-    return {
-      data: response.data,
-      totalItems: parseInt(response.headers["x-wp-total"], 10),
-      regions: regions.data,
-      tags: tags.data,
-      dimensions: dimensions.data,
-      countries: countries.data,
-    };
+    if (!this._region) {
+      const [regions, tags, dimensions, countries] = await Promise.all([
+        this._api.get("/region?per_page=100"),
+        this._api.get("/tags?per_page=100"),
+        this._api.get("/tm-dimension?per_page=100"),
+        this._api.get("/country?per_page=100"),
+      ]);
+      return {
+        data: response.data,
+        totalItems: parseInt(response.headers["x-wp-total"], 10),
+        regions: regions.data,
+        tags: tags.data,
+        dates: response.data.map((d) => d.date),
+        dimensions: dimensions.data,
+        countries: countries.data,
+      };
+    } else {
+      const [regions] = await Promise.all([
+        this._api.get("/tags?per_page=100"),
+      ]);
+      return {
+        data: response.data,
+        totalItems: parseInt(response.headers["x-wp-total"], 10),
+        regions: regions.data,
+        dates: response.data.map((d) => d.date),
+        tags: [],
+        dimensions: [],
+        countries: [],
+      };
+    }
   }
 
   public formatTags(item: Post): TagItem[] {
@@ -158,18 +174,20 @@ export class PostsApi extends BaseUnauthenticatedApi {
     );
     //Verify if the client is using another language
     const foundPost = data[0];
-    if (foundPost.lang != this._lang) {
-      //In that case the lang returned is not the same as the user is trying to access, may because de slug is in a diferent language
-      //Lets see if there is any translation to this post
-      if (foundPost.translations) {
-        if (Object.keys(foundPost.translations).length > 0) {
-          if (foundPost.translations[this._lang]) {
-            const translated_postId: number =
-              foundPost.translations[this._lang];
-            const transalated_response = await this._api.get(
-              `${postTypeSlug}/${translated_postId}?_embed&acf_format=standard`
-            );
-            return [transalated_response.data];
+    if (foundPost) {
+      if (foundPost?.lang != this._lang) {
+        //In that case the lang returned is not the same as the user is trying to access, may because de slug is in a diferent language
+        //Lets see if there is any translation to this post
+        if (foundPost.translations) {
+          if (Object.keys(foundPost.translations).length > 0) {
+            if (foundPost.translations[this._lang]) {
+              const translated_postId: number =
+                foundPost.translations[this._lang];
+              const transalated_response = await this._api.get(
+                `${postTypeSlug}/${translated_postId}?_embed&acf_format=standard`
+              );
+              return [transalated_response.data];
+            }
           }
         }
       }

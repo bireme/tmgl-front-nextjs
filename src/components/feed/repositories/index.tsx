@@ -1,8 +1,8 @@
+import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
   EvidenceMapItemDto,
   EvidenceMapsServiceDto,
 } from "@/services/types/evidenceMapsDto";
-import { Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
@@ -15,7 +15,17 @@ import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const RepositoriesFeed = ({ displayType }: { displayType: string }) => {
+export const RepositoriesFeed = ({
+  displayType,
+  country,
+  region,
+  thematicArea,
+}: {
+  displayType: string;
+  country?: string;
+  region?: string;
+  thematicArea?: string;
+}) => {
   const [loading, setLoading] = useState(false);
   const _service = new RepositorieService();
   const count = 12;
@@ -25,6 +35,49 @@ export const RepositoriesFeed = ({ displayType }: { displayType: string }) => {
   const [items, setItems] = useState<EvidenceMapItemDto[]>([]);
   const [apiResponse, setApiResponse] = useState<EvidenceMapsServiceDto>();
   const { language } = useContext(GlobalContext);
+  const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
+
+  const initialFilters = (apiResponse: EvidenceMapsServiceDto) => {
+    if (country) {
+      const countryToFilter =
+        apiResponse?.countryFilters?.filter((c) => c.lang === language) || [];
+      let queryCountry = country;
+      const matched = countryToFilter.find((c) =>
+        c.queryString?.toLowerCase()?.includes(country)
+      );
+      queryCountry = matched?.queryString ?? country;
+      console.log(countryToFilter);
+
+      applyFilters([
+        {
+          parameter: "publication_country",
+          query: queryCountry,
+        },
+      ]);
+    }
+    if (region) {
+      applyFilters([
+        {
+          parameter: "region",
+          query: region,
+        },
+      ]);
+    }
+    if (thematicArea) {
+      applyFilters([
+        {
+          parameter: "descriptor",
+          query: thematicArea,
+        },
+      ]);
+    }
+    setLoading(false);
+    setInitialFilterDone(true);
+  };
+
+  useEffect(() => {
+    getEvidencemaps();
+  }, [country, region, thematicArea]);
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
@@ -41,6 +94,9 @@ export const RepositoriesFeed = ({ displayType }: { displayType: string }) => {
       setTotalPages(response.totalFound / count);
       setItems(response.data);
       setApiResponse(response);
+      if ((country || region || thematicArea) && !initialFilterDone) {
+        initialFilters(response);
+      }
     } catch (error) {
       console.log(error);
       console.log("Error while fetching Evidencemaps");
@@ -69,6 +125,7 @@ export const RepositoriesFeed = ({ displayType }: { displayType: string }) => {
                     .map((c) => ({
                       label: c.type,
                       ocorrences: c.count,
+                      id: c.queryString,
                     })),
                 },
                 {
@@ -127,7 +184,13 @@ export const RepositoriesFeed = ({ displayType }: { displayType: string }) => {
                 })}
               </>
             ) : (
-              <></>
+              <Flex
+                style={{ height: "400px", width: "100%" }}
+                justify={"center"}
+                align={"center"}
+              >
+                <Center>No results found!</Center>
+              </Flex>
             )}
           </Flex>
           <div className={styles.PaginationContainer}>

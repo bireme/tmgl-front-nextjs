@@ -163,27 +163,15 @@ export default function Dimensions() {
               <></>
             )}
 
-            <Container py={40} size={"xl"}>
-              <h2>Recent literature reviews</h2>
-              <TrendingCarrocel
-                rssString={
-                  post.acf?.rss_feed
-                    ? post.acf.rss_feed != ""
-                      ? post.acf.rss_feed
-                      : undefined
+            <TrendingCarrocel
+              rssString={
+                post.acf?.rss_feed
+                  ? post.acf.rss_feed != ""
+                    ? post.acf.rss_feed
                     : undefined
-                }
-              />
-              <div className={styles.More}>
-                {" "}
-                <a href={`/literature-reviews`}>
-                  More Literature Reviews{" "}
-                  <Button p={8} radius={"md"} size={"sm"}>
-                    <IconArrowRight size={19} stroke={1.5} />
-                  </Button>
-                </a>
-              </div>
-            </Container>
+                  : undefined
+              }
+            />
 
             {/* <RelatedVideosSection filter={'thematic_area:"TMGL"'} /> */}
           </div>

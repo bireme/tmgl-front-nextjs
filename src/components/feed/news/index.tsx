@@ -1,4 +1,4 @@
-import { Flex, Grid, LoadingOverlay } from "@mantine/core";
+import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { ListPostsDto, Post } from "@/services/types/posts.dto";
 import {
   decodeHtmlEntities,
@@ -10,6 +10,7 @@ import { Pagination } from "../pagination";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
+import moment from "moment";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
 
@@ -56,6 +57,33 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
               callBack={applyFilters}
               filters={[
                 {
+                  queryType: "after",
+                  label: "Publication Year",
+                  items: apiResponse
+                    ? Array.from(
+                        new Map(
+                          apiResponse.dates.map((c) => {
+                            const label = c ? moment(c).format("YYYY") : "";
+                            return [
+                              label,
+                              {
+                                label,
+                                ocorrences: undefined,
+                                id: c
+                                  ? `${moment(c).format(
+                                      "YYYY"
+                                    )}-01-01T00:00:00&before=${moment(c).format(
+                                      "YYYY"
+                                    )}-12-31T23:59:59`
+                                  : "",
+                              },
+                            ];
+                          })
+                        ).values()
+                      )
+                    : [],
+                },
+                {
                   queryType: "tags",
                   label: "Thematic Area",
                   items: apiResponse
@@ -88,17 +116,6 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                       }))
                     : [],
                 },
-                // {
-                //   queryType: "tm-dimension",
-                //   label: "Dimension",
-                //   items: apiResponse
-                //     ? apiResponse?.dimensions.map((c) => ({
-                //         label: decodeHtmlEntities(c.name),
-                //         ocorrences: undefined,
-                //         id: c.id.toString(),
-                //       }))
-                //     : [],
-                // },
               ]}
             />
           ) : (
@@ -137,7 +154,13 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                 })}
               </>
             ) : (
-              <></>
+              <Flex
+                style={{ height: "400px", width: "100%" }}
+                justify={"center"}
+                align={"center"}
+              >
+                <Center>No results found!</Center>
+              </Flex>
             )}
           </Flex>
           <div className={styles.PaginationContainer}>

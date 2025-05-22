@@ -67,7 +67,6 @@ export default function Journal() {
               className={`${styles.TitleWithIcon} ${styles.small}`}
               style={{ margin: "5px" }}
             >
-              <img src={"/local/svg/simbol.svg"} />
               Journals
             </h5>
             <Grid mt={30} mb={0}>
@@ -156,7 +155,9 @@ export default function Journal() {
                 {item?.links?.map((link, k) => {
                   return (
                     <p key={k} className={pageStyles.JournalDetail}>
-                      <a href={link}>{link}</a>
+                      <a href={link} target="_blank">
+                        {link}
+                      </a>
                     </p>
                   );
                 })}

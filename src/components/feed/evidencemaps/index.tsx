@@ -1,8 +1,8 @@
+import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
   EvidenceMapItemDto,
   EvidenceMapsServiceDto,
 } from "@/services/types/evidenceMapsDto";
-import { Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { useContext, useEffect, useState } from "react";
 
 import { EvidenceMapsService } from "@/services/apiRepositories/EvidenceMapsService";
@@ -34,6 +34,7 @@ export const EvidenceMapsFeed = ({
   const [filter, setFilter] = useState<queryType[]>([]);
   const [items, setItems] = useState<EvidenceMapItemDto[]>([]);
   const [apiResponse, setApiResponse] = useState<EvidenceMapsServiceDto>();
+  const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
   const { language } = useContext(GlobalContext);
 
   const applyFilters = async (queryList?: queryType[]) => {
@@ -42,7 +43,6 @@ export const EvidenceMapsFeed = ({
   };
   const getEvidencemaps = async () => {
     setLoading(true);
-    initialFilters();
     try {
       const response = await _service.getResources(
         count,
@@ -52,6 +52,10 @@ export const EvidenceMapsFeed = ({
       setTotalPages(response.totalFound / count);
       setItems(response.data);
       setApiResponse(response);
+      if ((country || region || thematicArea) && !initialFilterDone) {
+        console.log("teste");
+        initialFilters(response);
+      }
     } catch (error) {
       console.log(error);
       console.log("Error while fetching Evidencemaps");
@@ -59,12 +63,20 @@ export const EvidenceMapsFeed = ({
     setLoading(false);
   };
 
-  const initialFilters = () => {
+  const initialFilters = (apiResponse: EvidenceMapsServiceDto) => {
     if (country) {
+      const countryToFilter =
+        apiResponse?.countryFilters?.filter((c) => c.lang === language) || [];
+      let queryCountry = country;
+      const matched = countryToFilter.find((c) =>
+        c.queryString?.toLowerCase()?.includes(country)
+      );
+      queryCountry = matched?.queryString ?? country;
+
       applyFilters([
         {
-          parameter: "publication_country",
-          query: country,
+          parameter: "country",
+          query: queryCountry,
         },
       ]);
     }
@@ -84,6 +96,8 @@ export const EvidenceMapsFeed = ({
         },
       ]);
     }
+    setLoading(false);
+    setInitialFilterDone(true);
   };
 
   useEffect(() => {
@@ -165,7 +179,13 @@ export const EvidenceMapsFeed = ({
                 })}
               </>
             ) : (
-              <></>
+              <Flex
+                style={{ height: "400px", width: "100%" }}
+                justify={"center"}
+                align={"center"}
+              >
+                <Center>No results found!</Center>
+              </Flex>
             )}
           </Flex>
           <div className={styles.PaginationContainer}>

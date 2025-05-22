@@ -1,10 +1,12 @@
-import { Container, Flex } from "@mantine/core";
+import { Center, Container, Flex } from "@mantine/core";
 import { IconLayoutGrid, IconLayoutList } from "@tabler/icons-react";
 import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { DimensionsFeed } from "@/components/feed/dimensions";
+import { DimensionsSection } from "@/components/sections";
 import { GlobalContext } from "@/contexts/globalContext";
+import { ImageSection } from "@/components/video";
 import styles from "../../styles/pages/home.module.scss";
 
 export default function Dimensions() {
@@ -13,8 +15,7 @@ export default function Dimensions() {
 
   return (
     <>
-      <Container size={"xl"} py={40}>
-        <BreadCrumbs
+      {/* <BreadCrumbs
           blackColor
           path={[
             { path: "/", name: "HOME" },
@@ -29,7 +30,6 @@ export default function Dimensions() {
           mt={30}
         >
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            <img src={"/local/svg/simbol.svg"} />
             Dimensions
           </h3>
 
@@ -49,8 +49,24 @@ export default function Dimensions() {
           </div>
         </Flex>
 
-        <DimensionsFeed displayType={displayType} />
-      </Container>
+        <DimensionsFeed displayType={displayType} /> */}
+      <ImageSection>
+        <Container size={"xl"} py={"5%"} className={styles.TraditionalMedicine}>
+          <h2>
+            <img src={"/local/svg/simbol.svg"} />
+            Traditional Medicine Dimensions
+          </h2>
+          <Center m={0} p={0}>
+            <h4>
+              The Traditional Medicine Dimensions, derived from the Gujarat
+              Declaration, form the core pillars of TMGL. Advancing these
+              dimensions contributes to achieving health and well-being for all.
+            </h4>
+          </Center>
+
+          <DimensionsSection />
+        </Container>
+      </ImageSection>
     </>
   );
 }

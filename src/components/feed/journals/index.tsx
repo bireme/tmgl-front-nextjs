@@ -1,4 +1,4 @@
-import { Flex, Grid, LoadingOverlay } from "@mantine/core";
+import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
   JournalItemDto,
   JournalServiceDto,
@@ -10,6 +10,7 @@ import { JournalsService } from "@/services/apiRepositories/JournalsService";
 import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
+import { get } from "http";
 import { groupOccurrencesByRegion } from "../utils";
 import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
@@ -34,6 +35,7 @@ export const JournalsFeed = ({
   const [filter, setFilter] = useState<queryType[]>([]);
   const [items, setItems] = useState<JournalItemDto[]>([]);
   const [apiResponse, setApiResponse] = useState<JournalServiceDto>();
+  const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
   const { language } = useContext(GlobalContext);
 
   const applyFilters = async (queryList?: queryType[]) => {
@@ -41,12 +43,21 @@ export const JournalsFeed = ({
     setPage(1);
   };
 
-  const initialFilters = () => {
+  const initialFilters = (apiResponse: JournalServiceDto) => {
     if (country) {
+      const countryToFilter =
+        apiResponse?.countryFilters?.filter((c) => c.lang === language) || [];
+      let queryCountry = country;
+      const matched = countryToFilter.find((c) =>
+        c.queryString?.toLowerCase()?.includes(country)
+      );
+      queryCountry = matched?.queryString ?? country;
+      console.log(countryToFilter);
+
       applyFilters([
         {
-          parameter: "publication_country",
-          query: country,
+          parameter: "country",
+          query: queryCountry,
         },
       ]);
     }
@@ -66,11 +77,14 @@ export const JournalsFeed = ({
         },
       ]);
     }
+    setLoading(false);
+    setInitialFilterDone(true);
   };
 
   useEffect(() => {
-    initialFilters();
-  }, [region, thematicArea, country]);
+    getJournals();
+  }, [country, region, thematicArea]);
+
   const getJournals = async () => {
     setLoading(true);
     try {
@@ -83,6 +97,10 @@ export const JournalsFeed = ({
       setItems(response.data);
       if (!apiResponse) {
         setApiResponse(response);
+      }
+      if ((country || region || thematicArea) && !initialFilterDone) {
+        console.log("teste");
+        initialFilters(response);
       }
     } catch (error) {
       console.log(error);
@@ -202,7 +220,13 @@ export const JournalsFeed = ({
                 })}
               </>
             ) : (
-              <LoadingOverlay visible={true} style={{ position: "fixed" }} />
+              <Flex
+                style={{ height: "400px", width: "100%" }}
+                justify={"center"}
+                align={"center"}
+              >
+                <Center>No results found!</Center>
+              </Flex>
             )}
           </Flex>
           <div className={styles.PaginationContainer}>

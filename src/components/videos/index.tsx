@@ -25,7 +25,7 @@ export const VideoItem = ({ title, href, main, thumbnail }: VideoItemProps) => {
         justify={"flex-start"}
         align={main ? "" : "flex-start"}
         className={`${styles.VideoItem} ${main ? styles.Main : ""}`}
-        direction={main ? "column" : { base: "column", md: "row" }}
+        direction={main ? "column" : { base: "row", md: "row" }}
       >
         <div
           className={styles.VideoThumb}
@@ -49,8 +49,12 @@ export const FixedRelatedVideosSection = ({
       <Container size={"xl"}>
         {items?.length > 0 ? (
           <>
-            <h2>Related videos</h2>
-            <Flex className={styles.RelatedVideosSectionFlex} gap={20}>
+            <h3 className={styles.TitleWithIcon}>Related videos</h3>
+            <Flex
+              className={styles.RelatedVideosSectionFlex}
+              direction={{ base: "column", md: "row" }}
+              gap={20}
+            >
               <div className={styles.MainVideo}>
                 <VideoItem
                   title={items[0].title}
@@ -64,6 +68,7 @@ export const FixedRelatedVideosSection = ({
                   style={{ height: "100%" }}
                   direction={{ base: "column" }}
                   justify={"space-between"}
+                  gap={{ base: 30, md: 0 }}
                 >
                   <VideoItem
                     title={items[1].title}

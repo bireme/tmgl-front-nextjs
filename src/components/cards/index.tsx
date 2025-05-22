@@ -12,6 +12,9 @@ export interface IconCardProps {
 export const IconCard = ({ callBack, title, icon, small }: IconCardProps) => {
   return (
     <Flex
+      direction={"column"}
+      align={"center"}
+      justify={"center"}
       className={`${styles.IconCard} ${small ? styles.Small : ""}`}
       onClick={() => {
         callBack ? callBack() : null;

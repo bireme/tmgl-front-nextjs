@@ -82,7 +82,7 @@ export default function Home() {
           className={styles.TrandingAndFeaturedContainer}
         >
           <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
-            <img src={"/local/svg/simbol.svg"} /> Recent literature reviews
+            Recent literature reviews
           </h2>
           <div className={styles.TrendingText}>
             <p>{acf?.text_trending_topics}</p>
@@ -122,9 +122,7 @@ export default function Home() {
             </Flex>
           </Link>
           <br></br>
-          <h2 className={styles.TitleWithIcon}>
-            <img src={"/local/svg/simbol.svg"} /> Events
-          </h2>
+          <h2 className={styles.TitleWithIcon}> Events</h2>
         </Container>
       </div>
       <EventsSection />

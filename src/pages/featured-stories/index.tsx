@@ -17,10 +17,7 @@ export default function FeaturedStories() {
           ]}
           blackColor={true}
         />
-        <h2 className={styles.TitleWithIcon}>
-          <img src={"/local/svg/simbol.svg"} />
-          Featured Stories
-        </h2>
+        <h2 className={styles.TitleWithIcon}>Featured Stories</h2>
         <p>{globalConfig?.acf.stories_description}</p>
         <FeedSection postType="featured_stories" />
       </Container>
