@@ -126,6 +126,36 @@ export default function CountryHome() {
               </Grid>
             </Container>
           </div>
+          {properties?.tms_items?.length &&
+          properties?.tms_items?.length > 0 ? (
+            <div className={styles.Tms}>
+              <Container size={"xl"}>
+                <h3 className={styles.TitleWithIcon}>
+                  Traditional Medicine Systems
+                </h3>
+                <Flex
+                  justify={"center"}
+                  align={"center"}
+                  direction={{ base: "column", md: "row" }}
+                  gap={20}
+                >
+                  {properties?.tms_items?.map((item, index) => {
+                    return (
+                      <div className={styles.TmsItem} key={index}>
+                        <div
+                          className={styles.TmsImage}
+                          style={{ backgroundImage: `url(${item.image})  ` }}
+                        />
+                        <h4>{item.title}</h4>
+                      </div>
+                    );
+                  })}
+                </Flex>
+              </Container>
+            </div>
+          ) : (
+            <></>
+          )}
           {properties?.embed_content ? (
             <>
               <div className={styles.EmbedContent}>
@@ -187,36 +217,6 @@ export default function CountryHome() {
               <></>
             )}
           </div>
-          {properties?.tms_items?.length &&
-          properties?.tms_items?.length > 0 ? (
-            <div className={styles.Tms}>
-              <Container size={"xl"}>
-                <h3 className={styles.TitleWithIcon}>
-                  Traditional Medicine Systems
-                </h3>
-                <Flex
-                  justify={"center"}
-                  align={"center"}
-                  direction={{ base: "column", md: "row" }}
-                  gap={20}
-                >
-                  {properties?.tms_items?.map((item, index) => {
-                    return (
-                      <div className={styles.TmsItem} key={index}>
-                        <div
-                          className={styles.TmsImage}
-                          style={{ backgroundImage: `url(${item.image})  ` }}
-                        />
-                        <h4>{item.title}</h4>
-                      </div>
-                    );
-                  })}
-                </Flex>
-              </Container>
-            </div>
-          ) : (
-            <></>
-          )}
 
           <TrendingCarrocel
             allFilter={country ? country.toString() : undefined}
