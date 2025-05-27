@@ -49,7 +49,8 @@ export const EvidenceMapsFeed = ({
         (page - 1) * count,
         filter && filter.length > 0 ? filter : undefined
       );
-      setTotalPages(response.totalFound / count);
+      setTotalPages(Math.ceil(response.totalFound / count));
+
       setItems(response.data);
       setApiResponse(response);
       if ((country || region || thematicArea) && !initialFilterDone) {

@@ -47,6 +47,12 @@ export function decodeHtmlEntities(text: string): string {
   return he.decode(text);
 }
 
+export function decodeHtmlLink(html: string) {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+}
+
 export function extimateTime(
   words: number,
   wordsPerMinute: number = 120

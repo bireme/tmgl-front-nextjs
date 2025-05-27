@@ -5,6 +5,7 @@ import {
   Post,
 } from "@/services/types/posts.dto";
 import { HeroImage, HeroSlider } from "@/components/slider";
+import { decodeHtmlEntities, decodeHtmlLink } from "@/helpers/stringhelper";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
@@ -204,7 +205,12 @@ export default function CountryHome() {
                                 <img src={resource.icon} />
                               </>
                             }
-                            callBack={() => window.open(resource.url, "_blank")}
+                            callBack={() =>
+                              window.open(
+                                decodeHtmlLink(resource.url),
+                                "_blank"
+                              )
+                            }
                             key={index}
                           />
                         );
