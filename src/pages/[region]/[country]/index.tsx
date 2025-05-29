@@ -42,7 +42,7 @@ export default function CountryHome() {
 
   const getPageProperties = useCallback(async () => {
     setRegionName(region ? region.toString() : "");
-    setCountryName(country ? country.toString().replace("-", " ") : "");
+    setCountryName(country ? country.toString().replace(/-/g, " ") : "");
     const _api = new PostsApi(region ? region.toString() : "");
     if (country) {
       const postResponse = await _api.getPost("countries", country.toString());
