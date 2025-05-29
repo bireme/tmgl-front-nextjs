@@ -69,7 +69,6 @@ export default function EvidenceMap() {
               className={`${styles.TitleWithIcon} ${styles.small}`}
               style={{ margin: "5px" }}
             >
-              <img src={"/local/svg/simbol.svg"} />
               Evidence Maps
             </h5>
             <h3 className={`${styles.BlueTitle}`}>{item?.title}</h3>
