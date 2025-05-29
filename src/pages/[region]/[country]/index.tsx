@@ -5,6 +5,7 @@ import {
   Post,
 } from "@/services/types/posts.dto";
 import { HeroImage, HeroSlider } from "@/components/slider";
+import { decodeHtmlEntities, decodeHtmlLink } from "@/helpers/stringhelper";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
@@ -41,7 +42,7 @@ export default function CountryHome() {
 
   const getPageProperties = useCallback(async () => {
     setRegionName(region ? region.toString() : "");
-    setCountryName(country ? country.toString() : "");
+    setCountryName(country ? country.toString().replace(/-/g, " ") : "");
     const _api = new PostsApi(region ? region.toString() : "");
     if (country) {
       const postResponse = await _api.getPost("countries", country.toString());
@@ -114,7 +115,7 @@ export default function CountryHome() {
                           return (
                             <p key={key}>
                               <a href={keyR.url} target={"_blank"}>
-                                {keyR.text}
+                                {decodeHtmlEntities(keyR.text)}
                               </a>
                             </p>
                           );
@@ -204,7 +205,12 @@ export default function CountryHome() {
                                 <img src={resource.icon} />
                               </>
                             }
-                            callBack={() => window.open(resource.url, "_blank")}
+                            callBack={() =>
+                              window.open(
+                                decodeHtmlLink(resource.url),
+                                "_blank"
+                              )
+                            }
                             key={index}
                           />
                         );
