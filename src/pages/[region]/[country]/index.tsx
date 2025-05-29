@@ -115,7 +115,7 @@ export default function CountryHome() {
                           return (
                             <p key={key}>
                               <a href={keyR.url} target={"_blank"}>
-                                {keyR.text}
+                                {decodeHtmlEntities(keyR.text)}
                               </a>
                             </p>
                           );

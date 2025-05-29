@@ -108,50 +108,6 @@ export const HeaderLayout = () => {
     );
   };
 
-  // const renderSubItemsSubNav = (prev?: boolean) => {
-  //   return prevSelectedSubItem?.children.map((item, key) => {
-  //     return (
-  //       <a
-  //         key={key}
-  //         onClick={() => {
-  //           if (prev) {
-  //             router.push(item.url);
-  //             handleCloseMegaMenu();
-  //           } else {
-  //             if (item.children.length > 0) {
-  //               setPrevSelectedSubItem(originalMenuItem);
-  //               setSelectedMenuItem(item);
-  //               setSelectedSubItem(item);
-  //             } else {
-  //               setSelectedMenuItem(originalMenuItem);
-  //               setPrevSelectedSubItem(item);
-  //               console.log(originalMenuItem);
-  //               //If the site is being displayed at a phone this need to act lile a link
-  //               if (mediaQueryMatches) {
-  //                 router.push(item.url);
-  //                 handleCloseMegaMenu();
-  //                 setResponsiveMenuOpen(false);
-  //               }
-  //             }
-  //           }
-  //         }}
-  //         className={`${
-  //           selectedMenuItem?.ID == item.ID && !prev ? styles.selected : ""
-  //         }`}
-  //       >
-  //         {decodeHtmlEntities(item.title ? item.title : "")}
-  //         {selectedMenuItem?.ID == item.ID && !prev ? (
-  //           <div>
-  //             <IconChevronsRight />
-  //           </div>
-  //         ) : (
-  //           <></>
-  //         )}
-  //       </a>
-  //     );
-  //   });
-  // };
-
   const handleCloseMegaMenu = () => {
     setMegaMenuOpen(false);
     setResponsiveMenuOpen(false);

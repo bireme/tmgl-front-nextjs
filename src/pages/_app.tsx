@@ -10,6 +10,7 @@ import type { AppProps } from "next/app";
 import Cookies from "js-cookie";
 import { FooterLayout } from "@/components/layout/footer";
 import { GlobalProvider } from "@/contexts/globalContext";
+import { GptWidget } from "@/components/gpt";
 import { HeaderLayout } from "@/components/layout/header";
 import { mantineTheme } from "@styles/mantine-theme";
 import { useRouter } from "next/router";
@@ -70,6 +71,7 @@ export default function App({ Component, pageProps }: AppProps) {
         </Modal>
         <HeaderLayout />
         <Component {...pageProps} />
+        <GptWidget />
         <FooterLayout />
       </GlobalProvider>
     </MantineProvider>
