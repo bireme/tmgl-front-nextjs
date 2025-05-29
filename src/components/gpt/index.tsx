@@ -14,7 +14,7 @@ export const GptWidget = () => {
         }}
         className={styles.GptWidget}
       >
-        Talk with an assistent
+        Chat with our assistant
       </div>
     </>
   );
