@@ -1,4 +1,5 @@
 import { AcfImageArray } from "./featuredStoriesAcf";
+import { ItemResource } from "./posts.dto";
 
 export interface AcfSearch {
   title: string;
@@ -71,4 +72,5 @@ export interface HomeAcf {
   url_events: string;
   url_news: string;
   modal_home: AcfModalHome;
+  itens: ItemResource[];
 }
