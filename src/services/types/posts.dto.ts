@@ -125,6 +125,12 @@ export interface KeyResource {
   url: string;
 }
 
+export interface ItemResource {
+  title: string;
+  url: string;
+  icon: string;
+}
+
 export interface Post {
   id: number;
   date: string;

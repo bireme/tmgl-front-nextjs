@@ -33,7 +33,7 @@ export default function CountryHome() {
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       if (event.data?.type === "resize" && iframeRef.current) {
-        iframeRef.current.style.height = `${event.data.height}px`;
+        iframeRef.current.style.height = `${event.data.height + 200}px`;
       }
     };
     window.addEventListener("message", handleMessage);
@@ -42,7 +42,7 @@ export default function CountryHome() {
 
   const getPageProperties = useCallback(async () => {
     setRegionName(region ? region.toString() : "");
-    setCountryName(country ? country.toString() : "");
+    setCountryName(country ? country.toString().replace(/-/g, " ") : "");
     const _api = new PostsApi(region ? region.toString() : "");
     if (country) {
       const postResponse = await _api.getPost("countries", country.toString());
@@ -115,7 +115,7 @@ export default function CountryHome() {
                           return (
                             <p key={key}>
                               <a href={keyR.url} target={"_blank"}>
-                                {keyR.text}
+                                {decodeHtmlEntities(keyR.text)}
                               </a>
                             </p>
                           );
@@ -225,7 +225,16 @@ export default function CountryHome() {
           </div>
 
           <TrendingCarrocel
-            allFilter={country ? country.toString() : undefined}
+            allFilter={
+              !properties?.rss_filter
+                ? country
+                  ? country.toString()
+                  : undefined
+                : undefined
+            }
+            rssString={
+              properties?.rss_filter ? properties?.rss_filter : undefined
+            }
           />
           {region ? (
             <EventsSection region={region ? region.toString() : ""} />

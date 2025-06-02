@@ -31,8 +31,9 @@
   background-color: rgba(217, 217, 217, 0.20);
   border: solid #7bb4ce 2px;
   border-radius: 20px;
-  min-width: 230px;
+  min-width: 260px;
   max-width: 260px;
+  min-height: 280px;
   transition: 0.5s;
   @media (max-width: '400px') {
     min-width: 150px;

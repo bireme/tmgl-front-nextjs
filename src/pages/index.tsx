@@ -72,7 +72,7 @@ export default function Home() {
             <h4>{acf?.tmd.subtitle}</h4>
           </Center>
 
-          <DimensionsSection />
+          <DimensionsSection items={acf?.itens} />
         </Container>
       </ImageSection>
       <div className={styles.TrandingAndFeatured}>
