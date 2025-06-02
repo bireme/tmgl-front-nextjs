@@ -15,6 +15,7 @@ import { ArticleDTO } from "@/services/types/rssFeedTypes";
 import { FetchRSSFeed } from "@/services/rss/RssService";
 import { GlobalContext } from "@/contexts/globalContext";
 import { TrendingTopicSection } from "@/components/sections/topics";
+import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/slider.module.scss";
 import { useRouter } from "next/router";
 
@@ -122,7 +123,7 @@ export const TrendingCarrocel = ({
 
   const getTrendingTopics = useCallback(async () => {
     let filter = rssString ? rssString : globalConfig?.acf.filter_rss;
-    if (regionName) {
+    if (regionName && !rssString) {
       let regionalFilter = globalConfig?.acf.region_filters.filter(
         (f) => f.region_prefix.toLowerCase() == regionName.toLowerCase()
       );
@@ -152,9 +153,9 @@ export const TrendingCarrocel = ({
               nextControlIcon={<IconArrowRight size={16} />}
               previousControlIcon={<IconArrowLeft size={16} />}
               slideSize={{ base: "100%", md: "50%", lg: "32%" }}
-              slideGap={0}
-              align={"start"}
+              align={"center"}
               loop={false}
+              slidesToScroll={3}
               getEmblaApi={setEmbla}
               className={styles.TrandingCarrocelContainer}
             >
@@ -185,11 +186,17 @@ export const TrendingCarrocel = ({
               gap={10}
               align={"center"}
               onClick={() => {
-                router.push(
-                  `/recent-literature-reviews${
-                    allFilter ? "?country=" + allFilter : ""
-                  }`
-                );
+                !rssString
+                  ? router.push(
+                      `/recent-literature-reviews${
+                        allFilter ? "?country=" + allFilter : ""
+                      }`
+                    )
+                  : router.push(
+                      `/recent-literature-reviews${
+                        rssString ? "?filter=" + encodeURI(rssString) : ""
+                      }`
+                    );
               }}
               component="a"
               style={{ cursor: "pointer" }}
@@ -230,7 +237,11 @@ export const TrendingTopicCard = ({
       style={{ height: height }}
     >
       <div className={styles.TrendingText}>
-        <h3>{title}</h3>
+        <h3>
+          {decodeHtmlEntities(
+            title.length > 140 ? title.slice(0, 140) + "..." : title
+          )}
+        </h3>
         <div dangerouslySetInnerHTML={{ __html: excerpt }} />
       </div>
       <div className={styles.TrendingLink}>

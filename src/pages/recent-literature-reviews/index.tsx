@@ -9,6 +9,9 @@ import { useRouter } from "next/router";
 
 export default function TrendingTopics() {
   const { globalConfig } = useContext(GlobalContext);
+  const router = useRouter();
+  const { filter } = router.query;
+  if (!router.isReady) return null;
   return (
     <>
       <Container size={"xl"} py={60}>
@@ -21,7 +24,9 @@ export default function TrendingTopics() {
         />
         <h2 className={styles.TitleWithIcon}> Recent Literature Review</h2>
         <p>{globalConfig?.acf.trending_description}</p>
-        <TrendingTopicsFeedSection />
+        <TrendingTopicsFeedSection
+          filter={filter ? filter.toString() : undefined}
+        />
       </Container>
     </>
   );
