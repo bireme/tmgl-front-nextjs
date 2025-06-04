@@ -26,7 +26,7 @@ export const TraditionalSectionCard = ({
       p={sm ? 20 : 60}
       className={`${styles.TraditionalSection} ${sm ? styles.Small : ""}`}
       onClick={() => {
-        router.push(target ? target : "");
+        window.open(target ?? "/", "_blank");
       }}
       justify={"center"}
       align={"center"}
