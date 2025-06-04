@@ -23,7 +23,7 @@ export const TraditionalSectionCard = ({
   const router = useRouter();
   return (
     <Flex
-      p={sm ? 20 : 60}
+      p={sm ? 20 : 40}
       className={`${styles.TraditionalSection} ${sm ? styles.Small : ""}`}
       onClick={() => {
         window.open(target ?? "/", "_blank");
