@@ -1,5 +1,6 @@
+import { ItemResource, TmsItem } from "./posts.dto";
+
 import { AcfImageArray } from "./featuredStoriesAcf";
-import { ItemResource } from "./posts.dto";
 
 export interface AcfSearch {
   title: string;
@@ -73,4 +74,5 @@ export interface HomeAcf {
   url_news: string;
   modal_home: AcfModalHome;
   itens: ItemResource[];
+  manual_media: TmsItem[];
 }

@@ -128,27 +128,30 @@ export default function Home() {
       <EventsSection />
       <div className={styles.NewsContainer}>
         <NewsSection title={true} />
-        <FixedRelatedVideosSection
-          items={[
-            {
-              title:
-                "Traditional medicine: WHO Director General addresses the Group of Friends of Traditional Medicine ",
-              href: "https://www.youtube.com/watch?v=xEaxxGiyANM&t=1s",
-              thumbnail: "https://img.youtube.com/vi/xEaxxGiyANM/sddefault.jpg",
-            },
-            {
-              title: "The WHO Global Centre for Traditional Medicine ",
-              href: "https://www.youtube.com/watch?v=wsMwFRMfe1I",
-              thumbnail: "https://img.youtube.com/vi/wsMwFRMfe1I/sddefault.jpg",
-            },
-            {
-              title:
-                "Traditional Medicine: five areas of work of the WHO Global Centre for Traditional Medicine (GCTM)",
-              href: "https://www.youtube.com/watch?v=F6_qCT5T1ys",
-              thumbnail: "https://img.youtube.com/vi/F6_qCT5T1ys/sddefault.jpg",
-            },
-          ]}
-        />
+        {acf?.manual_media && acf.manual_media.length >= 3 ? (
+          <FixedRelatedVideosSection
+            items={[
+              {
+                title: acf?.manual_media[0].title,
+                href: acf?.manual_media[0].url,
+                thumbnail: acf?.manual_media[0].image,
+              },
+              {
+                title: acf?.manual_media[1].title,
+                href: acf?.manual_media[1].url,
+                thumbnail: acf?.manual_media[1].image,
+              },
+              {
+                title: acf?.manual_media[2].title,
+                href: acf?.manual_media[2].url,
+                thumbnail: acf?.manual_media[2].image,
+              },
+            ]}
+          />
+        ) : (
+          <></>
+        )}
+
         <NewsletterSection />
       </div>
     </>
