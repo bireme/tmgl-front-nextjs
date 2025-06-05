@@ -65,7 +65,6 @@ export default function Home() {
       <ImageSection>
         <Container size={"xl"} py={"5%"} className={styles.TraditionalMedicine}>
           <h2>
-            <img src={"/local/svg/simbol.svg"} />
             {acf?.tmd.title}
           </h2>
           <Center m={0} p={0}>

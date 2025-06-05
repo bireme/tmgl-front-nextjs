@@ -81,7 +81,7 @@ export const StoriesSection = ({ region }: StoriesSectionProps) => {
         posts.length > 0 ? (
           <>
             <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
-              <img src={"/local/svg/simbol.svg"} /> Featured Stories
+              Featured Stories
             </h2>
             <Grid my={50}>
               <Grid.Col span={{ md: 8 }}>
