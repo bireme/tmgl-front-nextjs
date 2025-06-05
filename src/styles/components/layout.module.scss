@@ -7,7 +7,17 @@
   column-gap: 6px;
   position: relative;
   overflow: hidden; // <- opcional, mas ajuda visualmente
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  @media screen and (max-width: 750px) {
+    margin-bottom: 100px;
+    background-size: contain;
+  }
   .FullImageSubItembBtn{
+    @media screen and (max-width: 750px) {
+    margin-bottom: 20px;
+    }
     right: 0px;
     text-decoration: none;
     z-index: 99;
@@ -445,6 +455,7 @@
       @media (max-width: '750px') {
         font-size: 22px;
         text-align: left;
+        width: 100%;
       }
     }
     nav{
@@ -492,9 +503,7 @@
       
     }
     .MegaMenuRightSection{
-      @media (max-width: '750px') {
-        display: none;
-      }
+      
     }
   }
   
