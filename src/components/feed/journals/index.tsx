@@ -89,7 +89,7 @@ export const JournalsFeed = ({
     setLoading(true);
     try {
       const response = await _service.getResources(
-        count,
+        count + 1,
         (page - 1) * count,
         filter && filter.length > 0 ? filter : undefined
       );

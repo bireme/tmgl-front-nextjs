@@ -139,7 +139,7 @@ export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
           </h5>
         </div> */}
 
-        <Button type="submit" size={"md"} fullWidth>
+        <Button type="submit" size={"md"} mt={10} fullWidth>
           {" "}
           Apply{" "}
         </Button>

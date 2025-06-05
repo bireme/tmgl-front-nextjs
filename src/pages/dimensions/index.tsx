@@ -53,7 +53,6 @@ export default function Dimensions() {
       <ImageSection>
         <Container size={"xl"} py={"5%"} className={styles.TraditionalMedicine}>
           <h2>
-            <img src={"/local/svg/simbol.svg"} />
             Traditional Medicine Dimensions
           </h2>
           <Center m={0} p={0}>

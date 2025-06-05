@@ -3,6 +3,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
 import { Container } from "@mantine/core";
 import { EventsSection } from "@/components/sections/events";
+import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
@@ -108,6 +109,29 @@ export default function RegionHome() {
               />
               <NewsletterSection />
             </div>
+            {acf?.manual_media && acf.manual_media.length >= 3 ? (
+              <FixedRelatedVideosSection
+                items={[
+                  {
+                    title: acf?.manual_media[0].title,
+                    href: acf?.manual_media[0].url,
+                    thumbnail: acf?.manual_media[0].image,
+                  },
+                  {
+                    title: acf?.manual_media[1].title,
+                    href: acf?.manual_media[1].url,
+                    thumbnail: acf?.manual_media[1].image,
+                  },
+                  {
+                    title: acf?.manual_media[2].title,
+                    href: acf?.manual_media[2].url,
+                    thumbnail: acf?.manual_media[2].image,
+                  },
+                ]}
+              />
+            ) : (
+              <></>
+            )}
           </>
         ) : (
           <></>

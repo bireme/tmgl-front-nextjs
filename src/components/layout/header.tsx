@@ -133,10 +133,10 @@ export const HeaderLayout = () => {
               if (item.children.length > 0) {
                 setThirdLevelItems(item.children);
                 setSelectedSubItem(item);
+                alert("teste");
               } else {
                 setThirdLevelItems(undefined);
                 setSelectedSubItem(item);
-                //If the site is being displayed at a phone this need to act lile a link
                 if (mediaQueryMatches) {
                   router.push(item.url);
                   handleCloseMegaMenu();
@@ -394,7 +394,7 @@ export const HeaderLayout = () => {
             }}
           >
             <Grid>
-              <Grid.Col span={5}>
+              <Grid.Col span={{ base: 12, md: 5 }}>
                 <h2
                   style={{
                     cursor: prevSelectedSubItem ? "pointer" : "default",

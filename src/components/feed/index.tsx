@@ -82,19 +82,20 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
   );
 };
 
-export const TrendingTopicsFeedSection = () => {
+export const TrendingTopicsFeedSection = ({ filter }: { filter?: string }) => {
   const [posts, setPosts] = useState<ArticleDTO[]>([]);
   const [queryString, setQueryString] = useState<string>("");
   const { globalConfig } = useContext(GlobalContext);
   const [count, setCount] = useState<number>(9);
   const getPosts = async (qs?: string, ct?: number) => {
+    console.log(filter);
     try {
       const data = await FetchRSSFeed(
         0,
         ct ? ct : count,
         1,
         qs,
-        globalConfig?.acf.filter_rss
+        filter ? filter : globalConfig?.acf.filter_rss
       );
       setPosts(data);
     } catch {

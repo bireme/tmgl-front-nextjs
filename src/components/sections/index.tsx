@@ -1,8 +1,8 @@
+import { ItemResource, Post } from "@/services/types/posts.dto";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { Flex } from "@mantine/core";
 import { GlobalContext } from "@/contexts/globalContext";
-import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../styles/components/sections.module.scss";
@@ -23,10 +23,10 @@ export const TraditionalSectionCard = ({
   const router = useRouter();
   return (
     <Flex
-      p={sm ? 20 : 60}
+      p={sm ? 20 : 40}
       className={`${styles.TraditionalSection} ${sm ? styles.Small : ""}`}
       onClick={() => {
-        router.push(target ? target : "");
+        window.open(target ?? "/", "_blank");
       }}
       justify={"center"}
       align={"center"}
@@ -38,7 +38,7 @@ export const TraditionalSectionCard = ({
   );
 };
 
-export const DimensionsSection = () => {
+export const DimensionsSection = ({ items }: { items?: ItemResource[] }) => {
   const [posts, setPosts] = useState<Array<Post>>();
   const _api = new PostsApi();
   const getDimensions = useCallback(async () => {
@@ -64,16 +64,27 @@ export const DimensionsSection = () => {
         justify={"center"}
         align={"center"}
       >
-        {posts?.map((dimension, key) => {
-          return (
-            <TraditionalSectionCard
-              key={key}
-              iconPath={_api.findFeaturedMedia(dimension, "full")}
-              target={`/dimensions/${dimension.slug}`}
-              title={dimension.title.rendered}
-            />
-          );
-        })}
+        {!items
+          ? posts?.map((dimension, key) => {
+              return (
+                <TraditionalSectionCard
+                  key={key}
+                  iconPath={_api.findFeaturedMedia(dimension, "full")}
+                  target={`/dimensions/${dimension.slug}`}
+                  title={dimension.title.rendered}
+                />
+              );
+            })
+          : items.map((item, key) => {
+              return (
+                <TraditionalSectionCard
+                  key={key}
+                  iconPath={item.icon}
+                  target={item.url}
+                  title={item.title}
+                />
+              );
+            })}
       </Flex>
     </>
   );
