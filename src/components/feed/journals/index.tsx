@@ -99,7 +99,6 @@ export const JournalsFeed = ({
         setApiResponse(response);
       }
       if ((country || region || thematicArea) && !initialFilterDone) {
-        console.log("teste");
         initialFilters(response);
       }
     } catch (error) {

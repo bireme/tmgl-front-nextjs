@@ -1,4 +1,11 @@
-import { Button, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
+import {
+  Button,
+  Center,
+  Container,
+  Flex,
+  Grid,
+  LoadingOverlay,
+} from "@mantine/core";
 import {
   RecomendedArticlesSection,
   RelatedArticlesSection,
@@ -111,7 +118,9 @@ export default function Dimensions() {
                                     title={resource.title}
                                     icon={
                                       <>
-                                        <img src={resource.icon} />
+                                        <Center mb={5}>
+                                          <img src={resource.icon} />
+                                        </Center>
                                       </>
                                     }
                                     callBack={() =>

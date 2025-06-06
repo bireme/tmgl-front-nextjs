@@ -133,7 +133,6 @@ export const HeaderLayout = () => {
               if (item.children.length > 0) {
                 setThirdLevelItems(item.children);
                 setSelectedSubItem(item);
-                alert("teste");
               } else {
                 setThirdLevelItems(undefined);
                 setSelectedSubItem(item);

@@ -54,7 +54,6 @@ export const EvidenceMapsFeed = ({
       setItems(response.data);
       setApiResponse(response);
       if ((country || region || thematicArea) && !initialFilterDone) {
-        console.log("teste");
         initialFilters(response);
       }
     } catch (error) {
