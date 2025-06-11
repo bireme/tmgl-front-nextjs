@@ -238,6 +238,7 @@ export default function CountryHome() {
               properties?.rss_filter ? properties?.rss_filter : undefined
             }
           />
+
           {region ? (
             <EventsSection region={region ? region.toString() : ""} />
           ) : (
