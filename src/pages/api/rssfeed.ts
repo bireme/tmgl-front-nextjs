@@ -10,13 +10,19 @@ export default async function handler(
   try {
     const { lang, from, count, page, queryString, filter } = req.query;
     const feedUrl = process.env.RSS_FEED_URL ? process.env.RSS_FEED_URL : "";
-    const response = await axios.get(
-      feedUrl +
-        `&lang=${lang}&from=${from}&count=${count}&page=${page}${
-          filter ? filter : ""
-        }${queryString ? `&q=${queryString}` : ""}`,
-      { responseType: "text" }
-    );
+    let response;
+    if (filter?.includes("lang=")) {
+      response = await axios.get(feedUrl + filter, { responseType: "text" });
+    } else {
+      response = await axios.get(
+        feedUrl +
+          `&lang=${lang}&from=${from}&count=${count}&page=${page}${
+            filter ? filter : ""
+          }${queryString ? `&q=${queryString}` : ""}`,
+        { responseType: "text" }
+      );
+    }
+
     const xmlData = response.data;
 
     const jsonData = await parseStringPromise(xmlData, {

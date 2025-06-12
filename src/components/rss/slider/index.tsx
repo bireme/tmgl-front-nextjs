@@ -86,10 +86,12 @@ export const TrendingSlider = () => {
                     >
                       <TrendingTopicSection
                         href={item.link}
-                        title={`${item.title.slice(0, 150)} ${
-                          item.title.length > 150 ? "..." : ""
-                        }`}
-                        excerpt={`${item.description.trim().slice(0, 120)}...`}
+                        title={`${decodeHtmlEntities(
+                          item.title.slice(0, 150)
+                        )} ${item.title.length > 150 ? "..." : ""}`}
+                        excerpt={`${decodeHtmlEntities(
+                          item.description.trim().slice(0, 120)
+                        )}...`}
                       />
                     </Carousel.Slide>
                   </div>
@@ -123,6 +125,7 @@ export const TrendingCarrocel = ({
 
   const getTrendingTopics = useCallback(async () => {
     let filter = rssString ? rssString : globalConfig?.acf.filter_rss;
+
     if (regionName && !rssString) {
       let regionalFilter = globalConfig?.acf.region_filters.filter(
         (f) => f.region_prefix.toLowerCase() == regionName.toLowerCase()
