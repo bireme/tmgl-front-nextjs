@@ -89,6 +89,7 @@ export interface LisDocuments {
   thematic_area_display: string[];
   title: string;
   updated_date: string;
+  fulltext: string[];
 }
 
 export interface ResponseHeader {

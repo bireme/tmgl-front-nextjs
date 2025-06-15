@@ -9,8 +9,8 @@ import {
 } from "@/helpers/stringhelper";
 import { useContext, useEffect, useState } from "react";
 
-import { EvidenceMapsService } from "@/services/apiRepositories/EvidenceMapsService";
 import { GlobalContext } from "@/contexts/globalContext";
+import { LegislationService } from "@/services/apiRepositories/LegislationsService";
 import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
@@ -19,7 +19,7 @@ import { groupOccurrencesByRegion } from "../utils";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const EvidenceMapsFeed = ({
+export const LegislationsFeed = ({
   displayType,
   country,
   region,
@@ -32,7 +32,7 @@ export const EvidenceMapsFeed = ({
 }) => {
   const { globalConfig } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
-  const _service = new EvidenceMapsService();
+  const _service = new LegislationService();
   const count = 12;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -114,7 +114,7 @@ export const EvidenceMapsFeed = ({
       }
     } catch (error) {
       console.log(error);
-      console.log("Error while fetching Evidencemaps");
+      console.log("Error while fetching Legislations");
     }
     setLoading(false);
   };

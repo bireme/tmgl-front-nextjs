@@ -1,13 +1,7 @@
 import {
-  EvidenceMapApiDto,
-  EvidenceMapItemDto,
-  EvidenceMapsServiceDto,
-} from "../types/evidenceMapsDto";
-import {
-  getCountryTags,
-  getDescriptorTags,
-  getRegionByCountry,
-} from "@/components/feed/utils";
+  LegislationItemDto,
+  LegislationServiceDto,
+} from "../types/legislationsDto";
 import {
   parseCountries,
   parseCountriesByAttr,
@@ -18,19 +12,18 @@ import {
 
 import { PostsApi } from "../posts/PostsApi";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
-import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
+import { getDescriptorTags } from "@/components/feed/utils";
 import moment from "moment";
 import { queryType } from "../types/resources";
-import { url } from "inspector";
 
-export class EvidenceMapsService {
+export class LegislationService {
   public getResources = async (
     count: number,
     start: number,
     queryItems?: Array<queryType>,
     and?: boolean
-  ): Promise<EvidenceMapsServiceDto> => {
+  ): Promise<LegislationServiceDto> => {
     let query = undefined;
     let q = undefined;
 
@@ -45,7 +38,7 @@ export class EvidenceMapsService {
     }`;
     q = "*:*";
     const { data } = await axios.post<RepositoryApiResponse>(
-      `/api/evidencemaps`,
+      `/api/legislations`,
       {
         query,
         count,
@@ -53,14 +46,15 @@ export class EvidenceMapsService {
         q,
       }
     );
+    console.log(data);
 
-    let responseItems: EvidenceMapItemDto[] = [];
+    let responseItems: LegislationItemDto[] = [];
     const postsApi = new PostsApi();
     if (data) {
       let resources = await postsApi.getPostByAcfMetaKey(
         "resource",
         "resource_type",
-        "evidence_map"
+        "legislation"
       );
       responseItems = data.data.diaServerResponse[0].response.docs.map(
         (item) => {
@@ -73,39 +67,19 @@ export class EvidenceMapsService {
               : null
             : null;
           return {
-            id: item.django_id,
-            title: item.title,
-            excerpt: item.abstract,
-            links: item.link,
-            countries: parseCountries(item),
-            created_at: moment(item?.created_date, "YYYYMMDD").toDate(),
-            updated_at: moment(item?.updated_date, "YYYYMMDD").toDate(),
-            areas: parseTematicAreas(item),
-            descriptors: item.descriptor,
-            releatedDocuments:
-              resources && resources.acf?.links
-                ? resources.acf?.links?.map((l: any) => {
-                    return {
-                      label: l.label,
-                      content: l.type == "link" ? l.link : l.file,
-                    };
-                  })
-                : [],
-            image: itemResources
-              ? postsApi.findFeaturedMedia(itemResources, "medium")
-                ? postsApi.findFeaturedMedia(itemResources, "medium")
-                : postsApi.findFeaturedMedia(itemResources, "full")
-                ? postsApi.findFeaturedMedia(itemResources, "full")
-                : postsApi.findFeaturedMedia(itemResources, "thumbnail")
-                ? postsApi.findFeaturedMedia(itemResources, "thumbnail")
-                : ""
-              : "",
+            created_date: item.created_date,
+            descriptor: item.descriptor,
+            django_ct: item.django_ct,
+            django_id: item.django_id,
+            fulltext: item.fulltext,
+            id: item.id,
+            indexed_database: item.indexed_database,
           };
         }
       );
     }
     console.log(data.data.diaServerResponse);
-    let responseDto: EvidenceMapsServiceDto = {
+    let responseDto: LegislationServiceDto = {
       totalFound: data.data.diaServerResponse[0].response.numFound,
       data: responseItems,
       languageFilters: parseMultLangFilter(
@@ -129,7 +103,7 @@ export class EvidenceMapsService {
   };
 
   public getItem = async (id: string): Promise<EvidenceMapItemDto> => {
-    const { data } = await axios.post<EvidenceMapApiDto>(`/api/evidencemaps`, {
+    const { data } = await axios.post<EvidenceMapApiDto>(`/api/legislations`, {
       id,
     });
 
@@ -170,55 +144,12 @@ export class EvidenceMapsService {
   };
 
   public formatTags = (item: EvidenceMapItemDto, language: string) => {
-    // const countries = item.countries
-    //   ? getCountryTags(item.countries, language)
-    //   : [];
-
     let descriptors = item.descriptors
       ? getDescriptorTags(item.descriptors)
       : [];
 
     if (descriptors.length > 0) descriptors = descriptors.slice(0, 1);
-
-    // let engCountries = item.countries?.map((c) => {
-    //   const item = c.countryLangs.find((cl) => cl.lang == "en");
-    //   if (item && item.countryName) {
-    //     return item.countryName;
-    //   } else return "";
-    // });
-    // let regions: Array<TagItem> = [];
-    // if (engCountries) {
-    //   regions = item.countries
-    //     ? getRegionByCountry(engCountries).map((c) => ({
-    //         name: c,
-    //         type: "region",
-    //       }))
-    //     : [];
-    // }
-
-    // let tags = countries.concat(descriptors);
     let tags = descriptors;
-    // if (regions.length > 0) {
-    //   tags = tags.concat(regions);
-    // }
     return tags;
-  };
-
-  public getTableauVixLink = (links: string[]): string | null => {
-    const link = links.find((l) => l.includes("tableau"));
-    if (!link) {
-      return null;
-    }
-    if (link.includes("app/profile/bireme")) {
-      let newLink = link.replace("app/profile/bireme/viz", "views");
-      newLink +=
-        "?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link";
-      return newLink;
-    } else {
-      if (link.includes("views") && !link.includes("viz_share_link")) {
-        return link;
-      }
-    }
-    return null;
   };
 }
