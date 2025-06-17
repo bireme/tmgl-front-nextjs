@@ -27,6 +27,8 @@ export interface GlobalConfigAcf {
     news_description: string;
     privacy_policy_url: string;
     regionais: RegionalItems[];
+    evidence_maps_priority: Array<string>;
+    legislations_description: string;
     route: RouteItems[];
     stories_description: string;
     journals_description?: string;

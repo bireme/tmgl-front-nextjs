@@ -3,6 +3,10 @@ import {
   EvidenceMapItemDto,
   EvidenceMapsServiceDto,
 } from "@/services/types/evidenceMapsDto";
+import {
+  decodeHtmlEntities,
+  removeHTMLTagsAndLimit,
+} from "@/helpers/stringhelper";
 import { useContext, useEffect, useState } from "react";
 
 import { EvidenceMapsService } from "@/services/apiRepositories/EvidenceMapsService";
@@ -10,9 +14,9 @@ import { GlobalContext } from "@/contexts/globalContext";
 import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
+import { chunkArray } from "@/components/layout/helper";
 import { groupOccurrencesByRegion } from "../utils";
 import { queryType } from "@/services/types/resources";
-import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
 export const EvidenceMapsFeed = ({
@@ -26,6 +30,7 @@ export const EvidenceMapsFeed = ({
   region?: string;
   thematicArea?: string;
 }) => {
+  const { globalConfig } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const _service = new EvidenceMapsService();
   const count = 12;
@@ -35,6 +40,7 @@ export const EvidenceMapsFeed = ({
   const [items, setItems] = useState<EvidenceMapItemDto[]>([]);
   const [apiResponse, setApiResponse] = useState<EvidenceMapsServiceDto>();
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
+  const [priorityItems, setPriorityItems] = useState<EvidenceMapItemDto[]>([]);
   const { language } = useContext(GlobalContext);
 
   const applyFilters = async (queryList?: queryType[]) => {
@@ -49,10 +55,60 @@ export const EvidenceMapsFeed = ({
         (page - 1) * count,
         filter && filter.length > 0 ? filter : undefined
       );
-      setTotalPages(Math.ceil(response.totalFound / count));
 
+      setTotalPages(Math.ceil(response.totalFound / count));
       setItems(response.data);
       setApiResponse(response);
+      const priority = globalConfig?.acf.evidence_maps_priority;
+      let priorityResult;
+      let orderedItems;
+
+      if (!filter || filter.length === 0) {
+        if (page === 1 && priority != null && priority.length > 0) {
+          let q: queryType = {
+            parameter: "django_id",
+            query: priority.join(","),
+          };
+          priorityResult = await _service.getResources(
+            priority.length + 1,
+            0,
+            [q],
+            true
+          );
+          const idPosition = new Map(priority.map((id, index) => [id, index]));
+          orderedItems = priorityResult.data.sort(
+            (a, b) =>
+              (idPosition.get(a.id) ?? Infinity) -
+              (idPosition.get(b.id) ?? Infinity)
+          );
+          setPriorityItems(orderedItems);
+        }
+
+        if (orderedItems || priorityItems.length > 0) {
+          let inOrderItems =
+            priorityItems.length > 0 ? priorityItems : orderedItems;
+          let chunkedItems = chunkArray(
+            inOrderItems as EvidenceMapItemDto[],
+            count + 1
+          );
+          let auxOriginalItems = response.data;
+          // Remove duplicados (que já estão na prioridade daquela página)
+          const priorityIdsSet = new Set(inOrderItems?.map((item) => item.id));
+          auxOriginalItems = auxOriginalItems.filter(
+            (item) => !priorityIdsSet.has(item.id)
+          );
+          inOrderItems = chunkedItems[page - 1];
+
+          // Junta os itens priorizados primeiro e os restantes da API depois
+          const finalItems = [...inOrderItems, ...auxOriginalItems].slice(
+            0,
+            count
+          ); // Garante o limite
+
+          setItems(finalItems);
+        }
+      }
+
       if ((country || region || thematicArea) && !initialFilterDone) {
         initialFilters(response);
       }
@@ -101,8 +157,8 @@ export const EvidenceMapsFeed = ({
   };
 
   useEffect(() => {
-    getEvidencemaps();
-  }, [page, filter, thematicArea, region, country]);
+    if (globalConfig) getEvidencemaps();
+  }, [page, filter, thematicArea, region, country, globalConfig]);
 
   return (
     <>
@@ -113,16 +169,6 @@ export const EvidenceMapsFeed = ({
             <ResourceFilters
               callBack={applyFilters}
               filters={[
-                // {
-                //   queryType: "publication_country",
-                //   label: "Country of Publication",
-                //   items: apiResponse?.countryFilters
-                //     .filter((c) => c.lang == language)
-                //     .map((c) => ({
-                //       label: c.type,
-                //       ocorrences: c.count,
-                //     })),
-                // },
                 {
                   queryType: "descriptor",
                   label: "Thematic area",
@@ -131,18 +177,6 @@ export const EvidenceMapsFeed = ({
                     ocorrences: c.count,
                   })),
                 },
-                // {
-                //   queryType: "region",
-                //   label: "WHO Regions",
-                //   items: groupOccurrencesByRegion(
-                //     apiResponse?.countryFilters
-                //       .filter((c) => c.lang == "en")
-                //       .map((c) => ({
-                //         label: c.type,
-                //         ocorrences: c.count,
-                //       }))
-                //   ),
-                // },
               ]}
             />
           ) : (
@@ -166,7 +200,7 @@ export const EvidenceMapsFeed = ({
                     <ResourceCard
                       displayType={displayType}
                       key={k}
-                      title={i.title}
+                      title={decodeHtmlEntities(i.title)}
                       tags={_service.formatTags(i, language)}
                       image={i.image ? i.image : ""}
                       excerpt={
