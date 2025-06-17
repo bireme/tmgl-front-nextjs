@@ -118,17 +118,6 @@ export const RepositoriesFeed = ({
               callBack={applyFilters}
               filters={[
                 {
-                  queryType: "publication_country",
-                  label: "Country",
-                  items: apiResponse?.countryFilters
-                    .filter((c) => c.lang == language)
-                    .map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                      id: c.queryString,
-                    })),
-                },
-                {
                   queryType: "region",
                   label: "WHO Region",
                   items: groupOccurrencesByRegion(
@@ -139,6 +128,17 @@ export const RepositoriesFeed = ({
                         ocorrences: c.count,
                       }))
                   ),
+                },
+                {
+                  queryType: "publication_country",
+                  label: "Country",
+                  items: apiResponse?.countryFilters
+                    .filter((c) => c.lang == language)
+                    .map((c) => ({
+                      label: c.type,
+                      ocorrences: c.count,
+                      id: c.queryString,
+                    })),
                 },
                 {
                   queryType: "descriptor",
