@@ -63,25 +63,29 @@ export const FixedRelatedVideosSection = ({
                   thumbnail={items[0].thumbnail ? items[0].thumbnail : ""}
                 />
               </div>
-              <div className={styles.SideVideos}>
-                <Flex
-                  style={{ height: "100%" }}
-                  direction={{ base: "column" }}
-                  justify={"space-between"}
-                  gap={{ base: 30, md: 0 }}
-                >
-                  <VideoItem
-                    title={items[1].title}
-                    href={items[1].href}
-                    thumbnail={items[1].thumbnail ? items[1].thumbnail : ""}
-                  />
-                  <VideoItem
-                    title={items[2].title}
-                    href={items[2].href}
-                    thumbnail={items[2].thumbnail ? items[2].thumbnail : ""}
-                  />
-                </Flex>
-              </div>
+              {items.length > 1 && (
+                <div className={styles.SideVideos}>
+                  <Flex
+                    style={{ height: "100%" }}
+                    direction={{ base: "column" }}
+                    justify={"space-between"}
+                    gap={{ base: 30, md: 0 }}
+                  >
+                    <VideoItem
+                      title={items[1].title}
+                      href={items[1].href}
+                      thumbnail={items[1].thumbnail ? items[1].thumbnail : ""}
+                    />
+                    {items.length > 2 && (
+                      <VideoItem
+                        title={items[2].title}
+                        href={items[2].href}
+                        thumbnail={items[2].thumbnail ? items[2].thumbnail : ""}
+                      />
+                    )}
+                  </Flex>
+                </div>
+              )}
             </Flex>{" "}
           </>
         ) : (

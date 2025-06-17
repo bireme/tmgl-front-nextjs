@@ -28,12 +28,13 @@ export class EvidenceMapsService {
   public getResources = async (
     count: number,
     start: number,
-    queryItems?: Array<queryType>
+    queryItems?: Array<queryType>,
+    and?: boolean
   ): Promise<EvidenceMapsServiceDto> => {
     let query = undefined;
     let q = undefined;
 
-    query = `thematic_area:"TMGL-EV"${
+    query = `thematic_area:"TMGL-EV"${and ? "&" : ""}${
       queryItems
         ? queryItems
             .map((k) => {
