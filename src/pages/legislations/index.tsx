@@ -48,12 +48,12 @@ export default function Legislations() {
           </p>
         </Flex>
 
-        <LegislationsFeed
+        {/* <LegislationsFeed
           thematicArea={thematicArea ? thematicArea.toString() : undefined}
           country={country ? country.toString() : undefined}
           region={region ? region.toString() : undefined}
           displayType={displayType}
-        />
+        /> */}
       </Container>
     </>
   );
