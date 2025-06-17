@@ -127,7 +127,6 @@ export default function CountryHome() {
               </Grid>
             </Container>
           </div>
-
           {properties?.tms_items?.length &&
           properties?.tms_items?.length > 0 ? (
             <div className={styles.Tms}>
@@ -158,7 +157,6 @@ export default function CountryHome() {
           ) : (
             <></>
           )}
-
           {properties?.embed_content ? (
             <>
               <div className={styles.EmbedContent}>
