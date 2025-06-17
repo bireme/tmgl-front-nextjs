@@ -109,26 +109,20 @@ export default function RegionHome() {
               />
               <NewsletterSection />
             </div>
-            {acf?.manual_media && acf.manual_media.length >= 3 ? (
-              <FixedRelatedVideosSection
-                items={[
-                  {
-                    title: acf?.manual_media[0].title,
-                    href: acf?.manual_media[0].url,
-                    thumbnail: acf?.manual_media[0].image,
-                  },
-                  {
-                    title: acf?.manual_media[1].title,
-                    href: acf?.manual_media[1].url,
-                    thumbnail: acf?.manual_media[1].image,
-                  },
-                  {
-                    title: acf?.manual_media[2].title,
-                    href: acf?.manual_media[2].url,
-                    thumbnail: acf?.manual_media[2].image,
-                  },
-                ]}
-              />
+            <br />
+            <br />
+            {acf?.manual_media && acf.manual_media.length > 0 ? (
+              <div style={{ float: "left", width: "100%" }}>
+                <FixedRelatedVideosSection
+                  items={acf.manual_media.map((item) => {
+                    return {
+                      title: item.title,
+                      href: item.url,
+                      thumbnail: item.image,
+                    };
+                  })}
+                />
+              </div>
             ) : (
               <></>
             )}
