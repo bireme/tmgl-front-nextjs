@@ -23,7 +23,8 @@ export default function CountryHome() {
   const router = useRouter();
   const _postApiHelper = new PostsApi();
   const [properties, setProperties] = useState<CountryAcfProps>();
-  const { setRegionName, setCountryName } = useContext(GlobalContext);
+  const { setRegionName, setCountryName, globalConfig } =
+    useContext(GlobalContext);
   const [postProps, setPostProps] = useState<Post>();
   const {
     query: { country, region },
@@ -164,6 +165,13 @@ export default function CountryHome() {
                   <h3 className={styles.TitleWithIcon}>
                     TM Research Analytics{" "}
                   </h3>
+                  <p>
+                    {decodeHtmlEntities(
+                      globalConfig?.acf.tm_research_analytics_descriptor
+                        ? globalConfig?.acf.tm_research_analytics_descriptor
+                        : ""
+                    )}
+                  </p>
                 </Container>
                 {properties?.embed_content ? (
                   <iframe

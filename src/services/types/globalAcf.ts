@@ -29,6 +29,7 @@ export interface GlobalConfigAcf {
     regionais: RegionalItems[];
     evidence_maps_priority: Array<string>;
     legislations_description: string;
+    tm_research_analytics_descriptor: string;
     route: RouteItems[];
     stories_description: string;
     journals_description?: string;
