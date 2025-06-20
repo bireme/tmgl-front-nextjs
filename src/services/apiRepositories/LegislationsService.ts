@@ -10,6 +10,7 @@ import {
   parseThematicAreabyAttr,
 } from "./utils";
 
+import { LegislationServerResponseDTO } from "../types/legislationsTypes";
 import { PostsApi } from "../posts/PostsApi";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
 import axios from "axios";
@@ -37,7 +38,7 @@ export class LegislationService {
         : ""
     }`;
     q = "*:*";
-    const { data } = await axios.post<RepositoryApiResponse>(
+    const { data } = await axios.post<LegislationServerResponseDTO>(
       `/api/legislations`,
       {
         query,
@@ -56,46 +57,68 @@ export class LegislationService {
         "resource_type",
         "legislation"
       );
-      // responseItems = data.data.diaServerResponse[0].response.docs.map(
-      //   (item) => {
-      //     let itemResources = resources.filter(
-      //       (i: any) => i.acf.resource_id == item.django_id
-      //     );
-      //     itemResources = itemResources
-      //       ? itemResources.length > 0
-      //         ? itemResources[0]
-      //         : null
-      //       : null;
-      //     return {
-      //       created_date: item.created_date,
-      //       descriptor: item.descriptor,
-      //       django_ct: item.django_ct,
-      //       django_id: item.django_id,
-      //       fulltext: item.fulltext,
-      //       id: item.id,
-      //       indexed_database: item.indexed_database,
-      //     };
-      //   }
-      // );
+      responseItems = data.diaServerResponse[0].response.docs.map((item) => {
+        let itemResources = resources.filter(
+          (i: any) => i.acf.resource_id == item.django_id
+        );
+        itemResources = itemResources
+          ? itemResources.length > 0
+            ? itemResources[0]
+            : null
+          : null;
+        return {
+          title: item.reference_title[0],
+          django_id: item.django_id,
+          id: item.id,
+          act_scope: item.scope,
+          act_number: item.act_number,
+          act_type: item.act_type,
+          official_ementa: item.official_ementa,
+          unofficial_ementa: "",
+          fulltext: item.fulltext,
+          collection: "",
+          language: item.language,
+          publication_date: moment(
+            item.publication_date,
+            "YYYY-MM-DD"
+          ).toDate(),
+          publication_country: "",
+          source_name: item.source_name,
+          scope_region: item.scope_region,
+          scope_state: item.scope_state,
+          status: item.status,
+          thematic_area: item.thematic_area,
+          thematic_area_display: item.thematic_area_display,
+          issuer_organ: item.issuer_organ,
+          descriptor: item.descriptor ? item.descriptor : [],
+          file: item.fulltext[0],
+          indexed_in: item.indexed_database[0],
+          indexed_database: item.indexed_database,
+          created_date: item.created_date,
+          updated_date: moment(item.updated_date, "YYYY-MM-DD").toDate(),
+          publication_year: item.publication_year,
+          descriptor_tags: item.descriptor,
+          resources: itemResources,
+          organ_issuer: item.issuer_organ,
+          scope_city: item.scope_city,
+          scope: item.scope,
+        };
+      });
     }
-    console.log(data.data.diaServerResponse);
+
     let responseDto: LegislationServiceDto = {
-      totalFound: data.data.diaServerResponse[0].response.numFound,
+      totalFound: data.diaServerResponse[0].response.numFound,
       data: responseItems,
-      languageFilters: parseMultLangFilter(
-        data.data.diaServerResponse[0].facet_counts.facet_fields.language
-      ),
       countryFilters: parseMultLangFilter(
-        data.data.diaServerResponse[0].facet_counts.facet_fields
-          .publication_country
+        data.diaServerResponse[0].facet_counts.facet_fields.country
       ),
-      thematicAreaFilters:
-        data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
-          (item) => {
-            return {
-              type: item[0],
-              count: parseInt(item[1]),
-            };
+      actTypeFilters: parseMultLangFilter(
+        data.diaServerResponse[0].facet_counts.facet_fields.act_type
+      ),
+      publicationYearFilter:
+        data.diaServerResponse[0].facet_counts.facet_fields.publication_year.map(
+          (k: any) => {
+            return k;
           }
         ),
     };
