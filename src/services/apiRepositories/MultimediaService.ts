@@ -3,34 +3,99 @@ import {
   MultimediaObject,
   MultimediaResponse,
   MultimediaResponseItems,
+  MultimediaServiceDto,
 } from "../types/multimediaTypes";
 
 import axios from "axios";
+import { parseMultLangFilter } from "./utils";
+import { queryType } from "../types/resources";
 
 export class MultimediaService {
   public getResources = async (
-    lang: string,
-    filterType?: string,
-    filter?: string
-  ): Promise<MultimediaDiaServerResponse | undefined> => {
+    count: number,
+    start: number,
+    queryItems?: Array<queryType>,
+    lang?: string
+  ): Promise<MultimediaServiceDto> => {
     try {
-      const response = await axios.post<MultimediaResponse>(`/api/multimedia`, {
-        fq: filterType,
-        q: filter,
+      let query = undefined;
+      let q = undefined;
+      const countryQueryCount = queryItems?.filter(
+        (q) => q.parameter == "country"
+      ).length
+        ? queryItems?.filter((q) => q.parameter == "country").length
+        : 0;
+
+      if (countryQueryCount <= 1)
+        query = `thematic_area:"TMGL"${
+          queryItems
+            ? queryItems
+                .map((k) => {
+                  return `${k.parameter}:"${k.query}"`;
+                })
+                .join("&")
+            : ""
+        }`;
+      else {
+        query = `thematic_area:"TMGL"${
+          queryItems
+            ? queryItems
+                .filter((q) => q.parameter != "country")
+                .map((k) => {
+                  return `${k.parameter}:"${k.query}"`;
+                })
+                .join("&")
+            : ""
+        }`;
+      }
+      q = "*:*";
+
+      let { data } = await axios.post<MultimediaResponse>(`/api/multimedia`, {
+        query,
+        count,
+        start,
+        q,
         lang,
       });
-      let returnObj = response.data.data.diaServerResponse[0];
+      let returnObj = data.data.diaServerResponse[0];
 
       for (let i = 0; i < returnObj.response.docs.length; i++) {
-        let thumbnail = await this.getVideoThumbnail(
-          returnObj.response.docs[i]
-        );
-        returnObj.response.docs[i].thumbnail = thumbnail;
+        if (returnObj.response.docs[i].media_type == "video") {
+          let thumbnail = await this.getVideoThumbnail(
+            returnObj.response.docs[i]
+          );
+          returnObj.response.docs[i].thumbnail = thumbnail;
+        } else {
+          returnObj.response.docs[i].thumbnail =
+            returnObj.response.docs[i].link;
+        }
       }
       returnObj.response.docs = returnObj.response.docs.reverse();
-      return returnObj;
+      return {
+        data: returnObj.response.docs,
+        totalFound: returnObj.response.numFound,
+        languageFilters: returnObj.facet_counts.facet_fields.language.map(
+          (k) => {
+            return { type: k[0], count: parseInt(k[1]) };
+          }
+        ),
+        regionFilters: returnObj.facet_counts.facet_fields.scope_region.map(
+          (k) => {
+            return { type: k[0], count: parseInt(k[1]) };
+          }
+        ),
+        thematicAreaFilters:
+          returnObj.facet_counts.facet_fields.descriptor_filter.map((k) => {
+            return { type: k[0], count: parseInt(k[1]) };
+          }),
+        countryFilters: [],
+        typeFilters: parseMultLangFilter(
+          returnObj.facet_counts.facet_fields.media_type_filter
+        ),
+      };
     } catch (error) {
       console.log(error);
+      throw new Error("Error while searching medias");
     }
   };
 
@@ -47,24 +112,37 @@ export class MultimediaService {
 
   public getVideoThumbnail = async (obj: MultimediaObject): Promise<string> => {
     let videoId: string;
-    if (obj.link[0].includes("vimeo")) {
-      videoId = obj.link[0].split("vimeo.com/")[1];
+
+    const url = obj.link[0];
+
+    if (url.includes("vimeo")) {
+      videoId = url.split("vimeo.com/")[1];
       const vimeoProps = await axios.get(
         `https://vimeo.com/api/v2/video/${videoId}.json`
       );
       return vimeoProps.data[0].thumbnail_large;
     }
-    if (obj.link[0].includes("youtube")) {
-      videoId = obj.link[0].split("v=")[1];
-      if (videoId) return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-      else {
-        let videoPaths = obj.link[0].split("/");
 
-        videoId = videoPaths[videoPaths.length - 1];
+    if (url.includes("youtube") || url.includes("youtu.be")) {
+      try {
+        const parsedUrl = new URL(url);
+        const params = new URLSearchParams(parsedUrl.search);
+        videoId = params.get("v") ?? ""; // tenta pegar via query string
+
+        if (!videoId) {
+          // fallback para youtu.be ou urls com final em ID
+          const pathSegments = parsedUrl.pathname.split("/");
+          videoId = pathSegments[pathSegments.length - 1];
+        }
+
         if (videoId.includes("?")) videoId = videoId.split("?")[0];
+
         return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
+      } catch (e) {
+        console.warn("Erro ao parsear URL do YouTube:", url);
       }
     }
+
     return "/local/jpeg/multimedia.jpg";
   };
 }

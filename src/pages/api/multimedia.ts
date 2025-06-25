@@ -10,12 +10,12 @@ export default async function handler(
     return res.status(405).json({ message: "Method not permited" });
   }
 
-  const { offset, lang, q, fq } = req.body;
+  const { start, count, lang, q, query } = req.body;
 
   try {
     if (!process.env.FIADMIN_URL) throw new Error("FIADMIN_URL not defined");
     let baseUrl = process.env.FIADMIN_URL;
-    let response = await getItems(baseUrl, fq, q, lang);
+    let response = await getItems(baseUrl, query, q, lang, count, start);
     if (response)
       return res.status(200).json({ data: response.data, status: true });
     return res.status(404).json({ data: {}, status: false });
@@ -25,9 +25,17 @@ export default async function handler(
   }
 }
 
-async function getItems(baseUrl: string, fq: string, q: string, lang: string) {
+async function getItems(
+  baseUrl: string,
+  fq: string,
+  q: string,
+  lang: string,
+  count: number = 10,
+  offset: number = 0
+) {
   baseUrl += "/multimedia/search/";
-  const url = `${baseUrl}?lang=${lang}&q=${q}&fq=${fq}&sort=created_date%20desc`;
+  const url = `${baseUrl}?lang=${lang}&q=${q}&fq=${fq}&sort=created_date%20desc&count=${count}&start=${offset}`;
+  console.log(url);
   const response = await axios.get(url);
   return response;
 }

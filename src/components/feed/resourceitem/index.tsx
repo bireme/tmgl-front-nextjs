@@ -13,6 +13,7 @@ export interface ResourceCardProps {
   resourceType?: string;
   size?: string;
   target?: string;
+  type?: string;
 }
 
 export interface TagItem {
@@ -29,6 +30,7 @@ export const ResourceCard = ({
   tags,
   size,
   target = "_self",
+  type,
 }: ResourceCardProps) => {
   const colors = {
     country: "#69A221",
@@ -50,19 +52,47 @@ export const ResourceCard = ({
         displayType == "column" ? "" : styles.Row
       } ${size == "Small" ? styles.Small : "auto"}`}
     >
-      {image && displayType != "column" && (
-        <div
-          className={styles.CardImage}
-          style={{ backgroundImage: `url(${image})` }}
-        ></div>
-      )}
-      <div className={styles.CardContent}>
-        {image && displayType == "column" && (
+      {type == "Pdf" && displayType != "column" ? (
+        <iframe
+          src={link}
+          style={{
+            width: "100%",
+            height: "100%",
+            border: "none",
+            overflow: "hidden",
+          }}
+        ></iframe>
+      ) : (
+        image &&
+        displayType != "column" &&
+        type != "Pdf" && (
           <div
             className={styles.CardImage}
             style={{ backgroundImage: `url(${image})` }}
           ></div>
+        )
+      )}
+      <div className={styles.CardContent}>
+        {type == "Pdf" && displayType == "column" ? (
+          <iframe
+            src={link}
+            className={styles.CardImage}
+            scrolling="no"
+            style={{
+              border: "none",
+              overflowY: "hidden",
+            }}
+          ></iframe>
+        ) : (
+          image &&
+          displayType == "column" && (
+            <div
+              className={styles.CardImage}
+              style={{ backgroundImage: `url(${image})` }}
+            ></div>
+          )
         )}
+        <small>{type}</small>
         <h3>{title}</h3>
         <p>{excerpt}</p>
       </div>
@@ -119,3 +149,5 @@ export const ResourceCard = ({
     </Flex>
   );
 };
+
+export const MediaCard = {};

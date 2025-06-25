@@ -102,9 +102,15 @@
     .CardImage{
       height: 100%;
       width: 40%;
+      overflow: hidden;
+      scrollbar-width: none;
     }
+    .CardImage::-webkit-scrollbar {
+        display: none; /* Chrome, Safari */
+      }
     .CardContent{
       width: 80%;
+      
     }
     .Tags{
       display: none;
@@ -117,6 +123,18 @@
     background-repeat: no-repeat;
     background-size: cover;
     border-radius: 8px;
+    overflow: hidden;
+      scrollbar-width: none;
+  }
+  .CardImage::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+  small{
+    float: left;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 0.86rem;
+    margin-bottom: 5px;
   }
   h3{
     font-family: 'Roboto Serif';
@@ -127,6 +145,7 @@
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
     margin-bottom: 10px;
+    margin-top: 5px;
   }
   p{
     margin-top: 0px;

@@ -4,11 +4,11 @@ import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
-import { JournalsFeed } from "@/components/feed/journals";
+import { MultimediaFeed } from "@/components/feed/multimedia";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
-export default function Journals() {
+export default function Multimedia() {
   const { globalConfig } = useContext(GlobalContext);
   const router = useRouter();
   const { country, region, thematicArea } = router.query;
@@ -20,12 +20,12 @@ export default function Journals() {
           blackColor
           path={[
             { path: "/", name: "HOME" },
-            { path: "/journals", name: "Journals" },
+            { path: "/multimedia", name: "Multimedia" },
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            Journals
+            multimedia
           </h3>
 
           <div>
@@ -45,11 +45,11 @@ export default function Journals() {
         </Flex>
         <Flex px={15} mb={40}>
           <p className={styles.DescriptionThin}>
-            {globalConfig?.acf.journals_description}
+            {globalConfig?.acf.multimedia_description}
           </p>
         </Flex>
 
-        <JournalsFeed
+        <MultimediaFeed
           thematicArea={thematicArea ? thematicArea.toString() : undefined}
           country={country ? country.toString() : undefined}
           region={region ? region.toString() : undefined}

@@ -34,6 +34,7 @@ export interface GlobalConfigAcf {
     stories_description: string;
     journals_description?: string;
     evidence_maps_description?: string;
+    multimedia_description?: string;
     terms_and_conditions_url: string;
     trending_description: string;
     events_description: string;

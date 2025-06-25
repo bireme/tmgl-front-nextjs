@@ -1,4 +1,5 @@
 import { FacetCounts, ResponseHeader } from "./repositoryTypes";
+import { FilterItem, MultLangFilter } from "./resources";
 
 export interface Meta {
   limit: number;
@@ -24,7 +25,7 @@ export interface MultimediaObject {
   contributors: string[];
   cooperative_center_code: string;
   created_time: string;
-  description: string;
+  description: string[];
   descriptors: Descriptor[];
   dimension: string;
   id: number;
@@ -35,9 +36,10 @@ export interface MultimediaObject {
   publisher: string;
   related_links: string[];
   status: number;
+  media_type: string;
   thematic_areas: ThematicArea[];
   title: string;
-  title_translated: string;
+  title_translated: string[];
   updated_time: string | null;
   version_notes: string;
   thumbnail?: string;
@@ -61,4 +63,14 @@ export interface MultimediaDiaServerResponse {
   facet_counts: FacetCounts;
   response: MultimediaResponseItems;
   responseHeader: ResponseHeader;
+}
+
+export interface MultimediaServiceDto {
+  data: MultimediaObject[];
+  regionFilters: FilterItem[];
+  countryFilters: FilterItem[];
+  typeFilters: MultLangFilter[];
+  thematicAreaFilters: FilterItem[];
+  languageFilters: FilterItem[];
+  totalFound: number;
 }

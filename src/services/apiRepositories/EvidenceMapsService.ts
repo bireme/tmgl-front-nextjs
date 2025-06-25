@@ -4,11 +4,6 @@ import {
   EvidenceMapsServiceDto,
 } from "../types/evidenceMapsDto";
 import {
-  getCountryTags,
-  getDescriptorTags,
-  getRegionByCountry,
-} from "@/components/feed/utils";
-import {
   parseCountries,
   parseCountriesByAttr,
   parseMultLangFilter,
@@ -20,6 +15,7 @@ import { PostsApi } from "../posts/PostsApi";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
+import { getDescriptorTags } from "@/components/feed/utils";
 import moment from "moment";
 import { queryType } from "../types/resources";
 import { url } from "inspector";
