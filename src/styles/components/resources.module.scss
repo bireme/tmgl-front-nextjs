@@ -104,6 +104,7 @@
       width: 40%;
       overflow: hidden;
       scrollbar-width: none;
+      position: relative  ;
     }
     .CardImage::-webkit-scrollbar {
         display: none; /* Chrome, Safari */
@@ -124,6 +125,8 @@
     background-size: cover;
     border-radius: 8px;
     overflow: hidden;
+    
+      position: relative  ;
       scrollbar-width: none;
   }
   .CardImage::-webkit-scrollbar {

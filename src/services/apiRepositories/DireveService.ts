@@ -1,17 +1,19 @@
 import { EventsItemsDto, EventsServiceDto } from "../types/eventsDto";
 import { getDescriptorTags, getRegionByCountry } from "@/components/feed/utils";
+import { mapToFilterItems, parseMultLangFilter } from "./utils";
 
 import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
-import { parseMultLangFilter } from "./utils";
+import { lang } from "moment";
 import { queryType } from "../types/resources";
 
 export class DireveService {
   public getResources = async (
     count: number,
     start: number,
-    queryItems?: Array<queryType>
+    queryItems?: Array<queryType>,
+    language?: string
   ): Promise<EventsServiceDto> => {
     try {
       let query = undefined;
@@ -34,11 +36,13 @@ export class DireveService {
         count,
         start,
         q,
+        lang: language,
       });
 
       let responseItems: EventsItemsDto[] = [];
 
       if (data) {
+        console.log(data);
         responseItems = data.data.diaServerResponse[0].response.docs.map(
           (event: any) => {
             return {
@@ -71,6 +75,9 @@ export class DireveService {
               return { count: parseInt(c[1]), type: c[0] };
             }
           ),
+        modalityFilter: mapToFilterItems(
+          data.data.diaServerResponse[0].response.docs
+        ),
         descriptorFilter:
           data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
             (c) => {

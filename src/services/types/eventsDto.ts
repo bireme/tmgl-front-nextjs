@@ -7,6 +7,7 @@ export interface EventsServiceDto {
   descriptorFilter: FilterItem[];
   eventTypeFilter: MultLangFilter[];
   publicationYearFilter: FilterItem[];
+  modalityFilter: FilterItem[];
 }
 
 export interface EventsItemsDto {

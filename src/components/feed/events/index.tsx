@@ -109,17 +109,19 @@ export const EventsFeed = ({
               callBack={applyFilters}
               filters={[
                 {
+                  queryType: "Region",
+                  label: "WHO Regions",
+                  items: groupOccurrencesByRegion(
+                    apiResponse?.countryFilters.map((c) => ({
+                      label: c.type,
+                      ocorrences: c.count,
+                    }))
+                  ),
+                },
+                {
                   queryType: "publication_year",
                   label: "Publication Year",
                   items: apiResponse?.publicationYearFilter?.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
-                },
-                {
-                  queryType: "country",
-                  label: "Country",
-                  items: apiResponse?.countryFilters.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
                   })),
@@ -133,15 +135,21 @@ export const EventsFeed = ({
                   })),
                 },
                 {
-                  queryType: "Region",
-                  label: "WHO Regions",
-                  items: groupOccurrencesByRegion(
-                    apiResponse?.countryFilters.map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                    }))
-                  ),
+                  queryType: "event_modality",
+                  label: "Modality",
+                  items: apiResponse?.modalityFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                  })),
                 },
+                // {
+                //   queryType: "country",
+                //   label: "Country",
+                //   items: apiResponse?.countryFilters.map((c) => ({
+                //     label: c.type,
+                //     ocorrences: c.count,
+                //   })),
+                // },
               ]}
             />
           ) : (

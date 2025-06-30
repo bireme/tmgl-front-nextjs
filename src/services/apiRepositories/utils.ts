@@ -1,6 +1,7 @@
 import {
   Area,
   Country,
+  FilterItem,
   MultLangFilter,
   MultLangStringAttr,
 } from "../types/resources";
@@ -112,6 +113,18 @@ export function parseTematicArea(item: string): Area {
   areas.areaLangs = langs;
   return areas;
 }
+
+export const mapToFilterItems = (items: LisDocuments[]): FilterItem[] => {
+  const countMap: Record<string, number> = {};
+
+  items.forEach((item) => {
+    item.event_modality.forEach((modality) => {
+      countMap[modality] = (countMap[modality] || 0) + 1;
+    });
+  });
+
+  return Object.entries(countMap).map(([type, count]) => ({ type, count }));
+};
 
 export function parseMultLangFilter(items: Array<String>): MultLangFilter[] {
   let filters: MultLangFilter[] = [];

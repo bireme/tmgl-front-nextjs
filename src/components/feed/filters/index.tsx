@@ -88,6 +88,12 @@ export const ResourceFilters = ({
     callBack(queryItems.length > 0 ? queryItems : undefined);
   };
 
+  const clearFilters = () => {
+    setQueryString("");
+    setSelectedFilters({});
+    callBack(undefined);
+  };
+
   return (
     <div className={styles.FilterContent}>
       <h3>Filters</h3>
@@ -147,13 +153,6 @@ export const ResourceFilters = ({
                         }
                         key={k}
                       />
-                      {/* {item.ocorrences ? (
-                        <span>({item.ocorrences})</span>
-                      ) : item.ocorrences == 0 ? (
-                        <span>({item.ocorrences})</span>
-                      ) : (
-                        <></>
-                      )} */}
                     </Flex>
                   ))}
               </Accordion.Panel>
@@ -161,7 +160,16 @@ export const ResourceFilters = ({
           </Accordion>
         );
       })}
-
+      <Button
+        mt={20}
+        fullWidth
+        variant="outline"
+        onClick={() => {
+          clearFilters();
+        }}
+      >
+        Clear Filters
+      </Button>
       <Button
         mt={20}
         fullWidth

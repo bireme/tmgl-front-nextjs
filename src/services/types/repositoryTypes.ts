@@ -90,6 +90,7 @@ export interface LisDocuments {
   title: string;
   updated_date: string;
   fulltext: string[];
+  event_modality: string[];
 }
 
 export interface ResponseHeader {

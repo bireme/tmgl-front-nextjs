@@ -1,6 +1,6 @@
 import { Badge, Flex } from "@mantine/core";
+import { IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
 
-import { IconArrowRight } from "@tabler/icons-react";
 import styles from "../../../styles/components/resources.module.scss";
 
 export interface ResourceCardProps {
@@ -89,7 +89,24 @@ export const ResourceCard = ({
             <div
               className={styles.CardImage}
               style={{ backgroundImage: `url(${image})` }}
-            ></div>
+            >
+              {type == "Video" ? (
+                <>
+                  <IconPlayerPlay
+                    color="white"
+                    size={30}
+                    style={{
+                      position: "absolute",
+                      bottom: "10px",
+                      right: "10px",
+                      background: "black 2px 2px 2px",
+                    }}
+                  />
+                </>
+              ) : (
+                <></>
+              )}
+            </div>
           )
         )}
         <small>{type}</small>

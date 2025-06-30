@@ -41,7 +41,7 @@ export const MultimediaFeed = ({
   const { globalConfig } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const _service = new MultimediaService();
-  const count = 12;
+  const count = 11;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
@@ -61,7 +61,6 @@ export const MultimediaFeed = ({
       const response = await _service.getResources(
         count + 1,
         (page - 1) * count,
-
         filter && filter.length > 0 ? filter : undefined,
         language
       );
@@ -105,14 +104,14 @@ export const MultimediaFeed = ({
                     ocorrences: c.count,
                   })),
                 },
-                {
-                  queryType: "media_type",
-                  label: "Media Type",
-                  items: apiResponse?.typeFilters.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
-                },
+                // {
+                //   queryType: "media_type",
+                //   label: "Media Type",
+                //   items: apiResponse?.typeFilters.map((c) => ({
+                //     label: c.type,
+                //     ocorrences: c.count,
+                //   })),
+                // },
               ]}
             />
           ) : (

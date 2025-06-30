@@ -5,9 +5,9 @@ export function translateType(type: string) {
     case "Slide":
       return "Pdf";
     case "video":
-      return "Vídeo";
+      return "Video";
     case "audio":
-      return "Áudio";
+      return "Audio";
     default:
       return type;
   }
