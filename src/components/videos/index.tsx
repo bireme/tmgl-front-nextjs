@@ -111,12 +111,8 @@ export const RelatedVideosSection = ({ filter }: RelatedVideosSectionProps) => {
 
   const getItems = async () => {
     try {
-      const response = await _service.getResources(
-        language,
-        'media_type:"video"' + filter,
-        "*:*"
-      );
-      if (response) setItems(response.response.docs);
+      const response = await _service.getResources(3, 0, [], language);
+      if (response) setItems(response.data);
     } catch {
       console.log("error while fetching multimedia");
     }
@@ -137,8 +133,8 @@ export const RelatedVideosSection = ({ filter }: RelatedVideosSectionProps) => {
                 <VideoItem
                   title={
                     language == "en"
-                      ? items[0].title_translated
-                      : items[0].title
+                      ? items[0].title_translated[0]
+                      : items[0].title[0]
                   }
                   href={items[0].link}
                   main={true}
@@ -154,8 +150,8 @@ export const RelatedVideosSection = ({ filter }: RelatedVideosSectionProps) => {
                   <VideoItem
                     title={
                       language == "en"
-                        ? items[1].title_translated
-                        : items[1].title
+                        ? items[1].title_translated[0]
+                        : items[1].title[0]
                     }
                     href={items[1].link}
                     thumbnail={items[1].thumbnail ? items[1].thumbnail : ""}
@@ -163,8 +159,8 @@ export const RelatedVideosSection = ({ filter }: RelatedVideosSectionProps) => {
                   <VideoItem
                     title={
                       language == "en"
-                        ? items[2].title_translated
-                        : items[2].title
+                        ? items[2].title_translated[0]
+                        : items[2].title[0]
                     }
                     href={items[2].link}
                     thumbnail={items[2].thumbnail ? items[2].thumbnail : ""}
