@@ -135,6 +135,7 @@ export const MultimediaFeed = ({
                     <ResourceCard
                       displayType={displayType}
                       key={k}
+                      target="_blank"
                       title={decodeHtmlEntities(
                         i.title_translated
                           ? i.title_translated[0]
