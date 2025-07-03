@@ -2,23 +2,15 @@ import {
   LegislationItemDto,
   LegislationServiceDto,
 } from "../types/legislationsDto";
-import {
-  parseCountries,
-  parseCountriesByAttr,
-  parseMultLangFilter,
-  parseTematicAreas,
-  parseThematicAreabyAttr,
-} from "./utils";
 
 import { LegislationServerResponseDTO } from "../types/legislationsTypes";
 import { PostsApi } from "../posts/PostsApi";
-import { RepositoryApiResponse } from "../types/repositoryTypes";
 import axios from "axios";
-import { getDescriptorTags } from "@/components/feed/utils";
 import moment from "moment";
+import { parseMultLangFilter } from "./utils";
 import { queryType } from "../types/resources";
 
-export class LegislationService {
+export class RegulationAndPolicesService {
   public getResources = async (
     count: number,
     start: number,
