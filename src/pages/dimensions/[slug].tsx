@@ -7,6 +7,10 @@ import {
   LoadingOverlay,
 } from "@mantine/core";
 import {
+  RecentMultimediaItems,
+  RelatedVideosSection,
+} from "@/components/videos";
+import {
   RecomendedArticlesSection,
   RelatedArticlesSection,
 } from "@/components/sections/recomended";
@@ -22,7 +26,6 @@ import { IconCard } from "@/components/cards";
 import { MediaApi } from "@/services/media/MediaApi";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
-import { RelatedVideosSection } from "@/components/videos";
 import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
@@ -182,7 +185,14 @@ export default function Dimensions() {
               }
             />
 
-            {/* <RelatedVideosSection filter={'thematic_area:"TMGL"'} /> */}
+            <RecentMultimediaItems
+              filter={[
+                {
+                  parameter: "keyword",
+                  query: post.title.rendered.toLowerCase(),
+                },
+              ]}
+            />
           </div>
         </>
       ) : (

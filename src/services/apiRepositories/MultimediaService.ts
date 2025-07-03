@@ -27,7 +27,7 @@ export class MultimediaService {
         : 0;
 
       if (countryQueryCount <= 1)
-        query = `thematic_area:"TMGL"${
+        query = `thematic_area:"TMGL"${queryItems ? "&" : ""}${
           queryItems
             ? queryItems
                 .map((k) => {
@@ -37,7 +37,7 @@ export class MultimediaService {
             : ""
         }`;
       else {
-        query = `thematic_area:"TMGL"${
+        query = `thematic_area:"TMGL&"${
           queryItems
             ? queryItems
                 .filter((q) => q.parameter != "country")
@@ -60,17 +60,18 @@ export class MultimediaService {
       let returnObj = data.data.diaServerResponse[0];
 
       for (let i = 0; i < returnObj.response.docs.length; i++) {
-        if (returnObj.response.docs[i].media_type == "video") {
-          let thumbnail = await this.getVideoThumbnail(
-            returnObj.response.docs[i]
-          );
-          returnObj.response.docs[i].thumbnail = thumbnail;
+        const doc = returnObj.response.docs[i];
+
+        if (doc.media_type == "video") {
+          let thumbnail = await this.getVideoThumbnail(doc);
+          doc.thumbnail = thumbnail;
         } else {
-          returnObj.response.docs[i].thumbnail =
-            returnObj.response.docs[i].link;
+          doc.thumbnail = doc.link[0];
         }
       }
+
       returnObj.response.docs = returnObj.response.docs.reverse();
+
       return {
         data: returnObj.response.docs,
         totalFound: returnObj.response.numFound,
@@ -112,7 +113,6 @@ export class MultimediaService {
 
   public getVideoThumbnail = async (obj: MultimediaObject): Promise<string> => {
     let videoId: string;
-
     const url = obj.link[0];
 
     if (url.includes("vimeo")) {
@@ -127,10 +127,9 @@ export class MultimediaService {
       try {
         const parsedUrl = new URL(url);
         const params = new URLSearchParams(parsedUrl.search);
-        videoId = params.get("v") ?? ""; // tenta pegar via query string
+        videoId = params.get("v") ?? "";
 
         if (!videoId) {
-          // fallback para youtu.be ou urls com final em ID
           const pathSegments = parsedUrl.pathname.split("/");
           videoId = pathSegments[pathSegments.length - 1];
         }

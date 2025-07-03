@@ -39,7 +39,7 @@ export interface MultimediaObject {
   media_type: string;
   thematic_areas: ThematicArea[];
   title: string;
-  title_translated: string[];
+  title_translated: string;
   updated_time: string | null;
   version_notes: string;
   thumbnail?: string;
