@@ -5,20 +5,32 @@ import { useState } from "react";
 export const IframeThumbNail = ({
   url,
   height,
+  type,
 }: {
   url: string;
   height?: string;
+  type?: string;
 }) => {
   const [loading, setLoading] = useState(true);
+  const [loadFailed, setLoadFailed] = useState(false);
+
   return (
     <div
       className={styles.iframeBlocker}
       style={{ height: height ? height : "auto" }}
     >
-      <iframe
-        onLoad={() => setLoading(false)}
-        src={url + "?toolbar=0&navpanes=0"}
-      />
+      {loadFailed ? (
+        <img src={"/local/png/pdf.png"} />
+      ) : (
+        <iframe
+          onError={() => setLoadFailed(true)}
+          onLoad={() => setLoading(false)}
+          src={`/api/proxy-pdf?url=${encodeURIComponent(url)}${
+            type ? `&type=${type}` : ""
+          }`}
+        />
+      )}
+
       {loading && (
         <div className={styles.iframeLoader}>
           <LoadingOverlay visible={loading} />

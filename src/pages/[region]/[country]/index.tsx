@@ -23,7 +23,7 @@ export default function CountryHome() {
   const router = useRouter();
   const _postApiHelper = new PostsApi();
   const [properties, setProperties] = useState<CountryAcfProps>();
-  const { setRegionName, setCountryName, globalConfig } =
+  const { setRegionName, setCountryName, globalConfig, countryName } =
     useContext(GlobalContext);
   const [postProps, setPostProps] = useState<Post>();
   const {
@@ -43,11 +43,12 @@ export default function CountryHome() {
 
   const getPageProperties = useCallback(async () => {
     setRegionName(region ? region.toString() : "");
-    setCountryName(country ? country.toString().replace(/-/g, " ") : "");
+    setCountryName(country ? country.toString() : "");
     const _api = new PostsApi(region ? region.toString() : "");
     if (country) {
       const postResponse = await _api.getPost("countries", country.toString());
       if (postResponse.length > 0) {
+        setCountryName(postResponse[0].title.rendered);
         setPostProps(postResponse[0]);
         setProperties(postResponse[0].acf);
       }
@@ -82,7 +83,7 @@ export default function CountryHome() {
                     },
                     {
                       path: `/${country}`,
-                      name: country ? country.toString() : "",
+                      name: countryName ? countryName.toString() : "",
                     },
                   ]}
                   blackColor={false}
@@ -138,8 +139,9 @@ export default function CountryHome() {
                 <Flex
                   justify={"center"}
                   align={"center"}
+                  wrap={"wrap"}
                   direction={{ base: "column", md: "row" }}
-                  gap={20}
+                  gap={25}
                 >
                   {properties?.tms_items?.map((item, index) => {
                     return (
@@ -148,7 +150,13 @@ export default function CountryHome() {
                           className={styles.TmsImage}
                           style={{ backgroundImage: `url(${item.image})  ` }}
                         />
-                        <h4>{item.title}</h4>
+                        <h4>
+                          {item.title
+                            ? item.title.length > 120
+                              ? item.title.substring(0, 120) + "..."
+                              : item.title
+                            : ""}
+                        </h4>
                       </div>
                     );
                   })}

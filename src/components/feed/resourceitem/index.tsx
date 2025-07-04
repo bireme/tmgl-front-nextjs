@@ -33,12 +33,21 @@ export const ResourceCard = ({
   size,
   target = "_self",
   type,
+  resourceType,
 }: ResourceCardProps) => {
   const isPdf = (thumb: string | string[]): boolean => {
     if (type == "Pdf") return true;
     if (Array.isArray(thumb)) thumb = thumb[0];
     if (typeof thumb !== "string") return false;
     return thumb.split("?")[0].toLowerCase().endsWith(".pdf");
+  };
+
+  const isImage = (thumb: string | string[]): boolean => {
+    if (Array.isArray(thumb)) thumb = thumb[0];
+    if (typeof thumb !== "string") return false;
+
+    const url = thumb.split("?")[0].toLowerCase();
+    return /\.(jpg|jpeg|png|gif|bmp|webp|svg)$/.test(url);
   };
 
   const colors = {
@@ -54,27 +63,30 @@ export const ResourceCard = ({
   const cardImage = () => {
     if (image) {
       if (isPdf(image)) {
-        return <IframeThumbNail url={image} />;
+        return <IframeThumbNail url={image} type={resourceType} />;
       }
-      return (
-        <div
-          className={styles.CardImage}
-          style={{ backgroundImage: `url(${image})` }}
-        >
-          {type === "Video" && (
-            <IconPlayerPlay
-              color="white"
-              size={30}
-              style={{
-                position: "absolute",
-                bottom: "10px",
-                right: "10px",
-                background: "black 2px 2px 2px",
-              }}
-            />
-          )}
-        </div>
-      );
+      if (isImage(image)) {
+        return (
+          <div
+            className={styles.CardImage}
+            style={{ backgroundImage: `url(${image})` }}
+          >
+            {type === "Video" && (
+              <IconPlayerPlay
+                color="white"
+                size={30}
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  right: "10px",
+                  background: "black 2px 2px 2px",
+                }}
+              />
+            )}
+          </div>
+        );
+      }
+      return <></>;
     }
   };
 

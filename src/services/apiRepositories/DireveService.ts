@@ -22,11 +22,9 @@ export class DireveService {
       //Adicionar o filtro de thematic area aqui
       query = `thematic_area:"TMGL"${
         queryItems
-          ? queryItems
-              .map((k) => {
-                return `${k.parameter}:"${k.query.replace('"', "")}"`;
-              })
-              .join("&")
+          ? queryItems.map((k) => {
+              return `&${k.parameter}:"${k.query.replace('"', "")}"`;
+            })
           : ""
       }`;
       q = "*:*";

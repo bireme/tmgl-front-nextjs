@@ -1,7 +1,9 @@
 import { FacetCounts } from "./repositoryTypes";
 
 export interface LegislationServerResponseDTO {
-  diaServerResponse: LegislationServerItemDTO[];
+  data: {
+    diaServerResponse: LegislationServerItemDTO[];
+  };
 }
 
 export interface LegislationServerItemDTO {
@@ -38,7 +40,7 @@ export interface LegislationDocumentDTO {
   official_ementa: string[];
   publication_date: string;
   publication_year: string;
-  reference_title: string[];
+  title: string;
   scope: string;
   scope_city?: string[];
   scope_region: string;

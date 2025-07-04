@@ -120,7 +120,7 @@ export const EventsFeed = ({
                 },
                 {
                   queryType: "publication_year",
-                  label: "Publication Year",
+                  label: "Year",
                   items: apiResponse?.publicationYearFilter?.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
