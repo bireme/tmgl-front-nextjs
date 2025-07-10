@@ -5,13 +5,12 @@ import {
   Flex,
   Group,
   Loader,
-  LoadingOverlay,
 } from "@mantine/core";
-import { Carousel, Embla } from "@mantine/carousel";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { ArticleDTO } from "@/services/types/rssFeedTypes";
+import { Carousel } from "@mantine/carousel";
 import { FetchRSSFeed } from "@/services/rss/RssService";
 import { GlobalContext } from "@/contexts/globalContext";
 import { TrendingTopicSection } from "@/components/sections/topics";

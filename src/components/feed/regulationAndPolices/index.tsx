@@ -1,8 +1,8 @@
 import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
-  MultimediaObject,
-  MultimediaServiceDto,
-} from "@/services/types/multimediaTypes";
+  RegulationAndPolicesItemDto,
+  RegulationsAndPolicesDto,
+} from "@/services/types/regulationsAndPolices";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
@@ -10,15 +10,14 @@ import {
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
-import { MultimediaService } from "@/services/apiRepositories/MultimediaService";
 import { Pagination } from "../pagination";
+import { RegulationAndPolicesService } from "@/services/apiRepositories/RegulationAndPolices";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
-import { translateType } from "./functions";
 
-export const MultimediaFeed = ({
+export const RegulationAndPolicesFeed = ({
   displayType,
   country,
   region,
@@ -31,27 +30,25 @@ export const MultimediaFeed = ({
 }) => {
   const { globalConfig } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
-  const _service = new MultimediaService();
+  const _service = new RegulationAndPolicesService();
   const count = 11;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
-  const [items, setItems] = useState<MultimediaObject[]>([]);
-  const [apiResponse, setApiResponse] = useState<MultimediaServiceDto>();
-  const { language } = useContext(GlobalContext);
+  const [items, setItems] = useState<RegulationAndPolicesItemDto[]>([]);
+  const [apiResponse, setApiResponse] = useState<RegulationsAndPolicesDto>();
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(1);
   };
-  const getMedias = async () => {
+  const getRegulationsAndPolicies = async () => {
     setLoading(true);
     try {
       const response = await _service.getResources(
         count + 1,
         (page - 1) * count,
-        filter && filter.length > 0 ? filter : undefined,
-        language
+        filter && filter.length > 0 ? filter : undefined
       );
 
       setTotalPages(Math.ceil(response.totalFound / count));
@@ -59,13 +56,50 @@ export const MultimediaFeed = ({
       setApiResponse(response);
     } catch (error) {
       console.log(error);
-      console.log("Error while fetching Evidencemaps");
+      console.log("Error while fetching Legislations");
     }
     setLoading(false);
   };
 
+  //   if (country) {
+  //     const countryToFilter =
+  //       apiResponse?.act_country?.filter((c) => c.lang === language) || [];
+  //     let queryCountry = country;
+  //     const matched = countryToFilter.find((c) =>
+  //       c.queryString?.toLowerCase()?.includes(country)
+  //     );
+  //     queryCountry = matched?.queryString ?? country;
+
+  //     applyFilters([
+  //       {
+  //         parameter: "country",
+  //         query: queryCountry,
+  //       },
+  //     ]);
+  //   }
+  //   if (region) {
+  //     applyFilters([
+  //       {
+  //         parameter: "region",
+  //         query: region,
+  //       },
+  //     ]);
+  //   }
+  //   if (thematicArea) {
+  //     applyFilters([
+  //       {
+  //         parameter: "descriptor",
+  //         query: thematicArea,
+  //       },
+  //     ]);
+  //   }
+  //   setLoading(false);
+  //   setInitialFilterDone(true);
+  // };
+
   useEffect(() => {
-    if (globalConfig) getMedias();
+    if (globalConfig) getRegulationsAndPolicies();
+    console.log("mudou de página", page);
   }, [page, filter, thematicArea, region, country, globalConfig]);
 
   return (
@@ -74,37 +108,7 @@ export const MultimediaFeed = ({
       <Grid>
         <Grid.Col span={{ md: 3, base: 12 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
-            <ResourceFilters
-              callBack={applyFilters}
-              filters={[
-                {
-                  queryType: "descriptor",
-                  label: "Thematic area",
-                  items: apiResponse?.thematicAreaFilters.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
-                },
-                {
-                  queryType: "language",
-                  label: "Language",
-                  items: apiResponse?.languageFilters.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
-                },
-                {
-                  queryType: "media_type",
-                  label: "Media Type",
-                  items: apiResponse?.typeFilters
-                    .filter((c) => c.lang == language)
-                    .map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                    })),
-                },
-              ]}
-            />
+            <ResourceFilters callBack={applyFilters} filters={[]} />
           ) : (
             <></>
           )}
@@ -126,27 +130,18 @@ export const MultimediaFeed = ({
                     <ResourceCard
                       displayType={displayType}
                       key={k}
+                      title={
+                        removeHTMLTagsAndLimit(i.title, 120) +
+                        `${i.title.length > 120 ? "..." : ""}`
+                      }
+                      image={i.file ? i.file : ""}
+                      excerpt={
+                        removeHTMLTagsAndLimit(i.official_ementa, 180) +
+                        `${i.official_ementa.length > 180 ? "..." : ""}`
+                      }
+                      resourceType="regulations-and-policies"
                       target="_blank"
-                      title={decodeHtmlEntities(
-                        i.title_translated
-                          ? i.title_translated[0]
-                          : i.title
-                          ? i.title
-                          : ""
-                      )}
-                      type={i.media_type ? i.media_type : ""}
-                      image={i.thumbnail ? i.thumbnail : ""}
-                      excerpt={`${removeHTMLTagsAndLimit(
-                        i.description ? i.description[0] : "",
-                        120
-                      )} ${
-                        i.description
-                          ? i.description[0].length > 120
-                            ? "..."
-                            : ""
-                          : ""
-                      }`}
-                      link={i.link}
+                      link={i.file}
                     />
                   );
                 })}

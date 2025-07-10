@@ -44,7 +44,8 @@ export function removeHTMLTagsAndLimit(text: string, limit: number): string {
   return truncatedText;
 }
 export function decodeHtmlEntities(text: string): string {
-  return he.decode(text);
+  let decoded = he.decode(text);
+  return decoded.replace(/<[^>]+>/g, "");
 }
 
 export function decodeHtmlLink(html: string) {

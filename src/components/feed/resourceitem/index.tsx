@@ -1,6 +1,8 @@
-import { Badge, Flex } from "@mantine/core";
+import { Badge, Flex, LoadingOverlay } from "@mantine/core";
 import { IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
+import { useEffect, useState } from "react";
 
+import { IframeThumbNail } from "../multimedia/pdf_thumbnail";
 import styles from "../../../styles/components/resources.module.scss";
 
 export interface ResourceCardProps {
@@ -31,7 +33,23 @@ export const ResourceCard = ({
   size,
   target = "_self",
   type,
+  resourceType,
 }: ResourceCardProps) => {
+  const isPdf = (thumb: string | string[]): boolean => {
+    if (type == "Pdf") return true;
+    if (Array.isArray(thumb)) thumb = thumb[0];
+    if (typeof thumb !== "string") return false;
+    return thumb.split("?")[0].toLowerCase().endsWith(".pdf");
+  };
+
+  const isImage = (thumb: string | string[]): boolean => {
+    if (Array.isArray(thumb)) thumb = thumb[0];
+    if (typeof thumb !== "string") return false;
+
+    const url = thumb.split("?")[0].toLowerCase();
+    return /\.(jpg|jpeg|png|gif|bmp|webp|svg)$/.test(url);
+  };
+
   const colors = {
     country: "#69A221",
     descriptor: "#8B142A",
@@ -42,85 +60,61 @@ export const ResourceCard = ({
     window.location.href = `${window.location.pathname}?${tagType}=${tagName}`;
   };
 
-  return (
-    <Flex
-      direction={displayType == "column" ? "column" : "row"}
-      align={displayType == "column" ? "flex-end" : "flex-start"}
-      justify={"space-between"}
-      gap={30}
-      className={`${styles.ResourceCard} ${
-        displayType == "column" ? "" : styles.Row
-      } ${size == "Small" ? styles.Small : "auto"}`}
-    >
-      {type == "Pdf" && displayType != "column" ? (
-        <iframe
-          src={link}
-          style={{
-            width: "100%",
-            height: "100%",
-            border: "none",
-            overflow: "hidden",
-          }}
-        ></iframe>
-      ) : (
-        image &&
-        displayType != "column" &&
-        type != "Pdf" && (
+  const cardImage = () => {
+    if (image) {
+      if (isPdf(image)) {
+        return <IframeThumbNail url={image} type={resourceType} />;
+      }
+      if (isImage(image)) {
+        return (
           <div
             className={styles.CardImage}
             style={{ backgroundImage: `url(${image})` }}
-          ></div>
-        )
-      )}
+          >
+            {type === "Video" && (
+              <IconPlayerPlay
+                color="white"
+                size={30}
+                style={{
+                  position: "absolute",
+                  bottom: "10px",
+                  right: "10px",
+                  background: "black 2px 2px 2px",
+                }}
+              />
+            )}
+          </div>
+        );
+      }
+      return <></>;
+    }
+  };
+
+  return (
+    <Flex
+      direction={displayType === "column" ? "column" : "row"}
+      align={displayType === "column" ? "flex-end" : "flex-start"}
+      justify="space-between"
+      gap={30}
+      className={`${styles.ResourceCard} ${
+        displayType === "column" ? "" : styles.Row
+      } ${size === "Small" ? styles.Small : "auto"}`}
+    >
+      {image && displayType !== "column" ? cardImage() : <></>}
       <div className={styles.CardContent}>
-        {type == "Pdf" && displayType == "column" ? (
-          <iframe
-            src={link}
-            className={styles.CardImage}
-            scrolling="no"
-            style={{
-              border: "none",
-              overflowY: "hidden",
-            }}
-          ></iframe>
-        ) : (
-          image &&
-          displayType == "column" && (
-            <div
-              className={styles.CardImage}
-              style={{ backgroundImage: `url(${image})` }}
-            >
-              {type == "Video" ? (
-                <>
-                  <IconPlayerPlay
-                    color="white"
-                    size={30}
-                    style={{
-                      position: "absolute",
-                      bottom: "10px",
-                      right: "10px",
-                      background: "black 2px 2px 2px",
-                    }}
-                  />
-                </>
-              ) : (
-                <></>
-              )}
-            </div>
-          )
-        )}
+        {image && displayType === "column" ? cardImage() : <></>}
         <small>{type}</small>
         <h3>{title}</h3>
         <p>{excerpt}</p>
       </div>
-      <Flex style={{ width: "100%" }} direction={"column"}>
-        <Flex mb={20} wrap={"wrap"} gap={5} className={styles.Tags}>
+      <Flex style={{ width: "100%" }} direction="column">
+        <Flex mb={20} wrap="wrap" gap={5} className={styles.Tags}>
           {tags
-            ?.filter((tag) => tag.type == "descriptor")
+            ?.filter((tag) => tag.type === "descriptor")
             .map((tag) => (
               <Badge
                 onClick={() => applyTag("thematicArea", tag.name)}
-                size={"md"}
+                size="md"
                 key={tag.name}
                 color={colors.descriptor}
               >
@@ -128,11 +122,11 @@ export const ResourceCard = ({
               </Badge>
             ))}
           {tags
-            ?.filter((tag) => tag.type == "region")
+            ?.filter((tag) => tag.type === "region")
             .map((tag) => (
               <Badge
                 onClick={() => applyTag("region", tag.name)}
-                size={"md"}
+                size="md"
                 key={tag.name}
                 color={colors.region}
               >
@@ -140,11 +134,11 @@ export const ResourceCard = ({
               </Badge>
             ))}
           {tags
-            ?.filter((tag) => tag.type == "country")
+            ?.filter((tag) => tag.type === "country")
             .map((tag) => (
               <Badge
                 onClick={() => applyTag("country", tag.name)}
-                size={"md"}
+                size="md"
                 key={tag.name}
                 color={colors.country}
               >
@@ -153,13 +147,12 @@ export const ResourceCard = ({
             ))}
         </Flex>
         <Flex
-          align={"flex-end"}
-          justify={"flex-end"}
-          style={{ height: displayType == "column" ? "auto" : "100%" }}
+          align="flex-end"
+          justify="flex-end"
+          style={{ height: displayType === "column" ? "auto" : "100%" }}
         >
           <a href={link} target={target}>
-            {" "}
-            <IconArrowRight />{" "}
+            <IconArrowRight />
           </a>
         </Flex>
       </Flex>

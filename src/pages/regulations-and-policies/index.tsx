@@ -4,11 +4,11 @@ import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
-import { LegislationsFeed } from "@/components/feed/legislations";
+import { RegulationAndPolicesFeed } from "@/components/feed/regulationAndPolices";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
-export default function Legislations() {
+export default function RegulationAndPolices() {
   const { globalConfig } = useContext(GlobalContext);
   const router = useRouter();
   const { country, region, thematicArea } = router.query;
@@ -25,7 +25,7 @@ export default function Legislations() {
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            Legislations
+            Regulations And Policies
           </h3>
           <div>
             <IconLayoutGrid
@@ -48,12 +48,12 @@ export default function Legislations() {
           </p>
         </Flex>
 
-        {/* <LegislationsFeed
+        <RegulationAndPolicesFeed
           thematicArea={thematicArea ? thematicArea.toString() : undefined}
           country={country ? country.toString() : undefined}
           region={region ? region.toString() : undefined}
           displayType={displayType}
-        /> */}
+        />
       </Container>
     </>
   );

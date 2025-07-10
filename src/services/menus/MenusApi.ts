@@ -10,6 +10,7 @@ export class MenusApi extends BaseUnauthenticatedApi {
     const { data } = await this._api.get(
       `/menu-locations/${menuSlug}${this._lang ? `?lang=${this._lang}` : ""}`
     );
+
     return data;
   }
 

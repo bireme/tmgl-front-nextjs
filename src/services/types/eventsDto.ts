@@ -1,9 +1,15 @@
-import { Area, Country, FilterItem, MultLangFilter } from "./resources";
+import {
+  Area,
+  Country,
+  CountryData,
+  FilterItem,
+  MultLangFilter,
+} from "./resources";
 
 export interface EventsServiceDto {
   data: EventsItemsDto[];
   totalFound: number;
-  countryFilters: FilterItem[];
+  countryFilters: MultLangFilter[];
   descriptorFilter: FilterItem[];
   eventTypeFilter: MultLangFilter[];
   publicationYearFilter: FilterItem[];
@@ -19,7 +25,7 @@ export interface EventsItemsDto {
   target_groups: string;
   observations: string;
   descriptors: string[];
-  countries?: string[];
+  countries?: Country[];
   areas?: Area[];
   modality: string[];
 }
