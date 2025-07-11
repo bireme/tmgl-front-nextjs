@@ -48,6 +48,8 @@ export const RegulationAndPolicesFeed = ({
       const response = await _service.getResources(
         count + 1,
         (page - 1) * count,
+        100,
+        100,
         filter && filter.length > 0 ? filter : undefined
       );
 
@@ -134,7 +136,6 @@ export const RegulationAndPolicesFeed = ({
                         removeHTMLTagsAndLimit(i.title, 120) +
                         `${i.title.length > 120 ? "..." : ""}`
                       }
-                      image={i.file ? i.file : ""}
                       excerpt={
                         removeHTMLTagsAndLimit(i.official_ementa, 180) +
                         `${i.official_ementa.length > 180 ? "..." : ""}`
@@ -146,13 +147,19 @@ export const RegulationAndPolicesFeed = ({
                   );
                 })}
               </>
+            ) : loading ? (
+              <></>
             ) : (
               <Flex
                 style={{ height: "400px", width: "100%" }}
                 justify={"center"}
                 align={"center"}
               >
-                <Center>No results found!</Center>
+                {apiResponse?.totalFound == 0 ? (
+                  <Center>No results found!</Center>
+                ) : (
+                  <></>
+                )}
               </Flex>
             )}
           </Flex>

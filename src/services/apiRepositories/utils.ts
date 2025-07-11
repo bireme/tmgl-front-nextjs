@@ -56,6 +56,9 @@ export function parseMultLangStringAttr(
   let langItems: MultLangStringAttr[] = [];
   langItems = items.map((i) => {
     let attrs = i.split("|");
+    if (attrs.length < 2) {
+      return { lang: "", content: i.toString() };
+    }
     return {
       lang: attrs[0],
       content: attrs[1],

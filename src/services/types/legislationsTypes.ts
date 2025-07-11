@@ -36,6 +36,7 @@ export interface LegislationDocumentDTO {
   indexed_database: string[];
   issue_date: string[];
   issuer_organ: string[];
+  unnofficial_ementa: string;
   language: string[];
   official_ementa: string[];
   publication_date: string;
