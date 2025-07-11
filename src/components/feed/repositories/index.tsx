@@ -183,13 +183,19 @@ export const RepositoriesFeed = ({
                   );
                 })}
               </>
+            ) : loading ? (
+              <></>
             ) : (
               <Flex
                 style={{ height: "400px", width: "100%" }}
                 justify={"center"}
                 align={"center"}
               >
-                <Center>No results found!</Center>
+                {apiResponse?.totalFound == 0 ? (
+                  <Center>No results found!</Center>
+                ) : (
+                  <></>
+                )}
               </Flex>
             )}
           </Flex>
