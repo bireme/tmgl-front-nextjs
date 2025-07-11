@@ -48,6 +48,8 @@ export const RegulationAndPolicesFeed = ({
       const response = await _service.getResources(
         count + 1,
         (page - 1) * count,
+        100,
+        100,
         filter && filter.length > 0 ? filter : undefined
       );
 
