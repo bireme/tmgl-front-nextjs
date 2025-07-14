@@ -127,6 +127,13 @@
   border-radius: 18px;
   padding: 18px;
   min-height: 440px;
+  .CardContent{
+    max-width: 100%;
+    h3{
+      max-width: 100%;
+      line-break: anywhere;
+    }
+  }
   &.Small{
     min-height: 140px;
   }
@@ -155,7 +162,7 @@
       }
     .CardContent{
       width: 80%;
-      
+      max-width: 100%;
     }
     .Tags{
       display: none;
@@ -193,10 +200,14 @@
     text-decoration-skip-ink: none;
     margin-bottom: 10px;
     margin-top: 5px;
+    max-width: 100%;
+        line-break: break-all;
   }
   p{
     margin-top: 0px;
     margin-bottom: 0px;
+    max-width: 100%;
+        line-break: break-all;
     font-family: 'Roboto';
     font-size: 14px;
     font-weight: 300;

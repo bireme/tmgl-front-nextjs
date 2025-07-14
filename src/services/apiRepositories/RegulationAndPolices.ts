@@ -2,21 +2,17 @@ import {
   BibliographicItemDto,
   BibliographicServerResponseDTO,
 } from "../types/bibliographicDto";
-import {
-  LegislationItemDto,
-  LegislationServiceDto,
-} from "../types/legislationsDto";
+import { FilterItem, queryType } from "../types/resources";
 import {
   RegulationAndPolicesItemDto,
   RegulationsAndPolicesDto,
 } from "../types/regulationsAndPolices";
-import { parseMultLangFilter, parseMultLangStringAttr } from "./utils";
 
+import { LegislationItemDto } from "../types/legislationsDto";
 import { LegislationServerResponseDTO } from "../types/legislationsTypes";
-import { PostsApi } from "../posts/PostsApi";
 import axios from "axios";
 import moment from "moment";
-import { queryType } from "../types/resources";
+import { parseMultLangStringAttr } from "./utils";
 
 export class RegulationAndPolicesService {
   public getResources = async (
@@ -33,7 +29,13 @@ export class RegulationAndPolicesService {
 
     // Busca legislações e itens bibliográficos em paralelo
     const [
-      { legislations, totalLegislationsFound },
+      {
+        legislations,
+        totalLegislationsFound,
+        typeFilters,
+        countryFilters,
+        yearFilters,
+      },
       { bibliographics, totalBibliographicsFound },
     ] = await Promise.all([
       this.getLegislations(legislationCount, start, queryItems, and),
@@ -43,69 +45,63 @@ export class RegulationAndPolicesService {
     // Mapeia legislações para RegulationAndPolicesItemDto
     const legislationData: RegulationAndPolicesItemDto[] = legislations.map(
       (item) => ({
-        act_scope: "",
         django_id: item.django_id ?? "",
-        file: item.file ? item.file[0] : "",
         id: item.id ?? "",
-        indexed_in: item.indexed_database ? item.indexed_database[0] : "",
+        author: item.organ_issuer ? item.organ_issuer : [""],
+        description: item.official_ementa
+          ? parseMultLangStringAttr(item.official_ementa)
+          : [],
+        external_link: item.file ? item.file : "",
         language: item.language
           ? parseMultLangStringAttr(
               item.language.split("|").map((i) => i.replace("^", "|"))
             )
           : [],
-        organ_issuer: item.organ_issuer ? item.organ_issuer : [""],
-        act_type: item.act_type ? item.act_type[0] : "",
-        act_number: item.act_number ? item.act_number : [],
-        act_country: item.scope_region
+        publication_date: item.publication_date
+          ? moment(item.publication_date).toDate()
+          : moment().toDate(),
+        title: item.title ?? "",
+        resource_type: "legislation",
+        country: item.scope_region
           ? parseMultLangStringAttr(
               item.scope_region.split("|").map((i) => i.replace("^", "|"))
             )
           : [],
-        publication_date: item.publication_date
-          ? moment(item.publication_date).toDate()
-          : moment().toDate(),
-        official_ementa: item.official_ementa
-          ? parseMultLangStringAttr(item.official_ementa)
+        type: item.act_type
+          ? parseMultLangStringAttr(
+              item.act_type.split("|").map((i) => i.replace("^", "|"))
+            )
           : [],
-        collection: item.collection ?? "",
-        indexed_database: item.indexed_database ? item.indexed_database : [],
-        title: item.title ?? "",
-        unofficial_ementa: item.unofficial_ementa
-          ? parseMultLangStringAttr([item.unofficial_ementa])
-          : [],
-        type: "legislation",
       })
     );
 
     // Mapeia itens bibliográficos para RegulationAndPolicesItemDto
     const bibliographicData: RegulationAndPolicesItemDto[] = bibliographics.map(
       (item) => ({
-        act_scope: "",
-        django_id: item.django_id ?? "",
-        file: item.link ? item.link[0] : "",
+        author: item.author ? item.author : [""],
         id: item.id ?? "",
-        indexed_in: item.indexed_database ? item.indexed_database[0] : "",
+        django_id: item.django_id ?? "",
+        country: item.publication_country
+          ? parseMultLangStringAttr(
+              item.publication_country[0]
+                .split("|")
+                .map((i) => i.replace("^", "|"))
+            )
+          : [],
+        description: item.abstract_language
+          ? parseMultLangStringAttr(item.abstract_language)
+          : [],
+        external_link: item.link ? item.link[0] : "",
         language: item.publication_language
           ? parseMultLangStringAttr(item.publication_language)
           : [],
-        unofficial_ementa: item.abstract_language
-          ? parseMultLangStringAttr(item.abstract_language)
-          : [],
-        organ_issuer: item.author ? item.author : [""],
-        act_type: item.publication_type ? item.publication_type[0] : "",
-        act_number: [],
-        act_country: item.publication_country
-          ? parseMultLangStringAttr(item.publication_country)
-          : [],
-        publication_date: item.created_date
-          ? moment(item.created_date).toDate()
+        publication_date: item.publication_date
+          ? moment(item.publication_date).toDate()
           : moment().toDate(),
-        official_ementa: item.abstract_language
-          ? parseMultLangStringAttr(item.abstract_language)
+        resource_type: "bibliographic",
+        type: item.publication_type
+          ? parseMultLangStringAttr(item.publication_type)
           : [],
-        collection: "",
-        indexed_database: item.indexed_database ? item.indexed_database : [],
-        type: "bibliographic",
         title: item.english_title ? item.english_title : item.id,
       })
     );
@@ -119,6 +115,11 @@ export class RegulationAndPolicesService {
 
     return {
       data,
+      legislationFilters: {
+        country: countryFilters || [],
+        type: typeFilters || [],
+        year: yearFilters || [],
+      },
       totalFound,
     };
   };
@@ -131,6 +132,9 @@ export class RegulationAndPolicesService {
   ): Promise<{
     legislations: LegislationItemDto[];
     totalLegislationsFound: number;
+    yearFilters: FilterItem[];
+    typeFilters: FilterItem[];
+    countryFilters: FilterItem[];
   }> => {
     let query = undefined;
     let q = undefined;
@@ -174,7 +178,6 @@ export class RegulationAndPolicesService {
               item.publication_date,
               "YYYY-MM-DD"
             ).toDate(),
-            publication_country: "",
             source_name: item.source_name,
             scope_region: item.scope_region,
             scope_state: item.scope_state,
@@ -198,6 +201,34 @@ export class RegulationAndPolicesService {
       );
     }
     return {
+      typeFilters:
+        data.data.diaServerResponse[0].facet_counts.facet_fields.act_type.map(
+          (t) => {
+            return {
+              type: t[0],
+              count: parseInt(t[1]),
+            };
+          }
+        ),
+      countryFilters:
+        data.data.diaServerResponse[0].facet_counts.facet_fields.scope_region.map(
+          (c) => {
+            return {
+              type: c[0],
+              count: parseInt(c[1]),
+            };
+          }
+        ),
+      yearFilters:
+        data.data.diaServerResponse[0].facet_counts.facet_fields.publication_year.map(
+          (i) => {
+            return {
+              type: i[0],
+              count: parseInt(i[1]),
+            };
+          }
+        ),
+
       legislations: responseItems,
       totalLegislationsFound: data?.data.diaServerResponse[0].response.numFound,
     };

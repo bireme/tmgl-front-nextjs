@@ -1,7 +1,12 @@
-import { MultLangStringAttr } from "./resources";
+import { FilterItem, MultLangFilter, MultLangStringAttr } from "./resources";
 
 export interface RegulationsAndPolicesDto {
   data: RegulationAndPolicesItemDto[];
+  legislationFilters: {
+    country: FilterItem[];
+    type: FilterItem[];
+    year: FilterItem[];
+  };
   totalFound: number;
 }
 
@@ -9,17 +14,12 @@ export interface RegulationAndPolicesItemDto {
   id: string;
   django_id: string;
   language: MultLangStringAttr[];
-  unofficial_ementa: MultLangStringAttr[];
-  file: string;
-  organ_issuer: string[];
-  act_scope: string;
+  description: MultLangStringAttr[];
+  external_link: string;
+  author: string[];
   title: string;
-  act_type?: string;
-  act_number?: string[];
-  act_country?: MultLangStringAttr[];
+  type: MultLangStringAttr[];
+  country?: MultLangStringAttr[];
   publication_date: Date;
-  official_ementa: MultLangStringAttr[];
-  collection?: string;
-  indexed_in?: string;
-  type?: string; // "legislation" ou "bibliographic"
+  resource_type?: string;
 }
