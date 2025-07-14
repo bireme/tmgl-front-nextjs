@@ -1,22 +1,25 @@
+import { FilterItem, MultLangFilter, MultLangStringAttr } from "./resources";
+
 export interface RegulationsAndPolicesDto {
   data: RegulationAndPolicesItemDto[];
+  legislationFilters: {
+    country: FilterItem[];
+    type: FilterItem[];
+    year: FilterItem[];
+  };
   totalFound: number;
 }
 
 export interface RegulationAndPolicesItemDto {
   id: string;
   django_id: string;
-  language: string[];
-  unofficial_ementa: string;
-  file: string;
-  organ_issuer: string[];
-  act_scope: string;
+  language: MultLangStringAttr[];
+  description: MultLangStringAttr[];
+  external_link: string;
+  author: string[];
   title: string;
-  act_type?: string;
-  act_number?: string[];
-  act_country?: string;
+  type: MultLangStringAttr[];
+  country?: MultLangStringAttr[];
   publication_date: Date;
-  official_ementa: string;
-  collection?: string;
-  indexed_in?: string;
+  resource_type?: string;
 }

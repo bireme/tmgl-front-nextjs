@@ -68,7 +68,7 @@ async function getBibliographic(
   apiKey: string,
   lang: string
 ) {
-  baseUrl += "leisref/v1/";
+  baseUrl += "bibliographic/v1/";
 
   const url = `${baseUrl}search/${query ? `?fq=${query}&` : "?"}${
     count ? `count=${count}` : ""

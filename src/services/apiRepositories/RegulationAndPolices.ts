@@ -1,66 +1,127 @@
 import {
-  LegislationItemDto,
-  LegislationServiceDto,
-} from "../types/legislationsDto";
+  BibliographicItemDto,
+  BibliographicServerResponseDTO,
+} from "../types/bibliographicDto";
+import { FilterItem, queryType } from "../types/resources";
+import {
+  RegulationAndPolicesItemDto,
+  RegulationsAndPolicesDto,
+} from "../types/regulationsAndPolices";
 
+import { LegislationItemDto } from "../types/legislationsDto";
 import { LegislationServerResponseDTO } from "../types/legislationsTypes";
-import { PostsApi } from "../posts/PostsApi";
-import { RegulationsAndPolicesDto } from "../types/regulationsAndPolices";
 import axios from "axios";
 import moment from "moment";
-import { parseMultLangFilter } from "./utils";
-import { queryType } from "../types/resources";
+import { parseMultLangStringAttr } from "./utils";
 
 export class RegulationAndPolicesService {
   public getResources = async (
     count: number,
     start: number,
-    // totalLegislation: number,
-    // totalBibliographic: number,
+    totalLegislation: number,
+    totalBibliographic: number,
     queryItems?: Array<queryType>,
     and?: boolean
   ): Promise<RegulationsAndPolicesDto> => {
-    //TODO: Dividir a páginação com base em totalLegilsation e TotalBibliographic
+    // Calcula quantos itens buscar de cada recurso
+    const legislationCount = Math.min(count, totalLegislation - start);
+    const bibliographicCount = Math.min(count, totalBibliographic - start);
 
-    const { legislations, totalLegislationsFound } = await this.getLegislations(
-      count,
-      start,
-      queryItems,
-      and
+    // Busca legislações e itens bibliográficos em paralelo
+    const [
+      {
+        legislations,
+        totalLegislationsFound,
+        typeFilters,
+        countryFilters,
+        yearFilters,
+      },
+      { bibliographics, totalBibliographicsFound },
+    ] = await Promise.all([
+      this.getLegislations(legislationCount, start, queryItems, and),
+      this.getBibliographic(bibliographicCount, start, queryItems, and),
+    ]);
+
+    // Mapeia legislações para RegulationAndPolicesItemDto
+    const legislationData: RegulationAndPolicesItemDto[] = legislations.map(
+      (item) => ({
+        django_id: item.django_id ?? "",
+        id: item.id ?? "",
+        author: item.organ_issuer ? item.organ_issuer : [""],
+        description: item.official_ementa
+          ? parseMultLangStringAttr(item.official_ementa)
+          : [],
+        external_link: item.file ? item.file : "",
+        language: item.language
+          ? parseMultLangStringAttr(
+              item.language.split("|").map((i) => i.replace("^", "|"))
+            )
+          : [],
+        publication_date: item.publication_date
+          ? moment(item.publication_date).toDate()
+          : moment().toDate(),
+        title: item.title ?? "",
+        resource_type: "legislation",
+        country: item.scope_region
+          ? parseMultLangStringAttr(
+              item.scope_region.split("|").map((i) => i.replace("^", "|"))
+            )
+          : [],
+        type: item.act_type
+          ? parseMultLangStringAttr(
+              item.act_type.split("|").map((i) => i.replace("^", "|"))
+            )
+          : [],
+      })
     );
-    //TODO: Buscar Bibliographic
 
-    const returnObject: RegulationsAndPolicesDto = {
-      data: legislations.map((item) => {
-        return {
-          organ_issuer: item.organ_issuer,
-          act_scope: item.act_scope,
-          act_number: item.act_number,
-          act_type: item.act_type,
-          act_country: "", //Ainda não vem da API
-          collection: item.collection,
-          descriptor: item.descriptor,
-          django_id: item.django_id,
-          file: item.file,
-          fulltext: item.fulltext,
-          id: item.id,
-          indexed_in: item.indexed_in,
-          language: item.language,
-          official_ementa: item.official_ementa ? item.official_ementa[0] : "",
-          publication_date: item.publication_date,
-          scope: item.scope,
-          scope_region: item.scope_region,
-          source_name: item.source_name,
-          status: item.status,
-          thematic_area: item.thematic_area,
-          thematic_area_display: item.thematic_area_display,
-          title: item.title,
-          unofficial_ementa: item.unofficial_ementa,
-        };
-      }),
-      totalFound: totalLegislationsFound,
+    // Mapeia itens bibliográficos para RegulationAndPolicesItemDto
+    const bibliographicData: RegulationAndPolicesItemDto[] = bibliographics.map(
+      (item) => ({
+        author: item.author ? item.author : [""],
+        id: item.id ?? "",
+        django_id: item.django_id ?? "",
+        country: item.publication_country
+          ? parseMultLangStringAttr(
+              item.publication_country[0]
+                .split("|")
+                .map((i) => i.replace("^", "|"))
+            )
+          : [],
+        description: item.abstract_language
+          ? parseMultLangStringAttr(item.abstract_language)
+          : [],
+        external_link: item.link ? item.link[0] : "",
+        language: item.publication_language
+          ? parseMultLangStringAttr(item.publication_language)
+          : [],
+        publication_date: item.publication_date
+          ? moment(item.publication_date).toDate()
+          : moment().toDate(),
+        resource_type: "bibliographic",
+        type: item.publication_type
+          ? parseMultLangStringAttr(item.publication_type)
+          : [],
+        title: item.english_title ? item.english_title : item.id,
+      })
+    );
+
+    // Junta os dois arrays
+    const data = [...legislationData, ...bibliographicData];
+
+    // Soma os totais encontrados
+    const totalFound =
+      (totalLegislationsFound || 0) + (totalBibliographicsFound || 0);
+
+    return {
+      data,
+      legislationFilters: {
+        country: countryFilters || [],
+        type: typeFilters || [],
+        year: yearFilters || [],
+      },
+      totalFound,
     };
-    return returnObject;
   };
 
   public getLegislations = async (
@@ -71,6 +132,9 @@ export class RegulationAndPolicesService {
   ): Promise<{
     legislations: LegislationItemDto[];
     totalLegislationsFound: number;
+    yearFilters: FilterItem[];
+    typeFilters: FilterItem[];
+    countryFilters: FilterItem[];
   }> => {
     let query = undefined;
     let q = undefined;
@@ -96,7 +160,6 @@ export class RegulationAndPolicesService {
 
     let responseItems: LegislationItemDto[] = [];
     if (data) {
-      console.log(data);
       responseItems = data.data.diaServerResponse[0].response.docs.map(
         (item) => {
           return {
@@ -107,15 +170,14 @@ export class RegulationAndPolicesService {
             act_number: item.act_number,
             act_type: item.act_type,
             official_ementa: item.official_ementa,
-            unofficial_ementa: "",
+            unofficial_ementa: item.unnofficial_ementa,
             fulltext: item.fulltext,
             collection: "",
-            language: item.language,
+            language: item.language ? item.language[0] : "",
             publication_date: moment(
               item.publication_date,
               "YYYY-MM-DD"
             ).toDate(),
-            publication_country: "",
             source_name: item.source_name,
             scope_region: item.scope_region,
             scope_state: item.scope_state,
@@ -139,6 +201,34 @@ export class RegulationAndPolicesService {
       );
     }
     return {
+      typeFilters:
+        data.data.diaServerResponse[0].facet_counts.facet_fields.act_type.map(
+          (t) => {
+            return {
+              type: t[0],
+              count: parseInt(t[1]),
+            };
+          }
+        ),
+      countryFilters:
+        data.data.diaServerResponse[0].facet_counts.facet_fields.scope_region.map(
+          (c) => {
+            return {
+              type: c[0],
+              count: parseInt(c[1]),
+            };
+          }
+        ),
+      yearFilters:
+        data.data.diaServerResponse[0].facet_counts.facet_fields.publication_year.map(
+          (i) => {
+            return {
+              type: i[0],
+              count: parseInt(i[1]),
+            };
+          }
+        ),
+
       legislations: responseItems,
       totalLegislationsFound: data?.data.diaServerResponse[0].response.numFound,
     };
@@ -149,5 +239,44 @@ export class RegulationAndPolicesService {
     start: number,
     queryItems?: Array<queryType>,
     and?: boolean
-  ) => {};
+  ): Promise<{
+    bibliographics: BibliographicItemDto[];
+    totalBibliographicsFound: number;
+  }> => {
+    let query = undefined;
+    let q = undefined;
+    query = `database:"Legislations"${and ? "&" : ""}${
+      queryItems
+        ? queryItems
+            .map((k) => {
+              return `${k.parameter}:"${k.query.replace('"', "")}"`;
+            })
+            .join("&")
+        : ""
+    }`;
+    q = "*:*";
+    const { data } = await axios.post<BibliographicServerResponseDTO>(
+      `/api/bibliographic`,
+      {
+        query,
+        count,
+        start,
+        q,
+      }
+    );
+
+    let responseItems: BibliographicItemDto[] = [];
+    if (data) {
+      responseItems = data.data.diaServerResponse[0].response.docs.map(
+        (item) => {
+          return item;
+        }
+      );
+    }
+    return {
+      bibliographics: responseItems,
+      totalBibliographicsFound:
+        data?.data.diaServerResponse[0].response.numFound,
+    };
+  };
 }
