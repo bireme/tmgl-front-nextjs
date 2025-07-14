@@ -43,69 +43,45 @@ export class RegulationAndPolicesService {
     // Mapeia legislações para RegulationAndPolicesItemDto
     const legislationData: RegulationAndPolicesItemDto[] = legislations.map(
       (item) => ({
-        act_scope: "",
         django_id: item.django_id ?? "",
-        file: item.file ? item.file[0] : "",
         id: item.id ?? "",
-        indexed_in: item.indexed_database ? item.indexed_database[0] : "",
+        author: item.organ_issuer ? item.organ_issuer : [""],
+        description: item.official_ementa
+          ? parseMultLangStringAttr(item.official_ementa)
+          : [],
+        external_link: item.file ? item.file : "",
         language: item.language
           ? parseMultLangStringAttr(
               item.language.split("|").map((i) => i.replace("^", "|"))
             )
           : [],
-        organ_issuer: item.organ_issuer ? item.organ_issuer : [""],
-        act_type: item.act_type ? item.act_type[0] : "",
-        act_number: item.act_number ? item.act_number : [],
-        act_country: item.scope_region
-          ? parseMultLangStringAttr(
-              item.scope_region.split("|").map((i) => i.replace("^", "|"))
-            )
-          : [],
         publication_date: item.publication_date
           ? moment(item.publication_date).toDate()
           : moment().toDate(),
-        official_ementa: item.official_ementa
-          ? parseMultLangStringAttr(item.official_ementa)
-          : [],
-        collection: item.collection ?? "",
-        indexed_database: item.indexed_database ? item.indexed_database : [],
         title: item.title ?? "",
-        unofficial_ementa: item.unofficial_ementa
-          ? parseMultLangStringAttr([item.unofficial_ementa])
-          : [],
-        type: "legislation",
+        resource_type: "legislation",
+        type: item.act_type ?? "",
       })
     );
 
     // Mapeia itens bibliográficos para RegulationAndPolicesItemDto
     const bibliographicData: RegulationAndPolicesItemDto[] = bibliographics.map(
       (item) => ({
-        act_scope: "",
-        django_id: item.django_id ?? "",
-        file: item.link ? item.link[0] : "",
+        author: item.author ? item.author : [""],
         id: item.id ?? "",
-        indexed_in: item.indexed_database ? item.indexed_database[0] : "",
+        django_id: item.django_id ?? "",
+        description: item.abstract_language
+          ? parseMultLangStringAttr(item.abstract_language)
+          : [],
+        external_link: item.link ? item.link[0] : "",
         language: item.publication_language
           ? parseMultLangStringAttr(item.publication_language)
           : [],
-        unofficial_ementa: item.abstract_language
-          ? parseMultLangStringAttr(item.abstract_language)
-          : [],
-        organ_issuer: item.author ? item.author : [""],
-        act_type: item.publication_type ? item.publication_type[0] : "",
-        act_number: [],
-        act_country: item.publication_country
-          ? parseMultLangStringAttr(item.publication_country)
-          : [],
-        publication_date: item.created_date
-          ? moment(item.created_date).toDate()
+        publication_date: item.publication_date
+          ? moment(item.publication_date).toDate()
           : moment().toDate(),
-        official_ementa: item.abstract_language
-          ? parseMultLangStringAttr(item.abstract_language)
-          : [],
-        collection: "",
-        indexed_database: item.indexed_database ? item.indexed_database : [],
-        type: "bibliographic",
+        resource_type: "bibliographic",
+        type: item.publication_type ? item.publication_type[0] : "",
         title: item.english_title ? item.english_title : item.id,
       })
     );

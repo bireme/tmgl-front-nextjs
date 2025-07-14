@@ -40,6 +40,7 @@ export interface BibliographicFacetFields {
   publication_year: [string, number][];
   scope: any[];
   scope_region: any[];
+
   scope_state: any[];
   status: [string, number][];
   tec_resource_type: any[];
