@@ -1,7 +1,12 @@
-import { MultLangStringAttr } from "./resources";
+import { FilterItem, MultLangFilter, MultLangStringAttr } from "./resources";
 
 export interface RegulationsAndPolicesDto {
   data: RegulationAndPolicesItemDto[];
+  legislationFilters: {
+    country: FilterItem[];
+    type: FilterItem[];
+    year: FilterItem[];
+  };
   totalFound: number;
 }
 
@@ -13,7 +18,7 @@ export interface RegulationAndPolicesItemDto {
   external_link: string;
   author: string[];
   title: string;
-  type: string;
+  type: MultLangStringAttr[];
   country?: MultLangStringAttr[];
   publication_date: Date;
   resource_type?: string;
