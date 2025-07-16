@@ -153,13 +153,19 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                   );
                 })}
               </>
+            ) : loading ? (
+              <></>
             ) : (
               <Flex
                 style={{ height: "400px", width: "100%" }}
                 justify={"center"}
                 align={"center"}
               >
-                <Center>No results found!</Center>
+                {apiResponse?.totalItems == 0 ? (
+                  <Center>No results found!</Center>
+                ) : (
+                  <></>
+                )}
               </Flex>
             )}
           </Flex>

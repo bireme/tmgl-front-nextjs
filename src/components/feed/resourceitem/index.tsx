@@ -3,6 +3,7 @@ import { IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
 
 import { IframeThumbNail } from "../multimedia/pdf_thumbnail";
+import moment from "moment";
 import styles from "../../../styles/components/resources.module.scss";
 
 export interface ResourceCardProps {
@@ -54,6 +55,7 @@ export const ResourceCard = ({
     country: "#69A221",
     descriptor: "#8B142A",
     region: "#3F6114",
+    type: "#1A4B8C",
   };
 
   const applyTag = (tagType: string, tagName: string) => {
@@ -142,6 +144,24 @@ export const ResourceCard = ({
                 key={tag.name}
                 color={colors.country}
               >
+                {tag.name}
+              </Badge>
+            ))}
+          {tags
+            ?.filter((tag) => tag.type === "type")
+            .map((tag) => (
+              <Badge size="md" key={tag.name} color={colors.type}>
+                {tag.name}
+              </Badge>
+            ))}
+          {tags
+            ?.filter(
+              (tag) =>
+                tag.type === "year" &&
+                moment(tag.name, moment.ISO_8601, true).isValid()
+            )
+            .map((tag) => (
+              <Badge size="md" key={tag.name} color={colors.descriptor}>
                 {tag.name}
               </Badge>
             ))}

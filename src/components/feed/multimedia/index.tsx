@@ -151,6 +151,8 @@ export const MultimediaFeed = ({
                   );
                 })}
               </>
+            ) : loading ? (
+              <></>
             ) : (
               <Flex
                 style={{ height: "400px", width: "100%" }}

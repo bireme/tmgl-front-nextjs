@@ -142,14 +142,17 @@ export const EventsFeed = ({
                     ocorrences: c.count,
                   })),
                 },
-                // {
-                //   queryType: "country",
-                //   label: "Country",
-                //   items: apiResponse?.countryFilters.map((c) => ({
-                //     label: c.type,
-                //     ocorrences: c.count,
-                //   })),
-                // },
+                {
+                  queryType: "country",
+                  label: "Country",
+                  items: apiResponse?.countryFilters
+                    .filter((c) => c.lang == language)
+                    .map((c) => ({
+                      label: c.type,
+                      ocorrences: c.count,
+                      id: c.queryString,
+                    })),
+                },
               ]}
             />
           ) : (
@@ -188,13 +191,19 @@ export const EventsFeed = ({
                   );
                 })}
               </>
+            ) : loading ? (
+              <></>
             ) : (
               <Flex
                 style={{ height: "400px", width: "100%" }}
                 justify={"center"}
                 align={"center"}
               >
-                <Center>No results found!</Center>
+                {apiResponse?.totalFound == 0 ? (
+                  <Center>No results found!</Center>
+                ) : (
+                  <></>
+                )}
               </Flex>
             )}
           </Flex>

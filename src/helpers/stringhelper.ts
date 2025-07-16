@@ -1,6 +1,6 @@
 import * as he from "he";
 
-import { queryType } from "@/services/types/resources";
+import { MultLangStringAttr, queryType } from "@/services/types/resources";
 
 export const parseWpLink = (wpLink: string, prefix?: string) => {
   return wpLink
@@ -32,6 +32,18 @@ export function generateSlug(text: string): string {
     .trim() // Remove espaços extras no início e fim
     .replace(/\s+/g, "-") // Substitui espaços por hífens
     .replace(/-+/g, "-"); // Remove hífens duplicados
+}
+
+export function getValueFromMultilangItem(
+  lang: string,
+  items: MultLangStringAttr[]
+): string {
+  let itemLang = items?.find((i) => i.lang === lang);
+  if (itemLang) {
+    return itemLang.content;
+  } else {
+    return items[0]?.content || "";
+  }
 }
 
 export function removeHTMLTagsAndLimit(text: string, limit: number): string {

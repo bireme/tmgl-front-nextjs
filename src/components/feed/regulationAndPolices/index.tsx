@@ -5,8 +5,10 @@ import {
 } from "@/services/types/regulationsAndPolices";
 import {
   decodeHtmlEntities,
+  getValueFromMultilangItem,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
+import moment, { lang } from "moment";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
@@ -14,6 +16,7 @@ import { Pagination } from "../pagination";
 import { RegulationAndPolicesService } from "@/services/apiRepositories/RegulationAndPolices";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
+import { parseMultLangStringAttr } from "@/services/apiRepositories/utils";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
 
@@ -28,7 +31,7 @@ export const RegulationAndPolicesFeed = ({
   region?: string;
   thematicArea?: string;
 }) => {
-  const { globalConfig } = useContext(GlobalContext);
+  const { globalConfig, language } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const _service = new RegulationAndPolicesService();
   const count = 11;
@@ -48,6 +51,8 @@ export const RegulationAndPolicesFeed = ({
       const response = await _service.getResources(
         count + 1,
         (page - 1) * count,
+        100,
+        100,
         filter && filter.length > 0 ? filter : undefined
       );
 
@@ -108,7 +113,68 @@ export const RegulationAndPolicesFeed = ({
       <Grid>
         <Grid.Col span={{ md: 3, base: 12 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
-            <ResourceFilters callBack={applyFilters} filters={[]} />
+            <ResourceFilters
+              callBack={applyFilters}
+              filters={[
+                {
+                  queryType: "publication_country",
+                  label: "Country",
+                  items: apiResponse?.legislationFilters.country.map((c) => {
+                    return {
+                      id: c.type,
+                      label: getValueFromMultilangItem(
+                        language,
+                        c.type
+                          .split("|")
+                          .map((i) => i.replace("^", "|"))
+                          .map((i) => {
+                            return {
+                              lang: i.split("|")[0],
+                              content: i.split("|")[1],
+                            };
+                          })
+                      ),
+                      ocorrences: c.count,
+                    };
+                  }),
+                },
+                {
+                  queryType: "act_type",
+                  label: "Type",
+                  items: apiResponse?.legislationFilters.type.map((c) => {
+                    return {
+                      type: c.type,
+                      label: getValueFromMultilangItem(
+                        language,
+                        c.type
+                          .split("|")
+                          .map((i) => i.replace("^", "|"))
+                          .map((i) => {
+                            return {
+                              lang: i.split("|")[0],
+                              content: i.split("|")[1],
+                            };
+                          })
+                      ),
+                      ocorrences: c.count,
+                    };
+                  }),
+                },
+                {
+                  queryType: "publication_year",
+                  label: "Year",
+                  items: apiResponse?.legislationFilters.year
+                    .map((c) => {
+                      return {
+                        id: c.type,
+                        label: c.type,
+                        ocorrences: c.count,
+                      };
+                    })
+                    .sort((a, b) => parseInt(b.label) - parseInt(a.label)),
+                },
+              ]}
+            />
           ) : (
             <></>
           )}
@@ -134,25 +200,57 @@ export const RegulationAndPolicesFeed = ({
                         removeHTMLTagsAndLimit(i.title, 120) +
                         `${i.title.length > 120 ? "..." : ""}`
                       }
-                      image={i.file ? i.file : ""}
                       excerpt={
-                        removeHTMLTagsAndLimit(i.official_ementa, 180) +
-                        `${i.official_ementa.length > 180 ? "..." : ""}`
+                        removeHTMLTagsAndLimit(
+                          getValueFromMultilangItem(language, i.description),
+                          180
+                        ) +
+                        `${
+                          getValueFromMultilangItem(language, i.description)
+                            .length > 180
+                            ? "..."
+                            : ""
+                        }`
                       }
+                      tags={[
+                        {
+                          name: i.country
+                            ? getValueFromMultilangItem(language, i.country)
+                            : "",
+                          type: "country",
+                        },
+                        {
+                          name: i.publication_date
+                            ? moment(i.publication_date).format("YYYY")
+                            : "",
+                          type: "year",
+                        },
+                      ]}
                       resourceType="regulations-and-policies"
                       target="_blank"
-                      link={i.file}
+                      type={
+                        i.type
+                          ? getValueFromMultilangItem(language, i.type)
+                          : ""
+                      }
+                      link={i.external_link}
                     />
                   );
                 })}
               </>
+            ) : loading ? (
+              <></>
             ) : (
               <Flex
                 style={{ height: "400px", width: "100%" }}
                 justify={"center"}
                 align={"center"}
               >
-                <Center>No results found!</Center>
+                {apiResponse?.totalFound == 0 ? (
+                  <Center>No results found!</Center>
+                ) : (
+                  <></>
+                )}
               </Flex>
             )}
           </Flex>
