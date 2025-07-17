@@ -100,6 +100,21 @@ export function parseThematicAreabyAttr(item: ThematicAreaApiDto[]): Area[] {
   });
   return areas;
 }
+export function mergeFilterItems(...filters: FilterItem[][]): FilterItem[] {
+  const map = new Map<string, number>();
+
+  for (const group of filters) {
+    for (const item of group) {
+      const current = map.get(item.type) || 0;
+      map.set(item.type, current + item.count);
+    }
+  }
+
+  return Array.from(map.entries()).map(([type, count]) => ({
+    type,
+    count,
+  }));
+}
 
 export function parseTematicArea(item: string): Area {
   let items = item.split("|");
@@ -147,4 +162,102 @@ export function parseMultLangFilter(items: Array<String>): MultLangFilter[] {
     }
   }
   return filters;
+}
+
+export function mergeMultLangFilters(
+  ...filters: MultLangFilter[][]
+): MultLangFilter[] {
+  const seen = new Set<string>();
+  const merged: MultLangFilter[] = [];
+
+  for (const group of filters) {
+    for (const item of group) {
+      const key = `${item.lang}|${item.queryString}|${item.type}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        merged.push(item);
+      }
+    }
+  }
+  return merged;
+}
+
+export function mapBibliographicTypes(type: string): string {
+  switch (type.toLowerCase()) {
+    case "s":
+      return "Article";
+    case "n":
+      return "Non-conventional";
+    case "m":
+      return "Monography";
+    case "t":
+      return "Thesis";
+    case "p":
+      return "Project Document";
+    case "sc":
+      return "Congress and conference";
+    case "scp":
+      return "Congress and conference";
+    case "msc":
+      return "Congress and conference";
+    case "nc":
+      return "Congress and conference";
+    case "mc":
+      return "Congress and conference";
+    case "mcp":
+      return "Congress and conference";
+  }
+  return "Bibliographic";
+}
+
+export function mapJoinedMultLangArrayToFilterItem(
+  data: [string, number][],
+  language: string
+): FilterItem[] {
+  const result: FilterItem[] = [];
+
+  for (const [multiLangStr, count] of data) {
+    const entries = multiLangStr.split("|");
+
+    for (const entry of entries) {
+      const [lang, value] = entry.split("^");
+
+      if (lang && value) {
+        if (lang == language) {
+          result.push({
+            count,
+            type: value,
+          });
+        }
+      }
+    }
+  }
+
+  return result;
+}
+
+export function mapJoinedMultLangArray(
+  data: [string, number][],
+  queryString: string
+): MultLangFilter[] {
+  const result: MultLangFilter[] = [];
+
+  for (const [multiLangStr, count] of data) {
+    const entries = multiLangStr.split("|");
+
+    for (const entry of entries) {
+      const [lang, value] = entry.split("^");
+
+      if (lang && value) {
+        result.push({
+          lang,
+          count,
+          type: value,
+          queryString: queryString,
+        });
+      }
+    }
+  }
+
+  return result;
 }

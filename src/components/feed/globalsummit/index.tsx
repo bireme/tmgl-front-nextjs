@@ -81,7 +81,29 @@ export const GlobalSummitFeed = ({
       <Grid>
         <Grid.Col span={{ md: 3, base: 12 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
-            <ResourceFilters callBack={applyFilters} filters={[]} />
+            <ResourceFilters
+              callBack={applyFilters}
+              filters={[
+                {
+                  queryType: "country",
+                  label: "Country",
+                  items: apiResponse?.countryFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
+                },
+                {
+                  queryType: "thematic_area",
+                  label: "Thematic area",
+                  items: apiResponse?.thematicAreaFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
+                },
+              ]}
+            />
           ) : (
             <></>
           )}

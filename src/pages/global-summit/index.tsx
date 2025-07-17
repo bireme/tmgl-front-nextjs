@@ -24,14 +24,12 @@ export default function GlobalSummit() {
             { path: "/", name: "HOME" },
             {
               path: "/global-summit",
-              name: "WHO TM Global Summit no menú Resources",
+              name: "WHO TM Global Summit",
             },
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
-          <h3 className={styles.TitleWithIcon}>
-            WHO TM Global Summit no menú Resources
-          </h3>
+          <h3 className={styles.TitleWithIcon}>WHO TM Global Summit</h3>
 
           <div>
             <IconLayoutGrid

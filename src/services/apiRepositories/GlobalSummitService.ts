@@ -2,6 +2,11 @@ import {
   BibliographicItemDto,
   BibliographicServerResponseDTO,
 } from "../types/bibliographicDto";
+import {
+  mapJoinedMultLangArrayToFilterItem,
+  mergeFilterItems,
+  parseMultLangStringAttr,
+} from "./utils";
 
 import { GlobalSummitDto } from "../types/globalSummitDto";
 import { LegislationServerResponseDTO } from "../types/legislationsTypes";
@@ -9,7 +14,6 @@ import { MultimediaResponse } from "../types/multimediaTypes";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
 import axios from "axios";
 import moment from "moment";
-import { parseMultLangStringAttr } from "./utils";
 import { queryType } from "../types/resources";
 
 export class GlobalSummitService {
@@ -22,7 +26,7 @@ export class GlobalSummitService {
   ): Promise<GlobalSummitDto> => {
     const allResults = await Promise.all([
       this.getBibliographic(10000, 0, lang!, queryItems, and),
-      this.getMultimedia(10000, 0, queryItems, and, lang),
+      this.getMultimedia(10000, 0, lang!, queryItems, and),
       this.getLegislations(10000, 0, lang!, queryItems, and),
       this.getLisResources(10000, 0, lang!, queryItems, and),
     ]);
@@ -46,7 +50,10 @@ export class GlobalSummitService {
         (sum, res) => sum + (res.totalFound || 0),
         0
       ),
-      countryFilter: [],
+      countryFilter: mergeFilterItems(
+        allResults[0].countryFilter,
+        allResults[1].countryFilter
+      ),
       documentTypeFilter: [],
       eventFilter: [],
       regionFilter: [],
@@ -105,12 +112,40 @@ export class GlobalSummitService {
             thematicArea: "",
           };
         }),
-        countryFilter: [],
-        documentTypeFilter: [],
+        countryFilter: mapJoinedMultLangArrayToFilterItem(
+          data.data.diaServerResponse[0].facet_counts.facet_fields
+            .publication_country,
+          lang
+        ),
+        documentTypeFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.publication_type.map(
+            (t) => {
+              return {
+                type: t[0],
+                count: t[1],
+              };
+            }
+          ),
         eventFilter: [],
         regionFilter: [],
-        thematicAreaFilter: [],
-        yearFilter: [],
+        thematicAreaFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
+            (t) => {
+              return {
+                type: t[0],
+                count: t[1],
+              };
+            }
+          ),
+        yearFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.publication_year.map(
+            (t) => {
+              return {
+                type: t[0],
+                count: t[1],
+              };
+            }
+          ),
         totalFound: data.data.diaServerResponse[0].response.numFound,
       };
     }
@@ -129,9 +164,9 @@ export class GlobalSummitService {
   public getMultimedia = async (
     count: number,
     start: number,
+    lang: string,
     queryItems?: Array<queryType>,
-    and?: boolean,
-    lang?: string
+    and?: boolean
   ): Promise<GlobalSummitDto> => {
     let query = undefined;
     let q = undefined;
@@ -204,12 +239,31 @@ export class GlobalSummitService {
             year: d.publication_year,
           };
         }),
-        countryFilter: [],
-        documentTypeFilter: [],
+        countryFilter: mapJoinedMultLangArrayToFilterItem(
+          data.data.diaServerResponse[0].facet_counts.facet_fields
+            .publication_country,
+          lang
+        ),
+        documentTypeFilter: [
+          {
+            type: "Multimedia",
+            count: data.data.diaServerResponse[0].response.numFound,
+          },
+        ],
         eventFilter: [],
         regionFilter: [],
-        thematicAreaFilter: [],
-        yearFilter: [],
+        thematicAreaFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
+            (y) => {
+              return { type: y[0], count: parseInt(y[1]) };
+            }
+          ),
+        yearFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.publication_year.map(
+            (y) => {
+              return { type: y[0], count: parseInt(y[1]) };
+            }
+          ),
         totalFound: data.data.diaServerResponse[0].response.numFound,
       };
     }
