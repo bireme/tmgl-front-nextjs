@@ -20,6 +20,7 @@ export interface RegionFilter {
 
 export interface GlobalConfigAcf {
   acf: {
+    who_tm_global_summit_description: string;
     aside_tab_title: string;
     content_description: string;
     dimensions_description: string;

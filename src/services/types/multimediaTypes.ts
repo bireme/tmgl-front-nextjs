@@ -30,13 +30,17 @@ export interface MultimediaObject {
   dimension: string;
   id: number;
   item_extension: string;
+  publication_year: string;
   link: string;
   other_physical_details: string;
   publication_date: string;
+  publication_country: string[];
+  thematic_area_display: string[];
   publisher: string;
   related_links: string[];
   status: number;
   media_type: string;
+  media_type_display: string[];
   thematic_areas: ThematicArea[];
   title: string;
   title_translated: string;

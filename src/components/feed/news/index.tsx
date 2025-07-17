@@ -57,6 +57,39 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
               callBack={applyFilters}
               filters={[
                 {
+                  queryType: "region",
+                  label: "WHO Regions",
+                  items: apiResponse
+                    ? apiResponse?.regions.map((c) => ({
+                        label: c.name,
+                        ocorrences: undefined,
+                        id: c.id.toString(),
+                      }))
+                    : [],
+                },
+                {
+                  queryType: "country",
+                  label: "Country",
+                  items: apiResponse
+                    ? apiResponse?.countries.map((c) => ({
+                        label: c.name,
+                        ocorrences: undefined,
+                        id: c.id.toString(),
+                      }))
+                    : [],
+                },
+                {
+                  queryType: "tags",
+                  label: "Thematic Area",
+                  items: apiResponse
+                    ? apiResponse?.tags.map((c) => ({
+                        label: c.name,
+                        ocorrences: undefined,
+                        id: c.id.toString(),
+                      }))
+                    : [],
+                },
+                {
                   queryType: "after",
                   label: "Publication Year",
                   items: apiResponse
@@ -81,39 +114,6 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                           })
                         ).values()
                       )
-                    : [],
-                },
-                {
-                  queryType: "tags",
-                  label: "Thematic Area",
-                  items: apiResponse
-                    ? apiResponse?.tags.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
-                    : [],
-                },
-                {
-                  queryType: "country",
-                  label: "Country",
-                  items: apiResponse
-                    ? apiResponse?.countries.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
-                    : [],
-                },
-                {
-                  queryType: "region",
-                  label: "WHO Regions",
-                  items: apiResponse
-                    ? apiResponse?.regions.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
                     : [],
                 },
               ]}
