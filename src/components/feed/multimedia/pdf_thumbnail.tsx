@@ -1,5 +1,3 @@
-import "react-pdf/dist/esm/Page/AnnotationLayer.css";
-
 import { LoadingOverlay } from "@mantine/core";
 import styles from "../../../styles/components/resources.module.scss";
 import { useState } from "react";
