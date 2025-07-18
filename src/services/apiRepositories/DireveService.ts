@@ -34,8 +34,6 @@ export class DireveService {
       }`;
       q = "*:*";
 
-      console.log(query);
-
       const { data } = await axios.post<RepositoryApiResponse>("/api/direve", {
         query,
         count,
