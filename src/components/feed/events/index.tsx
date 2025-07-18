@@ -80,7 +80,9 @@ export const EventsFeed = ({
       const response = await _service.getResources(
         count + 1,
         (page - 1) * count,
-        filter && filter.length > 0 ? filter : undefined
+        filter && filter.length > 0 ? filter : undefined,
+        language,
+        true
       );
       setTotalPages(response.totalFound / count);
       setItems(response.data);
@@ -127,7 +129,7 @@ export const EventsFeed = ({
                   })),
                 },
                 {
-                  queryType: "descriptor_filter",
+                  queryType: "descriptor",
                   label: "Thematic area",
                   items: apiResponse?.descriptorFilter.map((c) => ({
                     label: c.type,

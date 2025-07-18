@@ -27,35 +27,88 @@ export class GlobalSummitService {
     and?: boolean
   ): Promise<GlobalSummitDto> => {
     const allResults = await Promise.all([
-      this.getBibliographic(10000, 0, lang!, queryItems, and),
-      this.getMultimedia(10000, 0, lang!, queryItems, and),
-      this.getLegislations(10000, 0, lang!, queryItems, and),
-      this.getLisResources(10000, 0, lang!, queryItems, and),
+      this.getBibliographic(10000, 0, lang!),
+      this.getMultimedia(10000, 0, lang!),
+      this.getLegislations(10000, 0, lang!),
+      this.getLisResources(10000, 0, lang!),
     ]);
-
-    if (queryItems) {
-      console.log("Estão pesquisando!");
-    }
 
     // Unifica os dados de todos os recursos
     const mergedData = allResults.flatMap((r) => r.data);
 
     // Ordena por ano decrescente (ou outro critério, se preferir)
-    const orderedData = mergedData.sort((a, b) => {
+    let orderedData = mergedData.sort((a, b) => {
       const yearA = parseInt(a.year || "0");
       const yearB = parseInt(b.year || "0");
       return yearB - yearA;
     });
+
+    if (queryItems) {
+      const stringParameter = queryItems.filter((q) => q.parameter === "title");
+      const yearFilters = queryItems
+        .filter((q) => q.parameter === "year")
+        .map((q) => q.query);
+      const documentFilters = queryItems
+        .filter((q) => q.parameter === "document_type")
+        .map((q) => q.query);
+      const thematicAreaFilters = queryItems
+        .filter((q) => q.parameter === "thematic_area")
+        .map((q) => q.query);
+      const countryFilters = queryItems
+        .filter((q) => q.parameter === "country")
+        .map((q) => q.query);
+      const regionFilters = queryItems
+        .filter((q) => q.parameter === "region")
+        .map((q) => q.query);
+
+      if (regionFilters.length) {
+        orderedData = orderedData.filter((item) =>
+          regionFilters.includes(item.region ? item.region : "")
+        );
+      }
+
+      if (stringParameter) {
+        orderedData = orderedData.filter(
+          (item) =>
+            item.title
+              .toLowerCase()
+              .includes(stringParameter[0].query.toLowerCase()) ||
+            item.excerpt
+              .toLowerCase()
+              .includes(stringParameter[0].query.toLowerCase())
+        );
+      }
+
+      if (yearFilters.length) {
+        orderedData = orderedData.filter((item) =>
+          yearFilters.includes(item.year ? item.year : "")
+        );
+      }
+      if (countryFilters.length) {
+        orderedData = orderedData.filter((item) =>
+          countryFilters.includes(item.country ? item.country : "")
+        );
+      }
+      if (documentFilters.length) {
+        orderedData = orderedData.filter((item) =>
+          documentFilters.includes(item.documentType ? item.documentType : "")
+        );
+      }
+      if (thematicAreaFilters.length) {
+        orderedData = orderedData.filter((item) =>
+          Array.isArray(item.thematicArea)
+            ? item.thematicArea.some((ta) => thematicAreaFilters.includes(ta))
+            : thematicAreaFilters.includes(item.thematicArea || "")
+        );
+      }
+    }
 
     // Aplica a paginação solicitada
     const paginated = orderedData.slice(start, start + count);
 
     return {
       data: paginated,
-      totalFound: allResults.reduce(
-        (sum, res) => sum + (res.totalFound || 0),
-        0
-      ),
+      totalFound: orderedData.length,
       countryFilter: mergeFilterItems(
         allResults[0].countryFilter,
         allResults[1].countryFilter,
@@ -130,9 +183,18 @@ export class GlobalSummitService {
                     .map((i) => i.replace("^", "|"))
                 ).find((i) => i.lang == lang)?.content
               : "",
-            documentType: d.publication_type[0],
+            documentType: mapBibliographicTypes(d.publication_type[0]),
             year: d.publication_year,
-            thematicArea: "",
+            thematicArea: d.mh,
+            region: d.publication_country
+              ? getRegionByCountry([
+                  parseMultLangStringAttr(
+                    d.publication_country[0]
+                      .split("|")
+                      .map((i) => i.replace("^", "|"))
+                  ).find((i) => i.lang == lang)?.content || "",
+                ])[0]
+              : "",
           };
         }),
         countryFilter: mapJoinedMultLangArrayToFilterItem(
@@ -245,13 +307,7 @@ export class GlobalSummitService {
             excerpt: d.description[0],
             id: d.id.toString(),
             link: d.link[0],
-            documentType: d.media_type_display
-              ? parseMultLangStringAttr(
-                  d.media_type_display[0]
-                    .split("|")
-                    .map((i) => i.replace("^", "|"))
-                ).find((i) => i.lang == lang)?.content
-              : "",
+            documentType: "Multimedia",
             title: d.title,
             country: d.publication_country
               ? parseMultLangStringAttr(
@@ -260,14 +316,17 @@ export class GlobalSummitService {
                     .map((i) => i.replace("^", "|"))
                 ).find((i) => i.lang == lang)?.content
               : "",
-            thematicArea: d.thematic_area_display
-              ? parseMultLangStringAttr(
-                  d.thematic_area_display[0]
-                    .split("|")
-                    .map((i) => i.replace("^", "|"))
-                ).find((i) => i.lang == lang)?.content
-              : "",
+            thematicArea: d.descriptor,
             year: d.publication_year,
+            region: d.publication_country
+              ? getRegionByCountry([
+                  parseMultLangStringAttr(
+                    d.publication_country[0]
+                      .split("|")
+                      .map((i) => i.replace("^", "|"))
+                  ).find((i) => i.lang == lang)?.content || "",
+                ])[0]
+              : "",
           };
         }),
         countryFilter: mapJoinedMultLangArrayToFilterItem(
@@ -357,14 +416,13 @@ export class GlobalSummitService {
             country: parseMultLangStringAttr(
               d.scope_region[0].split("|").map((i) => i.replace("^", "|"))
             ).find((i) => i.lang == lang)?.content,
-            documentType: parseMultLangStringAttr(
-              d.act_type[0].split("|").map((i) => i.replace("^", "|"))
-            ).find((i) => i.lang == lang)?.content,
-            thematicArea: parseMultLangStringAttr(
-              d.thematic_area_display[0]
-                .split("|")
-                .map((i) => i.replace("^", "|"))
-            ).find((i) => i.lang == lang)?.content,
+            documentType: "Legislation",
+            thematicArea: d.descriptor,
+            region: getRegionByCountry([
+              parseMultLangStringAttr(
+                d.scope_region[0].split("|").map((i) => i.replace("^", "|"))
+              ).find((i) => i.lang == lang)?.content || "",
+            ])[0],
             year: d.publication_year,
           };
         }),
@@ -422,7 +480,6 @@ export class GlobalSummitService {
     };
   };
 
-  //Ainda tem que terminar   thematic_area:"GTMSummit"
   public getLisResources = async (
     count: number,
     start: number,
@@ -467,13 +524,16 @@ export class GlobalSummitService {
                     .map((i) => i.replace("^", "|"))
                 ).find((i) => i.lang == lang)?.content
               : "",
-            documentType: "Legislation",
-            thematicArea: d.publication_country
-              ? parseMultLangStringAttr(
-                  d.thematic_area_display[0]
-                    .split("|")
-                    .map((i) => i.replace("^", "|"))
-                ).find((i) => i.lang == lang)?.content
+            documentType: "Internet Resources",
+            thematicArea: d.descriptor,
+            region: d.publication_country
+              ? getRegionByCountry([
+                  parseMultLangStringAttr(
+                    d.publication_country[0]
+                      .split("|")
+                      .map((i) => i.replace("^", "|"))
+                  ).find((i) => i.lang == lang)?.content || "",
+                ])[0]
               : "",
             year: moment(d.created_date, "YYYYMMDD").format("YYYY"),
           };

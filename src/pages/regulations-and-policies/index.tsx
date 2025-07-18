@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
-import { RegulationAndPolicesFeed } from "@/components/feed/regulationAndPolices";
+import { RegulationsAndPolicesFeed } from "@/components/feed/regulationAndPolices";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
@@ -48,7 +48,7 @@ export default function RegulationAndPolices() {
           </p>
         </Flex>
 
-        <RegulationAndPolicesFeed
+        <RegulationsAndPolicesFeed
           thematicArea={thematicArea ? thematicArea.toString() : undefined}
           country={country ? country.toString() : undefined}
           region={region ? region.toString() : undefined}

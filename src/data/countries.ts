@@ -761,6 +761,14 @@ export const CountriesRegions = [
     Region: "Americas ",
   },
   {
+    Code: "US",
+    pt: "Estados Unidos",
+    en: "United States",
+    es: "Estados Unidos de América",
+    fr: "États-Unis d'Amérique",
+    Region: "Americas ",
+  },
+  {
     Code: "UY",
     pt: "Uruguai",
     en: "Uruguay",

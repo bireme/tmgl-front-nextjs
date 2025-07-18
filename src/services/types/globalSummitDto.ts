@@ -17,7 +17,8 @@ export interface GlobalSummitItemDto {
   title: string;
   excerpt: string;
   country?: string;
-  thematicArea?: string;
+  region?: string;
+  thematicArea?: string[];
   documentType?: string;
   year?: string;
 }

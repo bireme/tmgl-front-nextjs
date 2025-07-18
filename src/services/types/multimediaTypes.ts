@@ -29,6 +29,7 @@ export interface MultimediaObject {
   descriptors: Descriptor[];
   dimension: string;
   id: number;
+  descriptor: string[];
   item_extension: string;
   publication_year: string;
   link: string;

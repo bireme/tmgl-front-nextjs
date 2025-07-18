@@ -1,26 +1,22 @@
+import {} from "@/services/types/regulationsAndPolices";
+
 import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
-  RegulationAndPolicesItemDto,
-  RegulationsAndPolicesDto,
-} from "@/services/types/regulationsAndPolices";
-import {
-  decodeHtmlEntities,
-  getValueFromMultilangItem,
-  removeHTMLTagsAndLimit,
-} from "@/helpers/stringhelper";
-import moment, { lang } from "moment";
+  GlobalSummitDto,
+  GlobalSummitItemDto,
+} from "@/services/types/globalSummitDto";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { Pagination } from "../pagination";
-import { RegulationAndPolicesService } from "@/services/apiRepositories/RegulationAndPolices";
+import { RegulationsAndPolicesService } from "@/services/apiRepositories/RegulationAndPolices";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
-import { parseMultLangStringAttr } from "@/services/apiRepositories/utils";
 import { queryType } from "@/services/types/resources";
+import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const RegulationAndPolicesFeed = ({
+export const RegulationsAndPolicesFeed = ({
   displayType,
   country,
   region,
@@ -33,13 +29,13 @@ export const RegulationAndPolicesFeed = ({
 }) => {
   const { globalConfig, language } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
-  const _service = new RegulationAndPolicesService();
+  const _service = new RegulationsAndPolicesService();
   const count = 11;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
-  const [items, setItems] = useState<RegulationAndPolicesItemDto[]>([]);
-  const [apiResponse, setApiResponse] = useState<RegulationsAndPolicesDto>();
+  const [items, setItems] = useState<GlobalSummitItemDto[]>([]);
+  const [apiResponse, setApiResponse] = useState<GlobalSummitDto>();
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
@@ -51,8 +47,7 @@ export const RegulationAndPolicesFeed = ({
       const response = await _service.getResources(
         count + 1,
         (page - 1) * count,
-        100,
-        100,
+        language,
         filter && filter.length > 0 ? filter : undefined
       );
 
@@ -66,45 +61,8 @@ export const RegulationAndPolicesFeed = ({
     setLoading(false);
   };
 
-  //   if (country) {
-  //     const countryToFilter =
-  //       apiResponse?.act_country?.filter((c) => c.lang === language) || [];
-  //     let queryCountry = country;
-  //     const matched = countryToFilter.find((c) =>
-  //       c.queryString?.toLowerCase()?.includes(country)
-  //     );
-  //     queryCountry = matched?.queryString ?? country;
-
-  //     applyFilters([
-  //       {
-  //         parameter: "country",
-  //         query: queryCountry,
-  //       },
-  //     ]);
-  //   }
-  //   if (region) {
-  //     applyFilters([
-  //       {
-  //         parameter: "region",
-  //         query: region,
-  //       },
-  //     ]);
-  //   }
-  //   if (thematicArea) {
-  //     applyFilters([
-  //       {
-  //         parameter: "descriptor",
-  //         query: thematicArea,
-  //       },
-  //     ]);
-  //   }
-  //   setLoading(false);
-  //   setInitialFilterDone(true);
-  // };
-
   useEffect(() => {
     if (globalConfig) getRegulationsAndPolicies();
-    console.log("mudou de página", page);
   }, [page, filter, thematicArea, region, country, globalConfig]);
 
   return (
@@ -117,61 +75,49 @@ export const RegulationAndPolicesFeed = ({
               callBack={applyFilters}
               filters={[
                 {
-                  queryType: "publication_country",
+                  queryType: "region",
+                  label: "WHO region",
+                  items: apiResponse?.regionFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
+                },
+                {
+                  queryType: "country",
                   label: "Country",
-                  items: apiResponse?.legislationFilters.country.map((c) => {
-                    return {
-                      id: c.type,
-                      label: getValueFromMultilangItem(
-                        language,
-                        c.type
-                          .split("|")
-                          .map((i) => i.replace("^", "|"))
-                          .map((i) => {
-                            return {
-                              lang: i.split("|")[0],
-                              content: i.split("|")[1],
-                            };
-                          })
-                      ),
-                      ocorrences: c.count,
-                    };
-                  }),
+                  items: apiResponse?.countryFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
                 },
                 {
-                  queryType: "act_type",
-                  label: "Type",
-                  items: apiResponse?.legislationFilters.type.map((c) => {
-                    return {
-                      type: c.type,
-                      label: getValueFromMultilangItem(
-                        language,
-                        c.type
-                          .split("|")
-                          .map((i) => i.replace("^", "|"))
-                          .map((i) => {
-                            return {
-                              lang: i.split("|")[0],
-                              content: i.split("|")[1],
-                            };
-                          })
-                      ),
-                      ocorrences: c.count,
-                    };
-                  }),
+                  queryType: "thematic_area",
+                  label: "Thematic area",
+                  items: apiResponse?.thematicAreaFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
                 },
                 {
-                  queryType: "publication_year",
+                  queryType: "document_type",
+                  label: "Document Type",
+                  items: apiResponse?.documentTypeFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
+                },
+                {
+                  queryType: "year",
                   label: "Year",
-                  items: apiResponse?.legislationFilters.year
-                    .map((c) => {
-                      return {
-                        id: c.type,
-                        label: c.type,
-                        ocorrences: c.count,
-                      };
-                    })
-                    .sort((a, b) => parseInt(b.label) - parseInt(a.label)),
+                  items: apiResponse?.yearFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
                 },
               ]}
             />
@@ -201,39 +147,43 @@ export const RegulationAndPolicesFeed = ({
                         `${i.title.length > 120 ? "..." : ""}`
                       }
                       excerpt={
-                        removeHTMLTagsAndLimit(
-                          getValueFromMultilangItem(language, i.description),
-                          180
-                        ) +
-                        `${
-                          getValueFromMultilangItem(language, i.description)
-                            .length > 180
-                            ? "..."
-                            : ""
-                        }`
+                        removeHTMLTagsAndLimit(i.excerpt, 180) +
+                        `${i.excerpt.length > 180 ? "..." : ""}`
                       }
                       tags={[
-                        {
-                          name: i.country
-                            ? getValueFromMultilangItem(language, i.country)
-                            : "",
-                          type: "country",
-                        },
-                        {
-                          name: i.publication_date
-                            ? moment(i.publication_date).format("YYYY")
-                            : "",
-                          type: "year",
-                        },
+                        ...(i.country
+                          ? [
+                              {
+                                name: i.country,
+                                type: "country",
+                              },
+                            ]
+                          : []),
+                        ...(i.region
+                          ? [
+                              {
+                                name: i.region,
+                                type: "region",
+                              },
+                            ]
+                          : []),
+                        ...(Array.isArray(i.thematicArea)
+                          ? i.thematicArea.map((tag) => ({
+                              name: tag,
+                              type: "descriptor",
+                            }))
+                          : i.thematicArea
+                          ? [
+                              {
+                                name: i.thematicArea,
+                                type: "descriptor",
+                              },
+                            ]
+                          : []),
                       ]}
-                      resourceType="regulations-and-policies"
                       target="_blank"
-                      type={
-                        i.type
-                          ? getValueFromMultilangItem(language, i.type)
-                          : ""
-                      }
-                      link={i.external_link}
+                      type={i.documentType}
+                      link={i.link}
                     />
                   );
                 })}

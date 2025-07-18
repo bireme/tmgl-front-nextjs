@@ -1,28 +1,19 @@
+import {} from "@/services/types/regulationsAndPolices";
+
 import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
   GlobalSummitDto,
   GlobalSummitItemDto,
 } from "@/services/types/globalSummitDto";
-import {
-  RegulationAndPolicesItemDto,
-  RegulationsAndPolicesDto,
-} from "@/services/types/regulationsAndPolices";
-import {
-  decodeHtmlEntities,
-  getValueFromMultilangItem,
-  removeHTMLTagsAndLimit,
-} from "@/helpers/stringhelper";
-import moment, { lang } from "moment";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { GlobalSummitService } from "@/services/apiRepositories/GlobalSummitService";
 import { Pagination } from "../pagination";
-import { RegulationAndPolicesService } from "@/services/apiRepositories/RegulationAndPolices";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
-import { parseMultLangStringAttr } from "@/services/apiRepositories/utils";
 import { queryType } from "@/services/types/resources";
+import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
 export const GlobalSummitFeed = ({
@@ -72,7 +63,6 @@ export const GlobalSummitFeed = ({
 
   useEffect(() => {
     if (globalConfig) getRegulationsAndPolicies();
-    console.log("mudou de página", page);
   }, [page, filter, thematicArea, region, country, globalConfig]);
 
   return (
@@ -161,14 +151,35 @@ export const GlobalSummitFeed = ({
                         `${i.excerpt.length > 180 ? "..." : ""}`
                       }
                       tags={[
-                        {
-                          name: i.country ? i.country : "",
-                          type: "country",
-                        },
-                        {
-                          name: i.year ? i.year : "",
-                          type: "year",
-                        },
+                        ...(i.country
+                          ? [
+                              {
+                                name: i.country,
+                                type: "country",
+                              },
+                            ]
+                          : []),
+                        ...(i.region
+                          ? [
+                              {
+                                name: i.region,
+                                type: "region",
+                              },
+                            ]
+                          : []),
+                        ...(Array.isArray(i.thematicArea)
+                          ? i.thematicArea.map((tag) => ({
+                              name: tag,
+                              type: "descriptor",
+                            }))
+                          : i.thematicArea
+                          ? [
+                              {
+                                name: i.thematicArea,
+                                type: "descriptor",
+                              },
+                            ]
+                          : []),
                       ]}
                       target="_blank"
                       type={i.documentType}
