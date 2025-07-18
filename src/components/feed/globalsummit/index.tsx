@@ -85,6 +85,15 @@ export const GlobalSummitFeed = ({
               callBack={applyFilters}
               filters={[
                 {
+                  queryType: "region",
+                  label: "WHO region",
+                  items: apiResponse?.regionFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
+                },
+                {
                   queryType: "country",
                   label: "Country",
                   items: apiResponse?.countryFilter.map((c) => ({
@@ -97,6 +106,24 @@ export const GlobalSummitFeed = ({
                   queryType: "thematic_area",
                   label: "Thematic area",
                   items: apiResponse?.thematicAreaFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
+                },
+                {
+                  queryType: "document_type",
+                  label: "Document Type",
+                  items: apiResponse?.documentTypeFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
+                },
+                {
+                  queryType: "year",
+                  label: "Year",
+                  items: apiResponse?.yearFilter.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
                     id: undefined,

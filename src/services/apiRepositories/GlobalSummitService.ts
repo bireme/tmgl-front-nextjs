@@ -2,7 +2,9 @@ import {
   BibliographicItemDto,
   BibliographicServerResponseDTO,
 } from "../types/bibliographicDto";
+import axios, { all } from "axios";
 import {
+  mapBibliographicTypes,
   mapJoinedMultLangArrayToFilterItem,
   mergeFilterItems,
   parseMultLangStringAttr,
@@ -12,7 +14,7 @@ import { GlobalSummitDto } from "../types/globalSummitDto";
 import { LegislationServerResponseDTO } from "../types/legislationsTypes";
 import { MultimediaResponse } from "../types/multimediaTypes";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
-import axios from "axios";
+import { getRegionByCountry } from "@/components/feed/utils";
 import moment from "moment";
 import { queryType } from "../types/resources";
 
@@ -30,6 +32,10 @@ export class GlobalSummitService {
       this.getLegislations(10000, 0, lang!, queryItems, and),
       this.getLisResources(10000, 0, lang!, queryItems, and),
     ]);
+
+    if (queryItems) {
+      console.log("Estão pesquisando!");
+    }
 
     // Unifica os dados de todos os recursos
     const mergedData = allResults.flatMap((r) => r.data);
@@ -52,13 +58,30 @@ export class GlobalSummitService {
       ),
       countryFilter: mergeFilterItems(
         allResults[0].countryFilter,
-        allResults[1].countryFilter
-      ),
-      documentTypeFilter: [],
+        allResults[1].countryFilter,
+        allResults[2].countryFilter,
+        allResults[3].countryFilter
+      ).sort((a, b) => b.type.localeCompare(a.type)),
+      documentTypeFilter: mergeFilterItems(
+        allResults[0].documentTypeFilter,
+        allResults[1].documentTypeFilter,
+        allResults[2].documentTypeFilter,
+        allResults[3].documentTypeFilter
+      ).sort((a, b) => b.type.localeCompare(a.type)),
       eventFilter: [],
-      regionFilter: [],
-      thematicAreaFilter: [],
-      yearFilter: [],
+      regionFilter: mergeFilterItems(allResults[0].regionFilter),
+      thematicAreaFilter: mergeFilterItems(
+        allResults[0].thematicAreaFilter,
+        allResults[1].thematicAreaFilter,
+        allResults[2].thematicAreaFilter,
+        allResults[3].thematicAreaFilter
+      ).sort((a, b) => b.type.localeCompare(a.type)),
+      yearFilter: mergeFilterItems(
+        allResults[0].yearFilter,
+        allResults[1].yearFilter,
+        allResults[2].yearFilter,
+        allResults[3].yearFilter
+      ).sort((a, b) => Number(a.type) + Number(b.type)),
     };
   };
 
@@ -121,13 +144,21 @@ export class GlobalSummitService {
           data.data.diaServerResponse[0].facet_counts.facet_fields.publication_type.map(
             (t) => {
               return {
-                type: t[0],
+                type: mapBibliographicTypes(t[0]),
                 count: t[1],
               };
             }
           ),
         eventFilter: [],
-        regionFilter: [],
+        regionFilter: getRegionByCountry(
+          mapJoinedMultLangArrayToFilterItem(
+            data.data.diaServerResponse[0].facet_counts.facet_fields
+              .publication_country,
+            lang
+          ).map((c) => c.type)
+        ).map((r) => {
+          return { type: r, count: 99 };
+        }),
         thematicAreaFilter:
           data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
             (t) => {
@@ -251,7 +282,15 @@ export class GlobalSummitService {
           },
         ],
         eventFilter: [],
-        regionFilter: [],
+        regionFilter: getRegionByCountry(
+          mapJoinedMultLangArrayToFilterItem(
+            data.data.diaServerResponse[0].facet_counts.facet_fields
+              .publication_country,
+            lang
+          ).map((c) => c.type)
+        ).map((r) => {
+          return { type: r, count: 99 };
+        }),
         thematicAreaFilter:
           data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
             (y) => {
@@ -329,12 +368,45 @@ export class GlobalSummitService {
             year: d.publication_year,
           };
         }),
-        countryFilter: [],
-        documentTypeFilter: [],
+        countryFilter: mapJoinedMultLangArrayToFilterItem(
+          data.data.diaServerResponse[0].facet_counts.facet_fields.scope_region,
+          lang
+        ),
+        documentTypeFilter: [
+          {
+            type: "Legislation",
+            count: data.data.diaServerResponse[0].response.numFound,
+          },
+        ],
         eventFilter: [],
-        regionFilter: [],
-        thematicAreaFilter: [],
-        yearFilter: [],
+        regionFilter: getRegionByCountry(
+          mapJoinedMultLangArrayToFilterItem(
+            data.data.diaServerResponse[0].facet_counts.facet_fields
+              .scope_region,
+            lang
+          ).map((c) => c.type)
+        ).map((r) => {
+          return { type: r, count: 99 };
+        }),
+        thematicAreaFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.thematic_area_display.map(
+            (i) => {
+              let type = i[0]
+                .split("|")
+                .map((i) => i.replace("^", "|"))
+                .find((i) => i[0] == lang);
+              return {
+                type: type ? type : "",
+                count: parseInt(i[1]),
+              };
+            }
+          ),
+        yearFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.publication_year.map(
+            (y) => {
+              return { type: y[0], count: parseInt(y[1]) };
+            }
+          ),
         totalFound: data.data.diaServerResponse[0].response.numFound,
       };
     }
@@ -406,13 +478,43 @@ export class GlobalSummitService {
             year: moment(d.created_date, "YYYYMMDD").format("YYYY"),
           };
         }),
-        countryFilter: [],
+        countryFilter: mapJoinedMultLangArrayToFilterItem(
+          data.data.diaServerResponse[0].facet_counts.facet_fields
+            .publication_country,
+          lang
+        ),
         totalFound: data.data.diaServerResponse[0].response.numFound,
-        documentTypeFilter: [],
+        documentTypeFilter: [
+          {
+            type: "Internet Resources",
+            count: data.data.diaServerResponse[0].response.numFound,
+          },
+        ],
         eventFilter: [],
-        regionFilter: [],
-        thematicAreaFilter: [],
-        yearFilter: [],
+        regionFilter: getRegionByCountry(
+          mapJoinedMultLangArrayToFilterItem(
+            data.data.diaServerResponse[0].facet_counts.facet_fields
+              .publication_country,
+            lang
+          ).map((c) => c.type)
+        ).map((r) => {
+          return { type: r, count: 99 };
+        }),
+        thematicAreaFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
+            (t) => {
+              return {
+                type: t[0],
+                count: parseInt(t[1]),
+              };
+            }
+          ),
+        yearFilter: data.data.diaServerResponse[0].response.docs.map((d) => {
+          return {
+            type: moment(d.created_date, "YYYYMMDD").format("YYYY"),
+            count: 1,
+          };
+        }),
       };
     }
     return {

@@ -50,7 +50,7 @@ export interface FacetFields {
   publication_type: Array<String>;
   publication_year: Array<String>;
   scope: Array<String>;
-  scope_region: Array<String>;
+  scope_region: [string, number][];
   scope_state: Array<String>;
   status: Array<String>;
   tec_resource_type: Array<String>;
