@@ -108,8 +108,9 @@ export class EvidenceMapsService {
         data.data.diaServerResponse[0].facet_counts.facet_fields.language
       ),
       countryFilters: parseMultLangFilter(
-        data.data.diaServerResponse[0].facet_counts.facet_fields
-          .publication_country
+        data.data.diaServerResponse[0].facet_counts.facet_fields.publication_country.map(
+          ([joinedLangStr]) => joinedLangStr.replace(/\^/g, "|")
+        )
       ),
       thematicAreaFilters:
         data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(

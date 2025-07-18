@@ -96,19 +96,24 @@
   }
   iframe{
     background: white;
-    width: 100%; height: 100%; border: none;
+    width: 100%; height: 100%; 
+    border: solid #f3f3f2 1px;
+    overflow: hidden !important;
   }
   .block{
     position: absolute;
     top: 0;
     left: 0;
-    border-right: solid #f3f3f2 13px;
+    border-right: solid #f3f3f2 18px;
     border-radius: 10px;
     width: 100%;
     height: 100%;
     z-index: 10;
     pointer-events: all;
     background: transparent;
+    @media screen and (max-width: 1305px) {
+      border-bottom: solid #f3f3f2 25px;
+    }
     &.blockTop{
       border-top: solid #f3f3f2 40px;
     }
@@ -122,6 +127,13 @@
   border-radius: 18px;
   padding: 18px;
   min-height: 440px;
+  .CardContent{
+    max-width: 100%;
+    h3{
+      max-width: 100%;
+      line-break: anywhere;
+    }
+  }
   &.Small{
     min-height: 140px;
   }
@@ -150,7 +162,7 @@
       }
     .CardContent{
       width: 80%;
-      
+      max-width: 100%;
     }
     .Tags{
       display: none;
@@ -188,10 +200,14 @@
     text-decoration-skip-ink: none;
     margin-bottom: 10px;
     margin-top: 5px;
+    max-width: 100%;
+        line-break: break-all;
   }
   p{
     margin-top: 0px;
     margin-bottom: 0px;
+    max-width: 100%;
+        line-break: break-all;
     font-family: 'Roboto';
     font-size: 14px;
     font-weight: 300;

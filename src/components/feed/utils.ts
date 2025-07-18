@@ -19,8 +19,8 @@ export function getRegionByCountry(countries: string[]): string[] {
   const itemRegions = regions.filter((region) =>
     region.countries.some((country) =>
       countries
-        .map((c) => c.toLocaleLowerCase())
-        .includes(country.toLocaleLowerCase())
+        .map((c) => c?.toLocaleLowerCase())
+        .includes(country?.toLocaleLowerCase())
     )
   );
   return itemRegions.map((region) => region.region);

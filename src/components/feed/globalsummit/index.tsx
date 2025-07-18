@@ -8,15 +8,15 @@ import {
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
+import { GlobalSummitService } from "@/services/apiRepositories/GlobalSummitService";
 import { Pagination } from "../pagination";
-import { RegulationsAndPolicesService } from "@/services/apiRepositories/RegulationAndPolices";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
 import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const RegulationsAndPolicesFeed = ({
+export const GlobalSummitFeed = ({
   displayType,
   country,
   region,
@@ -29,7 +29,7 @@ export const RegulationsAndPolicesFeed = ({
 }) => {
   const { globalConfig, language } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
-  const _service = new RegulationsAndPolicesService();
+  const _service = new GlobalSummitService();
   const count = 11;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);

@@ -1,6 +1,10 @@
 import { EventsItemsDto, EventsServiceDto } from "../types/eventsDto";
 import { getDescriptorTags, getRegionByCountry } from "@/components/feed/utils";
-import { mapToFilterItems, parseMultLangFilter } from "./utils";
+import {
+  mapToFilterItems,
+  parseCountriesByAttr,
+  parseMultLangFilter,
+} from "./utils";
 
 import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
@@ -13,7 +17,8 @@ export class DireveService {
     count: number,
     start: number,
     queryItems?: Array<queryType>,
-    language?: string
+    language?: string,
+    and?: boolean
   ): Promise<EventsServiceDto> => {
     try {
       let query = undefined;
@@ -23,11 +28,13 @@ export class DireveService {
       query = `thematic_area:"TMGL"${
         queryItems
           ? queryItems.map((k) => {
-              return `&${k.parameter}:"${k.query.replace('"', "")}"`;
+              return `${k.parameter}:"${k.query.replace('"', "")}"`;
             })
           : ""
       }`;
       q = "*:*";
+
+      console.log(query);
 
       const { data } = await axios.post<RepositoryApiResponse>("/api/direve", {
         query,
@@ -40,7 +47,6 @@ export class DireveService {
       let responseItems: EventsItemsDto[] = [];
 
       if (data) {
-        console.log(data);
         responseItems = data.data.diaServerResponse[0].response.docs.map(
           (event: any) => {
             return {
@@ -49,7 +55,9 @@ export class DireveService {
               observations: event.observations?.join(" , "),
               location: event.location,
               date: event.date,
-              countries: [event.country],
+              countries: event.country
+                ? parseCountriesByAttr([event.country])
+                : [],
               target_groups: event.target_groups,
               descriptors: event.descriptor,
               modality: event.event_modality,
@@ -67,12 +75,9 @@ export class DireveService {
       let responseDto: EventsServiceDto = {
         totalFound: data.data.diaServerResponse[0].response.numFound,
         data: responseItems,
-        countryFilters:
-          data.data.diaServerResponse[0].facet_counts.facet_fields.country.map(
-            (c) => {
-              return { count: parseInt(c[1]), type: c[0] };
-            }
-          ),
+        countryFilters: parseMultLangFilter(
+          data.data.diaServerResponse[0].facet_counts.facet_fields.country
+        ),
         modalityFilter: mapToFilterItems(
           data.data.diaServerResponse[0].response.docs
         ),
@@ -102,9 +107,10 @@ export class DireveService {
 
   public formatTags = (item: EventsItemsDto, language: string) => {
     const countries = item.countries;
-    let countryTags = countries?.map((c) => {
-      return { name: c, type: "country" };
-    });
+
+    let countryTags = countries?.map((c) =>
+      c.countryLangs.find((cl) => cl.lang === language)
+    );
 
     let descriptors = item.descriptors
       ? getDescriptorTags(item.descriptors)
@@ -114,7 +120,13 @@ export class DireveService {
     let regions: Array<TagItem> = [];
     if (countries) {
       regions = item.countries
-        ? getRegionByCountry(countries).map((c) => ({
+        ? getRegionByCountry(
+            countries.map(
+              (c) =>
+                c.countryLangs.filter((cl) => cl.lang === language)[0]
+                  .countryName
+            )
+          ).map((c) => ({
             name: c,
             type: "region",
           }))
@@ -122,7 +134,11 @@ export class DireveService {
     }
     let tags: any[] = [];
     if (countryTags) {
-      tags = descriptors.concat(countryTags);
+      let countryTagsMapped = countryTags.map((c) => ({
+        name: c?.countryName ? c.countryName : "",
+        type: "country",
+      }));
+      tags = descriptors.concat(countryTagsMapped);
     }
 
     if (regions.length > 0) {

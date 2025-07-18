@@ -14,7 +14,7 @@ export interface LegislationItemDto {
   title: string;
   act_scope: string;
   organ_issuer: string[];
-  language: string[];
+  language: string;
   unofficial_ementa: string;
   file: string;
   collection: string;

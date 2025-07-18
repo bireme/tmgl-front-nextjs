@@ -45,12 +45,12 @@ export interface FacetFields {
   license: Array<String>;
   media_collection_filter: Array<String>;
   media_type_filter: Array<String>;
-  publication_country: Array<String>;
+  publication_country: [string, number][];
   publication_language: Array<String>;
   publication_type: Array<String>;
   publication_year: Array<String>;
   scope: Array<String>;
-  scope_region: Array<String>;
+  scope_region: [string, number][];
   scope_state: Array<String>;
   status: Array<String>;
   tec_resource_type: Array<String>;

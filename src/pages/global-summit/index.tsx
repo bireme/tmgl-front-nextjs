@@ -4,12 +4,14 @@ import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
-import { RegulationsAndPolicesFeed } from "@/components/feed/regulationAndPolices";
+import { GlobalSummitFeed } from "@/components/feed/globalsummit";
+import { RepositoriesFeed } from "@/components/feed/repositories";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
-export default function RegulationAndPolices() {
+export default function GlobalSummit() {
   const { globalConfig } = useContext(GlobalContext);
+
   const router = useRouter();
   const { country, region, thematicArea } = router.query;
   const [displayType, setDisplayType] = useState<string>("column");
@@ -20,13 +22,15 @@ export default function RegulationAndPolices() {
           blackColor
           path={[
             { path: "/", name: "HOME" },
-            { path: "/legislations", name: "Legislations" },
+            {
+              path: "/global-summit",
+              name: "WHO TM Global Summit",
+            },
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
-          <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            Regulations And Policies
-          </h3>
+          <h3 className={styles.TitleWithIcon}>WHO TM Global Summit</h3>
+
           <div>
             <IconLayoutGrid
               size={30}
@@ -43,12 +47,9 @@ export default function RegulationAndPolices() {
           </div>
         </Flex>
         <Flex px={15} mb={40}>
-          <p className={styles.DescriptionThin}>
-            {globalConfig?.acf.legislations_description}
-          </p>
+          <p>{globalConfig?.acf.who_tm_global_summit_description}</p>
         </Flex>
-
-        <RegulationsAndPolicesFeed
+        <GlobalSummitFeed
           thematicArea={thematicArea ? thematicArea.toString() : undefined}
           country={country ? country.toString() : undefined}
           region={region ? region.toString() : undefined}
