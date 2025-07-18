@@ -17,7 +17,8 @@ export class DireveService {
     count: number,
     start: number,
     queryItems?: Array<queryType>,
-    language?: string
+    language?: string,
+    and?: boolean
   ): Promise<EventsServiceDto> => {
     try {
       let query = undefined;
@@ -27,11 +28,13 @@ export class DireveService {
       query = `thematic_area:"TMGL"${
         queryItems
           ? queryItems.map((k) => {
-              return `&${k.parameter}:"${k.query.replace('"', "")}"`;
+              return `${k.parameter}:"${k.query.replace('"', "")}"`;
             })
           : ""
       }`;
       q = "*:*";
+
+      console.log(query);
 
       const { data } = await axios.post<RepositoryApiResponse>("/api/direve", {
         query,
@@ -44,7 +47,6 @@ export class DireveService {
       let responseItems: EventsItemsDto[] = [];
 
       if (data) {
-        console.log(data);
         responseItems = data.data.diaServerResponse[0].response.docs.map(
           (event: any) => {
             return {
@@ -105,8 +107,7 @@ export class DireveService {
 
   public formatTags = (item: EventsItemsDto, language: string) => {
     const countries = item.countries;
-    console.log(language);
-    console.log(countries);
+
     let countryTags = countries?.map((c) =>
       c.countryLangs.find((cl) => cl.lang === language)
     );

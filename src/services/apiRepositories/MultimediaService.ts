@@ -82,7 +82,7 @@ export class MultimediaService {
         ),
         regionFilters: returnObj.facet_counts.facet_fields.scope_region.map(
           (k) => {
-            return { type: k[0], count: parseInt(k[1]) };
+            return { type: k[0], count: k[1] };
           }
         ),
         thematicAreaFilters:
