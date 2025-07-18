@@ -110,17 +110,17 @@ export class RegulationsAndPolicesService {
       countryFilter: mergeFilterItems(
         allResults[0].countryFilter,
         allResults[1].countryFilter
-      ).sort((a, b) => b.type.localeCompare(a.type)),
+      ).sort((a, b) => a.type.localeCompare(b.type)),
       documentTypeFilter: mergeFilterItems(
         allResults[0].documentTypeFilter,
         allResults[1].documentTypeFilter
-      ).sort((a, b) => b.type.localeCompare(a.type)),
+      ).sort((a, b) => a.type.localeCompare(b.type)),
       eventFilter: [],
       regionFilter: mergeFilterItems(allResults[0].regionFilter),
       thematicAreaFilter: mergeFilterItems(
         allResults[0].thematicAreaFilter,
         allResults[1].thematicAreaFilter
-      ).sort((a, b) => b.type.localeCompare(a.type)),
+      ).sort((a, b) => a.type.localeCompare(b.type)),
       yearFilter: mergeFilterItems(
         allResults[0].yearFilter,
         allResults[1].yearFilter

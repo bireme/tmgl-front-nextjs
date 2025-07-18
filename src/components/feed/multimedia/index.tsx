@@ -66,6 +66,12 @@ export const MultimediaFeed = ({
 
   useEffect(() => {
     if (globalConfig) getMedias();
+    const pixelRatio = window.devicePixelRatio;
+    if (pixelRatio !== 1) {
+      document.body.style.transform = `scale(${1 / pixelRatio})`;
+      document.body.style.transformOrigin = "0 0";
+      document.body.style.width = `${pixelRatio * 100}%`;
+    }
   }, [page, filter, thematicArea, region, country, globalConfig]);
 
   return (
@@ -77,6 +83,14 @@ export const MultimediaFeed = ({
             <ResourceFilters
               callBack={applyFilters}
               filters={[
+                {
+                  queryType: "country",
+                  label: "Country",
+                  items: apiResponse?.countryFilters.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                  })),
+                },
                 {
                   queryType: "descriptor",
                   label: "Thematic area",

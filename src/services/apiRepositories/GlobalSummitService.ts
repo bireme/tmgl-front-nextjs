@@ -114,13 +114,13 @@ export class GlobalSummitService {
         allResults[1].countryFilter,
         allResults[2].countryFilter,
         allResults[3].countryFilter
-      ).sort((a, b) => b.type.localeCompare(a.type)),
+      ).sort((a, b) => a.type.localeCompare(b.type)),
       documentTypeFilter: mergeFilterItems(
         allResults[0].documentTypeFilter,
         allResults[1].documentTypeFilter,
         allResults[2].documentTypeFilter,
         allResults[3].documentTypeFilter
-      ).sort((a, b) => b.type.localeCompare(a.type)),
+      ).sort((a, b) => a.type.localeCompare(b.type)),
       eventFilter: [],
       regionFilter: mergeFilterItems(allResults[0].regionFilter),
       thematicAreaFilter: mergeFilterItems(
@@ -128,7 +128,7 @@ export class GlobalSummitService {
         allResults[1].thematicAreaFilter,
         allResults[2].thematicAreaFilter,
         allResults[3].thematicAreaFilter
-      ).sort((a, b) => b.type.localeCompare(a.type)),
+      ).sort((a, b) => a.type.localeCompare(b.type)),
       yearFilter: mergeFilterItems(
         allResults[0].yearFilter,
         allResults[1].yearFilter,

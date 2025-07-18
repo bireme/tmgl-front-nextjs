@@ -121,6 +121,17 @@ export const EventsFeed = ({
                   ),
                 },
                 {
+                  queryType: "country",
+                  label: "Country",
+                  items: apiResponse?.countryFilters
+                    .filter((c) => c.lang == language)
+                    .map((c) => ({
+                      label: c.type,
+                      ocorrences: c.count,
+                      id: c.queryString,
+                    })),
+                },
+                {
                   queryType: "publication_year",
                   label: "Year",
                   items: apiResponse?.publicationYearFilter?.map((c) => ({
@@ -143,17 +154,6 @@ export const EventsFeed = ({
                     label: c.type,
                     ocorrences: c.count,
                   })),
-                },
-                {
-                  queryType: "country",
-                  label: "Country",
-                  items: apiResponse?.countryFilters
-                    .filter((c) => c.lang == language)
-                    .map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                      id: c.queryString,
-                    })),
                 },
               ]}
             />
