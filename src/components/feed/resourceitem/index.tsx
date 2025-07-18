@@ -1,8 +1,8 @@
 import { Badge, Flex, LoadingOverlay } from "@mantine/core";
 import { IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
-import PdfThumbnail, { IframeThumbNail } from "../multimedia/pdf_thumbnail";
 import { useEffect, useState } from "react";
 
+import { IframeThumbNail } from "../multimedia/pdf_thumbnail";
 import moment from "moment";
 import styles from "../../../styles/components/resources.module.scss";
 
@@ -65,7 +65,7 @@ export const ResourceCard = ({
   const cardImage = () => {
     if (image) {
       if (isPdf(image)) {
-        return <PdfThumbnail url={image} />;
+        return <IframeThumbNail url={image} type="pdf" />;
       }
       if (isImage(image)) {
         return (
