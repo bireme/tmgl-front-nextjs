@@ -65,7 +65,7 @@ export class RegulationsAndPolicesService {
         );
       }
 
-      if (stringParameter) {
+      if (stringParameter.length > 0) {
         orderedData = orderedData.filter(
           (item) =>
             item.title

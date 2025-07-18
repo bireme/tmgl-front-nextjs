@@ -67,7 +67,7 @@ export class GlobalSummitService {
         );
       }
 
-      if (stringParameter) {
+      if (stringParameter.length > 0) {
         orderedData = orderedData.filter(
           (item) =>
             item.title
