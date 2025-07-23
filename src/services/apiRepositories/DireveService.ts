@@ -1,18 +1,190 @@
 import { EventsItemsDto, EventsServiceDto } from "../types/eventsDto";
-import { getDescriptorTags, getRegionByCountry } from "@/components/feed/utils";
 import {
+  applyDefaultResourceFilters,
+  mapJoinedMultLangArrayToFilterItem,
   mapToFilterItems,
+  mergeFilterItems,
   parseCountriesByAttr,
   parseMultLangFilter,
+  parseMultLangStringAttr,
 } from "./utils";
+import { getDescriptorTags, getRegionByCountry } from "@/components/feed/utils";
+import moment, { lang } from "moment";
 
+import { DefaultResourceDto } from "../types/defaultResource";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
-import { lang } from "moment";
 import { queryType } from "../types/resources";
 
 export class DireveService {
+  public getDefaultResources = async (
+    count: number,
+    start: number,
+    lang: string,
+    queryItems?: Array<queryType>
+  ): Promise<DefaultResourceDto> => {
+    const allResults = await Promise.all([
+      this.getDireveResources(10000, 0, lang!),
+    ]);
+
+    const mergedData = allResults.flatMap((r) => r.data);
+
+    let orderedData = mergedData.sort((a, b) => {
+      const yearA = parseInt(a.year || "0");
+      const yearB = parseInt(b.year || "0");
+      return yearB - yearA;
+    });
+
+    if (queryItems) {
+      orderedData = applyDefaultResourceFilters(queryItems, orderedData);
+    }
+    const paginated = orderedData.slice(start, start + count);
+
+    return {
+      data: paginated,
+      totalFound: orderedData.length,
+      countryFilter: allResults[0].countryFilter.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      documentTypeFilter: allResults[0].documentTypeFilter.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      eventFilter: allResults[0].eventFilter?.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      regionFilter: allResults[0].regionFilter,
+      thematicAreaFilter: allResults[0].thematicAreaFilter.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      yearFilter: allResults[0].yearFilter.sort(
+        (a, b) => Number(a.type) + Number(b.type)
+      ),
+      modalityFilter: allResults[0].modalityFilter?.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+    };
+  };
+
+  public getDireveResources = async (
+    count: number,
+    start: number,
+    lang: string,
+    queryItems?: Array<queryType>,
+    and?: boolean
+  ): Promise<DefaultResourceDto> => {
+    let query = undefined;
+    let q = undefined;
+
+    query = `thematic_area:"TMGL"${and ? "&" : ""}${
+      queryItems
+        ? queryItems
+            .map((k) => {
+              return `${k.parameter}:"${k.query.replace('"', "")}"`;
+            })
+            .join("&")
+        : ""
+    }`;
+    q = "*:*";
+    const { data } = await axios.post<RepositoryApiResponse>("/api/direve", {
+      query,
+      count,
+      start,
+      q,
+      lang,
+    });
+
+    if (data) {
+      return {
+        data: data.data.diaServerResponse[0].response.docs.map((d) => {
+          return {
+            excerpt: d.observations ? d.observations?.join(",") : "",
+            id: d.id,
+            link: d.link[0],
+            title: d.title,
+            modality: d.event_modality ? d.event_modality[0] : "",
+            country: d.country
+              ? parseMultLangStringAttr(
+                  d.country.split("|").map((i) => i.replace("^", "|"))
+                ).find((i) => i.lang == lang)?.content
+              : "",
+            documentType: "Event",
+            thematicArea: d.thematic_area_display
+              ? d.thematic_area_display.map((t) => {
+                  return (
+                    parseMultLangStringAttr(
+                      t.split("|").map((i) => i.replace("^", "|"))
+                    ).find((i) => i.lang == lang)?.content || ""
+                  );
+                })
+              : [],
+            region: d.country
+              ? getRegionByCountry([
+                  parseMultLangStringAttr(
+                    d.country[0].split("|").map((i) => i.replace("^", "|"))
+                  ).find((i) => i.lang == lang)?.content || "",
+                ])[0]
+              : "",
+            year: moment(d.created_date, "YYYYMMDD").format("YYYY"),
+          };
+        }),
+        countryFilter: mapJoinedMultLangArrayToFilterItem(
+          data.data.diaServerResponse[0].facet_counts.facet_fields.country,
+          lang
+        ),
+        totalFound: data.data.diaServerResponse[0].response.numFound,
+        documentTypeFilter: [
+          {
+            type: "Events",
+            count: data.data.diaServerResponse[0].response.numFound,
+          },
+        ],
+        eventFilter: [],
+        regionFilter: getRegionByCountry(
+          mapJoinedMultLangArrayToFilterItem(
+            data.data.diaServerResponse[0].facet_counts.facet_fields.country,
+            lang
+          ).map((c) => c.type)
+        ).map((r) => {
+          return { type: r, count: 99 };
+        }),
+        thematicAreaFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
+            (t) => {
+              return {
+                type: t[0],
+                count: parseInt(t[1]),
+              };
+            }
+          ),
+        yearFilter: data.data.diaServerResponse[0].response.docs.map((d) => {
+          return {
+            type: moment(d.created_date, "YYYYMMDD").format("YYYY"),
+            count: 1,
+          };
+        }),
+        modalityFilter: data.data.diaServerResponse[0].response.docs.map(
+          (d) => {
+            return {
+              type: d.event_modality ? d.event_modality[0] : "",
+              count: 1,
+            };
+          }
+        ),
+      };
+    }
+    return {
+      data: [],
+      countryFilter: [],
+      documentTypeFilter: [],
+      eventFilter: [],
+      totalFound: 0,
+      regionFilter: [],
+      thematicAreaFilter: [],
+      yearFilter: [],
+    };
+  };
+
   public getResources = async (
     count: number,
     start: number,
@@ -74,7 +246,9 @@ export class DireveService {
         totalFound: data.data.diaServerResponse[0].response.numFound,
         data: responseItems,
         countryFilters: parseMultLangFilter(
-          data.data.diaServerResponse[0].facet_counts.facet_fields.country
+          data.data.diaServerResponse[0].facet_counts.facet_fields.publication_country.map(
+            ([joinedLangStr]) => joinedLangStr.replace(/\^/g, "|")
+          )
         ),
         modalityFilter: mapToFilterItems(
           data.data.diaServerResponse[0].response.docs

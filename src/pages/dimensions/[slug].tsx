@@ -184,15 +184,6 @@ export default function Dimensions() {
                   : undefined
               }
             />
-
-            <RecentMultimediaItems
-              filter={[
-                {
-                  parameter: "keyword",
-                  query: post.title.rendered.toLowerCase(),
-                },
-              ]}
-            />
           </div>
         </>
       ) : (

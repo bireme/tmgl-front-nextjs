@@ -4,11 +4,87 @@ import {
   FilterItem,
   MultLangFilter,
   MultLangStringAttr,
+  queryType,
 } from "../types/resources";
 
+import { DefaultResourceItemDto } from "../types/defaultResource";
 import { JournalDescription } from "../types/journalsDto";
 import { LisDocuments } from "../types/repositoryTypes";
 import { ThematicAreaApiDto } from "../types/evidenceMapsDto";
+
+export function applyDefaultResourceFilters(
+  queryItems: queryType[],
+  orderedData: DefaultResourceItemDto[]
+): DefaultResourceItemDto[] {
+  const stringParameter = queryItems.filter((q) => q.parameter === "title");
+  const modalityFilter = queryItems
+    .filter((q) => q.parameter === "modality")
+    .map((q) => q.query);
+  const yearFilters = queryItems
+    .filter((q) => q.parameter === "year")
+    .map((q) => q.query);
+  const documentFilters = queryItems
+    .filter((q) => q.parameter === "document_type")
+    .map((q) => q.query);
+  const thematicAreaFilters = queryItems
+    .filter((q) => q.parameter === "thematic_area")
+    .map((q) => q.query);
+  const countryFilters = queryItems
+    .filter((q) => q.parameter === "country")
+    .map((q) => q.query);
+  const regionFilters = queryItems
+    .filter((q) => q.parameter === "region")
+    .map((q) => q.query);
+
+  if (regionFilters.length) {
+    orderedData = orderedData.filter((item) =>
+      regionFilters.includes(item.region ? item.region : "")
+    );
+  }
+
+  if (modalityFilter.length) {
+    orderedData = orderedData.filter((item) =>
+      modalityFilter.includes(item.modality ? item.modality : "")
+    );
+  }
+
+  if (stringParameter.length > 0) {
+    orderedData = orderedData.filter(
+      (item) =>
+        item.title
+          .toLowerCase()
+          .includes(stringParameter[0].query.toLowerCase()) ||
+        item.excerpt
+          .toLowerCase()
+          .includes(stringParameter[0].query.toLowerCase())
+    );
+  }
+
+  if (yearFilters.length) {
+    orderedData = orderedData.filter((item) =>
+      yearFilters.includes(item.year ? item.year : "")
+    );
+  }
+  if (countryFilters.length) {
+    orderedData = orderedData.filter((item) =>
+      countryFilters.includes(item.country ? item.country : "")
+    );
+  }
+  if (documentFilters.length) {
+    orderedData = orderedData.filter((item) =>
+      documentFilters.includes(item.documentType ? item.documentType : "")
+    );
+  }
+  if (thematicAreaFilters.length) {
+    orderedData = orderedData.filter((item) =>
+      Array.isArray(item.thematicArea)
+        ? item.thematicArea.some((ta) => thematicAreaFilters.includes(ta))
+        : thematicAreaFilters.includes(item.thematicArea || "")
+    );
+  }
+
+  return orderedData;
+}
 
 export const findDescription = (
   descriptions: JournalDescription[],

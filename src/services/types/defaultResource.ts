@@ -1,17 +1,18 @@
 import { FilterItem } from "./resources";
 
-export interface GlobalSummitDto {
-  data: GlobalSummitItemDto[];
-  eventFilter: FilterItem[];
+export interface DefaultResourceDto {
+  data: DefaultResourceItemDto[];
   regionFilter: FilterItem[];
   countryFilter: FilterItem[];
   thematicAreaFilter: FilterItem[];
   documentTypeFilter: FilterItem[];
   yearFilter: FilterItem[];
+  modalityFilter?: FilterItem[];
+  eventFilter?: FilterItem[];
   totalFound: number;
 }
 
-export interface GlobalSummitItemDto {
+export interface DefaultResourceItemDto {
   id: string;
   link: string;
   title: string;
@@ -21,4 +22,5 @@ export interface GlobalSummitItemDto {
   thematicArea?: string[];
   documentType?: string;
   year?: string;
+  modality?: string;
 }

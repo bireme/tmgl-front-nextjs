@@ -2,9 +2,9 @@ import {} from "@/services/types/regulationsAndPolices";
 
 import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
-  GlobalSummitDto,
-  GlobalSummitItemDto,
-} from "@/services/types/globalSummitDto";
+  DefaultResourceDto,
+  DefaultResourceItemDto,
+} from "@/services/types/defaultResource";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
@@ -34,8 +34,8 @@ export const RegulationsAndPolicesFeed = ({
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
-  const [items, setItems] = useState<GlobalSummitItemDto[]>([]);
-  const [apiResponse, setApiResponse] = useState<GlobalSummitDto>();
+  const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
+  const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
@@ -55,7 +55,6 @@ export const RegulationsAndPolicesFeed = ({
       setItems(response.data);
       setApiResponse(response);
     } catch (error) {
-      console.log(error);
       console.log("Error while fetching Legislations");
     }
     setLoading(false);
@@ -168,10 +167,12 @@ export const RegulationsAndPolicesFeed = ({
                             ]
                           : []),
                         ...(Array.isArray(i.thematicArea)
-                          ? i.thematicArea.map((tag) => ({
-                              name: tag,
-                              type: "descriptor",
-                            }))
+                          ? i.thematicArea
+                              .filter((tag) => tag.trim() !== "") // Remove strings vazias ou com apenas espaços
+                              .map((tag) => ({
+                                name: tag,
+                                type: "descriptor",
+                              }))
                           : i.thematicArea
                           ? [
                               {

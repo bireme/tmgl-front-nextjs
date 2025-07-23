@@ -29,7 +29,7 @@ export interface FacetFields {
   aggregation_level: Array<String>;
   audience: Array<String>;
   collection: Array<String>;
-  country: Array<String>;
+  country: [string, number][];
   course_type: Array<String>;
   database: Array<String>;
   descriptor_filter: Array<String>;
@@ -66,6 +66,7 @@ export interface ApiResponse {
 
 export interface LisDocuments {
   _version_: number;
+  observations?: string[];
   abstract: string;
   created_date: string;
   descriptor: string[];

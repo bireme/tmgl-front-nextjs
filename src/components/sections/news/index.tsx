@@ -92,7 +92,7 @@ export const NewsSection = ({ region, title }: NewsSectionProps) => {
         <Container size={"xl"} py={80}>
           {title && posts.length > 0 ? (
             <>
-              <h2 className={styles.TitleWithIcon}>News from WHO GTMC</h2>
+              <h2 className={styles.TitleWithIcon}>News from WHO</h2>
             </>
           ) : (
             <></>

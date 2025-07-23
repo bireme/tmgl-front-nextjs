@@ -1,9 +1,9 @@
 import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
-import { EventsItemsDto, EventsServiceDto } from "@/services/types/eventsDto";
 import {
-  decodeHtmlEntities,
-  removeHTMLTagsAndLimit,
-} from "@/helpers/stringhelper";
+  DefaultResourceDto,
+  DefaultResourceItemDto,
+} from "@/services/types/defaultResource";
+import { EventsItemsDto, EventsServiceDto } from "@/services/types/eventsDto";
 import { useContext, useEffect, useState } from "react";
 
 import { DireveService } from "@/services/apiRepositories/DireveService";
@@ -13,6 +13,7 @@ import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
 import { groupOccurrencesByRegion } from "../utils";
 import { queryType } from "@/services/types/resources";
+import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
 export const EventsFeed = ({
@@ -32,12 +33,12 @@ export const EventsFeed = ({
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
-  const [items, setItems] = useState<EventsItemsDto[]>([]);
-  const [apiResponse, setApiResponse] = useState<EventsServiceDto>();
+  const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
+  const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
   const { language } = useContext(GlobalContext);
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
 
-  const initialFilters = (apiResponse: EventsServiceDto) => {
+  const initialFilters = (apiResponse: DefaultResourceDto) => {
     if (country) {
       applyFilters([
         {
@@ -77,21 +78,19 @@ export const EventsFeed = ({
   const getEvents = async () => {
     setLoading(true);
     try {
-      const response = await _service.getResources(
-        count + 1,
+      const response = await _service.getDefaultResources(
+        count,
         (page - 1) * count,
-        filter && filter.length > 0 ? filter : undefined,
         language,
-        true
+        filter && filter.length > 0 ? filter : undefined
       );
-      setTotalPages(response.totalFound / count);
+      setTotalPages(Math.ceil(response.totalFound / count));
       setItems(response.data);
       setApiResponse(response);
       if ((country || region || thematicArea) && !initialFilterDone) {
         initialFilters(response);
       }
     } catch (error) {
-      console.log(error);
       console.log("Error while fetching Events");
     }
     setLoading(false);
@@ -99,7 +98,7 @@ export const EventsFeed = ({
 
   useEffect(() => {
     getEvents();
-  }, [page, filter]);
+  }, [page, filter, thematicArea, region, country]);
 
   return (
     <>
@@ -113,47 +112,50 @@ export const EventsFeed = ({
                 {
                   queryType: "Region",
                   label: "WHO Regions",
-                  items: groupOccurrencesByRegion(
-                    apiResponse?.countryFilters.map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                    }))
-                  ),
+                  items: apiResponse?.regionFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
                 },
                 {
                   queryType: "country",
                   label: "Country",
-                  items: apiResponse?.countryFilters
-                    .filter((c) => c.lang == language)
-                    .map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                      id: c.queryString,
-                    })),
+                  items: apiResponse?.countryFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
+                },
+
+                {
+                  queryType: "descriptor",
+                  label: "Thematic area",
+                  items: apiResponse?.thematicAreaFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
                 },
                 {
                   queryType: "publication_year",
                   label: "Year",
-                  items: apiResponse?.publicationYearFilter?.map((c) => ({
+                  items: apiResponse?.yearFilter.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
+                    id: undefined,
                   })),
                 },
                 {
-                  queryType: "descriptor",
-                  label: "Thematic area",
-                  items: apiResponse?.descriptorFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
-                },
-                {
-                  queryType: "event_modality",
+                  queryType: "modality",
                   label: "Modality",
-                  items: apiResponse?.modalityFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
+                  items: apiResponse.modalityFilter
+                    ? apiResponse?.modalityFilter.map((c) => ({
+                        label: c.type,
+                        ocorrences: c.count,
+                        id: undefined,
+                      }))
+                    : [],
                 },
               ]}
             />
@@ -178,17 +180,50 @@ export const EventsFeed = ({
                     <ResourceCard
                       displayType={displayType}
                       key={k}
-                      title={`${removeHTMLTagsAndLimit(
-                        i.title ? i.title : "",
-                        100
-                      )} ${i.title?.length > 100 ? "..." : ""}`}
-                      tags={_service.formatTags(i, language)}
-                      excerpt={`${removeHTMLTagsAndLimit(
-                        i.observations ? i.observations : "",
-                        180
-                      )} ${i.observations?.length > 180 ? "..." : ""}`}
-                      link={i.links ? i.links[0].url : ""}
+                      title={
+                        removeHTMLTagsAndLimit(i.title, 120) +
+                        `${i.title.length > 120 ? "..." : ""}`
+                      }
+                      excerpt={
+                        removeHTMLTagsAndLimit(i.excerpt, 180) +
+                        `${i.excerpt.length > 180 ? "..." : ""}`
+                      }
+                      tags={[
+                        ...(i.country
+                          ? [
+                              {
+                                name: i.country,
+                                type: "country",
+                              },
+                            ]
+                          : []),
+                        ...(i.region
+                          ? [
+                              {
+                                name: i.region,
+                                type: "region",
+                              },
+                            ]
+                          : []),
+                        ...(Array.isArray(i.thematicArea)
+                          ? i.thematicArea
+                              .filter((tag) => tag.trim() !== "")
+                              .map((tag) => ({
+                                name: tag,
+                                type: "descriptor",
+                              }))
+                          : i.thematicArea
+                          ? [
+                              {
+                                name: i.thematicArea,
+                                type: "descriptor",
+                              },
+                            ]
+                          : []),
+                      ]}
                       target="_blank"
+                      type={i.documentType}
+                      link={i.link}
                     />
                   );
                 })}

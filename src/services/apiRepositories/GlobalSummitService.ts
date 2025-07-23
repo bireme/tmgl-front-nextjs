@@ -1,16 +1,14 @@
 import {
-  BibliographicItemDto,
-  BibliographicServerResponseDTO,
-} from "../types/bibliographicDto";
-import axios, { all } from "axios";
-import {
+  applyDefaultResourceFilters,
   mapBibliographicTypes,
   mapJoinedMultLangArrayToFilterItem,
   mergeFilterItems,
   parseMultLangStringAttr,
 } from "./utils";
+import axios, { all } from "axios";
 
-import { GlobalSummitDto } from "../types/globalSummitDto";
+import { BibliographicServerResponseDTO } from "../types/bibliographicDto";
+import { DefaultResourceDto } from "../types/defaultResource";
 import { LegislationServerResponseDTO } from "../types/legislationsTypes";
 import { MultimediaResponse } from "../types/multimediaTypes";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
@@ -25,7 +23,7 @@ export class GlobalSummitService {
     lang: string,
     queryItems?: Array<queryType>,
     and?: boolean
-  ): Promise<GlobalSummitDto> => {
+  ): Promise<DefaultResourceDto> => {
     const allResults = await Promise.all([
       this.getBibliographic(10000, 0, lang!),
       this.getMultimedia(10000, 0, lang!),
@@ -44,66 +42,8 @@ export class GlobalSummitService {
     });
 
     if (queryItems) {
-      const stringParameter = queryItems.filter((q) => q.parameter === "title");
-      const yearFilters = queryItems
-        .filter((q) => q.parameter === "year")
-        .map((q) => q.query);
-      const documentFilters = queryItems
-        .filter((q) => q.parameter === "document_type")
-        .map((q) => q.query);
-      const thematicAreaFilters = queryItems
-        .filter((q) => q.parameter === "thematic_area")
-        .map((q) => q.query);
-      const countryFilters = queryItems
-        .filter((q) => q.parameter === "country")
-        .map((q) => q.query);
-      const regionFilters = queryItems
-        .filter((q) => q.parameter === "region")
-        .map((q) => q.query);
-
-      if (regionFilters.length) {
-        orderedData = orderedData.filter((item) =>
-          regionFilters.includes(item.region ? item.region : "")
-        );
-      }
-
-      if (stringParameter.length > 0) {
-        orderedData = orderedData.filter(
-          (item) =>
-            item.title
-              .toLowerCase()
-              .includes(stringParameter[0].query.toLowerCase()) ||
-            item.excerpt
-              .toLowerCase()
-              .includes(stringParameter[0].query.toLowerCase())
-        );
-      }
-
-      if (yearFilters.length) {
-        orderedData = orderedData.filter((item) =>
-          yearFilters.includes(item.year ? item.year : "")
-        );
-      }
-      if (countryFilters.length) {
-        orderedData = orderedData.filter((item) =>
-          countryFilters.includes(item.country ? item.country : "")
-        );
-      }
-      if (documentFilters.length) {
-        orderedData = orderedData.filter((item) =>
-          documentFilters.includes(item.documentType ? item.documentType : "")
-        );
-      }
-      if (thematicAreaFilters.length) {
-        orderedData = orderedData.filter((item) =>
-          Array.isArray(item.thematicArea)
-            ? item.thematicArea.some((ta) => thematicAreaFilters.includes(ta))
-            : thematicAreaFilters.includes(item.thematicArea || "")
-        );
-      }
+      orderedData = applyDefaultResourceFilters(queryItems, orderedData);
     }
-
-    // Aplica a paginação solicitada
     const paginated = orderedData.slice(start, start + count);
 
     return {
@@ -144,7 +84,7 @@ export class GlobalSummitService {
     lang: string,
     queryItems?: Array<queryType>,
     and?: boolean
-  ): Promise<GlobalSummitDto> => {
+  ): Promise<DefaultResourceDto> => {
     let query = undefined;
     let q = undefined;
     query = `database:"GTM Summit - The First WHO Tradicional Medicine Global Summit"${
@@ -260,7 +200,7 @@ export class GlobalSummitService {
     lang: string,
     queryItems?: Array<queryType>,
     and?: boolean
-  ): Promise<GlobalSummitDto> => {
+  ): Promise<DefaultResourceDto> => {
     let query = undefined;
     let q = undefined;
     const countryQueryCount = queryItems?.filter(
@@ -383,7 +323,7 @@ export class GlobalSummitService {
     lang: string,
     queryItems?: Array<queryType>,
     and?: boolean
-  ): Promise<GlobalSummitDto> => {
+  ): Promise<DefaultResourceDto> => {
     let query = undefined;
     let q = undefined;
     query = `indexed_database:"TMGL-Africa"${and ? "&" : ""}${
@@ -486,7 +426,7 @@ export class GlobalSummitService {
     lang: string,
     queryItems?: Array<queryType>,
     and?: boolean
-  ): Promise<GlobalSummitDto> => {
+  ): Promise<DefaultResourceDto> => {
     let query = undefined;
     let q = undefined;
 

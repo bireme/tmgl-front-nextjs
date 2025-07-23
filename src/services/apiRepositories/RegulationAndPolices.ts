@@ -1,7 +1,3 @@
-import {
-  BibliographicItemDto,
-  BibliographicServerResponseDTO,
-} from "../types/bibliographicDto";
 import axios, { all } from "axios";
 import {
   mapBibliographicTypes,
@@ -10,12 +6,10 @@ import {
   parseMultLangStringAttr,
 } from "./utils";
 
-import { GlobalSummitDto } from "../types/globalSummitDto";
+import { BibliographicServerResponseDTO } from "../types/bibliographicDto";
+import { DefaultResourceDto } from "../types/defaultResource";
 import { LegislationServerResponseDTO } from "../types/legislationsTypes";
-import { MultimediaResponse } from "../types/multimediaTypes";
-import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { getRegionByCountry } from "@/components/feed/utils";
-import moment from "moment";
 import { queryType } from "../types/resources";
 
 export class RegulationsAndPolicesService {
@@ -25,7 +19,7 @@ export class RegulationsAndPolicesService {
     lang: string,
     queryItems?: Array<queryType>,
     and?: boolean
-  ): Promise<GlobalSummitDto> => {
+  ): Promise<DefaultResourceDto> => {
     const allResults = await Promise.all([
       this.getBibliographic(10000, 0, lang!),
       this.getLegislations(10000, 0, lang!),
@@ -134,7 +128,7 @@ export class RegulationsAndPolicesService {
     lang: string,
     queryItems?: Array<queryType>,
     and?: boolean
-  ): Promise<GlobalSummitDto> => {
+  ): Promise<DefaultResourceDto> => {
     let query = undefined;
     let q = undefined;
     query = `database:"Legislations"${and ? "&" : ""}${
@@ -248,7 +242,7 @@ export class RegulationsAndPolicesService {
     lang: string,
     queryItems?: Array<queryType>,
     and?: boolean
-  ): Promise<GlobalSummitDto> => {
+  ): Promise<DefaultResourceDto> => {
     let query = undefined;
     let q = undefined;
     query = `thematic_area:"TMGL"${and ? "&" : ""}${
