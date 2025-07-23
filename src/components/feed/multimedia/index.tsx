@@ -1,12 +1,8 @@
 import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
-  MultimediaObject,
-  MultimediaServiceDto,
-} from "@/services/types/multimediaTypes";
-import {
-  decodeHtmlEntities,
-  removeHTMLTagsAndLimit,
-} from "@/helpers/stringhelper";
+  DefaultResourceDto,
+  DefaultResourceItemDto,
+} from "@/services/types/defaultResource";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
@@ -15,8 +11,8 @@ import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
 import { queryType } from "@/services/types/resources";
+import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
-import { translateType } from "./functions";
 
 export const MultimediaFeed = ({
   displayType,
@@ -36,42 +32,70 @@ export const MultimediaFeed = ({
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
-  const [items, setItems] = useState<MultimediaObject[]>([]);
-  const [apiResponse, setApiResponse] = useState<MultimediaServiceDto>();
+  const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
+  const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
   const { language } = useContext(GlobalContext);
+  const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
+
+  const initialFilters = (apiResponse: DefaultResourceDto) => {
+    if (country) {
+      applyFilters([
+        {
+          parameter: "country",
+          query: country,
+        },
+      ]);
+    }
+    if (region) {
+      applyFilters([
+        {
+          parameter: "region",
+          query: region,
+        },
+      ]);
+    }
+    if (thematicArea) {
+      applyFilters([
+        {
+          parameter: "descriptor",
+          query: thematicArea,
+        },
+      ]);
+    }
+    setLoading(false);
+    setInitialFilterDone(true);
+  };
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(1);
   };
+
   const getMedias = async () => {
     setLoading(true);
     try {
-      const response = await _service.getResources(
+      const response = await _service.getDefaultResources(
         count + 1,
         (page - 1) * count,
-        filter && filter.length > 0 ? filter : undefined,
-        language
+        language,
+        filter && filter.length > 0 ? filter : undefined
       );
 
       setTotalPages(Math.ceil(response.totalFound / count));
       setItems(response.data);
       setApiResponse(response);
+      if ((country || region || thematicArea) && !initialFilterDone) {
+        initialFilters(response);
+      }
     } catch (error) {
       console.log(error);
-      console.log("Error while fetching Evidencemaps");
+      console.log("Error while fetching Multimedias");
     }
     setLoading(false);
   };
 
   useEffect(() => {
     if (globalConfig) getMedias();
-    const pixelRatio = window.devicePixelRatio;
-    if (pixelRatio !== 1) {
-      document.body.style.transform = `scale(${1 / pixelRatio})`;
-      document.body.style.transformOrigin = "0 0";
-      document.body.style.width = `${pixelRatio * 100}%`;
-    }
   }, [page, filter, thematicArea, region, country, globalConfig]);
 
   return (
@@ -84,38 +108,52 @@ export const MultimediaFeed = ({
               callBack={applyFilters}
               filters={[
                 {
-                  queryType: "country",
-                  label: "Country",
-                  items: apiResponse?.countryFilters.map((c) => ({
+                  queryType: "Region",
+                  label: "WHO Regions",
+                  items: apiResponse?.regionFilter.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
+                    id: undefined,
                   })),
                 },
+                {
+                  queryType: "country",
+                  label: "Country",
+                  items: apiResponse?.countryFilter.map((c) => ({
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  })),
+                },
+
                 {
                   queryType: "descriptor",
                   label: "Thematic area",
-                  items: apiResponse?.thematicAreaFilters.map((c) => ({
+                  items: apiResponse?.thematicAreaFilter.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
+                    id: undefined,
                   })),
                 },
                 {
-                  queryType: "language",
-                  label: "Language",
-                  items: apiResponse?.languageFilters.map((c) => ({
+                  queryType: "publication_year",
+                  label: "Year",
+                  items: apiResponse?.yearFilter.map((c) => ({
                     label: c.type,
                     ocorrences: c.count,
+                    id: undefined,
                   })),
                 },
                 {
-                  queryType: "media_type",
+                  queryType: "resource_type",
                   label: "Media Type",
-                  items: apiResponse?.typeFilters
-                    .filter((c) => c.lang == language)
-                    .map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                    })),
+                  items: apiResponse.resourceTypeFilter
+                    ? apiResponse?.resourceTypeFilter.map((c) => ({
+                        label: c.type,
+                        ocorrences: c.count,
+                        id: undefined,
+                      }))
+                    : [],
                 },
               ]}
             />
@@ -138,28 +176,56 @@ export const MultimediaFeed = ({
                 {items.map((i, k) => {
                   return (
                     <ResourceCard
+                      image={i.thumbnail}
                       displayType={displayType}
                       key={k}
+                      title={
+                        i.title
+                          ? removeHTMLTagsAndLimit(i.title, 120) +
+                            `${i.title.length > 120 ? "..." : ""}`
+                          : ""
+                      }
+                      excerpt={
+                        i.excerpt
+                          ? removeHTMLTagsAndLimit(i.excerpt, 180) +
+                            `${i.excerpt.length > 180 ? "..." : ""}`
+                          : ""
+                      }
+                      tags={[
+                        ...(i.country
+                          ? [
+                              {
+                                name: i.country,
+                                type: "country",
+                              },
+                            ]
+                          : []),
+                        ...(i.region
+                          ? [
+                              {
+                                name: i.region,
+                                type: "region",
+                              },
+                            ]
+                          : []),
+                        ...(Array.isArray(i.thematicArea)
+                          ? i.thematicArea
+                              .filter((tag) => tag.trim() !== "")
+                              .map((tag) => ({
+                                name: tag,
+                                type: "descriptor",
+                              }))
+                          : i.thematicArea
+                          ? [
+                              {
+                                name: i.thematicArea,
+                                type: "descriptor",
+                              },
+                            ]
+                          : []),
+                      ]}
                       target="_blank"
-                      title={decodeHtmlEntities(
-                        i.title_translated
-                          ? i.title_translated[0]
-                          : i.title
-                          ? i.title
-                          : ""
-                      )}
-                      type={i.media_type ? i.media_type : ""}
-                      image={i.thumbnail ? i.thumbnail : ""}
-                      excerpt={`${removeHTMLTagsAndLimit(
-                        i.description ? i.description[0] : "",
-                        120
-                      )} ${
-                        i.description
-                          ? i.description[0].length > 120
-                            ? "..."
-                            : ""
-                          : ""
-                      }`}
+                      type={i.documentType}
                       link={i.link}
                     />
                   );

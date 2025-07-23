@@ -44,7 +44,7 @@ export interface FacetFields {
   learning_resource_type: Array<String>;
   license: Array<String>;
   media_collection_filter: Array<String>;
-  media_type_filter: Array<String>;
+  media_type_filter: [string, number][];
   publication_country: [string, number][];
   publication_language: Array<String>;
   publication_type: Array<String>;

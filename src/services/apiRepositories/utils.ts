@@ -17,8 +17,11 @@ export function applyDefaultResourceFilters(
   orderedData: DefaultResourceItemDto[]
 ): DefaultResourceItemDto[] {
   const stringParameter = queryItems.filter((q) => q.parameter === "title");
+  const resourceTypeFilter = queryItems
+    .filter((q) => q.parameter === "resource_type")
+    .map((q) => q.query);
   const modalityFilter = queryItems
-    .filter((q) => q.parameter === "modality")
+    .filter((q) => q.parameter === "resource_type")
     .map((q) => q.query);
   const yearFilters = queryItems
     .filter((q) => q.parameter === "year")
@@ -45,6 +48,12 @@ export function applyDefaultResourceFilters(
   if (modalityFilter.length) {
     orderedData = orderedData.filter((item) =>
       modalityFilter.includes(item.modality ? item.modality : "")
+    );
+  }
+
+  if (resourceTypeFilter.length) {
+    orderedData = orderedData.filter((item) =>
+      modalityFilter.includes(item.documentType ? item.documentType : "")
     );
   }
 

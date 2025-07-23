@@ -11,6 +11,7 @@ import { BibliographicServerResponseDTO } from "../types/bibliographicDto";
 import { DefaultResourceDto } from "../types/defaultResource";
 import { LegislationServerResponseDTO } from "../types/legislationsTypes";
 import { MultimediaResponse } from "../types/multimediaTypes";
+import { MultimediaService } from "./MultimediaService";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { getRegionByCountry } from "@/components/feed/utils";
 import moment from "moment";
@@ -24,17 +25,24 @@ export class GlobalSummitService {
     queryItems?: Array<queryType>,
     and?: boolean
   ): Promise<DefaultResourceDto> => {
+    const multimediaService = new MultimediaService();
+
     const allResults = await Promise.all([
       this.getBibliographic(10000, 0, lang!),
-      this.getMultimedia(10000, 0, lang!),
+      multimediaService.getMultimediaResource(
+        10000,
+        0,
+        lang!,
+        [],
+        false,
+        "GTMSummit"
+      ),
       this.getLegislations(10000, 0, lang!),
       this.getLisResources(10000, 0, lang!),
     ]);
 
-    // Unifica os dados de todos os recursos
     const mergedData = allResults.flatMap((r) => r.data);
 
-    // Ordena por ano decrescente (ou outro critério, se preferir)
     let orderedData = mergedData.sort((a, b) => {
       const yearA = parseInt(a.year || "0");
       const yearB = parseInt(b.year || "0");
@@ -177,129 +185,6 @@ export class GlobalSummitService {
                 type: t[0],
                 count: t[1],
               };
-            }
-          ),
-        totalFound: data.data.diaServerResponse[0].response.numFound,
-      };
-    }
-    return {
-      data: [],
-      countryFilter: [],
-      documentTypeFilter: [],
-      eventFilter: [],
-      regionFilter: [],
-      thematicAreaFilter: [],
-      yearFilter: [],
-      totalFound: 0,
-    };
-  };
-
-  public getMultimedia = async (
-    count: number,
-    start: number,
-    lang: string,
-    queryItems?: Array<queryType>,
-    and?: boolean
-  ): Promise<DefaultResourceDto> => {
-    let query = undefined;
-    let q = undefined;
-    const countryQueryCount = queryItems?.filter(
-      (q) => q.parameter == "country"
-    ).length
-      ? queryItems?.filter((q) => q.parameter == "country").length
-      : 0;
-
-    if (countryQueryCount <= 1)
-      query = `thematic_area:"GTMSummit"${queryItems ? "&" : ""}${
-        queryItems
-          ? queryItems
-              .map((k) => {
-                return `${k.parameter}:"${k.query}"`;
-              })
-              .join("&")
-          : ""
-      }`;
-    else {
-      query = `thematic_area:"TMGL&"${
-        queryItems
-          ? queryItems
-              .filter((q) => q.parameter != "country")
-              .map((k) => {
-                return `${k.parameter}:"${k.query}"`;
-              })
-              .join("&")
-          : ""
-      }`;
-    }
-    q = "*:*";
-
-    let { data } = await axios.post<MultimediaResponse>(`/api/multimedia`, {
-      query,
-      count,
-      start,
-      q,
-      lang,
-    });
-    if (data) {
-      return {
-        data: data.data.diaServerResponse[0].response.docs.map((d) => {
-          return {
-            excerpt: d.description[0],
-            id: d.id.toString(),
-            link: d.link[0],
-            documentType: "Multimedia",
-            title: d.title,
-            country: d.publication_country
-              ? parseMultLangStringAttr(
-                  d.publication_country[0]
-                    .split("|")
-                    .map((i) => i.replace("^", "|"))
-                ).find((i) => i.lang == lang)?.content
-              : "",
-            thematicArea: d.descriptor,
-            year: d.publication_year,
-            region: d.publication_country
-              ? getRegionByCountry([
-                  parseMultLangStringAttr(
-                    d.publication_country[0]
-                      .split("|")
-                      .map((i) => i.replace("^", "|"))
-                  ).find((i) => i.lang == lang)?.content || "",
-                ])[0]
-              : "",
-          };
-        }),
-        countryFilter: mapJoinedMultLangArrayToFilterItem(
-          data.data.diaServerResponse[0].facet_counts.facet_fields
-            .publication_country,
-          lang
-        ),
-        documentTypeFilter: [
-          {
-            type: "Multimedia",
-            count: data.data.diaServerResponse[0].response.numFound,
-          },
-        ],
-        eventFilter: [],
-        regionFilter: getRegionByCountry(
-          mapJoinedMultLangArrayToFilterItem(
-            data.data.diaServerResponse[0].facet_counts.facet_fields
-              .publication_country,
-            lang
-          ).map((c) => c.type)
-        ).map((r) => {
-          return { type: r, count: 99 };
-        }),
-        thematicAreaFilter:
-          data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
-            (y) => {
-              return { type: y[0], count: parseInt(y[1]) };
-            }
-          ),
-        yearFilter:
-          data.data.diaServerResponse[0].facet_counts.facet_fields.publication_year.map(
-            (y) => {
-              return { type: y[0], count: parseInt(y[1]) };
             }
           ),
         totalFound: data.data.diaServerResponse[0].response.numFound,

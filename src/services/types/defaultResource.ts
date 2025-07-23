@@ -7,7 +7,7 @@ export interface DefaultResourceDto {
   thematicAreaFilter: FilterItem[];
   documentTypeFilter: FilterItem[];
   yearFilter: FilterItem[];
-  modalityFilter?: FilterItem[];
+  resourceTypeFilter?: FilterItem[];
   eventFilter?: FilterItem[];
   totalFound: number;
 }
@@ -19,8 +19,10 @@ export interface DefaultResourceItemDto {
   excerpt: string;
   country?: string;
   region?: string;
+  thumbnail?: string;
   thematicArea?: string[];
   documentType?: string;
+  resourceType?: string;
   year?: string;
   modality?: string;
 }

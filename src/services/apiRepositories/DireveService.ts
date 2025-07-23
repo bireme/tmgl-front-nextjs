@@ -60,7 +60,7 @@ export class DireveService {
       yearFilter: allResults[0].yearFilter.sort(
         (a, b) => Number(a.type) + Number(b.type)
       ),
-      modalityFilter: allResults[0].modalityFilter?.sort((a, b) =>
+      resourceTypeFilter: allResults[0].resourceTypeFilter?.sort((a, b) =>
         a.type.localeCompare(b.type)
       ),
     };
@@ -163,7 +163,7 @@ export class DireveService {
             count: 1,
           };
         }),
-        modalityFilter: data.data.diaServerResponse[0].response.docs.map(
+        resourceTypeFilter: data.data.diaServerResponse[0].response.docs.map(
           (d) => {
             return {
               type: d.event_modality ? d.event_modality[0] : "",

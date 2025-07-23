@@ -147,10 +147,10 @@ export const EventsFeed = ({
                   })),
                 },
                 {
-                  queryType: "modality",
+                  queryType: "resource_type",
                   label: "Modality",
-                  items: apiResponse.modalityFilter
-                    ? apiResponse?.modalityFilter.map((c) => ({
+                  items: apiResponse.resourceTypeFilter
+                    ? apiResponse?.resourceTypeFilter.map((c) => ({
                         label: c.type,
                         ocorrences: c.count,
                         id: undefined,
