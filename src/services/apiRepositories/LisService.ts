@@ -3,23 +3,27 @@ import {
   EvidenceMapsServiceDto,
 } from "../types/evidenceMapsDto";
 import {
+  applyDefaultResourceFilters,
+  mapJoinedMultLangArrayToFilterItem,
+  parseCountries,
+  parseMultLangFilter,
+  parseMultLangStringAttr,
+  parseTematicAreas,
+} from "./utils";
+import {
   getCountryTags,
   getDescriptorTags,
   getRegionByCountry,
 } from "@/components/feed/utils";
-import {
-  parseCountries,
-  parseMultLangFilter,
-  parseTematicAreas,
-} from "./utils";
 
+import { DefaultResourceDto } from "../types/defaultResource";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
 import moment from "moment";
 import { queryType } from "../types/resources";
 
-export class RepositorieService {
+export class LisService {
   public getResources = async (
     count: number,
     start: number,
@@ -200,5 +204,168 @@ export class RepositorieService {
       }
     }
     return null;
+  };
+
+  public getDefaultResources = async (
+    count: number,
+    start: number,
+    lang: string,
+    queryItems?: Array<queryType>,
+    baseFilter?: string,
+    souceType?: string
+  ): Promise<DefaultResourceDto> => {
+    const allResults = await Promise.all([
+      this.getLisResources(10000, 0, lang, [], false, baseFilter, souceType),
+    ]);
+
+    const mergedData = allResults.flatMap((r) => r.data);
+
+    let orderedData = mergedData.sort((a, b) => {
+      const yearA = parseInt(a.year || "0");
+      const yearB = parseInt(b.year || "0");
+      return yearB - yearA;
+    });
+
+    if (queryItems) {
+      orderedData = applyDefaultResourceFilters(queryItems, orderedData);
+    }
+    const paginated = orderedData.slice(start, start + count);
+
+    return {
+      data: paginated,
+      totalFound: orderedData.length,
+      countryFilter: allResults[0].countryFilter.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      documentTypeFilter: allResults[0].documentTypeFilter.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      eventFilter: allResults[0].eventFilter?.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      regionFilter: allResults[0].regionFilter,
+      thematicAreaFilter: allResults[0].thematicAreaFilter.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      yearFilter: allResults[0].yearFilter.sort(
+        (a, b) => Number(a.type) + Number(b.type)
+      ),
+      resourceTypeFilter: allResults[0].resourceTypeFilter?.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+    };
+  };
+
+  public getLisResources = async (
+    count: number,
+    start: number,
+    lang: string,
+    queryItems?: Array<queryType>,
+    and?: boolean,
+    baseFilter?: string,
+    source_type?: string
+  ): Promise<DefaultResourceDto> => {
+    let query = undefined;
+    let q = undefined;
+
+    query = `thematic_area:"${baseFilter ? baseFilter : "TMGL"}"${
+      source_type ? `source_type:"${source_type}"` : ""
+    }${and ? "&" : ""}${
+      queryItems
+        ? queryItems
+            .map((k) => {
+              return `${k.parameter}:"${k.query.replace('"', "")}"`;
+            })
+            .join("&")
+        : ""
+    }`;
+    q = "*:*";
+    const { data } = await axios.post<RepositoryApiResponse>(
+      `/api/evidencemaps`,
+      {
+        query,
+        count,
+        start,
+        q,
+      }
+    );
+    if (data) {
+      return {
+        data: data.data.diaServerResponse[0].response.docs.map((d) => {
+          return {
+            excerpt: d.abstract,
+            id: d.id,
+            link: d.link[0],
+            title: d.title,
+            country: d.publication_country
+              ? parseMultLangStringAttr(
+                  d.publication_country[0]
+                    .split("|")
+                    .map((i) => i.replace("^", "|"))
+                ).find((i) => i.lang == lang)?.content
+              : "",
+            documentType: "Internet Resources",
+            thematicArea: d.descriptor,
+            region: d.publication_country
+              ? getRegionByCountry([
+                  parseMultLangStringAttr(
+                    d.publication_country[0]
+                      .split("|")
+                      .map((i) => i.replace("^", "|"))
+                  ).find((i) => i.lang == lang)?.content || "",
+                ])[0]
+              : "",
+            year: moment(d.created_date, "YYYYMMDD").format("YYYY"),
+          };
+        }),
+        countryFilter: mapJoinedMultLangArrayToFilterItem(
+          data.data.diaServerResponse[0].facet_counts.facet_fields
+            .publication_country,
+          lang
+        ),
+        totalFound: data.data.diaServerResponse[0].response.numFound,
+        documentTypeFilter: [
+          {
+            type: "Internet Resources",
+            count: data.data.diaServerResponse[0].response.numFound,
+          },
+        ],
+        eventFilter: [],
+        regionFilter: getRegionByCountry(
+          mapJoinedMultLangArrayToFilterItem(
+            data.data.diaServerResponse[0].facet_counts.facet_fields
+              .publication_country,
+            lang
+          ).map((c) => c.type)
+        ).map((r) => {
+          return { type: r, count: 99 };
+        }),
+        thematicAreaFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
+            (t) => {
+              return {
+                type: t[0],
+                count: parseInt(t[1]),
+              };
+            }
+          ),
+        yearFilter: data.data.diaServerResponse[0].response.docs.map((d) => {
+          return {
+            type: moment(d.created_date, "YYYYMMDD").format("YYYY"),
+            count: 1,
+          };
+        }),
+      };
+    }
+    return {
+      data: [],
+      countryFilter: [],
+      documentTypeFilter: [],
+      eventFilter: [],
+      totalFound: 0,
+      regionFilter: [],
+      thematicAreaFilter: [],
+      yearFilter: [],
+    };
   };
 }

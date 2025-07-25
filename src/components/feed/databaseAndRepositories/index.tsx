@@ -4,18 +4,18 @@ import {
   DefaultResourceDto,
   DefaultResourceItemDto,
 } from "@/services/types/defaultResource";
+import { groupOccurrencesByRegion, initialFilters } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
-import { MultimediaService } from "@/services/apiRepositories/MultimediaService";
+import { LisService } from "@/services/apiRepositories/LisService";
 import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
-import { initialFilters } from "../utils";
 import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const MultimediaFeed = ({
+export const DatabaseAndRepositoriesFeed = ({
   displayType,
   country,
   region,
@@ -26,10 +26,9 @@ export const MultimediaFeed = ({
   region?: string;
   thematicArea?: string;
 }) => {
-  const { globalConfig } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
-  const _service = new MultimediaService();
-  const count = 11;
+  const _service = new LisService();
+  const count = 12;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
@@ -43,18 +42,18 @@ export const MultimediaFeed = ({
     setPage(1);
   };
 
-  const getMedias = async () => {
+  const getLisResources = async () => {
     setLoading(true);
     try {
       const response = await _service.getDefaultResources(
-        count + 1,
+        count,
         (page - 1) * count,
         language,
         filter && filter.length > 0 ? filter : undefined,
-        true
+        "TMGL",
+        "databases_bibliography"
       );
-
-      setTotalPages(Math.ceil(response.totalFound / count));
+      setTotalPages(response.totalFound / count);
       setItems(response.data);
       setApiResponse(response);
       if ((country || region || thematicArea) && !initialFilterDone) {
@@ -68,15 +67,14 @@ export const MultimediaFeed = ({
         );
       }
     } catch (error) {
-      console.log(error);
-      console.log("Error while fetching Multimedias");
+      console.log("Error while fetching Database and Repositories");
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    if (globalConfig) getMedias();
-  }, [page, filter, thematicArea, region, country, globalConfig]);
+    getLisResources();
+  }, [country, region, thematicArea, page, filter]);
 
   return (
     <>
@@ -156,7 +154,6 @@ export const MultimediaFeed = ({
                           : []),
                       ]}
                       target="_blank"
-                      type={i.documentType}
                       link={i.link}
                     />
                   );
@@ -170,7 +167,11 @@ export const MultimediaFeed = ({
                 justify={"center"}
                 align={"center"}
               >
-                <Center>No results found!</Center>
+                {apiResponse?.totalFound == 0 ? (
+                  <Center>No results found!</Center>
+                ) : (
+                  <></>
+                )}
               </Flex>
             )}
           </Flex>

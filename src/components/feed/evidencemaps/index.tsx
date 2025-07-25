@@ -15,7 +15,6 @@ import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
 import { chunkArray } from "@/components/layout/helper";
-import { groupOccurrencesByRegion } from "../utils";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
 

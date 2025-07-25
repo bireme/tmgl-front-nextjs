@@ -1,8 +1,45 @@
-import { Area, Country } from "@/services/types/resources";
+import { Area, Country, queryType } from "@/services/types/resources";
 import { CountriesRegions, CountryGroupType } from "@/data/countries";
 
 import { FilterOption } from "./filters";
 import { TagItem } from "./resourceitem";
+
+//Usado para filtros por tag
+export const initialFilters = (
+  applyFilters: Function,
+  setLoading: Function,
+  setInitialFilterDone: Function,
+  country?: string,
+  thematicArea?: string,
+  region?: string
+) => {
+  if (country) {
+    applyFilters([
+      {
+        parameter: "country",
+        query: country,
+      },
+    ]);
+  }
+  if (region) {
+    applyFilters([
+      {
+        parameter: "region",
+        query: region,
+      },
+    ]);
+  }
+  if (thematicArea) {
+    applyFilters([
+      {
+        parameter: "descriptor",
+        query: thematicArea,
+      },
+    ]);
+  }
+  setLoading(false);
+  setInitialFilterDone(true);
+};
 
 export function getCountryTags(
   countryList: Country[],
@@ -13,7 +50,6 @@ export function getCountryTags(
     return { name: item, type: "country" };
   });
 }
-
 export function getRegionByCountry(countries: string[]): string[] {
   let regions = groupCountriesByRegion(CountriesRegions);
   const itemRegions = regions.filter((region) =>
@@ -25,7 +61,6 @@ export function getRegionByCountry(countries: string[]): string[] {
   );
   return itemRegions.map((region) => region.region);
 }
-
 export function groupOccurrencesByRegion(
   filterOptions: FilterOption[]
 ): FilterOption[] {
@@ -51,7 +86,6 @@ export function groupOccurrencesByRegion(
     };
   });
 }
-
 type RegionGroupType = {
   region: string;
   countries: string[];
@@ -80,7 +114,6 @@ function groupCountriesByRegion(
     return acc;
   }, []);
 }
-
 export function getTematicAreaTags(
   thematicAreaList: Area[],
   lang: string
@@ -90,7 +123,6 @@ export function getTematicAreaTags(
     return { name: item, type: "area" };
   });
 }
-
 export function getDescriptorTags(descriptorList: string[]): Array<TagItem> {
   return descriptorList
     .filter((c) => c != "")

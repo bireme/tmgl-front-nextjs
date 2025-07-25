@@ -113,7 +113,8 @@ export class MultimediaService {
     lang: string,
     queryItems?: Array<queryType>,
     and?: boolean,
-    baseFilter?: string
+    baseFilter?: string,
+    thumbnail?: boolean
   ): Promise<DefaultResourceDto> => {
     let query = undefined;
     let q = undefined;
@@ -144,27 +145,27 @@ export class MultimediaService {
       const docsRaw = data.data.diaServerResponse[0].response.docs;
 
       for (const d of docsRaw) {
-        if (d.media_type === "video") {
-          try {
-            const thumbnail = await this.getVideoThumbnail(d);
-            d.thumbnail = thumbnail;
-          } catch (err) {
-            console.warn("Erro ao gerar thumbnail de vídeo:", err);
-            d.thumbnail = "";
-          }
-        } else {
-          d.thumbnail = d.link[0];
-
-          if (d.media_type === "Imagem fixa" || d.media_type === "Slide") {
+        if (thumbnail) {
+          if (d.media_type === "video") {
             try {
-              const { data } = await axios.post(`/api/pdf-image`, {
-                url: d.thumbnail,
-              });
-              console.log("buscando imagem");
-              d.thumbnail = data.file;
+              const thumbnail = await this.getVideoThumbnail(d);
+              d.thumbnail = thumbnail;
             } catch (err) {
-              console.warn("Erro ao gerar thumbnail de PDF:", err);
+              console.warn("Erro ao gerar thumbnail de vídeo:", err);
               d.thumbnail = "";
+            }
+          } else {
+            d.thumbnail = d.link[0];
+
+            if (d.media_type === "Imagem fixa" || d.media_type === "Slide") {
+              try {
+                const { data } = await axios.post(`/api/pdf-image`, {
+                  url: d.thumbnail,
+                });
+                d.thumbnail = data.file;
+              } catch (err) {
+                d.thumbnail = "";
+              }
             }
           }
         }
@@ -268,10 +269,19 @@ export class MultimediaService {
     count: number,
     start: number,
     lang: string,
-    queryItems?: Array<queryType>
+    queryItems?: Array<queryType>,
+    thumbnail?: boolean
   ): Promise<DefaultResourceDto> => {
     const allResults = await Promise.all([
-      this.getMultimediaResource(10000, 0, lang),
+      this.getMultimediaResource(
+        10000,
+        0,
+        lang,
+        [],
+        false,
+        undefined,
+        thumbnail ? true : false
+      ),
     ]);
 
     const mergedData = allResults.flatMap((r) => r.data);

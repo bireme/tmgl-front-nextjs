@@ -41,19 +41,23 @@ export function applyDefaultResourceFilters(
 
   if (regionFilters.length) {
     orderedData = orderedData.filter((item) =>
-      regionFilters.includes(item.region ? item.region : "")
+      regionFilters.includes(item.region?.trim() ? item.region.trim() : "")
     );
   }
 
   if (modalityFilter.length) {
     orderedData = orderedData.filter((item) =>
-      modalityFilter.includes(item.modality ? item.modality : "")
+      modalityFilter.includes(
+        item.modality?.trim() ? item.modality?.trim() : ""
+      )
     );
   }
 
   if (resourceTypeFilter.length) {
     orderedData = orderedData.filter((item) =>
-      modalityFilter.includes(item.documentType ? item.documentType : "")
+      modalityFilter.includes(
+        item.documentType?.trim() ? item.documentType?.trim() : ""
+      )
     );
   }
 
@@ -62,26 +66,30 @@ export function applyDefaultResourceFilters(
       (item) =>
         item.title
           .toLowerCase()
+          ?.trim()
           .includes(stringParameter[0].query.toLowerCase()) ||
         item.excerpt
           .toLowerCase()
+          ?.trim()
           .includes(stringParameter[0].query.toLowerCase())
     );
   }
 
   if (yearFilters.length) {
     orderedData = orderedData.filter((item) =>
-      yearFilters.includes(item.year ? item.year : "")
+      yearFilters.includes(item.year?.trim() ? item.year?.trim() : "")
     );
   }
   if (countryFilters.length) {
     orderedData = orderedData.filter((item) =>
-      countryFilters.includes(item.country ? item.country : "")
+      countryFilters.includes(item.country?.trim() ? item.country?.trim() : "")
     );
   }
   if (documentFilters.length) {
     orderedData = orderedData.filter((item) =>
-      documentFilters.includes(item.documentType ? item.documentType : "")
+      documentFilters.includes(
+        item.documentType?.trim() ? item.documentType?.trim() : ""
+      )
     );
   }
   if (thematicAreaFilters.length) {

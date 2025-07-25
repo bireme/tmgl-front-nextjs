@@ -1,8 +1,73 @@
 import { Accordion, Button, Checkbox, Flex, Input } from "@mantine/core";
 import { useEffect, useState } from "react";
 
+import { DefaultResourceDto } from "@/services/types/defaultResource";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
+
+export const DefaultFeedFilterComponent = ({
+  applyFilters,
+  apiResponse,
+}: {
+  applyFilters: (q?: queryType[] | undefined) => {};
+  apiResponse: DefaultResourceDto;
+}) => {
+  return (
+    <ResourceFilters
+      callBack={applyFilters}
+      filters={[
+        {
+          queryType: "Region",
+          label: "WHO Regions",
+          items: apiResponse?.regionFilter.map((c) => ({
+            label: c.type,
+            ocorrences: c.count,
+            id: undefined,
+          })),
+        },
+        {
+          queryType: "country",
+          label: "Country",
+          items: apiResponse?.countryFilter.map((c) => ({
+            label: c.type,
+            ocorrences: c.count,
+            id: undefined,
+          })),
+        },
+
+        {
+          queryType: "descriptor",
+          label: "Thematic area",
+          items: apiResponse?.thematicAreaFilter.map((c) => ({
+            label: c.type,
+            ocorrences: c.count,
+            id: undefined,
+          })),
+        },
+        {
+          queryType: "publication_year",
+          label: "Year",
+          items: apiResponse?.yearFilter.map((c) => ({
+            label: c.type,
+            ocorrences: c.count,
+            id: undefined,
+          })),
+        },
+        {
+          queryType: "resource_type",
+          label: "Media Type",
+          items: apiResponse.resourceTypeFilter
+            ? apiResponse?.resourceTypeFilter.map((c) => ({
+                label: c.type,
+                ocorrences: c.count,
+                id: undefined,
+              }))
+            : [],
+        },
+      ]}
+    />
+  );
+};
 
 export interface FilterType {
   label: string;
@@ -17,7 +82,7 @@ export interface FilterOption {
 export interface FiltersFormProps {
   callBack: (q?: queryType[]) => {};
   filters?: FilterType[];
-  stringParameter?: string; //Parametro para busca aberta (muda em determinadas api's)
+  stringParameter?: string;
 }
 export const ResourceFilters = ({
   callBack,
@@ -30,15 +95,6 @@ export const ResourceFilters = ({
     [key: string]: string[];
   }>({});
 
-  /**
-   * Handles changes in the state of a checkbox, updating the selectedFilters state
-   * accordingly.
-   *
-   * @param {string} filterLabel - The label of the filter group
-   * @param {string} itemLabel - The label of the item
-   * @param {boolean} checked - Whether the checkbox is checked
-   * @param {string} [itemId] - Optional ID of the item
-   */
   const handleCheckboxChange = (
     filterLabel: string,
     itemLabel: string,
@@ -62,10 +118,6 @@ export const ResourceFilters = ({
     }
   };
 
-  /**
-   * Submits the filters to the callback function, converting the state into a array of queryType
-   * @returns {void}
-   */
   const submit = () => {
     let queryItems: queryType[] = [];
 
@@ -105,61 +157,64 @@ export const ResourceFilters = ({
         onChange={(e) => setQueryString(e.target.value)}
       />
 
-      {filters?.map((f, k) => {
-        return (
-          <Accordion
-            key={k}
-            mt={30}
-            chevronPosition="left"
-            radius={"md"}
-            defaultValue="1"
-          >
-            <Accordion.Item
-              className={styles.filterGroupItem}
-              value={"content-type"}
-              key={"content-type"}
+      {filters
+        ?.filter((f) => f.items.length > 0)
+        .map((f, k) => {
+          return (
+            <Accordion
+              key={k}
+              mt={30}
+              chevronPosition="left"
+              radius={"md"}
+              defaultValue="1"
             >
-              <Accordion.Control mb={10}>{f.label}</Accordion.Control>
-              <Accordion.Panel>
-                {f.items &&
-                  f.items.map((item: FilterOption, k) => (
-                    <Flex
-                      mt={7}
-                      align={"center"}
-                      key={k}
-                      justify={"space-between"}
-                      className={styles.filterCheckbox}
-                    >
-                      <Checkbox
-                        radius={"xs"}
-                        size="xs"
-                        checked={
-                          item.id
-                            ? selectedFilters[f.queryType]?.includes(item.id) ||
-                              false
-                            : selectedFilters[f.queryType]?.includes(
-                                item.label
-                              ) || false
-                        }
-                        value={item.id ? item.id : item.label}
-                        label={item.label}
-                        onChange={(event) =>
-                          handleCheckboxChange(
-                            f.queryType,
-                            item.label,
-                            event.currentTarget.checked,
-                            item.id
-                          )
-                        }
+              <Accordion.Item
+                className={styles.filterGroupItem}
+                value={"content-type"}
+                key={"content-type"}
+              >
+                <Accordion.Control mb={10}>{f.label}</Accordion.Control>
+                <Accordion.Panel>
+                  {f.items &&
+                    f.items.map((item: FilterOption, k) => (
+                      <Flex
+                        mt={7}
+                        align={"center"}
                         key={k}
-                      />
-                    </Flex>
-                  ))}
-              </Accordion.Panel>
-            </Accordion.Item>
-          </Accordion>
-        );
-      })}
+                        justify={"space-between"}
+                        className={styles.filterCheckbox}
+                      >
+                        <Checkbox
+                          radius={"xs"}
+                          size="xs"
+                          checked={
+                            item.id
+                              ? selectedFilters[f.queryType]?.includes(
+                                  item.id
+                                ) || false
+                              : selectedFilters[f.queryType]?.includes(
+                                  item.label
+                                ) || false
+                          }
+                          value={item.id ? item.id : item.label}
+                          label={item.label}
+                          onChange={(event) =>
+                            handleCheckboxChange(
+                              f.queryType,
+                              item.label,
+                              event.currentTarget.checked,
+                              item.id
+                            )
+                          }
+                          key={k}
+                        />
+                      </Flex>
+                    ))}
+                </Accordion.Panel>
+              </Accordion.Item>
+            </Accordion>
+          );
+        })}
       <Button
         mt={20}
         fullWidth

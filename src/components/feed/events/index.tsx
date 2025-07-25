@@ -1,17 +1,16 @@
 import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
+import { DefaultFeedFilterComponent, ResourceFilters } from "../filters";
 import {
   DefaultResourceDto,
   DefaultResourceItemDto,
 } from "@/services/types/defaultResource";
-import { EventsItemsDto, EventsServiceDto } from "@/services/types/eventsDto";
 import { useContext, useEffect, useState } from "react";
 
 import { DireveService } from "@/services/apiRepositories/DireveService";
 import { GlobalContext } from "@/contexts/globalContext";
 import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
-import { ResourceFilters } from "../filters";
-import { groupOccurrencesByRegion } from "../utils";
+import { initialFilters } from "../utils";
 import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
@@ -38,39 +37,6 @@ export const EventsFeed = ({
   const { language } = useContext(GlobalContext);
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
 
-  const initialFilters = (apiResponse: DefaultResourceDto) => {
-    if (country) {
-      applyFilters([
-        {
-          parameter: "country",
-          query: country,
-        },
-      ]);
-    }
-    if (region) {
-      applyFilters([
-        {
-          parameter: "region",
-          query: region,
-        },
-      ]);
-    }
-    if (thematicArea) {
-      applyFilters([
-        {
-          parameter: "descriptor",
-          query: thematicArea,
-        },
-      ]);
-    }
-    setLoading(false);
-    setInitialFilterDone(true);
-  };
-
-  useEffect(() => {
-    getEvents();
-  }, [country, region, thematicArea]);
-
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(1);
@@ -88,7 +54,14 @@ export const EventsFeed = ({
       setItems(response.data);
       setApiResponse(response);
       if ((country || region || thematicArea) && !initialFilterDone) {
-        initialFilters(response);
+        initialFilters(
+          applyFilters,
+          setLoading,
+          setInitialFilterDone,
+          country,
+          thematicArea,
+          region
+        );
       }
     } catch (error) {
       console.log("Error while fetching Events");
@@ -106,58 +79,9 @@ export const EventsFeed = ({
       <Grid>
         <Grid.Col span={{ md: 3, base: 12 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
-            <ResourceFilters
-              callBack={applyFilters}
-              filters={[
-                {
-                  queryType: "Region",
-                  label: "WHO Regions",
-                  items: apiResponse?.regionFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                    id: undefined,
-                  })),
-                },
-                {
-                  queryType: "country",
-                  label: "Country",
-                  items: apiResponse?.countryFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                    id: undefined,
-                  })),
-                },
-
-                {
-                  queryType: "descriptor",
-                  label: "Thematic area",
-                  items: apiResponse?.thematicAreaFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                    id: undefined,
-                  })),
-                },
-                {
-                  queryType: "publication_year",
-                  label: "Year",
-                  items: apiResponse?.yearFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                    id: undefined,
-                  })),
-                },
-                {
-                  queryType: "resource_type",
-                  label: "Modality",
-                  items: apiResponse.resourceTypeFilter
-                    ? apiResponse?.resourceTypeFilter.map((c) => ({
-                        label: c.type,
-                        ocorrences: c.count,
-                        id: undefined,
-                      }))
-                    : [],
-                },
-              ]}
+            <DefaultFeedFilterComponent
+              applyFilters={applyFilters}
+              apiResponse={apiResponse}
             />
           ) : (
             <></>

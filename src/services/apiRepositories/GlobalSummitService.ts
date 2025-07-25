@@ -5,16 +5,14 @@ import {
   mergeFilterItems,
   parseMultLangStringAttr,
 } from "./utils";
-import axios, { all } from "axios";
 
 import { BibliographicServerResponseDTO } from "../types/bibliographicDto";
 import { DefaultResourceDto } from "../types/defaultResource";
 import { LegislationServerResponseDTO } from "../types/legislationsTypes";
-import { MultimediaResponse } from "../types/multimediaTypes";
+import { LisService } from "./LisService";
 import { MultimediaService } from "./MultimediaService";
-import { RepositoryApiResponse } from "../types/repositoryTypes";
+import axios from "axios";
 import { getRegionByCountry } from "@/components/feed/utils";
-import moment from "moment";
 import { queryType } from "../types/resources";
 
 export class GlobalSummitService {
@@ -26,6 +24,7 @@ export class GlobalSummitService {
     and?: boolean
   ): Promise<DefaultResourceDto> => {
     const multimediaService = new MultimediaService();
+    const lisService = new LisService();
 
     const allResults = await Promise.all([
       this.getBibliographic(10000, 0, lang!),
@@ -38,7 +37,7 @@ export class GlobalSummitService {
         "GTMSummit"
       ),
       this.getLegislations(10000, 0, lang!),
-      this.getLisResources(10000, 0, lang!),
+      lisService.getLisResources(10000, 0, lang!, [], false, "GTMSummit"),
     ]);
 
     const mergedData = allResults.flatMap((r) => r.data);
@@ -300,115 +299,6 @@ export class GlobalSummitService {
       eventFilter: [],
       regionFilter: [],
       totalFound: 0,
-      thematicAreaFilter: [],
-      yearFilter: [],
-    };
-  };
-
-  public getLisResources = async (
-    count: number,
-    start: number,
-    lang: string,
-    queryItems?: Array<queryType>,
-    and?: boolean
-  ): Promise<DefaultResourceDto> => {
-    let query = undefined;
-    let q = undefined;
-
-    query = `thematic_area:"GTMSummit"${and ? "&" : ""}${
-      queryItems
-        ? queryItems
-            .map((k) => {
-              return `${k.parameter}:"${k.query.replace('"', "")}"`;
-            })
-            .join("&")
-        : ""
-    }`;
-    q = "*:*";
-    const { data } = await axios.post<RepositoryApiResponse>(
-      `/api/evidencemaps`,
-      {
-        query,
-        count,
-        start,
-        q,
-      }
-    );
-    if (data) {
-      return {
-        data: data.data.diaServerResponse[0].response.docs.map((d) => {
-          return {
-            excerpt: d.abstract,
-            id: d.id,
-            link: d.link[0],
-            title: d.title,
-            country: d.publication_country
-              ? parseMultLangStringAttr(
-                  d.publication_country[0]
-                    .split("|")
-                    .map((i) => i.replace("^", "|"))
-                ).find((i) => i.lang == lang)?.content
-              : "",
-            documentType: "Internet Resources",
-            thematicArea: d.descriptor,
-            region: d.publication_country
-              ? getRegionByCountry([
-                  parseMultLangStringAttr(
-                    d.publication_country[0]
-                      .split("|")
-                      .map((i) => i.replace("^", "|"))
-                  ).find((i) => i.lang == lang)?.content || "",
-                ])[0]
-              : "",
-            year: moment(d.created_date, "YYYYMMDD").format("YYYY"),
-          };
-        }),
-        countryFilter: mapJoinedMultLangArrayToFilterItem(
-          data.data.diaServerResponse[0].facet_counts.facet_fields
-            .publication_country,
-          lang
-        ),
-        totalFound: data.data.diaServerResponse[0].response.numFound,
-        documentTypeFilter: [
-          {
-            type: "Internet Resources",
-            count: data.data.diaServerResponse[0].response.numFound,
-          },
-        ],
-        eventFilter: [],
-        regionFilter: getRegionByCountry(
-          mapJoinedMultLangArrayToFilterItem(
-            data.data.diaServerResponse[0].facet_counts.facet_fields
-              .publication_country,
-            lang
-          ).map((c) => c.type)
-        ).map((r) => {
-          return { type: r, count: 99 };
-        }),
-        thematicAreaFilter:
-          data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
-            (t) => {
-              return {
-                type: t[0],
-                count: parseInt(t[1]),
-              };
-            }
-          ),
-        yearFilter: data.data.diaServerResponse[0].response.docs.map((d) => {
-          return {
-            type: moment(d.created_date, "YYYYMMDD").format("YYYY"),
-            count: 1,
-          };
-        }),
-      };
-    }
-    return {
-      data: [],
-      countryFilter: [],
-      documentTypeFilter: [],
-      eventFilter: [],
-      totalFound: 0,
-      regionFilter: [],
       thematicAreaFilter: [],
       yearFilter: [],
     };

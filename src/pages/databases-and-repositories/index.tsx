@@ -3,8 +3,8 @@ import { IconLayoutGrid, IconLayoutList } from "@tabler/icons-react";
 import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import { DatabaseAndRepositoriesFeed } from "@/components/feed/databaseAndRepositories";
 import { GlobalContext } from "@/contexts/globalContext";
-import { RepositoriesFeed } from "@/components/feed/repositories";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
@@ -45,8 +45,8 @@ export default function DatabaseRepositories() {
         <Flex px={15} mb={40}>
           <p>{globalConfig?.acf.database_repositories_descriptions}</p>
         </Flex>
-        {/* Precisa filtrar pelo database_source */}
-        <RepositoriesFeed
+
+        <DatabaseAndRepositoriesFeed
           thematicArea={thematicArea ? thematicArea.toString() : undefined}
           country={country ? country.toString() : undefined}
           region={region ? region.toString() : undefined}

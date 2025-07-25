@@ -12,6 +12,7 @@ import { GlobalSummitService } from "@/services/apiRepositories/GlobalSummitServ
 import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
 import { ResourceFilters } from "../filters";
+import { initialFilters } from "../utils";
 import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
@@ -36,6 +37,7 @@ export const GlobalSummitFeed = ({
   const [filter, setFilter] = useState<queryType[]>([]);
   const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
   const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
+  const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
@@ -54,6 +56,16 @@ export const GlobalSummitFeed = ({
       setTotalPages(Math.ceil(response.totalFound / count));
       setItems(response.data);
       setApiResponse(response);
+      if ((country || region || thematicArea) && !initialFilterDone) {
+        initialFilters(
+          applyFilters,
+          setLoading,
+          setInitialFilterDone,
+          country,
+          thematicArea,
+          region
+        );
+      }
     } catch (error) {
       console.log(error);
       console.log("Error while fetching Legislations");

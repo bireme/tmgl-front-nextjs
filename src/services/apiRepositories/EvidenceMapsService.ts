@@ -13,12 +13,10 @@ import {
 
 import { PostsApi } from "../posts/PostsApi";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
-import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
 import { getDescriptorTags } from "@/components/feed/utils";
 import moment from "moment";
 import { queryType } from "../types/resources";
-import { url } from "inspector";
 
 export class EvidenceMapsService {
   public getResources = async (

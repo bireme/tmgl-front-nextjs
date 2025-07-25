@@ -1,6 +1,7 @@
 import {} from "@/services/types/regulationsAndPolices";
 
 import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
+import { DefaultFeedFilterComponent, ResourceFilters } from "../filters";
 import {
   DefaultResourceDto,
   DefaultResourceItemDto,
@@ -11,7 +12,7 @@ import { GlobalContext } from "@/contexts/globalContext";
 import { Pagination } from "../pagination";
 import { RegulationsAndPolicesService } from "@/services/apiRepositories/RegulationAndPolices";
 import { ResourceCard } from "../resourceitem";
-import { ResourceFilters } from "../filters";
+import { initialFilters } from "../utils";
 import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
@@ -36,6 +37,7 @@ export const RegulationsAndPolicesFeed = ({
   const [filter, setFilter] = useState<queryType[]>([]);
   const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
   const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
+  const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
@@ -54,6 +56,16 @@ export const RegulationsAndPolicesFeed = ({
       setTotalPages(Math.ceil(response.totalFound / count));
       setItems(response.data);
       setApiResponse(response);
+      if ((country || region || thematicArea) && !initialFilterDone) {
+        initialFilters(
+          applyFilters,
+          setLoading,
+          setInitialFilterDone,
+          country,
+          thematicArea,
+          region
+        );
+      }
     } catch (error) {
       console.log("Error while fetching Legislations");
     }
@@ -70,55 +82,9 @@ export const RegulationsAndPolicesFeed = ({
       <Grid>
         <Grid.Col span={{ md: 3, base: 12 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
-            <ResourceFilters
-              callBack={applyFilters}
-              filters={[
-                {
-                  queryType: "region",
-                  label: "WHO region",
-                  items: apiResponse?.regionFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                    id: undefined,
-                  })),
-                },
-                {
-                  queryType: "country",
-                  label: "Country",
-                  items: apiResponse?.countryFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                    id: undefined,
-                  })),
-                },
-                {
-                  queryType: "thematic_area",
-                  label: "Thematic area",
-                  items: apiResponse?.thematicAreaFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                    id: undefined,
-                  })),
-                },
-                {
-                  queryType: "document_type",
-                  label: "Document Type",
-                  items: apiResponse?.documentTypeFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                    id: undefined,
-                  })),
-                },
-                {
-                  queryType: "year",
-                  label: "Year",
-                  items: apiResponse?.yearFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                    id: undefined,
-                  })),
-                },
-              ]}
+            <DefaultFeedFilterComponent
+              applyFilters={applyFilters}
+              apiResponse={apiResponse}
             />
           ) : (
             <></>

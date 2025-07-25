@@ -1,17 +1,21 @@
 import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
+import { DefaultFeedFilterComponent, ResourceFilters } from "../filters";
+import {
+  DefaultResourceDto,
+  DefaultResourceItemDto,
+} from "@/services/types/defaultResource";
 import {
   JournalItemDto,
   JournalServiceDto,
 } from "@/services/types/journalsDto";
+import { groupOccurrencesByRegion, initialFilters } from "../utils";
 import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { JournalsService } from "@/services/apiRepositories/JournalsService";
 import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
-import { ResourceFilters } from "../filters";
 import { get } from "http";
-import { groupOccurrencesByRegion } from "../utils";
 import { queryType } from "@/services/types/resources";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/resources.module.scss";
@@ -33,8 +37,8 @@ export const JournalsFeed = ({
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
-  const [items, setItems] = useState<JournalItemDto[]>([]);
-  const [apiResponse, setApiResponse] = useState<JournalServiceDto>();
+  const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
+  const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
   const { language } = useContext(GlobalContext);
 
@@ -43,55 +47,19 @@ export const JournalsFeed = ({
     setPage(1);
   };
 
-  const initialFilters = (apiResponse: JournalServiceDto) => {
-    if (country) {
-      const countryToFilter =
-        apiResponse?.countryFilters?.filter((c) => c.lang === language) || [];
-      let queryCountry = country;
-      const matched = countryToFilter.find((c) =>
-        c.queryString?.toLowerCase()?.includes(country)
-      );
-      queryCountry = matched?.queryString ?? country;
-      console.log(countryToFilter);
-
-      applyFilters([
-        {
-          parameter: "country",
-          query: queryCountry,
-        },
-      ]);
-    }
-    if (region) {
-      applyFilters([
-        {
-          parameter: "region",
-          query: region,
-        },
-      ]);
-    }
-    if (thematicArea) {
-      applyFilters([
-        {
-          parameter: "descriptor",
-          query: thematicArea,
-        },
-      ]);
-    }
-    setLoading(false);
-    setInitialFilterDone(true);
-  };
-
   useEffect(() => {
     getJournals();
-  }, [country, region, thematicArea]);
+  }, [country, region, thematicArea, page, filter]);
 
   const getJournals = async () => {
     setLoading(true);
     try {
-      const response = await _service.getResources(
-        count + 1,
+      const response = await _service.getDefaultResources(
+        count,
         (page - 1) * count,
-        filter && filter.length > 0 ? filter : undefined
+        language,
+        filter && filter.length > 0 ? filter : undefined,
+        "TMGL"
       );
       setTotalPages(response.totalFound / count);
       setItems(response.data);
@@ -99,34 +67,20 @@ export const JournalsFeed = ({
         setApiResponse(response);
       }
       if ((country || region || thematicArea) && !initialFilterDone) {
-        initialFilters(response);
+        initialFilters(
+          applyFilters,
+          setLoading,
+          setInitialFilterDone,
+          country,
+          thematicArea,
+          region
+        );
       }
     } catch (error) {
-      console.log(error);
       console.log("Error while fetching journals");
     }
     setLoading(false);
   };
-
-  const getJournalDescription = (item: JournalItemDto) => {
-    const lang = language ? language : "en";
-    let desc = "";
-    if (item.description) {
-      if (item.description.length > 0) {
-        let auxDesc = item.description.find((d) => d.lang == language)?.content;
-        if (auxDesc) {
-          desc = removeHTMLTagsAndLimit(auxDesc, 180);
-        } else {
-          desc = "";
-        }
-      }
-    }
-    return desc;
-  };
-
-  useEffect(() => {
-    getJournals();
-  }, [page, filter]);
 
   return (
     <>
@@ -134,58 +88,9 @@ export const JournalsFeed = ({
       <Grid>
         <Grid.Col span={{ md: 3, base: 12 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
-            <ResourceFilters
-              callBack={applyFilters}
-              filters={[
-                {
-                  queryType: "country",
-                  label: "WHO Regions",
-                  items: groupOccurrencesByRegion(
-                    apiResponse?.countryFilters.map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                      id: c.queryString,
-                    }))
-                  ),
-                },
-                {
-                  queryType: "country",
-                  label: "Country of Publication",
-                  items: apiResponse?.countryFilters
-                    .filter((c) => c.lang == language)
-                    .map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                      id: c.queryString,
-                    })),
-                },
-                {
-                  queryType: "descriptor",
-                  label: "Thematic Area",
-                  items: apiResponse?.thematicAreaFilters.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
-                },
-                {
-                  queryType: "language",
-                  label: "Language",
-                  items: apiResponse?.languageFilters
-                    .filter((l) => l.lang == language)
-                    .map((c) => ({
-                      label: c.type,
-                      ocorrences: c.count,
-                    })),
-                },
-                {
-                  queryType: "indexed_database",
-                  label: "Indexed by",
-                  items: apiResponse?.indexFilters.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
-                },
-              ]}
+            <DefaultFeedFilterComponent
+              applyFilters={applyFilters}
+              apiResponse={apiResponse}
             />
           ) : (
             <></>
@@ -206,14 +111,56 @@ export const JournalsFeed = ({
                 {items.map((i, k) => {
                   return (
                     <ResourceCard
-                      size={"Small"}
+                      image={i.thumbnail}
                       displayType={displayType}
-                      image={i.logo ? i.logo : undefined}
                       key={k}
-                      title={i.title}
-                      tags={_service.formatTags(i, language)}
-                      excerpt={getJournalDescription(i)}
-                      link={`/journals/${i.id}`}
+                      title={
+                        i.title
+                          ? removeHTMLTagsAndLimit(i.title, 120) +
+                            `${i.title.length > 120 ? "..." : ""}`
+                          : ""
+                      }
+                      excerpt={
+                        i.excerpt
+                          ? removeHTMLTagsAndLimit(i.excerpt, 180) +
+                            `${i.excerpt.length > 180 ? "..." : ""}`
+                          : ""
+                      }
+                      tags={[
+                        ...(i.country
+                          ? [
+                              {
+                                name: i.country,
+                                type: "country",
+                              },
+                            ]
+                          : []),
+                        ...(i.region
+                          ? [
+                              {
+                                name: i.region,
+                                type: "region",
+                              },
+                            ]
+                          : []),
+                        ...(Array.isArray(i.thematicArea)
+                          ? i.thematicArea
+                              .filter((tag) => tag.trim() !== "")
+                              .map((tag) => ({
+                                name: tag,
+                                type: "descriptor",
+                              }))
+                          : i.thematicArea
+                          ? [
+                              {
+                                name: i.thematicArea,
+                                type: "descriptor",
+                              },
+                            ]
+                          : []),
+                      ]}
+                      target="_self"
+                      link={"/journals/" + i.id}
                     />
                   );
                 })}

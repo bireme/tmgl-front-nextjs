@@ -4,16 +4,19 @@ import {
   JournalServiceDto,
 } from "../types/journalsDto";
 import {
-  getCountryTags,
-  getDescriptorTags,
-  getRegionByCountry,
-} from "@/components/feed/utils";
-import {
+  applyDefaultResourceFilters,
+  mapJoinedMultLangArrayToFilterItem,
   parseJournalCountries,
   parseMultLangFilter,
   parseMultLangStringAttr,
 } from "./utils";
+import {
+  getCountryTags,
+  getDescriptorTags,
+  getRegionByCountry,
+} from "@/components/feed/utils";
 
+import { DefaultResourceDto } from "../types/defaultResource";
 import { EvidenceMapItemDto } from "../types/evidenceMapsDto";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
@@ -234,5 +237,163 @@ export class JournalsService {
       tags = tags.concat(regions);
     }
     return tags;
+  };
+
+  public getDefaultResources = async (
+    count: number,
+    start: number,
+    lang: string,
+    queryItems?: Array<queryType>,
+    baseFilter?: string,
+    souceType?: string
+  ): Promise<DefaultResourceDto> => {
+    const allResults = await Promise.all([
+      this.getTitleResources(10000, 0, lang, [], false, baseFilter, souceType),
+    ]);
+
+    const mergedData = allResults.flatMap((r) => r.data);
+
+    let orderedData = mergedData.sort((a, b) => {
+      const yearA = parseInt(a.year || "0");
+      const yearB = parseInt(b.year || "0");
+      return yearB - yearA;
+    });
+
+    if (queryItems) {
+      orderedData = applyDefaultResourceFilters(queryItems, orderedData);
+    }
+    const paginated = orderedData.slice(start, start + count);
+
+    return {
+      data: paginated,
+      totalFound: orderedData.length,
+      countryFilter: allResults[0].countryFilter.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      documentTypeFilter: allResults[0].documentTypeFilter.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      eventFilter: allResults[0].eventFilter?.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      regionFilter: allResults[0].regionFilter,
+      thematicAreaFilter: allResults[0].thematicAreaFilter.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+      yearFilter: allResults[0].yearFilter.sort(
+        (a, b) => Number(a.type) + Number(b.type)
+      ),
+      resourceTypeFilter: allResults[0].resourceTypeFilter?.sort((a, b) =>
+        a.type.localeCompare(b.type)
+      ),
+    };
+  };
+
+  public getTitleResources = async (
+    count: number,
+    start: number,
+    lang: string,
+    queryItems?: Array<queryType>,
+    and?: boolean,
+    baseFilter?: string,
+    source_type?: string
+  ): Promise<DefaultResourceDto> => {
+    let query = undefined;
+    let q = undefined;
+
+    query = `thematic_area:"${baseFilter ? baseFilter : "TMGL"}"${
+      source_type ? `source_type:"${source_type}"` : ""
+    }${and ? "&" : ""}${
+      queryItems
+        ? queryItems
+            .map((k) => {
+              return `${k.parameter}:"${k.query.replace('"', "")}"`;
+            })
+            .join("&")
+        : ""
+    }`;
+    q = "*:*";
+
+    const { data } = await axios.post<RepositoryApiResponse>(`/api/journals`, {
+      query,
+      count,
+      start,
+      q,
+    });
+    if (data) {
+      return {
+        data: data.data.diaServerResponse[0].response.docs.map((d) => {
+          return {
+            excerpt:
+              parseMultLangStringAttr(d.description ? d.description : []).find(
+                (i) => i.lang == lang
+              )?.content || "",
+            id: d.django_id,
+            link: d.link ? d.link[0] : "",
+            title: d.title,
+            country: d.country
+              ? parseMultLangStringAttr(
+                  d.country.split("|").map((i) => i.replace("^", "|"))
+                ).find((i) => i.lang == lang)?.content
+              : "",
+            documentType: "Journals",
+            thematicArea: d.descriptor,
+            region: d.country
+              ? getRegionByCountry([
+                  parseMultLangStringAttr(
+                    d.country[0].split("|").map((i) => i.replace("^", "|"))
+                  ).find((i) => i.lang == lang)?.content || "",
+                ])[0]
+              : "",
+            year: moment(d.created_date, "YYYYMMDD").format("YYYY"),
+          };
+        }),
+        countryFilter: mapJoinedMultLangArrayToFilterItem(
+          data.data.diaServerResponse[0].facet_counts.facet_fields.country,
+          lang
+        ),
+        totalFound: data.data.diaServerResponse[0].response.numFound,
+        documentTypeFilter: [
+          {
+            type: "Internet Resources",
+            count: data.data.diaServerResponse[0].response.numFound,
+          },
+        ],
+        eventFilter: [],
+        regionFilter: getRegionByCountry(
+          mapJoinedMultLangArrayToFilterItem(
+            data.data.diaServerResponse[0].facet_counts.facet_fields.country,
+            lang
+          ).map((c) => c.type)
+        ).map((r) => {
+          return { type: r, count: 99 };
+        }),
+        thematicAreaFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
+            (t) => {
+              return {
+                type: t[0],
+                count: parseInt(t[1]),
+              };
+            }
+          ),
+        yearFilter: data.data.diaServerResponse[0].response.docs.map((d) => {
+          return {
+            type: moment(d.created_date, "YYYYMMDD").format("YYYY"),
+            count: 1,
+          };
+        }),
+      };
+    }
+    return {
+      data: [],
+      countryFilter: [],
+      documentTypeFilter: [],
+      eventFilter: [],
+      totalFound: 0,
+      regionFilter: [],
+      thematicAreaFilter: [],
+      yearFilter: [],
+    };
   };
 }

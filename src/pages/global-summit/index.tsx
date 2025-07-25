@@ -5,7 +5,6 @@ import { useContext, useState } from "react";
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
 import { GlobalSummitFeed } from "@/components/feed/globalsummit";
-import { RepositoriesFeed } from "@/components/feed/repositories";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
