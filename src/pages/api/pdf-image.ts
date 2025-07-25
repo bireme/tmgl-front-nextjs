@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
+import { PDFDocument } from "pdf-lib";
 import axios from "axios";
 import crypto from "crypto";
 import { fromBuffer } from "pdf2pic";
@@ -38,25 +39,58 @@ export default async function handler(
     const response = await axios.get(url, { responseType: "arraybuffer" });
     const pdfBuffer = response.data;
 
+    // 📐 Usa pdf-lib para detectar proporção da primeira página
+    const doc = await PDFDocument.load(pdfBuffer);
+    const firstPage = doc.getPage(0);
+    const { width: pageWidth, height: pageHeight } = firstPage.getSize();
+
+    // 🧠 Calcula tamanho proporcional baseado em altura 1000px
+    const renderHeight = 1000;
+    const renderWidth = Math.round((pageWidth / pageHeight) * renderHeight);
+
     const convert = fromBuffer(pdfBuffer, {
       density: 120,
       savePath: outputPath,
-      saveFilename: hash + "_raw", // vai gerar: hash_raw_1.png
+      saveFilename: hash + "_raw",
       format: "png",
-      quality: 100,
+      quality: 80,
+      width: renderWidth,
+      height: renderHeight,
     });
 
-    const pageNumber = 1;
-    await convert(pageNumber);
+    await convert(1);
 
-    const rawFile = path.join(THUMBS_DIR, `${hash}_raw.${pageNumber}.png`);
-
+    const rawFile = path.join(THUMBS_DIR, `${hash}_raw.1.png`);
     const finalFile = path.join(THUMBS_DIR, `${hash}.png`);
 
-    // Redimensiona mantendo o aspecto
-    await sharp(rawFile).resize({ width: 400 }).toFile(finalFile);
+    // 📸 Recorta thumbnail 800x600 do topo da imagem renderizada
+    const targetWidth = 800;
+    const targetHeight = 600;
 
-    fs.unlinkSync(rawFile);
+    const image = sharp(rawFile);
+    const resized = await image.resize({ height: targetHeight }).toBuffer();
+    const resizedMeta = await sharp(resized).metadata();
+
+    const cropLeft = Math.max(
+      0,
+      Math.floor(((resizedMeta.width ?? targetWidth) - targetWidth) / 2)
+    );
+
+    if ((resizedMeta.width ?? 0) >= targetWidth) {
+      await sharp(resized)
+        .extract({
+          left: cropLeft,
+          top: 0,
+          width: targetWidth,
+          height: targetHeight,
+        })
+        .toFile(finalFile);
+    } else {
+      // fallback: só redimensiona e salva como está
+      await sharp(resized).toFile(finalFile);
+    }
+
+    opcional: fs.unlinkSync(rawFile);
 
     return res.status(200).json({ file: imgPublic });
   } catch (err) {
