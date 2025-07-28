@@ -36,7 +36,10 @@ export default async function handler(
     }
 
     // Baixa o PDF
-    const response = await axios.get(url, { responseType: "arraybuffer" });
+    const response = await axios.get(url, {
+      responseType: "arraybuffer",
+      timeout: 1000,
+    });
     const pdfBuffer = response.data;
 
     // 📐 Usa pdf-lib para detectar proporção da primeira página

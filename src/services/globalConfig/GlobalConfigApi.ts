@@ -11,8 +11,7 @@ export class GlobalConfigApi extends BaseUnauthenticatedApi {
       const { data } = await this._api.get("");
       return data;
     } catch (error) {
-      console.log(error);
-      throw new Error("Error while connecting to wp");
+      throw new Error("Tryed to fetch global config but failed. " + error);
     }
   }
 }

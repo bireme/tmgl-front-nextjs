@@ -1,16 +1,24 @@
 import { GlobalConfigApi } from "./services/globalConfig/GlobalConfigApi";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
+import { redirect } from "next/dist/server/api-utils";
 
 export async function middleware(request: NextRequest) {
-  const fullUrl = request.nextUrl.pathname;
-  const _configApi = new GlobalConfigApi();
-  const data = await _configApi.getGlobalConfig();
+  // const fullUrl = request.nextUrl.pathname;
+  // const _configApi = new GlobalConfigApi();
+  // const data = await _configApi.getGlobalConfig();
 
-  const rule = data.acf.route.find((r) => r.url === fullUrl);
-  if (rule) {
-    return NextResponse.redirect(rule.redirect);
-  }
+  // const rule = data.acf.route.find((r) => r.url === fullUrl);
+  // const rule = [
+  //   {
+  //     url: "/en",
+  //     redirect: "https://teste.tmgl.org"
+  //   }
+  // ]
+
+  // if (rule) {
+  //   return NextResponse.redirect(rule.redirect);
+  // }
 
   const lang = request.nextUrl.searchParams.get("lang");
 

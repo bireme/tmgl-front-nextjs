@@ -4,11 +4,12 @@ import "@mantine/carousel/styles.css";
 import "../styles/custom-global.scss";
 
 import { Button, MantineProvider, Modal } from "@mantine/core";
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import type { AppProps } from "next/app";
 import Cookies from "js-cookie";
 import { FooterLayout } from "@/components/layout/footer";
+import { GlobalConfigLoader } from "@/contexts/GlobalConfigLoader";
 import { GlobalProvider } from "@/contexts/globalContext";
 import { GptWidget } from "@/components/gpt";
 import { HeaderLayout } from "@/components/layout/header";
@@ -35,6 +36,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <MantineProvider theme={mantineTheme}>
       <GlobalProvider>
+        <GlobalConfigLoader />
         <Modal
           title={"The WHO Traditional Medicine Global Library"}
           onClose={() => handleAgreeWarning()}

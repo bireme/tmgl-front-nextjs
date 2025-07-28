@@ -11,6 +11,7 @@ import {
 } from "./utils";
 
 import { DefaultResourceDto } from "../types/defaultResource";
+import SparkMD5 from "spark-md5";
 import axios from "axios";
 import { getRegionByCountry } from "@/components/feed/utils";
 import { queryType } from "../types/resources";
@@ -158,13 +159,32 @@ export class MultimediaService {
             d.thumbnail = d.link[0];
 
             if (d.media_type === "Imagem fixa" || d.media_type === "Slide") {
+              const cachedPath = this.getCachedThumbnailPath(d.thumbnail);
+
               try {
-                const { data } = await axios.post(`/api/pdf-image`, {
-                  url: d.thumbnail,
-                });
-                d.thumbnail = data.file;
+                const head = await fetch(cachedPath, { method: "HEAD" });
+
+                if (head.ok) {
+                  // Imagem já existe no servidor
+                  d.thumbnail = cachedPath;
+                } else {
+                  // Chama a API pra gerar e salvar
+                  const { data } = await axios.post(`/api/pdf-image`, {
+                    url: d.thumbnail,
+                  });
+                  d.thumbnail = data.file;
+                }
               } catch (err) {
-                d.thumbnail = "";
+                console.warn("Erro ao verificar ou gerar thumbnail:", err);
+                try {
+                  const { data } = await axios.post(`/api/pdf-image`, {
+                    url: d.thumbnail,
+                  });
+                  d.thumbnail = data.file;
+                } catch (fallbackErr) {
+                  console.warn("Erro total ao gerar thumbnail:", fallbackErr);
+                  d.thumbnail = "";
+                }
               }
             }
           }
@@ -366,4 +386,9 @@ export class MultimediaService {
 
     return "/local/jpeg/multimedia.jpg";
   };
+
+  public getCachedThumbnailPath(url: string): string {
+    const hash = SparkMD5.hash(url);
+    return `/pdfs/${hash}.png`;
+  }
 }

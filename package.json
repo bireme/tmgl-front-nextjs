@@ -44,7 +44,10 @@
     "rss-parser": "^3.13.0",
     "sharp": "^0.34.3",
     "slick-carousel": "^1.8.1",
-    "xml2js": "^0.6.2"
+    "spark-md5": "^3.0.2",
+    "swr": "^2.3.4",
+    "xml2js": "^0.6.2",
+    "zod": "^4.0.10"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.2.2",
@@ -56,6 +59,7 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/react-slick": "^0.23.13",
+    "@types/spark-md5": "^3.0.5",
     "@types/xml2js": "^0.4.14",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",

@@ -2,8 +2,6 @@ import { Container, Flex, Grid } from "@mantine/core";
 import { decodeHtmlEntities, parseWpLink } from "@/helpers/stringhelper";
 import { useContext, useEffect, useState } from "react";
 
-import { FetchRSSFeed } from "@/services/rss/RssService";
-import { GlobalConfigApi } from "@/services/globalConfig/GlobalConfigApi";
 import { GlobalContext } from "@/contexts/globalContext";
 import { MenuItemDTO } from "@/services/types/menus.dto";
 import { MenusApi } from "@/services/menus/MenusApi";
@@ -11,8 +9,7 @@ import styles from "../../styles/components/layout.module.scss";
 import { useRouter } from "next/router";
 
 export const FooterLayout = () => {
-  const _configApi = new GlobalConfigApi();
-  const { setGlobalConfig, globalConfig } = useContext(GlobalContext);
+  const { globalConfig } = useContext(GlobalContext);
   const [footerLeft, setFooterLeft] = useState<MenuItemDTO[]>();
   const [footerRight, setFooterRight] = useState<MenuItemDTO[]>();
   const [footerCenter, setFooterCenter] = useState<MenuItemDTO[]>();
@@ -33,19 +30,6 @@ export const FooterLayout = () => {
     } catch (err: any) {
       console.log("Error while fetching footer menus");
     }
-  };
-
-  const getGlobalConfig = async () => {
-    //Get Global WP Config (Attributes from Global ACF page)
-    if (!globalConfig) {
-      try {
-        const data = await _configApi.getGlobalConfig();
-        setGlobalConfig(data);
-      } catch (err: any) {
-        console.log("Error while fetching global config");
-      }
-    }
-    //TODO : We may can add this global config in a cookie.
   };
 
   const renderMenuItem = (item: MenuItemDTO, index: number) => {
@@ -77,7 +61,6 @@ export const FooterLayout = () => {
 
   useEffect(() => {
     getFooterMenus();
-    getGlobalConfig();
   }, []);
 
   return (
