@@ -274,7 +274,7 @@ export class MultimediaService {
   ): Promise<DefaultResourceDto> => {
     const allResults = await Promise.all([
       this.getMultimediaResource(
-        10000,
+        400,
         0,
         lang,
         [],
