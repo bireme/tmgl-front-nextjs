@@ -1,10 +1,11 @@
-import axios, { all } from "axios";
 import {
+  applyDefaultResourceFilters,
   mapBibliographicTypes,
   mapJoinedMultLangArrayToFilterItem,
   mergeFilterItems,
   parseMultLangStringAttr,
 } from "./utils";
+import axios, { all } from "axios";
 
 import { BibliographicServerResponseDTO } from "../types/bibliographicDto";
 import { DefaultResourceDto } from "../types/defaultResource";
@@ -25,10 +26,8 @@ export class RegulationsAndPolicesService {
       this.getLegislations(10000, 0, lang!),
     ]);
 
-    // Unifica os dados de todos os recursos
     const mergedData = allResults.flatMap((r) => r.data);
 
-    // Ordena por ano decrescente (ou outro critério, se preferir)
     let orderedData = mergedData.sort((a, b) => {
       const yearA = parseInt(a.year || "0");
       const yearB = parseInt(b.year || "0");
@@ -36,66 +35,9 @@ export class RegulationsAndPolicesService {
     });
 
     if (queryItems) {
-      const stringParameter = queryItems.filter((q) => q.parameter === "title");
-      const yearFilters = queryItems
-        .filter((q) => q.parameter === "year")
-        .map((q) => q.query);
-      const documentFilters = queryItems
-        .filter((q) => q.parameter === "document_type")
-        .map((q) => q.query);
-      const thematicAreaFilters = queryItems
-        .filter((q) => q.parameter === "thematic_area")
-        .map((q) => q.query);
-      const countryFilters = queryItems
-        .filter((q) => q.parameter === "country")
-        .map((q) => q.query);
-      const regionFilters = queryItems
-        .filter((q) => q.parameter === "region")
-        .map((q) => q.query);
-
-      if (regionFilters.length) {
-        orderedData = orderedData.filter((item) =>
-          regionFilters.includes(item.region ? item.region : "")
-        );
-      }
-
-      if (stringParameter.length > 0) {
-        orderedData = orderedData.filter(
-          (item) =>
-            item.title
-              .toLowerCase()
-              .includes(stringParameter[0].query.toLowerCase()) ||
-            item.excerpt
-              .toLowerCase()
-              .includes(stringParameter[0].query.toLowerCase())
-        );
-      }
-
-      if (yearFilters.length) {
-        orderedData = orderedData.filter((item) =>
-          yearFilters.includes(item.year ? item.year : "")
-        );
-      }
-      if (countryFilters.length) {
-        orderedData = orderedData.filter((item) =>
-          countryFilters.includes(item.country ? item.country : "")
-        );
-      }
-      if (documentFilters.length) {
-        orderedData = orderedData.filter((item) =>
-          documentFilters.includes(item.documentType ? item.documentType : "")
-        );
-      }
-      if (thematicAreaFilters.length) {
-        orderedData = orderedData.filter((item) =>
-          Array.isArray(item.thematicArea)
-            ? item.thematicArea.some((ta) => thematicAreaFilters.includes(ta))
-            : thematicAreaFilters.includes(item.thematicArea || "")
-        );
-      }
+      orderedData = applyDefaultResourceFilters(queryItems, orderedData);
     }
 
-    // Aplica a paginação solicitada
     const paginated = orderedData.slice(start, start + count);
 
     return {

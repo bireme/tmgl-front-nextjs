@@ -41,14 +41,20 @@ export function applyDefaultResourceFilters(
 
   if (regionFilters.length) {
     orderedData = orderedData.filter((item) =>
-      regionFilters.includes(item.region?.trim() ? item.region.trim() : "")
+      regionFilters.includes(
+        item.region?.trim().toLocaleLowerCase()
+          ? item.region.trim().toLocaleLowerCase()
+          : ""
+      )
     );
   }
 
   if (modalityFilter.length) {
     orderedData = orderedData.filter((item) =>
       modalityFilter.includes(
-        item.modality?.trim() ? item.modality?.trim() : ""
+        item.modality?.trim().toLocaleLowerCase()
+          ? item.modality?.trim().toLocaleLowerCase()
+          : ""
       )
     );
   }
@@ -56,7 +62,9 @@ export function applyDefaultResourceFilters(
   if (resourceTypeFilter.length) {
     orderedData = orderedData.filter((item) =>
       modalityFilter.includes(
-        item.documentType?.trim() ? item.documentType?.trim() : ""
+        item.documentType?.trim().toLocaleLowerCase()
+          ? item.documentType?.trim().toLocaleLowerCase()
+          : ""
       )
     );
   }
@@ -82,13 +90,17 @@ export function applyDefaultResourceFilters(
   }
   if (countryFilters.length) {
     orderedData = orderedData.filter((item) =>
-      countryFilters.includes(item.country?.trim() ? item.country?.trim() : "")
+      countryFilters
+        .map((c) => c.trim().toLocaleLowerCase())
+        .includes(item.country?.trim().toLocaleLowerCase() ?? "")
     );
   }
   if (documentFilters.length) {
     orderedData = orderedData.filter((item) =>
       documentFilters.includes(
-        item.documentType?.trim() ? item.documentType?.trim() : ""
+        item.documentType?.trim().toLocaleLowerCase()
+          ? item.documentType?.trim().toLocaleLowerCase()
+          : ""
       )
     );
   }
