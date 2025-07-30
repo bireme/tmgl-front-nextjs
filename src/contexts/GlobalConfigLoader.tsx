@@ -7,20 +7,16 @@ import { useEffect } from "react";
 import useSWR from "swr";
 
 const fetchGlobalConfig = async (): Promise<GlobalConfigAcf> => {
-  console.log("Fetching global config from API or cache");
   const cached = localStorage.getItem("globalConfig");
   if (cached) {
-    console.log("Using cached global config");
     try {
       const parsed = JSON.parse(cached);
       const validated = GlobalConfigAcfSchema.parse(parsed); // lança se for inválido
       return validated;
     } catch (e) {
-      console.warn("Invalid cached global config:", e);
       localStorage.removeItem("globalConfig");
     }
   }
-  console.log("Fetching global config from API");
   const _configApi = new GlobalConfigApi();
   try {
     const data = await _configApi.getGlobalConfig();
@@ -34,7 +30,6 @@ const fetchGlobalConfig = async (): Promise<GlobalConfigAcf> => {
 
 export const GlobalConfigLoader = () => {
   const { setGlobalConfig } = useContext(GlobalContext);
-  console.log("Loading global config...");
   const { data } = useSWR("globalConfig", fetchGlobalConfig, {
     revalidateOnFocus: false,
     dedupingInterval: 1000 * 60 * 60 * 6, // 6 horas
