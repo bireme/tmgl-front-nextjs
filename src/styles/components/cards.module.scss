@@ -1,5 +1,5 @@
 .IconCard{
-  flex: 2;
+  min-width: 20%;
   &.Small{
     max-width: 80%;
     width: 80%;
@@ -17,7 +17,7 @@
   background-color: #F3F3F2;
   border-radius: 16px;
   padding: 10px 20px;
-  max-height: 130px;
+  min-height: 150px;
   cursor: pointer;
   transition: 0.5s;
   box-shadow: 0px 4px 16px 0px #00000040;

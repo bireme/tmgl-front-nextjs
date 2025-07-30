@@ -20,6 +20,7 @@ export const IconCard = ({ callBack, title, icon, small }: IconCardProps) => {
         callBack ? callBack() : null;
       }}
       gap={"10%"}
+      mb={"40px"}
     >
       <Flex direction={"column"} justify={"center"} className={styles.cardIcon}>
         {icon}
