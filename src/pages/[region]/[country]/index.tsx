@@ -1,4 +1,4 @@
-import { Container, Flex, Grid, Loader, LoadingOverlay } from "@mantine/core";
+import { Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import {
   CountryAcfProps,
   CountryAcfResource,

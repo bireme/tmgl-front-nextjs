@@ -41,11 +41,17 @@ export function applyDefaultResourceFilters(
 
   if (regionFilters.length) {
     orderedData = orderedData.filter((item) =>
-      regionFilters.includes(
-        item.region?.trim().toLocaleLowerCase()
-          ? item.region.trim().toLocaleLowerCase()
-          : ""
-      )
+      regionFilters
+        .map((c) => c.trim().toLocaleLowerCase())
+        .includes(item.region?.trim().toLocaleLowerCase() ?? "")
+    );
+  }
+
+  if (countryFilters.length) {
+    orderedData = orderedData.filter((item) =>
+      countryFilters
+        .map((c) => c.trim().toLocaleLowerCase())
+        .includes(item.country?.trim().toLocaleLowerCase() ?? "")
     );
   }
 

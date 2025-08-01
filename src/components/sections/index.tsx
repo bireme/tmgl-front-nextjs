@@ -51,7 +51,7 @@ export const DimensionsSection = ({ items }: { items?: ItemResource[] }) => {
   }, []);
 
   useEffect(() => {
-    getDimensions();
+    if (!items) getDimensions();
   }, [getDimensions]);
 
   return (
