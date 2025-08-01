@@ -23,7 +23,6 @@ const fetchGlobalConfig = async (): Promise<GlobalConfigAcf> => {
     localStorage.setItem("globalConfig", JSON.stringify(data));
     return data;
   } catch (error) {
-    console.error("Error fetching global config:", error);
     throw new Error("Failed to fetch global config");
   }
 };

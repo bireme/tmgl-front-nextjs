@@ -2,6 +2,31 @@
   width: 100%;
   height: 70vh;
 }
+.CollaborationNetworkContainer{
+  background-color: #D2E2E9;
+  float: left;
+  width: 100%;
+  h2{
+    font-family: "Roboto Serif";
+    font-size: 1.7rem;
+    margin-bottom: 40px;
+  }
+}
+.CollaborationNetworkItem{
+  width: 100%;
+  height: 120px;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: contain ;
+  display: flex;
+  align-items: baseline;
+}
+.CollaborationNetworkItemContainer{
+  max-width: 250px;
+  width: 250px;
+  text-align: center;
+}
+
 
 .TmsItem{
   max-width: 22%;

@@ -1,12 +1,14 @@
+import { Center, Container, Flex } from "@mantine/core";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
-import { Container } from "@mantine/core";
+import { DimensionsSection } from "@/components/sections";
 import { EventsSection } from "@/components/sections/events";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
+import { ImageSection } from "@/components/video";
 import { NewsSection } from "@/components/sections/news";
 import { NewsletterSection } from "@/components/sections/newsletter";
 import { PagesApi } from "@/services/pages/PagesApi";
@@ -78,10 +80,53 @@ export default function RegionHome() {
       <div>
         {acf ? (
           <>
+            {acf?.resources?.length > 0 ? (
+              <ImageSection>
+                <Container
+                  size={"xl"}
+                  py={"5%"}
+                  className={styles.TraditionalMedicine}
+                >
+                  <h2>{acf?.region_resources_title}</h2>
+                  <Center m={0} p={0}>
+                    <h4>{acf?.region_resources_subtitle}</h4>
+                  </Center>
+
+                  <DimensionsSection items={acf?.resources} />
+                </Container>
+              </ImageSection>
+            ) : (
+              <></>
+            )}
             <RegionalDimensions
               acf={acf}
               region={region ? region.toString() : ""}
             />
+            {acf.collaboration_network_items?.length > 0 && (
+              <div className={styles.CollaborationNetworkContainer}>
+                <Container size={"xl"} py={20}>
+                  <Center>
+                    <h2>Collaboration Network</h2>
+                  </Center>
+                  <Flex gap={30} align={"center"} justify={"center"}>
+                    {acf?.collaboration_network_items?.length > 0 &&
+                      acf?.collaboration_network_items.map((item, index) => (
+                        <div
+                          key={index}
+                          className={styles.CollaborationNetworkItemContainer}
+                        >
+                          <div
+                            style={{ backgroundImage: `url('${item.url}')` }}
+                            className={styles.CollaborationNetworkItem}
+                          ></div>
+                          <p>{item.title}</p>
+                        </div>
+                      ))}
+                  </Flex>
+                </Container>
+              </div>
+            )}
+
             <div className={styles.TrandingAndFeatured}>
               <Container
                 size={"xl"}

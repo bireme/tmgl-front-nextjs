@@ -75,4 +75,8 @@ export interface HomeAcf {
   modal_home: AcfModalHome;
   itens: ItemResource[];
   manual_media: TmsItem[];
+  region_resources_title: string;
+  region_resources_subtitle: string;
+  resources: ItemResource[];
+  collaboration_network_items: AcfImageArray[];
 }
