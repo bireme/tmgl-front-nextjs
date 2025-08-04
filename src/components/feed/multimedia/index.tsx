@@ -110,6 +110,7 @@ export const MultimediaFeed = ({
                       image={i.thumbnail}
                       displayType={displayType}
                       key={k}
+                      type={i.documentType ? i.documentType : "Multimedia"}
                       title={
                         i.title
                           ? removeHTMLTagsAndLimit(i.title, 120) +
@@ -156,7 +157,6 @@ export const MultimediaFeed = ({
                           : []),
                       ]}
                       target="_blank"
-                      type={i.documentType}
                       link={i.link}
                     />
                   );

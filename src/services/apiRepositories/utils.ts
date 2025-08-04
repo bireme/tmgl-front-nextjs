@@ -18,28 +18,29 @@ export function applyDefaultResourceFilters(
 ): DefaultResourceItemDto[] {
   const stringParameter = queryItems.filter((q) => q.parameter === "title");
   const resourceTypeFilter = queryItems
-    .filter((q) => q.parameter === "resource_type")
+    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "resource_type")
     .map((q) => q.query);
   const modalityFilter = queryItems
-    .filter((q) => q.parameter === "resource_type")
+    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "resource_type")
     .map((q) => q.query);
   const yearFilters = queryItems
-    .filter((q) => q.parameter === "year")
+    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "year")
     .map((q) => q.query);
   const documentFilters = queryItems
-    .filter((q) => q.parameter === "document_type")
+    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "document_type")
     .map((q) => q.query);
   const thematicAreaFilters = queryItems
-    .filter((q) => q.parameter === "thematic_area")
+    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "thematic_area")
     .map((q) => q.query);
   const countryFilters = queryItems
-    .filter((q) => q.parameter === "country")
+    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "country")
     .map((q) => q.query);
   const regionFilters = queryItems
-    .filter((q) => q.parameter === "region")
+    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "region")
     .map((q) => q.query);
 
   if (regionFilters.length) {
+    console.log("Filtering by region:", regionFilters);
     orderedData = orderedData.filter((item) =>
       regionFilters.includes(item.region?.trim() ? item.region.trim() : "")
     );

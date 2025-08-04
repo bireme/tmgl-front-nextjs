@@ -25,6 +25,8 @@ export class RegulationsAndPolicesService {
       this.getLegislations(10000, 0, lang!),
     ]);
 
+    console.log("All results:", allResults);
+
     // Unifica os dados de todos os recursos
     const mergedData = allResults.flatMap((r) => r.data);
 

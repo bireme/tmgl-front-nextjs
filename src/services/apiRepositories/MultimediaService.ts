@@ -194,9 +194,12 @@ export class MultimediaService {
           excerpt: d.description ? d.description[0] : "",
           id: d.id.toString(),
           link: d.link[0],
-          documentType: d.media_type
+          resouceType: "Multimedia",
+          documentType: d.media_type_display
             ? parseMultLangStringAttr(
-                d.media_type[0].split("|").map((i) => i.replace("^", "|"))
+                d.media_type_display[0]
+                  .split("|")
+                  .map((i) => i.replace("^", "|"))
               ).find((i) => i.lang == lang)?.content
             : "",
           title: d.title_translated
@@ -237,12 +240,18 @@ export class MultimediaService {
             .publication_country,
           lang
         ),
-        documentTypeFilter: [
-          {
-            type: "Multimedia",
-            count: data.data.diaServerResponse[0].response.numFound,
-          },
-        ],
+        documentTypeFilter:
+          data.data.diaServerResponse[0].facet_counts.facet_fields.media_type_filter.map(
+            (y) => {
+              return {
+                type:
+                  parseMultLangStringAttr(
+                    y[0].split("|").map((i) => i.replace("^", "|"))
+                  ).find((i) => i.lang == lang)?.content || "",
+                count: y[1],
+              };
+            }
+          ),
         eventFilter: [],
         regionFilter: getRegionByCountry(
           mapJoinedMultLangArrayToFilterItem(
@@ -313,6 +322,7 @@ export class MultimediaService {
     });
 
     if (queryItems) {
+      console.log("Applying filters:", queryItems);
       orderedData = applyDefaultResourceFilters(queryItems, orderedData);
     }
     const paginated = orderedData.slice(start, start + count);

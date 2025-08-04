@@ -1651,7 +1651,8 @@ export const CountriesRegions = [
   {
     Code: "KR",
     pt: "Coreia do Sul",
-    en: "Republic of Korea",
+    en: "Korea, Democratic People's Republic of",
+    other: "Korea, Republic of",
     es: "República de Corea",
     fr: "République de Corée",
     Region: "Western Pacific",
