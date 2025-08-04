@@ -248,7 +248,7 @@ export class JournalsService {
     souceType?: string
   ): Promise<DefaultResourceDto> => {
     const allResults = await Promise.all([
-      this.getTitleResources(10000, 0, lang, [], false, baseFilter, souceType),
+      this.getTitleResources(1000, 0, lang, [], false, baseFilter, souceType),
     ]);
 
     const mergedData = allResults.flatMap((r) => r.data);
@@ -341,7 +341,7 @@ export class JournalsService {
             region: d.country
               ? getRegionByCountry([
                   parseMultLangStringAttr(
-                    d.country[0].split("|").map((i) => i.replace("^", "|"))
+                    d.country.split("|").map((i) => i.replace("^", "|"))
                   ).find((i) => i.lang == lang)?.content || "",
                 ])[0]
               : "",
