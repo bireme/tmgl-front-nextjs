@@ -26,7 +26,7 @@ export const RegionalDimensions = ({
           <Grid.Col span={{ base: 12, md: 4.5 }}>
             <h2 className={styles.TitleWithIcon}>{acf.tmd.title}</h2>
             <div dangerouslySetInnerHTML={{ __html: acf.tmd.subtitle }} />
-            {acf.tmd?.explore_page ? (
+            {/* {acf.tmd?.explore_page ? (
               <>
                 <a
                   href={`${region}/content/${acf.tmd?.explore_page.post_name}${
@@ -40,7 +40,7 @@ export const RegionalDimensions = ({
               </>
             ) : (
               <> </>
-            )}
+            )} */}
           </Grid.Col>
           <Grid.Col span={{ base: 12, md: 7.5 }} px={20}>
             <Flex
