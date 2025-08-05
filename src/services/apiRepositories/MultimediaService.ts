@@ -194,7 +194,13 @@ export class MultimediaService {
           excerpt: d.description ? d.description[0] : "",
           id: d.id.toString(),
           link: d.link[0],
-          resouceType: "Multimedia",
+          resourceType: d.media_type_display
+            ? parseMultLangStringAttr(
+                d.media_type_display[0]
+                  .split("|")
+                  .map((i) => i.replace("^", "|"))
+              ).find((i) => i.lang == lang)?.content
+            : "",
           documentType: d.media_type_display
             ? parseMultLangStringAttr(
                 d.media_type_display[0]

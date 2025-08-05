@@ -21,7 +21,7 @@ export function applyDefaultResourceFilters(
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "resource_type")
     .map((q) => q.query);
   const modalityFilter = queryItems
-    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "resource_type")
+    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "modality_type")
     .map((q) => q.query);
   const yearFilters = queryItems
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "year")
@@ -67,8 +67,10 @@ export function applyDefaultResourceFilters(
   }
 
   if (resourceTypeFilter.length) {
+    console.log("Filtering by resource type:", resourceTypeFilter);
+    console.log(orderedData);
     orderedData = orderedData.filter((item) =>
-      modalityFilter.includes(
+      resourceTypeFilter.includes(
         item.documentType?.trim().toLocaleLowerCase()
           ? item.documentType?.trim().toLocaleLowerCase()
           : ""
