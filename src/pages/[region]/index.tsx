@@ -111,16 +111,23 @@ export default function RegionHome() {
                   <Flex gap={30} align={"center"} justify={"center"}>
                     {acf?.collaboration_network_items?.length > 0 &&
                       acf?.collaboration_network_items.map((item, index) => (
-                        <div
+                        <a
+                          style={{ textDecoration: "none", color: "black" }}
                           key={index}
-                          className={styles.CollaborationNetworkItemContainer}
+                          href={item.description}
+                          target={"_blank"}
                         >
                           <div
-                            style={{ backgroundImage: `url('${item.url}')` }}
-                            className={styles.CollaborationNetworkItem}
-                          ></div>
-                          <p>{item.title}</p>
-                        </div>
+                            key={index}
+                            className={styles.CollaborationNetworkItemContainer}
+                          >
+                            <div
+                              style={{ backgroundImage: `url('${item.url}')` }}
+                              className={styles.CollaborationNetworkItem}
+                            ></div>
+                            <p>{item.title}</p>
+                          </div>
+                        </a>
                       ))}
                   </Flex>
                 </Container>
