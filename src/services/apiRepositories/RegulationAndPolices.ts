@@ -15,12 +15,12 @@ import { queryType } from "../types/resources";
 
 export class RegulationsAndPolicesService {
   public getResources = async (
-    count: number,
+    count: number, // caller manda pageSize+1
     start: number,
     lang: string,
     queryItems?: Array<queryType>,
     and?: boolean
-  ): Promise<DefaultResourceDto> => {
+  ): Promise<DefaultResourceDto & { hasNext: boolean }> => {
     const allResults = await Promise.all([
       this.getBibliographic(10000, 0, lang!),
       this.getLegislations(10000, 0, lang!),
@@ -28,21 +28,34 @@ export class RegulationsAndPolicesService {
 
     const mergedData = allResults.flatMap((r) => r.data);
 
-    let orderedData = mergedData.sort((a, b) => {
-      const yearA = parseInt(a.year || "0");
-      const yearB = parseInt(b.year || "0");
-      return yearB - yearA;
+    // Ordenação determinística: ano desc + id/title
+    const orderedData = mergedData.slice().sort((a, b) => {
+      const yA = Number.parseInt(a.year ?? "0", 10) || 0;
+      const yB = Number.parseInt(b.year ?? "0", 10) || 0;
+      if (yA !== yB) return yB - yA;
+
+      const aKey = (a.id ?? a.title ?? a.excerpt ?? "")
+        .toString()
+        .toLowerCase();
+      const bKey = (b.id ?? b.title ?? b.excerpt ?? "")
+        .toString()
+        .toLowerCase();
+      return aKey.localeCompare(bKey);
     });
 
-    if (queryItems) {
-      orderedData = applyDefaultResourceFilters(queryItems, orderedData);
-    }
+    const filtered = queryItems
+      ? applyDefaultResourceFilters(queryItems, orderedData)
+      : orderedData;
 
-    const paginated = orderedData.slice(start, start + count);
+    const pageSize = Math.max(0, count);
+    const window = filtered.slice(start, start + pageSize + 1);
+    const hasNext = window.length > pageSize;
+    const paginated = hasNext ? window.slice(0, pageSize) : window;
 
     return {
       data: paginated,
-      totalFound: orderedData.length,
+      totalFound: filtered.length,
+      hasNext,
       countryFilter: mergeFilterItems(
         allResults[0].countryFilter,
         allResults[1].countryFilter
@@ -57,10 +70,11 @@ export class RegulationsAndPolicesService {
         allResults[0].thematicAreaFilter,
         allResults[1].thematicAreaFilter
       ).sort((a, b) => a.type.localeCompare(b.type)),
+      // corrigido: ordenar numericamente desc
       yearFilter: mergeFilterItems(
         allResults[0].yearFilter,
         allResults[1].yearFilter
-      ).sort((a, b) => Number(a.type) + Number(b.type)),
+      ).sort((a, b) => Number(b.type) - Number(a.type)),
     };
   };
 

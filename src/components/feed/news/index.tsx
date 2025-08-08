@@ -60,11 +60,17 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                   queryType: "region",
                   label: "WHO Regions",
                   items: apiResponse
-                    ? apiResponse?.regions.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
+                    ? apiResponse?.regions
+                        .filter(
+                          (c, index, arr) =>
+                            arr.findIndex((item) => item.name === c.name) ===
+                            index
+                        )
+                        .map((c) => ({
+                          label: c.name,
+                          ocorrences: undefined,
+                          id: c.id.toString(),
+                        }))
                     : [],
                 },
                 {

@@ -17,6 +17,7 @@ import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
 import { TrendingSlider } from "@/components/rss/slider";
 import styles from "../../styles/pages/home.module.scss";
+import { url } from "inspector";
 import { useRouter } from "next/router";
 
 export default function RegionHome() {
@@ -92,16 +93,24 @@ export default function RegionHome() {
                     <h4>{acf?.region_resources_subtitle}</h4>
                   </Center>
 
-                  <DimensionsSection items={acf?.resources} />
+                  <DimensionsSection
+                    items={acf?.resources.map((item) => {
+                      return {
+                        icon: item.icon,
+                        url: item.url.replace(
+                          region ? region.toString() : "",
+                          ""
+                        ),
+                        title: item.title,
+                      };
+                    })}
+                  />
                 </Container>
               </ImageSection>
             ) : (
               <></>
             )}
-            <RegionalDimensions
-              acf={acf}
-              region={region ? region.toString() : ""}
-            />
+            <RegionalDimensions acf={acf} region={""} />
             {acf.collaboration_network_items?.length > 0 && (
               <div className={styles.CollaborationNetworkContainer}>
                 <Container size={"xl"} py={20}>
