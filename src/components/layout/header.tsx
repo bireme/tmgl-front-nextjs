@@ -167,7 +167,7 @@ export const HeaderLayout = () => {
         <>
           <img
             alt={"menu-image"}
-            width={selectedSubItem.attr ? "100%" : "20%"}
+            width={selectedSubItem.attr ? "90%" : "20%"}
             src={
               selectedSubItem.attr
                 ? `${process.env.WP_BASE_URL}${selectedSubItem.attr}`

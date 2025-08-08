@@ -42,16 +42,27 @@ export class GlobalSummitService {
 
     const mergedData = allResults.flatMap((r) => r.data);
 
-    let orderedData = mergedData.sort((a, b) => {
-      const yearA = parseInt(a.year || "0");
-      const yearB = parseInt(b.year || "0");
-      return yearB - yearA;
+    const orderedData = mergedData.slice().sort((a, b) => {
+      const yA = Number.parseInt(a.year ?? "0", 10) || 0;
+      const yB = Number.parseInt(b.year ?? "0", 10) || 0;
+      if (yA !== yB) return yB - yA;
+
+      const aKey = (a.id ?? a.title ?? a.excerpt ?? "")
+        .toString()
+        .toLowerCase();
+      const bKey = (b.id ?? b.title ?? b.excerpt ?? "")
+        .toString()
+        .toLowerCase();
+      return aKey.localeCompare(bKey);
     });
 
-    if (queryItems) {
-      orderedData = applyDefaultResourceFilters(queryItems, orderedData);
-    }
-    const paginated = orderedData.slice(start, start + count);
+    const filtered = queryItems
+      ? applyDefaultResourceFilters(queryItems, orderedData)
+      : orderedData;
+    const pageSize = Math.max(0, count);
+    const window = filtered.slice(start, start + pageSize + 1);
+    const hasNext = window.length > pageSize;
+    const paginated = hasNext ? window.slice(0, pageSize) : window;
 
     return {
       data: paginated,

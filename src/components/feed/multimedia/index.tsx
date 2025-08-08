@@ -29,7 +29,7 @@ export const MultimediaFeed = ({
   const { globalConfig } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const _service = new MultimediaService();
-  const count = 11;
+  const count = 12;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
@@ -47,8 +47,8 @@ export const MultimediaFeed = ({
     setLoading(true);
     try {
       const response = await _service.getDefaultResources(
-        count + 1,
-        (page - 1) * count,
+        count,
+        page * count,
         language,
         filter && filter.length > 0 ? filter : undefined,
         true

@@ -24,43 +24,35 @@ export abstract class BaseUnauthenticatedApi {
     this._api.defaults.headers.common["Accept"] = "*/*";
   }
 
-  public findFeaturedMedia(post: Post, size?: string): string {
-    let url;
-    if (post._embedded) {
-      if (post._embedded["wp:featuredmedia"]?.length > 0) {
-        if (
-          post._embedded["wp:featuredmedia"][0].media_details.sizes &&
-          size != "full"
-        ) {
-          switch (size) {
-            case "thumbnail":
-              url =
-                post._embedded["wp:featuredmedia"][0].media_details.sizes
-                  .thumbnail?.source_url;
-              break;
-            case "medium":
-              url =
-                post._embedded["wp:featuredmedia"][0].media_details.sizes.medium
-                  ?.source_url;
-              break;
-            case "large":
-              url =
-                post._embedded["wp:featuredmedia"][0].media_details.sizes.large
-                  ?.source_url;
-              break;
-            case "full":
-              url =
-                post._embedded["wp:featuredmedia"][0].media_details.sizes.full
-                  ?.source_url;
+public findFeaturedMedia(post: Post, size?: string): string {
+  const fm = post?._embedded?.['wp:featuredmedia']?.[0];
+  if (!fm) return '';
 
-              break;
-          }
-        } else {
-          url = post._embedded["wp:featuredmedia"][0].source_url;
+  const sizes = fm.media_details?.sizes;
+  let url: string | undefined;
+
+  if (sizes) {
+    // Ordem de prioridade para fallback
+    const order = ['thumbnail', 'medium', 'large', 'full'] as const;
+
+    if (size && size !== 'full') {
+      url = sizes[size as keyof typeof sizes]?.source_url || undefined;
+    } else if (size === 'full') {
+      url = sizes.full?.source_url || undefined;
+    }
+    if (!url) {
+      for (const key of order) {
+        const candidate = sizes[key]?.source_url;
+        if (candidate) {
+          url = candidate;
+          break;
         }
       }
     }
-    if (url) return url + `${url.includes(".webp") ? "" : ".webp"}`;
-    return "";
   }
+  if (!url) {
+    url = fm.source_url;
+  }
+  return url ? url + (url.includes('.webp') ? '' : '.webp') : '';
 }
+

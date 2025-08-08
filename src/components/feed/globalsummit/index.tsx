@@ -31,7 +31,7 @@ export const GlobalSummitFeed = ({
   const { globalConfig, language } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const _service = new GlobalSummitService();
-  const count = 11;
+  const count = 12;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
@@ -47,8 +47,8 @@ export const GlobalSummitFeed = ({
     setLoading(true);
     try {
       const response = await _service.getResources(
-        count + 1,
-        (page - 1) * count,
+        count,
+        page * count,
         language,
         filter && filter.length > 0 ? filter : undefined
       );
@@ -76,6 +76,12 @@ export const GlobalSummitFeed = ({
   useEffect(() => {
     if (globalConfig) getRegulationsAndPolicies();
   }, [page, filter, thematicArea, region, country, globalConfig]);
+
+  const isNonEmptyString = (v: unknown): v is string =>
+    typeof v === "string" && v.trim().length > 0;
+
+  const toTag = (name: unknown, type: "country" | "region" | "descriptor") =>
+    isNonEmptyString(name) ? [{ name, type }] : [];
 
   return (
     <>
@@ -163,35 +169,17 @@ export const GlobalSummitFeed = ({
                         `${i.excerpt.length > 180 ? "..." : ""}`
                       }
                       tags={[
-                        ...(i.country
-                          ? [
-                              {
-                                name: i.country,
-                                type: "country",
-                              },
-                            ]
-                          : []),
-                        ...(i.region
-                          ? [
-                              {
-                                name: i.region,
-                                type: "region",
-                              },
-                            ]
-                          : []),
+                        ...toTag(i.country, "country"),
+                        ...toTag(i.region, "region"),
+
                         ...(Array.isArray(i.thematicArea)
-                          ? i.thematicArea.map((tag) => ({
-                              name: tag,
-                              type: "descriptor",
-                            }))
-                          : i.thematicArea
-                          ? [
-                              {
-                                name: i.thematicArea,
-                                type: "descriptor",
-                              },
-                            ]
-                          : []),
+                          ? i.thematicArea
+                              .filter(isNonEmptyString) // agora TS sabe que é string
+                              .map((tag) => ({
+                                name: tag,
+                                type: "descriptor" as const,
+                              }))
+                          : toTag(i.thematicArea, "descriptor")),
                       ]}
                       target="_blank"
                       type={i.documentType}

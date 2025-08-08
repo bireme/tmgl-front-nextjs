@@ -31,7 +31,7 @@ export const RegulationsAndPolicesFeed = ({
   const { globalConfig, language } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
   const _service = new RegulationsAndPolicesService();
-  const count = 11;
+  const count = 12;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
@@ -47,8 +47,8 @@ export const RegulationsAndPolicesFeed = ({
     setLoading(true);
     try {
       const response = await _service.getResources(
-        count + 1,
-        (page - 1) * count,
+        count,
+        page * count,
         language,
         filter && filter.length > 0 ? filter : undefined
       );
