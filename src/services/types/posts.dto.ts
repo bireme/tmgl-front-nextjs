@@ -82,6 +82,7 @@ interface Embedded {
 
 export interface ListPostsDto {
   totalItems: number;
+  totalPages?: number;
   data: Post[];
   regions: Term[];
   tags: Term[];

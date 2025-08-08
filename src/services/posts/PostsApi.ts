@@ -92,6 +92,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
       return {
         data: response.data,
         totalItems: parseInt(response.headers["x-wp-total"], 10),
+        totalPages: parseInt(response.headers["x-Wp-totalpages"], 1),
         regions: regions.data,
         tags: tags.data,
         dates: response.data.map((d) => d.date),
@@ -105,6 +106,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
       return {
         data: response.data,
         totalItems: parseInt(response.headers["x-wp-total"], 10),
+        totalPages: parseInt(response.headers["x-Wp-totalpages"], 1),
         regions: regions.data,
         dates: response.data.map((d) => d.date),
         tags: [],

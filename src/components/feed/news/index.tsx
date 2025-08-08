@@ -36,7 +36,7 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
       resetPage ? 1 : page,
       filter
     );
-    setTotalPages(response.totalItems / count);
+    setTotalPages(Math.ceil(response.totalItems / count));
     setApiResponse(response);
     setItems(response.data);
     setLoading(false);
@@ -44,7 +44,7 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
 
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [page]);
 
   return (
     <>
