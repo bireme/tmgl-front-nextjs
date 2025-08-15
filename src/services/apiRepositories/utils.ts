@@ -30,7 +30,7 @@ export function applyDefaultResourceFilters(
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "document_type")
     .map((q) => q.query);
   const thematicAreaFilters = queryItems
-    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "thematic_area")
+    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "descriptor")
     .map((q) => q.query);
   const countryFilters = queryItems
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "country")
@@ -67,7 +67,6 @@ export function applyDefaultResourceFilters(
   }
 
   if (resourceTypeFilter.length) {
-    console.log("Filtering by resource type:", resourceTypeFilter);
     console.log(orderedData);
     orderedData = orderedData.filter((item) =>
       resourceTypeFilter.includes(
@@ -114,11 +113,32 @@ export function applyDefaultResourceFilters(
     );
   }
   if (thematicAreaFilters.length) {
-    orderedData = orderedData.filter((item) =>
-      Array.isArray(item.thematicArea)
-        ? item.thematicArea.some((ta) => thematicAreaFilters.includes(ta))
-        : thematicAreaFilters.includes(item.thematicArea || "")
+    // Normaliza o filtro
+    const normFilters = new Set(
+      thematicAreaFilters.map((f) => String(f).trim().toLowerCase())
     );
+
+    orderedData = orderedData.filter((item) => {
+      const areas = Array.isArray(item.thematicArea)
+        ? item.thematicArea
+        : [item.thematicArea];
+
+      return areas.some((area) => {
+        const x = String(area ?? "")
+          .trim()
+          .toLowerCase();
+
+        // Igualdade exata
+        if (normFilters.has(x)) return true;
+
+        // Subcategoria (ex.: "covid-19/immunology")
+        for (const f of normFilters) {
+          if (x.startsWith(f + "/")) return true;
+        }
+
+        return false;
+      });
+    });
   }
 
   return orderedData;
