@@ -41,7 +41,7 @@ export const GlobalSummitFeed = ({
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
-    setPage(1);
+    setPage(0);
   };
   const getRegulationsAndPolicies = async () => {
     setLoading(true);

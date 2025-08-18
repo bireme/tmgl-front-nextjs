@@ -40,7 +40,7 @@ export const MultimediaFeed = ({
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
-    setPage(1);
+    setPage(0);
   };
 
   const getMedias = async () => {
@@ -169,9 +169,7 @@ export const MultimediaFeed = ({
                 style={{ height: "400px", width: "100%" }}
                 justify={"center"}
                 align={"center"}
-              >
-                <Center>No results found!</Center>
-              </Flex>
+              ></Flex>
             )}
           </Flex>
           <div className={styles.PaginationContainer}>

@@ -39,7 +39,7 @@ export const DatabaseAndRepositoriesFeed = ({
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
-    setPage(1);
+    setPage(0);
   };
 
   const getLisResources = async () => {

@@ -11,6 +11,7 @@ import { DefaultResourceItemDto } from "../types/defaultResource";
 import { JournalDescription } from "../types/journalsDto";
 import { LisDocuments } from "../types/repositoryTypes";
 import { ThematicAreaApiDto } from "../types/evidenceMapsDto";
+import { string } from "zod";
 
 export function applyDefaultResourceFilters(
   queryItems: queryType[],
@@ -52,8 +53,8 @@ export function applyDefaultResourceFilters(
   if (countryFilters.length) {
     orderedData = orderedData.filter((item) =>
       countryFilters
-        .map((c) => c.trim().toLocaleLowerCase())
-        .includes(item.country?.trim().toLocaleLowerCase() ?? "")
+        .map((c) => c.toLocaleLowerCase())
+        .includes(item.country?.toLocaleLowerCase() ?? "")
     );
   }
 
@@ -79,6 +80,7 @@ export function applyDefaultResourceFilters(
   }
 
   if (stringParameter.length > 0) {
+    console.log(stringParameter);
     orderedData = orderedData.filter(
       (item) =>
         item.title
@@ -151,10 +153,6 @@ export function applyDefaultResourceFilters(
       }
       return hit;
     });
-
-    console.log(
-      `Filtrados por thematicArea: ${before} -> ${orderedData.length}`
-    );
   }
 
   return orderedData;

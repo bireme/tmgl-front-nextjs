@@ -39,7 +39,7 @@ export const EventsFeed = ({
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
-    setPage(1);
+    setPage(0);
   };
   const getEvents = async () => {
     setLoading(true);
