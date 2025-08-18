@@ -16,6 +16,8 @@ export function applyDefaultResourceFilters(
   queryItems: queryType[],
   orderedData: DefaultResourceItemDto[]
 ): DefaultResourceItemDto[] {
+  console.log("aplicando filtros");
+
   const stringParameter = queryItems.filter((q) => q.parameter === "title");
   const resourceTypeFilter = queryItems
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "resource_type")
@@ -40,7 +42,6 @@ export function applyDefaultResourceFilters(
     .map((q) => q.query);
 
   if (regionFilters.length) {
-    console.log("Filtering by region:", regionFilters);
     orderedData = orderedData.filter((item) =>
       regionFilters
         .map((c) => c.trim().toLocaleLowerCase())
@@ -112,33 +113,48 @@ export function applyDefaultResourceFilters(
       )
     );
   }
-  if (thematicAreaFilters.length) {
-    // Normaliza o filtro
-    const normFilters = new Set(
-      thematicAreaFilters.map((f) => String(f).trim().toLowerCase())
-    );
+
+  if (Array.isArray(thematicAreaFilters) && thematicAreaFilters.length) {
+    const filters = thematicAreaFilters
+      .map((f) =>
+        String(f ?? "")
+          .trim()
+          .toLowerCase()
+      )
+      .filter(Boolean);
+
+    console.log("Filtros normalizados:", filters);
+
+    const before = orderedData.length;
 
     orderedData = orderedData.filter((item) => {
-      const areas = Array.isArray(item.thematicArea)
+      const rawAreas = Array.isArray(item?.thematicArea)
         ? item.thematicArea
-        : [item.thematicArea];
+        : [item?.thematicArea];
 
-      return areas.some((area) => {
-        const x = String(area ?? "")
-          .trim()
-          .toLowerCase();
+      const areas = rawAreas
+        .map((a) =>
+          String(a ?? "")
+            .trim()
+            .toLowerCase()
+        )
+        .filter(Boolean);
 
-        // Igualdade exata
-        if (normFilters.has(x)) return true;
+      // bate se igual ou se for subcategoria (ex.: "midwifery/...").
+      const hit = areas.some((x) =>
+        filters.some((f) => x === f || x.startsWith(f + "/"))
+      );
 
-        // Subcategoria (ex.: "covid-19/immunology")
-        for (const f of normFilters) {
-          if (x.startsWith(f + "/")) return true;
-        }
-
-        return false;
-      });
+      if (hit) {
+        // debug opcional para ver quais bateram
+        // console.log("HIT:", { areas: rawAreas, item });
+      }
+      return hit;
     });
+
+    console.log(
+      `Filtrados por thematicArea: ${before} -> ${orderedData.length}`
+    );
   }
 
   return orderedData;

@@ -29,7 +29,7 @@ export const DatabaseAndRepositoriesFeed = ({
   const [loading, setLoading] = useState(false);
   const _service = new LisService();
   const count = 12;
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
   const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
@@ -47,7 +47,7 @@ export const DatabaseAndRepositoriesFeed = ({
     try {
       const response = await _service.getDefaultResources(
         count,
-        (page - 1) * count,
+        page * count,
         language,
         filter && filter.length > 0 ? filter : undefined,
         "TMGL",
