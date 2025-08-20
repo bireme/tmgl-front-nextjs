@@ -38,6 +38,16 @@
       max-width: 80px;
     }
   }
+  .cardTitle{
+     font-family: "Roboto Serif";
+  }
+  .cardImage{
+    padding: 5px;
+    img{
+      width: 100%;
+      margin-bottom: 10px;
+    }
+  }
   @media (max-width: '750px')  {
     flex: 1;
     width: 100%;

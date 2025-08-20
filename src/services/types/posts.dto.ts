@@ -91,6 +91,43 @@ export interface ListPostsDto {
   countries: Term[];
 }
 
+export interface ThematicPageAcfProps {
+  search: {
+    title: string;
+    subtitle: string;
+    slider_images: AcfImageArray[];
+  };
+  title: string;
+  content: string;
+  comunity_initiatives_title: string;
+  community_iniciatives: CommunityInitiative[];
+  similar_themes: SimilarTheme[];
+  news_tag_filter: string;
+  events_tag_filter: string;
+  show_more_news_link: string;
+  show_more_events_link: string;
+  multimedia_items: ACFMultimediaItem[];
+  more_media_url: string;
+  rss_filter: string;
+}
+
+export interface CommunityInitiative {
+  label: string;
+  url: string;
+}
+
+export interface SimilarTheme {
+  title: string;
+  image: string;
+  url: string;
+}
+
+export interface ACFMultimediaItem {
+  image: string;
+  title: string;
+  url: string;
+}
+
 export interface CountryAcfProps {
   content: string;
   slide_images: AcfImageArray[];
