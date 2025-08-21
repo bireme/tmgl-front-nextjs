@@ -3,6 +3,7 @@ import { ItemResource, TmsItem } from "./posts.dto";
 import { AcfImageArray } from "./featuredStoriesAcf";
 
 export interface AcfSearch {
+  small?: boolean;
   title: string;
   subtitle: string;
   slide_image_1?: number;

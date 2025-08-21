@@ -9,6 +9,7 @@ import {
 import { decodeHtmlEntities, decodeHtmlLink } from "@/helpers/stringhelper";
 import { useCallback, useContext, useEffect, useState } from "react";
 
+import { BreadCrumbs } from "@/components/breadcrumbs";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
 import { IconArrowRight } from "@tabler/icons-react";
@@ -21,9 +22,7 @@ import { useRouter } from "next/router";
 
 export default function ThematicPage() {
   const router = useRouter();
-  const _postApiHelper = new PostsApi();
   const [properties, setProperties] = useState<ThematicPageAcfProps>();
-  const { globalConfig } = useContext(GlobalContext);
   const [postProps, setPostProps] = useState<Post>();
   const {
     query: { slug },
@@ -60,7 +59,22 @@ export default function ThematicPage() {
 
             <div className={styles.FullContainer}>
               <Container size={"xl"}>
+                <br />
+                <BreadCrumbs
+                  path={[
+                    {
+                      path: `/home`,
+                      name: "Home",
+                    },
+                    {
+                      path: `/thematic-page/${slug}`,
+                      name: slug ? slug.toString() : "",
+                    },
+                  ]}
+                  blackColor={false}
+                />
                 <SearchForm
+                  small={true}
                   title={
                     properties?.search.title ? properties?.search.title : ""
                   }
@@ -73,7 +87,7 @@ export default function ThematicPage() {
               </Container>
             </div>
           </div>
-          <div className={styles.CountryContent}>
+          <div className={styles.TmPageContent}>
             <Container size={"xl"} my={40}>
               <Grid>
                 <Grid.Col span={{ md: 9, base: 12 }} px={20}>
@@ -109,7 +123,7 @@ export default function ThematicPage() {
             {properties ? (
               properties?.similar_themes?.length > 0 ? (
                 <Container py={40} size={"xl"}>
-                  <h3 className={styles.TitleWithIcon}>Resources</h3>
+                  <h3 className={styles.TitleWithIcon}>Related Themes</h3>
                   <Flex
                     mt={50}
                     gap={{ base: "20px", md: "3%" }}
