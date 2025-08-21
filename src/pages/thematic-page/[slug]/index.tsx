@@ -1,19 +1,25 @@
-import { Button, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
-import { HeroImage, HeroSlider } from "@/components/slider";
-import { IconCard, ImageCard } from "@/components/cards";
 import {
+  ACFMultimediaItem,
   Post,
   SimilarTheme,
   ThematicPageAcfProps,
 } from "@/services/types/posts.dto";
+import {
+  BackgroundImage,
+  Button,
+  Container,
+  Flex,
+  Grid,
+  LoadingOverlay,
+} from "@mantine/core";
+import { HeroImage, HeroSlider } from "@/components/slider";
+import { IconCard, ImageCard } from "@/components/cards";
 import { decodeHtmlEntities, decodeHtmlLink } from "@/helpers/stringhelper";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { FixedRelatedVideosSection } from "@/components/videos";
-import { GlobalContext } from "@/contexts/globalContext";
 import { IconArrowRight } from "@tabler/icons-react";
-import { ImageSection } from "@/components/video";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
 import { TrendingCarrocel } from "@/components/rss/slider";
@@ -138,6 +144,54 @@ export default function ThematicPage() {
                             title={resource.title}
                             icon={
                               <>
+                                <div
+                                  className={styles.imageCardImage}
+                                  style={{
+                                    backgroundImage: `url(${resource.image})`,
+                                  }}
+                                />
+                              </>
+                            }
+                            callBack={() =>
+                              window.open(
+                                decodeHtmlLink(resource.url),
+                                "_blank"
+                              )
+                            }
+                            key={index}
+                          />
+                        );
+                      }
+                    )}
+                  </Flex>
+                </Container>
+              ) : (
+                <></>
+              )
+            ) : (
+              <></>
+            )}
+          </div>
+
+          <div className={styles.CountryRersources}>
+            {properties ? (
+              properties?.resources?.length > 0 ? (
+                <Container py={40} size={"xl"}>
+                  <h3 className={styles.TitleWithIcon}>Resources</h3>
+                  <Flex
+                    mt={50}
+                    gap={{ base: "20px", md: "3%" }}
+                    justify={"space-around"}
+                    direction={{ base: "column", sm: "row" }}
+                    wrap={"wrap"}
+                  >
+                    {properties?.resources.map(
+                      (resource: ACFMultimediaItem, index: number) => {
+                        return (
+                          <IconCard
+                            title={resource.title}
+                            icon={
+                              <>
                                 <img src={resource.image} />
                               </>
                             }
@@ -161,12 +215,23 @@ export default function ThematicPage() {
               <></>
             )}
           </div>
+
           <TrendingCarrocel
             allFilter={properties?.rss_filter}
             rssString={
               properties?.rss_filter ? properties?.rss_filter : undefined
             }
           />
+          {/* <Container size={"xl"} py={60}>
+            <Grid>
+              <Grid.Col span={{ md: 6, base: 12 }}>
+                <h3 className={styles.TitleWithIcon}>News</h3>
+              </Grid.Col>
+              <Grid.Col span={{ md: 6, base: 12 }}>
+                <h3 className={styles.TitleWithIcon}>Events</h3>
+              </Grid.Col>
+            </Grid>
+          </Container> */}
 
           {properties?.multimedia_items ? (
             <>

@@ -89,6 +89,8 @@ export interface ListPostsDto {
   dates: string[];
   dimensions: Term[];
   countries: Term[];
+  thematicAreas: Term[];
+  langs: Term[];
 }
 
 export interface ThematicPageAcfProps {
@@ -109,6 +111,7 @@ export interface ThematicPageAcfProps {
   multimedia_items: ACFMultimediaItem[];
   more_media_url: string;
   rss_filter: string;
+  resources: ACFMultimediaItem[];
 }
 
 export interface CommunityInitiative {

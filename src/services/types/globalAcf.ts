@@ -39,6 +39,7 @@ export interface GlobalConfigAcf {
     terms_and_conditions_url: string;
     trending_description: string;
     events_description: string;
+    thematic_area_description: string;
     database_repositories_descriptions?: string;
     filter_rss?: string;
     region_filters: RegionFilter[];

@@ -54,6 +54,7 @@ export const ImageCard = ({ callBack, title, icon, small }: IconCardProps) => {
         direction={"column"}
         justify={"center"}
         className={styles.cardImage}
+        style={{ width: "100%" }}
       >
         {icon}
       </Flex>
