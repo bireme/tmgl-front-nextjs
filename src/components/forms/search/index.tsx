@@ -5,7 +5,7 @@ import styles from "../../../styles/components/forms.module.scss";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
-export const SearchForm = ({ title, subtitle }: AcfSearch) => {
+export const SearchForm = ({ title, subtitle, small }: AcfSearch) => {
   const router = useRouter();
   const [searchString, setSearchString] = useState<string | null>(null);
 
@@ -26,7 +26,7 @@ export const SearchForm = ({ title, subtitle }: AcfSearch) => {
 
   return (
     <Flex
-      className={styles.SearchForm}
+      className={`${styles.SearchForm}`}
       py={{ base: 40, md: 0 }}
       align={{ base: "flex-end", md: "center" }}
     >

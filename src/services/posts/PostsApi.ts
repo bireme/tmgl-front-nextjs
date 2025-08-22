@@ -98,6 +98,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
         dates: response.data.map((d) => d.date),
         dimensions: dimensions.data,
         countries: countries.data,
+        thematicAreas: tags.data,
       };
     } else {
       const [regions] = await Promise.all([
@@ -112,6 +113,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
         tags: [],
         dimensions: [],
         countries: [],
+        thematicAreas: [],
       };
     }
   }
