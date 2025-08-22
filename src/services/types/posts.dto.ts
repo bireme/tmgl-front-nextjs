@@ -90,7 +90,6 @@ export interface ListPostsDto {
   dimensions: Term[];
   countries: Term[];
   thematicAreas: Term[];
-  langs: Term[];
 }
 
 export interface ThematicPageAcfProps {

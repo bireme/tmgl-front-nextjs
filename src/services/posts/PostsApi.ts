@@ -83,12 +83,11 @@ export class PostsApi extends BaseUnauthenticatedApi {
     );
 
     if (!this._region) {
-      const [regions, tags, dimensions, countries, langs] = await Promise.all([
+      const [regions, tags, dimensions, countries] = await Promise.all([
         this._api.get("/region?per_page=100"),
         this._api.get("/tags?per_page=100"),
         this._api.get("/tm-dimension?per_page=100"),
         this._api.get("/country?per_page=100"),
-        this._api.get("/lang?per_page=100"),
       ]);
       return {
         data: response.data,
@@ -100,7 +99,6 @@ export class PostsApi extends BaseUnauthenticatedApi {
         dimensions: dimensions.data,
         countries: countries.data,
         thematicAreas: tags.data,
-        langs: langs.data,
       };
     } else {
       const [regions] = await Promise.all([
@@ -115,7 +113,6 @@ export class PostsApi extends BaseUnauthenticatedApi {
         tags: [],
         dimensions: [],
         countries: [],
-        langs: [],
         thematicAreas: [],
       };
     }

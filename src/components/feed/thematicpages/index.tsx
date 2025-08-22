@@ -71,28 +71,28 @@ export const ThematicPagesFeed = ({ displayType }: { displayType: string }) => {
                       }))
                     : [],
                 },
-                {
-                  queryType: "country",
-                  label: "Countries",
-                  items: apiResponse
-                    ? apiResponse?.countries.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
-                    : [],
-                },
-                {
-                  queryType: "tags",
-                  label: "Language",
-                  items: apiResponse?.langs
-                    ? apiResponse?.langs.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
-                    : [],
-                },
+                // {
+                //   queryType: "country",
+                //   label: "Countries",
+                //   items: apiResponse
+                //     ? apiResponse?.countries.map((c) => ({
+                //         label: c.name,
+                //         ocorrences: undefined,
+                //         id: c.id.toString(),
+                //       }))
+                //     : [],
+                // },
+                // {
+                //   queryType: "tags",
+                //   label: "Language",
+                //   items: apiResponse?.langs
+                //     ? apiResponse?.langs.map((c) => ({
+                //         label: c.name,
+                //         ocorrences: undefined,
+                //         id: c.id.toString(),
+                //       }))
+                //     : [],
+                // },
               ]}
             />
           ) : (
