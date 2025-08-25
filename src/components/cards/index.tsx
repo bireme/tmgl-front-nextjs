@@ -1,4 +1,5 @@
-import { Flex } from "@mantine/core";
+import { Flex, Text } from "@mantine/core";
+
 import Link from "next/link";
 import { ReactNode } from "react";
 import styles from "../../styles/components/cards.module.scss";
@@ -32,6 +33,39 @@ export const IconCard = ({ callBack, title, icon, small }: IconCardProps) => {
       >
         {title}
       </Flex>
+    </Flex>
+  );
+};
+
+export const ImageCard = ({ callBack, title, icon, small }: IconCardProps) => {
+  return (
+    <Flex
+      direction={"column"}
+      align={"center"}
+      justify={"center"}
+      className={`${styles.IconCard} ${small ? styles.Small : ""}`}
+      onClick={() => {
+        callBack ? callBack() : null;
+      }}
+      gap={"10%"}
+      mb={"40px"}
+    >
+      <Flex
+        direction={"column"}
+        justify={"center"}
+        className={styles.cardImage}
+        style={{ width: "100%" }}
+      >
+        {icon}
+      </Flex>
+
+      <Text
+        className={styles.cardTitle}
+        ta={"left"}
+        style={{ width: "100%", fontWeight: "bold" }}
+      >
+        {title}
+      </Text>
     </Flex>
   );
 };

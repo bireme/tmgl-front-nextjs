@@ -1,3 +1,4 @@
+import { FilterItem, queryType } from "../types/resources";
 import {
   MultimediaObject,
   MultimediaResponse,
@@ -14,7 +15,6 @@ import { DefaultResourceDto } from "../types/defaultResource";
 import SparkMD5 from "spark-md5";
 import axios from "axios";
 import { getRegionByCountry } from "@/components/feed/utils";
-import { queryType } from "../types/resources";
 
 export class MultimediaService {
   public getResources = async (
@@ -241,11 +241,32 @@ export class MultimediaService {
       }
       return {
         data: docs,
-        countryFilter: mapJoinedMultLangArrayToFilterItem(
-          data.data.diaServerResponse[0].facet_counts.facet_fields
-            .publication_country,
-          lang
-        ),
+        countryFilter: data.data.diaServerResponse[0].response.docs
+          .map((d) => {
+            if (d.publication_country) {
+              const item = parseMultLangStringAttr(
+                d.publication_country[0]
+                  .split("|")
+                  .map((i) => i.replace("^", "|"))
+              ).find((i) => i.lang == lang)?.content;
+              return {
+                type: item ? item : "",
+                count: 1,
+              };
+            }
+            return { type: "", count: 0 };
+          }) // remove vazios
+          .filter((i) => i.type !== "" && i.count > 0)
+          // agrupa por type
+          .reduce((acc: FilterItem[], cur: FilterItem) => {
+            const found = acc.find((x: any) => x.type === cur.type);
+            if (found) {
+              found.count += cur.count;
+            } else {
+              acc.push({ ...cur });
+            }
+            return acc;
+          }, []),
         documentTypeFilter:
           data.data.diaServerResponse[0].facet_counts.facet_fields.media_type_filter.map(
             (y) => {
@@ -338,6 +359,7 @@ export class MultimediaService {
     const filtered = queryItems
       ? applyDefaultResourceFilters(queryItems, orderedData)
       : orderedData;
+
     const pageSize = Math.max(0, count);
     const window = filtered.slice(start, start + pageSize + 1);
     const hasNext = window.length > pageSize;

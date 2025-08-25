@@ -154,6 +154,11 @@ export const ResourceFilters = ({
         placeholder="Search for something"
         radius={"sm"}
         value={queryString}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            submit();
+          }
+        }}
         onChange={(e) => setQueryString(e.target.value)}
       />
 

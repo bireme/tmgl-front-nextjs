@@ -30,7 +30,7 @@ export const MultimediaFeed = ({
   const [loading, setLoading] = useState(false);
   const _service = new MultimediaService();
   const count = 12;
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
   const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
@@ -40,7 +40,7 @@ export const MultimediaFeed = ({
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
-    setPage(1);
+    setPage(0);
   };
 
   const getMedias = async () => {
@@ -169,9 +169,7 @@ export const MultimediaFeed = ({
                 style={{ height: "400px", width: "100%" }}
                 justify={"center"}
                 align={"center"}
-              >
-                <Center>No results found!</Center>
-              </Flex>
+              ></Flex>
             )}
           </Flex>
           <div className={styles.PaginationContainer}>

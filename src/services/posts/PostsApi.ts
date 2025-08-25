@@ -92,11 +92,13 @@ export class PostsApi extends BaseUnauthenticatedApi {
       return {
         data: response.data,
         totalItems: parseInt(response.headers["x-wp-total"], 10),
+        totalPages: parseInt(response.headers["x-Wp-totalpages"], 1),
         regions: regions.data,
         tags: tags.data,
         dates: response.data.map((d) => d.date),
         dimensions: dimensions.data,
         countries: countries.data,
+        thematicAreas: tags.data,
       };
     } else {
       const [regions] = await Promise.all([
@@ -105,11 +107,13 @@ export class PostsApi extends BaseUnauthenticatedApi {
       return {
         data: response.data,
         totalItems: parseInt(response.headers["x-wp-total"], 10),
+        totalPages: parseInt(response.headers["x-Wp-totalpages"], 1),
         regions: regions.data,
         dates: response.data.map((d) => d.date),
         tags: [],
         dimensions: [],
         countries: [],
+        thematicAreas: [],
       };
     }
   }

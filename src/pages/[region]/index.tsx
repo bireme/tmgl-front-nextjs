@@ -117,7 +117,12 @@ export default function RegionHome() {
                   <Center>
                     <h2>Collaboration Network</h2>
                   </Center>
-                  <Flex gap={30} align={"center"} justify={"center"}>
+                  <Flex
+                    gap={30}
+                    align={"center"}
+                    justify={"center"}
+                    direction={{ base: "column", sm: "column", md: "row" }}
+                  >
                     {acf?.collaboration_network_items?.length > 0 &&
                       acf?.collaboration_network_items.map((item, index) => (
                         <a
@@ -166,7 +171,7 @@ export default function RegionHome() {
             <div className={styles.NewsContainer}>
               <NewsSection
                 region={region ? region.toString() : ""}
-                title={true}
+                title={"News from WHO"}
               />
               <NewsletterSection />
             </div>

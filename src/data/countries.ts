@@ -43,7 +43,7 @@ export const CountriesRegions = [
   {
     Code: "BF",
     pt: "Burkina Faso",
-    en: "Burkina Faso (People's Republic of)",
+    en: "Burkina Faso",
     es: "Burkina Faso",
     fr: "Burkina Faso",
     Region: "Africa",

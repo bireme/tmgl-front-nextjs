@@ -11,11 +11,14 @@ import { DefaultResourceItemDto } from "../types/defaultResource";
 import { JournalDescription } from "../types/journalsDto";
 import { LisDocuments } from "../types/repositoryTypes";
 import { ThematicAreaApiDto } from "../types/evidenceMapsDto";
+import { string } from "zod";
 
 export function applyDefaultResourceFilters(
   queryItems: queryType[],
   orderedData: DefaultResourceItemDto[]
 ): DefaultResourceItemDto[] {
+  console.log("aplicando filtros");
+
   const stringParameter = queryItems.filter((q) => q.parameter === "title");
   const resourceTypeFilter = queryItems
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "resource_type")
@@ -30,7 +33,7 @@ export function applyDefaultResourceFilters(
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "document_type")
     .map((q) => q.query);
   const thematicAreaFilters = queryItems
-    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "thematic_area")
+    .filter((q) => q.parameter.toLocaleLowerCase().trim() === "descriptor")
     .map((q) => q.query);
   const countryFilters = queryItems
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "country")
@@ -40,7 +43,6 @@ export function applyDefaultResourceFilters(
     .map((q) => q.query);
 
   if (regionFilters.length) {
-    console.log("Filtering by region:", regionFilters);
     orderedData = orderedData.filter((item) =>
       regionFilters
         .map((c) => c.trim().toLocaleLowerCase())
@@ -51,8 +53,8 @@ export function applyDefaultResourceFilters(
   if (countryFilters.length) {
     orderedData = orderedData.filter((item) =>
       countryFilters
-        .map((c) => c.trim().toLocaleLowerCase())
-        .includes(item.country?.trim().toLocaleLowerCase() ?? "")
+        .map((c) => c.toLocaleLowerCase())
+        .includes(item.country?.toLocaleLowerCase() ?? "")
     );
   }
 
@@ -67,7 +69,6 @@ export function applyDefaultResourceFilters(
   }
 
   if (resourceTypeFilter.length) {
-    console.log("Filtering by resource type:", resourceTypeFilter);
     console.log(orderedData);
     orderedData = orderedData.filter((item) =>
       resourceTypeFilter.includes(
@@ -79,6 +80,7 @@ export function applyDefaultResourceFilters(
   }
 
   if (stringParameter.length > 0) {
+    console.log(stringParameter);
     orderedData = orderedData.filter(
       (item) =>
         item.title
@@ -113,12 +115,44 @@ export function applyDefaultResourceFilters(
       )
     );
   }
-  if (thematicAreaFilters.length) {
-    orderedData = orderedData.filter((item) =>
-      Array.isArray(item.thematicArea)
-        ? item.thematicArea.some((ta) => thematicAreaFilters.includes(ta))
-        : thematicAreaFilters.includes(item.thematicArea || "")
-    );
+
+  if (Array.isArray(thematicAreaFilters) && thematicAreaFilters.length) {
+    const filters = thematicAreaFilters
+      .map((f) =>
+        String(f ?? "")
+          .trim()
+          .toLowerCase()
+      )
+      .filter(Boolean);
+
+    console.log("Filtros normalizados:", filters);
+
+    const before = orderedData.length;
+
+    orderedData = orderedData.filter((item) => {
+      const rawAreas = Array.isArray(item?.thematicArea)
+        ? item.thematicArea
+        : [item?.thematicArea];
+
+      const areas = rawAreas
+        .map((a) =>
+          String(a ?? "")
+            .trim()
+            .toLowerCase()
+        )
+        .filter(Boolean);
+
+      // bate se igual ou se for subcategoria (ex.: "midwifery/...").
+      const hit = areas.some((x) =>
+        filters.some((f) => x === f || x.startsWith(f + "/"))
+      );
+
+      if (hit) {
+        // debug opcional para ver quais bateram
+        // console.log("HIT:", { areas: rawAreas, item });
+      }
+      return hit;
+    });
   }
 
   return orderedData;

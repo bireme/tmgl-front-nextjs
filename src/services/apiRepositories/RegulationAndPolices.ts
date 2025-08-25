@@ -47,11 +47,13 @@ export class RegulationsAndPolicesService {
       ? applyDefaultResourceFilters(queryItems, orderedData)
       : orderedData;
 
+    console.log("filtrados", filtered);
     const pageSize = Math.max(0, count);
     const window = filtered.slice(start, start + pageSize + 1);
     const hasNext = window.length > pageSize;
     const paginated = hasNext ? window.slice(0, pageSize) : window;
-
+    console.log("paginated", start);
+    console.log("pagesize", pageSize);
     return {
       data: paginated,
       totalFound: filtered.length,

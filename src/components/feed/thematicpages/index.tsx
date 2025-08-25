@@ -1,5 +1,9 @@
 import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
-import { ListPostsDto, Post } from "@/services/types/posts.dto";
+import {
+  ListPostsDto,
+  Post,
+  ThematicPageAcfProps,
+} from "@/services/types/posts.dto";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
@@ -14,7 +18,7 @@ import moment from "moment";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const NewsFeed = ({ displayType }: { displayType: string }) => {
+export const ThematicPagesFeed = ({ displayType }: { displayType: string }) => {
   const [loading, setLoading] = useState(false);
   const count = 12;
   const [page, setPage] = useState<number>(1);
@@ -31,7 +35,7 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
 
     setLoading(true);
     const response = await _api.listPosts(
-      "posts",
+      "thematic-pages",
       count,
       resetPage ? 1 : page,
       filter
@@ -57,34 +61,6 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
               callBack={applyFilters}
               filters={[
                 {
-                  queryType: "region",
-                  label: "WHO Regions",
-                  items: apiResponse
-                    ? apiResponse?.regions
-                        .filter(
-                          (c, index, arr) =>
-                            arr.findIndex((item) => item.name === c.name) ===
-                            index
-                        )
-                        .map((c) => ({
-                          label: c.name,
-                          ocorrences: undefined,
-                          id: c.id.toString(),
-                        }))
-                    : [],
-                },
-                {
-                  queryType: "country",
-                  label: "Country",
-                  items: apiResponse
-                    ? apiResponse?.countries.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
-                    : [],
-                },
-                {
                   queryType: "tags",
                   label: "Thematic Area",
                   items: apiResponse
@@ -95,33 +71,28 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                       }))
                     : [],
                 },
-                {
-                  queryType: "after",
-                  label: "Publication Year",
-                  items: apiResponse
-                    ? Array.from(
-                        new Map(
-                          apiResponse.dates.map((c) => {
-                            const label = c ? moment(c).format("YYYY") : "";
-                            return [
-                              label,
-                              {
-                                label,
-                                ocorrences: undefined,
-                                id: c
-                                  ? `${moment(c).format(
-                                      "YYYY"
-                                    )}-01-01T00:00:00&before=${moment(c).format(
-                                      "YYYY"
-                                    )}-12-31T23:59:59`
-                                  : "",
-                              },
-                            ];
-                          })
-                        ).values()
-                      )
-                    : [],
-                },
+                // {
+                //   queryType: "country",
+                //   label: "Countries",
+                //   items: apiResponse
+                //     ? apiResponse?.countries.map((c) => ({
+                //         label: c.name,
+                //         ocorrences: undefined,
+                //         id: c.id.toString(),
+                //       }))
+                //     : [],
+                // },
+                // {
+                //   queryType: "tags",
+                //   label: "Language",
+                //   items: apiResponse?.langs
+                //     ? apiResponse?.langs.map((c) => ({
+                //         label: c.name,
+                //         ocorrences: undefined,
+                //         id: c.id.toString(),
+                //       }))
+                //     : [],
+                // },
               ]}
             />
           ) : (
@@ -141,6 +112,7 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
             {items.length > 0 ? (
               <>
                 {items.map((i, k) => {
+                  const acf: ThematicPageAcfProps = i.acf;
                   return (
                     <ResourceCard
                       displayType={displayType}
@@ -150,11 +122,11 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                       image={_api.findFeaturedMedia(i, "medium")}
                       excerpt={
                         removeHTMLTagsAndLimit(
-                          decodeHtmlEntities(i.excerpt.rendered),
+                          decodeHtmlEntities(acf.content),
                           180
-                        ) + `${i.excerpt.rendered.length > 180 ? "..." : ""}`
+                        ) + `${acf.content.length > 180 ? "..." : ""}`
                       }
-                      link={`/news/${i.slug}`}
+                      link={`/thematic-page/${i.slug}`}
                     />
                   );
                 })}
