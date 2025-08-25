@@ -171,7 +171,7 @@ export default function RegionHome() {
             <div className={styles.NewsContainer}>
               <NewsSection
                 region={region ? region.toString() : ""}
-                title={true}
+                title={"News from WHO"}
               />
               <NewsletterSection />
             </div>
