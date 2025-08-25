@@ -69,15 +69,39 @@ export const NewsItem = ({
 
 export interface NewsSectionProps {
   region?: string;
-  title?: boolean;
+  title?: string;
+  type?: string;
+  archive?: string;
 }
-export const NewsSection = ({ region, title }: NewsSectionProps) => {
+export const NewsSection = ({
+  region,
+  title,
+  type,
+  archive,
+}: NewsSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
   const _api = new PostsApi();
   const getNews = useCallback(async () => {
     try {
-      const resp = await _api.getCustomPost("posts", 4, -1, undefined, region);
-      setPosts(resp);
+      if (type) {
+        const resp = await _api.getCustomPost(
+          type,
+          4,
+          undefined,
+          undefined,
+          region
+        );
+        setPosts(resp);
+      } else {
+        const resp = await _api.getCustomPost(
+          "posts",
+          4,
+          -1,
+          undefined,
+          region
+        );
+        setPosts(resp);
+      }
     } catch (error: any) {
       console.log("Error while getting news", error);
     }
@@ -92,7 +116,7 @@ export const NewsSection = ({ region, title }: NewsSectionProps) => {
         <Container size={"xl"} py={80}>
           {title && posts.length > 0 ? (
             <>
-              <h2 className={styles.TitleWithIcon}>News from WHO</h2>
+              <h2 className={styles.TitleWithIcon}>{title}</h2>
             </>
           ) : (
             <></>
@@ -126,7 +150,7 @@ export const NewsSection = ({ region, title }: NewsSectionProps) => {
           {posts.length > 0 ? (
             <>
               <Link
-                href={"/news"}
+                href={!archive ? "/news" : "/" + archive}
                 style={{
                   textDecoration: "none",
                   color: "black",
@@ -134,7 +158,8 @@ export const NewsSection = ({ region, title }: NewsSectionProps) => {
                 }}
               >
                 <Flex justify={"flex-start"} align={"center"} gap={10}>
-                  <p>Explore archived news</p>{" "}
+                  {type ? <p>Explore more</p> : <p>Explore archived news</p>}
+
                   <Button p={5} size={"xs"}>
                     <IconArrowRight />
                   </Button>
