@@ -10,6 +10,15 @@ import { TagItem } from "@/components/feed/resourceitem";
 import { TaxonomiesApi } from "../taxonomies/TaxonomiesApi";
 import { queryType } from "../types/resources";
 
+type GetCustomPostOptions = {
+  /** ID único ou lista de IDs de tag */
+  tagId?: number | number[];
+  /** Se true, usa tags_exclude (default: incluir com tags) */
+  excludeTag?: boolean;
+  catId?: number | number[];
+  excludeCat?: boolean;
+};
+
 export class PostsApi extends BaseUnauthenticatedApi {
   public constructor(region?: string) {
     super(`${region ? region + "/" : ""}wp-json/wp/v2/`);
@@ -28,43 +37,81 @@ export class PostsApi extends BaseUnauthenticatedApi {
     return data;
   }
 
+  public async getCategoryBySlug(slug: string) {
+    const { data } = await this._api.get(
+      `categories?slug=${encodeURIComponent(slug)}&per_page=100`
+    );
+    return Array.isArray(data) && data.length ? data[0] : null;
+  }
+
   public async getCustomPost(
     postTypeSlug: string,
     perPage?: number,
     parent?: number,
     region?: number[],
-    regionString?: string
+    regionString?: string,
+    options?: GetCustomPostOptions
   ): Promise<Post[]> {
     if (regionString) {
       const _taxApi = new TaxonomiesApi();
       const taxonomies = await _taxApi.getTaxonomies("region");
-      if (taxonomies) {
-        const filteredRegions = taxonomies.filter(
-          (t) => t?.name == regionString || t?.slug == regionString
-        );
-        if (filteredRegions.length > 0) {
-          region = [filteredRegions[0].id];
-        }
+      const hit = taxonomies?.find(
+        (t) => t?.name == regionString || t?.slug == regionString
+      );
+      if (hit) region = [hit.id];
+    }
+
+    // tags
+    let tagQuery = "";
+    if (options?.tagId !== undefined) {
+      const ids = Array.isArray(options.tagId)
+        ? options.tagId
+        : [options.tagId];
+      if (ids.length > 0) {
+        tagQuery = options.excludeTag
+          ? `&tags_exclude=${ids.join(",")}`
+          : `&tags=${ids.join(",")}`;
       }
     }
 
-    const { data } = await this._api.get(
-      `${postTypeSlug}?per_page=${
-        perPage ? perPage : process.env.POSTSPERPAGE
-      }&_embed&orderby=date&order=desc&acf_format=standard${
-        parent || (parent == 0 && parent >= 0) ? "&parent=" + parent : ""
-      }${
-        region && region.length > 0
-          ? `&region=${region.length > 0 ? region.join(",") : ""}`
-          : ""
-      }&${
+    // categorias
+    let catQuery = "";
+    let catIds: number[] = [];
+    if (options?.catId !== undefined) {
+      catIds = Array.isArray(options.catId) ? options.catId : [options.catId];
+      if (catIds.length > 0) {
+        catQuery = options.excludeCat
+          ? `&categories_exclude=${catIds.join(",")}`
+          : `&categories=${catIds.join(",")}`;
+      }
+    }
+
+    const url =
+      `${postTypeSlug}?per_page=${perPage ?? process.env.POSTSPERPAGE}` +
+      `&_embed&orderby=date&order=desc&acf_format=standard` +
+      `${parent !== undefined && parent >= 0 ? `&parent=${parent}` : ""}` +
+      `${region && region.length ? `&region=${region.join(",")}` : ""}` +
+      `${tagQuery}${catQuery}` +
+      `&${
         this._lang == "en"
-          ? postTypeSlug == "posts" || postTypeSlug == "pages"
+          ? postTypeSlug === "posts" || postTypeSlug === "pages"
             ? `lang=${this._lang}`
             : ""
           : `lang=${this._lang}`
-      }`
-    );
+      }`;
+
+    const { data } = await this._api.get(url);
+
+    // -------- Fallback seguro no cliente (se o servidor ignorar categories_exclude) --------
+    if (options?.excludeCat && catIds.length > 0 && Array.isArray(data)) {
+      const exclude = new Set(catIds);
+      // WP expõe 'categories' para posts e para CPTs que suportam 'category'
+      return data.filter((p: any) => {
+        const cats: number[] = Array.isArray(p?.categories) ? p.categories : [];
+        return cats.every((id) => !exclude.has(id));
+      });
+    }
+
     return data;
   }
 
@@ -159,6 +206,18 @@ export class PostsApi extends BaseUnauthenticatedApi {
     }
 
     return countryTags.concat(regionTags).concat(tagsTags);
+  }
+
+  public async getTagBySlug(slug: string): Promise<any[]> {
+    try {
+      const { data } = await this._api.get(
+        `tags?slug=${encodeURIComponent(slug)}`
+      );
+      return data; // retorna todos os objetos da tag
+    } catch (error) {
+      console.error("Erro ao buscar tag por slug:", error);
+      return [];
+    }
   }
 
   public async getPostByAcfMetaKey(

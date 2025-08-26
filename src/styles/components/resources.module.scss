@@ -122,6 +122,16 @@
 
 .ResourceCard{
   width: 31%;
+  height: 100%;
+  
+  &.FullWidth{
+    width: 100% !important;
+    min-width: 100%;
+    &.Row{
+      width: 100% !important;
+    min-width: 100%;
+    }
+  }
   background-color: #F3F3F2;
   box-shadow: 0px 4px 16px 0px #00000040;
   border-radius: 18px;
@@ -149,6 +159,11 @@
   &.Row{
     width: 100%;
     min-height: 244px;
+    height: 100%;
+    &.FullWidth{
+      width: 100% !important;
+      min-width: 100%;
+    }
     .CardImage{
       height: 100%;
       width: 40%;
@@ -215,7 +230,8 @@
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
   }
-  a{
+  .buttonLink{
+    
     background-color:#0093D5;
     border-radius: 5px;
     display: flex;

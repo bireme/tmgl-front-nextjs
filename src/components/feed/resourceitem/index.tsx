@@ -1,8 +1,9 @@
 import { Badge, Flex, LoadingOverlay } from "@mantine/core";
+import { HTMLAttributes, useEffect, useState } from "react";
 import { IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
-import { useEffect, useState } from "react";
 
 import { IframeThumbNail } from "../multimedia/pdf_thumbnail";
+import { PropsWithChildren } from "react";
 import moment from "moment";
 import styles from "../../../styles/components/resources.module.scss";
 
@@ -17,12 +18,49 @@ export interface ResourceCardProps {
   size?: string;
   target?: string;
   type?: string;
+  fullWidth?: boolean;
 }
 
 export interface TagItem {
   name: string;
   type: string;
 }
+
+export type DefaultCardProps = PropsWithChildren<
+  {
+    displayType: string;
+    fullWidth?: boolean;
+    size?: string;
+  } & HTMLAttributes<HTMLDivElement>
+>;
+
+export const DefaultCard = ({
+  displayType,
+  fullWidth,
+  size,
+  children,
+  className,
+  style,
+  ...rest
+}: DefaultCardProps) => {
+  return (
+    <Flex
+      direction={displayType === "column" ? "column" : "row"}
+      align={displayType === "column" ? "flex-end" : "flex-start"}
+      justify="space-between"
+      gap={30}
+      className={`${styles.ResourceCard} ${
+        displayType === "column" ? "" : styles.Row
+      } ${size === "Small" ? styles.Small : ""} ${
+        fullWidth ? styles.FullWidth : ""
+      } ${className ?? ""}`}
+      style={{ height: "100%", ...style }}
+      {...rest}
+    >
+      {children}
+    </Flex>
+  );
+};
 
 export const ResourceCard = ({
   title,
@@ -34,7 +72,7 @@ export const ResourceCard = ({
   size,
   target = "_self",
   type,
-  resourceType,
+  fullWidth = false,
 }: ResourceCardProps) => {
   const isPdf = (thumb: string | string[]): boolean => {
     if (type == "Pdf") return true;
@@ -93,15 +131,7 @@ export const ResourceCard = ({
   };
 
   return (
-    <Flex
-      direction={displayType === "column" ? "column" : "row"}
-      align={displayType === "column" ? "flex-end" : "flex-start"}
-      justify="space-between"
-      gap={30}
-      className={`${styles.ResourceCard} ${
-        displayType === "column" ? "" : styles.Row
-      } ${size === "Small" ? styles.Small : "auto"}`}
-    >
+    <DefaultCard fullWidth={fullWidth} displayType={displayType} size={size}>
       {image && displayType !== "column" ? cardImage() : <></>}
       <div className={styles.CardContent}>
         {image && displayType === "column" ? cardImage() : <></>}
@@ -171,12 +201,12 @@ export const ResourceCard = ({
           justify="flex-end"
           style={{ height: displayType === "column" ? "auto" : "100%" }}
         >
-          <a href={link} target={target}>
+          <a className={styles.buttonLink} href={link} target={target}>
             <IconArrowRight />
           </a>
         </Flex>
       </Flex>
-    </Flex>
+    </DefaultCard>
   );
 };
 

@@ -93,12 +93,14 @@ export const NewsSection = ({
         );
         setPosts(resp);
       } else {
+        const cat = await _api.getCategoryBySlug("thematic-page");
         const resp = await _api.getCustomPost(
           "posts",
           4,
           -1,
           undefined,
-          region
+          region,
+          cat ? { catId: cat.id, excludeCat: true } : undefined
         );
         setPosts(resp);
       }
@@ -134,7 +136,7 @@ export const NewsSection = ({
                   return (
                     <NewsItem
                       key={key}
-                      href={`/news/${item.slug}`}
+                      href={`/${archive ? archive : "news"}/${item.slug}`}
                       title={item.title.rendered}
                       date={moment(item.date).toDate()}
                       imagePath={_api.findFeaturedMedia(item, "full")}

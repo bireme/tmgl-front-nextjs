@@ -22,9 +22,8 @@ export async function FetchRSSFeed(
         filter: normalizeFilter(filter),
       },
     });
-    console.log(response);
     let feedItems = response.data.rss.channel.item || [];
-    console.log(feedItems);
+
     if (feedItems.length === 0) {
       feedItems.push(response.data.rss.channel);
     }
