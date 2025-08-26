@@ -30,6 +30,7 @@ export default function ThematicPage() {
   const router = useRouter();
   const [properties, setProperties] = useState<ThematicPageAcfProps>();
   const [postProps, setPostProps] = useState<Post>();
+  const [news, steNews] = useState<Array<Post>>([]);
   const {
     query: { slug },
   } = router;

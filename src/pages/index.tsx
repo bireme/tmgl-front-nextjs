@@ -64,9 +64,7 @@ export default function Home() {
       </div>
       <ImageSection>
         <Container size={"xl"} py={"5%"} className={styles.TraditionalMedicine}>
-          <h2>
-            {acf?.tmd.title}
-          </h2>
+          <h2>{acf?.tmd.title}</h2>
           <Center m={0} p={0}>
             <h4>{acf?.tmd.subtitle}</h4>
           </Center>
@@ -74,6 +72,11 @@ export default function Home() {
           <DimensionsSection items={acf?.itens} />
         </Container>
       </ImageSection>
+      <NewsSection
+        title={"Thematic Pages"}
+        type="thematic-pages"
+        archive="thematic-page"
+      />
       <div className={styles.TrandingAndFeatured}>
         <Container
           size={"xl"}
@@ -126,7 +129,7 @@ export default function Home() {
       </div>
       <EventsSection />
       <div className={styles.NewsContainer}>
-        <NewsSection title={true} />
+        <NewsSection title={"News from WHO"} />
         {acf?.manual_media && acf.manual_media.length >= 3 ? (
           <FixedRelatedVideosSection
             items={[
