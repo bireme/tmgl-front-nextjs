@@ -42,9 +42,18 @@ export const ThematicPagesFeed = ({ displayType }: { displayType: string }) => {
     );
     setTotalPages(Math.ceil(response.totalItems / count));
     setApiResponse(response);
-    setItems(response.data);
+    setItems(response.data.reverse());
     setLoading(false);
   };
+
+  function hasDemoTag(item: any): boolean {
+    const groups = item?._embedded?.["wp:term"] ?? [];
+    const flat = typeof groups?.flat === "function" ? groups.flat() : groups;
+
+    return (Array.isArray(flat) ? flat : []).some(
+      (t: any) => t?.taxonomy === "post_tag" && t?.name === "demo"
+    );
+  }
 
   useEffect(() => {
     getPosts();
@@ -64,11 +73,26 @@ export const ThematicPagesFeed = ({ displayType }: { displayType: string }) => {
                   queryType: "tags",
                   label: "Thematic Area",
                   items: apiResponse
-                    ? apiResponse?.tags.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
+                    ? Array.from(
+                        new Map(
+                          apiResponse.data
+                            .flatMap((c) =>
+                              (c._embedded?.["wp:term"] ?? [])
+                                .flat()
+                                .filter(
+                                  (term: any) =>
+                                    term?.taxonomy === "thematic-area"
+                                )
+                                .map((t: any) => ({
+                                  label: t.name,
+                                  ocorrences: undefined,
+                                  id: String(t.id),
+                                }))
+                            )
+                            // cria [id, objeto] para deduplicar pelo id
+                            .map((obj) => [obj.id, obj])
+                        ).values()
+                      )
                     : [],
                 },
                 // {
@@ -115,6 +139,7 @@ export const ThematicPagesFeed = ({ displayType }: { displayType: string }) => {
                   const acf: ThematicPageAcfProps = i.acf;
                   return (
                     <ResourceCard
+                      demo={hasDemoTag(i)}
                       displayType={displayType}
                       key={k}
                       title={i.title.rendered}
