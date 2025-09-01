@@ -52,6 +52,7 @@ export function getCountryTags(
 }
 export function getRegionByCountry(countries: string[]): string[] {
   let regions = groupCountriesByRegion(CountriesRegions);
+
   const itemRegions = regions.filter((region) =>
     region.countries.some((country) =>
       countries

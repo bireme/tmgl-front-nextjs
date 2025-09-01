@@ -19,6 +19,7 @@ export interface ResourceCardProps {
   target?: string;
   type?: string;
   fullWidth?: boolean;
+  demo?: boolean;
 }
 
 export interface TagItem {
@@ -73,6 +74,7 @@ export const ResourceCard = ({
   target = "_self",
   type,
   fullWidth = false,
+  demo = false,
 }: ResourceCardProps) => {
   const isPdf = (thumb: string | string[]): boolean => {
     if (type == "Pdf") return true;
@@ -131,7 +133,16 @@ export const ResourceCard = ({
   };
 
   return (
-    <DefaultCard fullWidth={fullWidth} displayType={displayType} size={size}>
+    <DefaultCard
+      fullWidth={fullWidth}
+      displayType={displayType}
+      size={size}
+      style={{
+        opacity: demo ? 0.6 : 1,
+        pointerEvents: demo ? "none" : "auto",
+        cursor: demo ? "not-allowed" : "auto",
+      }}
+    >
       {image && displayType !== "column" ? cardImage() : <></>}
       <div className={styles.CardContent}>
         {image && displayType === "column" ? cardImage() : <></>}

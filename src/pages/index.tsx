@@ -72,11 +72,14 @@ export default function Home() {
           <DimensionsSection items={acf?.itens} />
         </Container>
       </ImageSection>
-      <NewsSection
-        title={"Thematic Pages"}
-        type="thematic-pages"
-        archive="thematic-page"
-      />
+      <div className={styles.NewsContainer}>
+        <NewsSection
+          title={"Thematic Pages"}
+          posType="thematic-pages"
+          archive="thematic-page"
+          includeDemo={true}
+        />
+      </div>
       <div className={styles.TrandingAndFeatured}>
         <Container
           size={"xl"}

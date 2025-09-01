@@ -1,97 +1,55 @@
-import { Badge, Button, Container, Flex, LoadingOverlay } from "@mantine/core";
+import { Button, Container, Flex } from "@mantine/core";
+import {
+  decodeHtmlEntities,
+  removeHTMLTagsAndLimit,
+} from "@/helpers/stringhelper";
 import { useCallback, useContext, useEffect, useState } from "react";
 
-import { GlobalContext } from "@/contexts/globalContext";
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
+import { ResourceCard } from "@/components/feed/resourceitem";
 import moment from "moment";
 import styles from "../../../styles/components/sections.module.scss";
 import { useRouter } from "next/router";
 
-export interface NewsItemProps {
-  imagePath: string;
-  date: Date;
-  title: string;
-  href: string;
-  category?: string[];
-}
-export const NewsItem = ({
-  imagePath,
-  date,
-  title,
-  href,
-  category,
-}: NewsItemProps) => {
-  const router = useRouter();
-  return (
-    <Flex
-      onClick={() => router.push(href)}
-      className={styles.NewsItem}
-      direction={"column"}
-      justify={"start"}
-    >
-      <div
-        className={styles.NewsImage}
-        style={{ backgroundImage: `url(${imagePath})` }}
-      ></div>
-      <Flex
-        direction={"column"}
-        justify={"space-between"}
-        className={styles.NewsContent}
-      >
-        <div>
-          <p>
-            <small>{moment(date).format("DD MMM [,] YYYY")}</small>
-          </p>
-          <h3>{title}</h3>
-        </div>
-        <Flex gap={10}>
-          {category?.map((item, key) => {
-            return (
-              <Badge
-                key={key}
-                color={"tmgl-red"}
-                style={{ fontWeight: 400 }}
-                px={15}
-                py={10}
-              >
-                {item}
-              </Badge>
-            );
-          })}
-        </Flex>
-      </Flex>
-    </Flex>
-  );
-};
-
 export interface NewsSectionProps {
   region?: string;
   title?: string;
-  type?: string;
+  posType?: string;
   archive?: string;
+  includeDemo?: boolean;
 }
 export const NewsSection = ({
   region,
   title,
-  type,
+  posType,
   archive,
+  includeDemo,
 }: NewsSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
+  const [demoTagId, setDemoTagId] = useState<number>();
   const _api = new PostsApi();
   const getNews = useCallback(async () => {
     try {
-      if (type) {
+      const demoTag = await _api.getTagBySlug("demo");
+      if (posType) {
+        setDemoTagId(demoTag ? demoTag[0].id : undefined);
         const resp = await _api.getCustomPost(
-          type,
+          posType,
           4,
           undefined,
           undefined,
-          region
+          region,
+          includeDemo == true
+            ? undefined
+            : {
+                tagId: demoTag[0].id,
+                excludeTag: true,
+              }
         );
-        setPosts(resp);
+        setPosts(resp.reverse());
       } else {
         const cat = await _api.getCategoryBySlug("thematic-page");
         const resp = await _api.getCustomPost(
@@ -100,7 +58,12 @@ export const NewsSection = ({
           -1,
           undefined,
           region,
-          cat ? { catId: cat.id, excludeCat: true } : undefined
+          cat
+            ? {
+                catId: cat.id,
+                excludeCat: true,
+              }
+            : undefined
         );
         setPosts(resp);
       }
@@ -111,6 +74,20 @@ export const NewsSection = ({
   useEffect(() => {
     getNews();
   }, [getNews]);
+
+  function hasDemoTag(item: any, demoTagId: number): boolean {
+    if (Array.isArray(item?.tags) && item.tags.includes(demoTagId)) {
+      return true;
+    }
+
+    // CPTs (tags vêm via _embedded["wp:term"])
+    const groups = item?._embedded?.["wp:term"] ?? [];
+    const flat = typeof groups?.flat === "function" ? groups.flat() : groups;
+
+    return (Array.isArray(flat) ? flat : []).some(
+      (t: any) => t?.taxonomy === "post_tag" && t?.id === demoTagId
+    );
+  }
 
   return (
     <>
@@ -134,13 +111,45 @@ export const NewsSection = ({
               >
                 {posts.map((item, key) => {
                   return (
-                    <NewsItem
+                    <ResourceCard
+                      demo={
+                        demoTagId
+                          ? hasDemoTag(item, demoTagId)
+                            ? true
+                            : false
+                          : false
+                      }
+                      displayType="column"
                       key={key}
-                      href={`/${archive ? archive : "news"}/${item.slug}`}
-                      title={item.title.rendered}
-                      date={moment(item.date).toDate()}
-                      imagePath={_api.findFeaturedMedia(item, "full")}
-                      category={_api.getPostTags(item)}
+                      link={`/${archive ? archive : "news"}/${item.slug}`}
+                      title={
+                        removeHTMLTagsAndLimit(item.title.rendered, 65) +
+                        `${item.title.rendered.length > 65 ? "..." : ""}`
+                      }
+                      type={moment(item.date).format("DD MMM , YYYY")}
+                      image={_api.findFeaturedMedia(item, "full")}
+                      tags={_api.getPostTags(item).map((t) => {
+                        return {
+                          name:
+                            removeHTMLTagsAndLimit(t, 20) +
+                            `${t.length > 20 ? "..." : ""}`,
+                          type: "descriptor",
+                        };
+                      })}
+                      excerpt={
+                        item.excerpt
+                          ? removeHTMLTagsAndLimit(
+                              decodeHtmlEntities(item.excerpt.rendered),
+                              120
+                            ) +
+                            `${item.excerpt.rendered.length > 120 ? "..." : ""}`
+                          : item.acf?.content
+                          ? removeHTMLTagsAndLimit(
+                              decodeHtmlEntities(item.acf.content),
+                              120
+                            ) + `${item.acf.content.length > 120 ? "..." : ""}`
+                          : "--"
+                      }
                     />
                   );
                 })}
@@ -160,7 +169,7 @@ export const NewsSection = ({
                 }}
               >
                 <Flex justify={"flex-start"} align={"center"} gap={10}>
-                  {type ? <p>Explore more</p> : <p>Explore archived news</p>}
+                  {posType ? <p>Explore more</p> : <p>Explore archived news</p>}
 
                   <Button p={5} size={"xs"}>
                     <IconArrowRight />

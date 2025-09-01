@@ -102,7 +102,6 @@ export class PostsApi extends BaseUnauthenticatedApi {
 
     const { data } = await this._api.get(url);
 
-    // -------- Fallback seguro no cliente (se o servidor ignorar categories_exclude) --------
     if (options?.excludeCat && catIds.length > 0 && Array.isArray(data)) {
       const exclude = new Set(catIds);
       // WP expõe 'categories' para posts e para CPTs que suportam 'category'

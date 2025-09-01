@@ -281,11 +281,17 @@ export class MultimediaService {
           ),
         eventFilter: [],
         regionFilter: getRegionByCountry(
-          mapJoinedMultLangArrayToFilterItem(
-            data.data.diaServerResponse[0].facet_counts.facet_fields
-              .publication_country,
-            lang
-          ).map((c) => c.type)
+          data.data.diaServerResponse[0].response.docs.map((d) => {
+            if (d.publication_country) {
+              const item = parseMultLangStringAttr(
+                d.publication_country[0]
+                  .split("|")
+                  .map((i) => i.replace("^", "|"))
+              ).find((i) => i.lang == lang)?.content;
+              return item ? item : "";
+            }
+            return "";
+          })
         ).map((r) => {
           return { type: r, count: 99 };
         }),

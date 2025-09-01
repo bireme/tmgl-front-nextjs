@@ -363,7 +363,7 @@ export const CountriesRegions = [
   {
     Code: "TZ",
     pt: "Tanzânia",
-    en: "United Republic of Tanzania",
+    en: "Tanzania, United Republic of",
     es: "República Unida de Tanzanía",
     fr: "République-Unie de Tanzanie",
     Region: "Africa",
