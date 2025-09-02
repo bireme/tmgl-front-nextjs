@@ -4,17 +4,8 @@ import {
   SimilarTheme,
   ThematicPageAcfProps,
 } from "@/services/types/posts.dto";
-import {
-  BackgroundImage,
-  Button,
-  Container,
-  Flex,
-  Grid,
-  LoadingOverlay,
-  Title,
-} from "@mantine/core";
+import { Button, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { DefaultCard, ResourceCard } from "@/components/feed/resourceitem";
-import { HeroImage, HeroSlider } from "@/components/slider";
 import { IconArrowRight, IconTemperature } from "@tabler/icons-react";
 import { IconCard, ImageCard } from "@/components/cards";
 import {
@@ -26,6 +17,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { FixedRelatedVideosSection } from "@/components/videos";
+import { HeroSlider } from "@/components/slider";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
 import { TrendingCarrocel } from "@/components/rss/slider";
@@ -37,6 +29,7 @@ export default function ThematicPage() {
   const [properties, setProperties] = useState<ThematicPageAcfProps>();
   const [postProps, setPostProps] = useState<Post>();
   const [news, setNews] = useState<Array<Post>>([]);
+  const [events, setEvents] = useState<Array<Post>>([]);
   const _api = new PostsApi();
   const {
     query: { slug },
@@ -67,6 +60,15 @@ export default function ThematicPage() {
             { tagId: [tagId], excludeTag: false }
           );
           setNews(newsResponse);
+          const eventsResponse = await _api.getCustomPost(
+            "event",
+            4,
+            undefined,
+            undefined,
+            undefined,
+            { tagId: [tagId], excludeTag: false }
+          );
+          setEvents(eventsResponse);
         }
       }
     }
@@ -153,7 +155,11 @@ export default function ThematicPage() {
             {properties ? (
               properties?.similar_themes?.length > 0 ? (
                 <Container py={40} size={"xl"}>
-                  <h3 className={styles.TitleWithIcon}>Related Themes</h3>
+                  <h3 className={styles.TitleWithIcon}>
+                    {properties.similar_themes_title
+                      ? properties.similar_themes_title
+                      : "Related Themes"}
+                  </h3>
                   <Flex
                     mt={50}
                     gap={{ base: "20px", md: "3%" }}
@@ -201,7 +207,11 @@ export default function ThematicPage() {
             {properties ? (
               properties?.resources?.length > 0 ? (
                 <Container py={40} size={"xl"}>
-                  <h3 className={styles.TitleWithIcon}>Resources</h3>
+                  <h3 className={styles.TitleWithIcon}>
+                    {properties.resources_title
+                      ? properties.resources_title
+                      : "Resources"}
+                  </h3>
                   <Flex
                     mt={50}
                     gap={{ base: "20px", md: "3%" }}
@@ -241,16 +251,24 @@ export default function ThematicPage() {
           </div>
 
           <TrendingCarrocel
+            title={
+              properties?.recent_literature_reviews_title
+                ? properties?.recent_literature_reviews_title
+                : "Recent literature reviews"
+            }
             allFilter={properties?.rss_filter}
             rssString={
               properties?.rss_filter ? properties?.rss_filter : undefined
             }
           />
+
           <Container size={"xl"} py={60}>
             <Grid>
               {news.length > 0 ? (
-                <Grid.Col span={{ md: 6, base: 12 }}>
-                  <h3 className={styles.TitleWithIcon}>News</h3>
+                <Grid.Col span={{ md: 6, base: 12 }} pr={20}>
+                  <h3 className={styles.TitleWithIcon}>
+                    {properties?.news_title ? properties?.news_title : "News"}
+                  </h3>
                   <Flex
                     gap="30px"
                     wrap="wrap"
@@ -288,7 +306,9 @@ export default function ThematicPage() {
                             style={{ width: "100%" }}
                             className={`${styles.BlueTitle} ${styles.small}`}
                           >
-                            Other News
+                            {properties?.other_news_title
+                              ? properties?.other_news_title
+                              : "Other News"}
                           </h3>
 
                           {news.slice(1, 4).map((item, key) => (
@@ -304,7 +324,7 @@ export default function ThematicPage() {
                         </DefaultCard>
                       </div>
                     ) : (
-                      <></>
+                      <div style={{ flex: 1, display: "flex" }} />
                     )}
                   </Flex>
                   {properties?.show_more_news_link ? (
@@ -318,7 +338,9 @@ export default function ThematicPage() {
                       component="a"
                       style={{ cursor: "pointer" }}
                     >
-                      Explore all{" "}
+                      {properties?.explore_all_label
+                        ? properties?.explore_all_label
+                        : "Explore all"}{" "}
                       <Button size={"xs"} p={5}>
                         <IconArrowRight stroke={1} />
                       </Button>
@@ -330,9 +352,96 @@ export default function ThematicPage() {
               ) : (
                 <></>
               )}
-              {/* <Grid.Col span={{ md: 6, base: 12 }}>
-                <h3 className={styles.TitleWithIcon}>Events</h3>
-              </Grid.Col> */}
+              {events.length > 0 ? (
+                <Grid.Col pl={20} span={{ md: 6, base: 12 }}>
+                  <h3 className={styles.TitleWithIcon}>
+                    {properties?.events_title
+                      ? properties?.events_title
+                      : "Events"}
+                  </h3>
+                  <Flex
+                    gap="30px"
+                    wrap="wrap"
+                    direction="row"
+                    justify="space-between"
+                    align="stretch"
+                  >
+                    {/* Coluna esquerda */}
+                    <div style={{ flex: 1, display: "flex" }}>
+                      <ResourceCard
+                        fullWidth
+                        title={events[0].title.rendered}
+                        displayType="column"
+                        excerpt={removeHTMLTagsAndLimit(
+                          events[0].excerpt.rendered,
+                          180
+                        )}
+                        image={_api.findFeaturedMedia(news[0], "large")}
+                        link={`/events/${events[0].slug}`}
+                        tags={[]}
+                      />
+                    </div>
+                    {events.length > 1 ? (
+                      <div style={{ flex: 1, display: "flex" }}>
+                        <DefaultCard
+                          fullWidth
+                          displayType="column"
+                          style={{
+                            flex: 1,
+                            backgroundColor: "white",
+                            alignItems: "flex-start",
+                          }}
+                        >
+                          <h3
+                            style={{ width: "100%" }}
+                            className={`${styles.BlueTitle} ${styles.small}`}
+                          >
+                            {properties?.other_events_title
+                              ? properties?.other_events_title
+                              : "Other Events"}
+                          </h3>
+
+                          {events.slice(1, 4).map((item, key) => (
+                            <a
+                              className={styles.linkTitle}
+                              href={""}
+                              key={key}
+                              style={{}}
+                            >
+                              {item.title.rendered}
+                            </a>
+                          ))}
+                        </DefaultCard>
+                      </div>
+                    ) : (
+                      <div style={{ flex: 1, display: "flex" }}></div>
+                    )}
+                  </Flex>
+                  {properties?.show_more_news_link ? (
+                    <Flex
+                      mt={25}
+                      gap={10}
+                      align={"center"}
+                      onClick={() => {
+                        properties?.show_more_news_link;
+                      }}
+                      component="a"
+                      style={{ cursor: "pointer" }}
+                    >
+                      {properties?.explore_all_label
+                        ? properties?.explore_all_label
+                        : "Explore all"}{" "}
+                      <Button size={"xs"} p={5}>
+                        <IconArrowRight stroke={1} />
+                      </Button>
+                    </Flex>
+                  ) : (
+                    <></>
+                  )}
+                </Grid.Col>
+              ) : (
+                <></>
+              )}
             </Grid>
           </Container>
 
@@ -340,6 +449,11 @@ export default function ThematicPage() {
             <>
               <div style={{ float: "left", width: "100%" }}>
                 <FixedRelatedVideosSection
+                  title={
+                    properties?.releated_video_title
+                      ? properties?.releated_video_title
+                      : "Related videos"
+                  }
                   items={
                     properties?.multimedia_items
                       ? properties?.multimedia_items?.map((item) => {
@@ -364,7 +478,9 @@ export default function ThematicPage() {
                   component="a"
                   style={{ cursor: "pointer" }}
                 >
-                  Explore all{" "}
+                  {properties?.explore_all_label
+                    ? properties?.explore_all_label
+                    : "Explore all"}{" "}
                   <Button size={"xs"} p={5}>
                     <IconArrowRight stroke={1} />
                   </Button>

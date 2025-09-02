@@ -111,6 +111,16 @@ export interface ThematicPageAcfProps {
   more_media_url: string;
   rss_filter: string;
   resources: ACFMultimediaItem[];
+  news_title?: string;
+  other_news_title?: string;
+  events_title?: string;
+  releated_video_title?: string;
+  recent_literature_reviews_title?: string;
+  resources_title?: string;
+  explore_all_label?: string;
+  similar_themes_title?: string;
+  colaboration_network_title?: string;
+  other_events_title?: string;
 }
 
 export interface CommunityInitiative {

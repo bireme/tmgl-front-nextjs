@@ -111,9 +111,11 @@ export const TrendingSlider = () => {
 };
 
 export const TrendingCarrocel = ({
+  title,
   rssString,
   allFilter,
 }: {
+  title?: string;
   rssString?: string;
   allFilter?: string;
 }) => {
@@ -148,7 +150,9 @@ export const TrendingCarrocel = ({
   return (
     <div className={styles.CountryRss}>
       <Container py={10} size={"xl"}>
-        <h3 className={styles.TitleWithIcon}>Recent literature reviews</h3>
+        <h3 className={styles.TitleWithIcon}>
+          {title ? title : "Recent literature reviews"}
+        </h3>
         {posts.length > 0 ? (
           <>
             <Carousel

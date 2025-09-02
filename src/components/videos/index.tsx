@@ -59,17 +59,21 @@ export const VideoItem = ({ title, href, main, thumbnail }: VideoItemProps) => {
 
 export interface FixedRelatedVideosSectionProps {
   items: VideoItemProps[];
+  title?: string;
 }
 
 export const FixedRelatedVideosSection = ({
   items,
+  title,
 }: FixedRelatedVideosSectionProps) => {
   return (
     <div className={styles.RelatedVideosSection}>
       <Container size={"xl"}>
         {items?.length > 0 ? (
           <>
-            <h2 className={styles.TitleWithIcon}>Related videos</h2>
+            <h2 className={styles.TitleWithIcon}>
+              {title ? title : "Related videos"}
+            </h2>
             <Flex
               className={styles.RelatedVideosSectionFlex}
               direction={{ base: "column", md: "row" }}
