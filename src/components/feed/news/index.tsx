@@ -1,4 +1,4 @@
-import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
+import { Center, Flex, Grid, LoadingOverlay, Title } from "@mantine/core";
 import { ListPostsDto, Post } from "@/services/types/posts.dto";
 import {
   decodeHtmlEntities,
@@ -129,6 +129,13 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
           )}
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 9 }} order={{ base: 2, sm: 1 }}>
+          {apiResponse ? (
+            <Title order={4} mb={30} fw={400}>
+              Showing {count} of {apiResponse?.totalItems} results found
+            </Title>
+          ) : (
+            <></>
+          )}
           <Flex
             direction={{
               base: displayType == "column" ? "column" : "row",

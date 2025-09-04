@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 export default function Multimedia() {
   const { globalConfig } = useContext(GlobalContext);
   const router = useRouter();
-  const { country, region, thematicArea } = router.query;
+  const { country, region, thematicArea, mediaType } = router.query;
   const [displayType, setDisplayType] = useState<string>("column");
   return (
     <>
@@ -53,6 +53,7 @@ export default function Multimedia() {
           thematicArea={thematicArea ? thematicArea.toString() : undefined}
           country={country ? country.toString() : undefined}
           region={region ? region.toString() : undefined}
+          mediaType={mediaType ? mediaType.toString() : undefined}
           displayType={displayType}
         />
       </Container>

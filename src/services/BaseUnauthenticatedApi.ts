@@ -53,6 +53,9 @@ export abstract class BaseUnauthenticatedApi {
     if (!url) {
       url = fm.source_url;
     }
-    return url ? url + (url.includes(".webp") ? "" : ".webp") : "";
+    return url
+      ? url +
+          (url.includes(".webp") ? "" : !url.includes("avif") ? ".webp" : "")
+      : "";
   }
 }

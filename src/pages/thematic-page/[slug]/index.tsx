@@ -314,7 +314,7 @@ export default function ThematicPage() {
                           {news.slice(1, 4).map((item, key) => (
                             <a
                               className={styles.linkTitle}
-                              href={""}
+                              href={`/news/${item.slug}`}
                               key={key}
                               style={{}}
                             >
@@ -376,7 +376,7 @@ export default function ThematicPage() {
                           events[0].excerpt.rendered,
                           180
                         )}
-                        image={_api.findFeaturedMedia(news[0], "large")}
+                        image={_api.findFeaturedMedia(events[0], "large")}
                         link={`/events/${events[0].slug}`}
                         tags={[]}
                       />
@@ -466,28 +466,30 @@ export default function ThematicPage() {
                       : []
                   }
                 />
+                <Container mt={0} pt={0} mb={40} size={"xl"}>
+                  {properties?.more_media_url ? (
+                    <Flex
+                      mt={25}
+                      gap={10}
+                      align={"center"}
+                      onClick={() => {
+                        properties?.more_media_url;
+                      }}
+                      component="a"
+                      style={{ cursor: "pointer" }}
+                    >
+                      {properties?.explore_all_label
+                        ? properties?.explore_all_label
+                        : "Explore all"}{" "}
+                      <Button size={"xs"} p={5}>
+                        <IconArrowRight stroke={1} />
+                      </Button>
+                    </Flex>
+                  ) : (
+                    <></>
+                  )}
+                </Container>
               </div>
-              {properties?.more_media_url ? (
-                <Flex
-                  mt={25}
-                  gap={10}
-                  align={"center"}
-                  onClick={() => {
-                    properties?.more_media_url;
-                  }}
-                  component="a"
-                  style={{ cursor: "pointer" }}
-                >
-                  {properties?.explore_all_label
-                    ? properties?.explore_all_label
-                    : "Explore all"}{" "}
-                  <Button size={"xs"} p={5}>
-                    <IconArrowRight stroke={1} />
-                  </Button>
-                </Flex>
-              ) : (
-                <></>
-              )}
             </>
           ) : (
             <></>

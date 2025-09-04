@@ -1,4 +1,4 @@
-import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
+import { Center, Flex, Grid, LoadingOverlay, Title } from "@mantine/core";
 import { DefaultFeedFilterComponent, ResourceFilters } from "../filters";
 import {
   DefaultResourceDto,
@@ -20,11 +20,13 @@ export const MultimediaFeed = ({
   country,
   region,
   thematicArea,
+  mediaType,
 }: {
   displayType: string;
   country?: string;
   region?: string;
   thematicArea?: string;
+  mediaType?: string;
 }) => {
   const { globalConfig } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
@@ -57,14 +59,18 @@ export const MultimediaFeed = ({
       setTotalPages(Math.ceil(response.totalFound / count));
       setItems(response.data);
       setApiResponse(response);
-      if ((country || region || thematicArea) && !initialFilterDone) {
+      if (
+        (country || region || thematicArea || mediaType) &&
+        !initialFilterDone
+      ) {
         initialFilters(
           applyFilters,
           setLoading,
           setInitialFilterDone,
           country,
           thematicArea,
-          region
+          region,
+          mediaType
         );
       }
     } catch (error) {
@@ -76,7 +82,7 @@ export const MultimediaFeed = ({
 
   useEffect(() => {
     if (globalConfig) getMedias();
-  }, [page, filter, thematicArea, region, country, globalConfig]);
+  }, [page, filter, thematicArea, region, country, globalConfig, mediaType]);
 
   return (
     <>
@@ -93,6 +99,13 @@ export const MultimediaFeed = ({
           )}
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 9 }} order={{ base: 2, sm: 1 }}>
+          {apiResponse ? (
+            <Title order={4} mb={30} fw={400}>
+              Showing {count} of {apiResponse?.totalFound} results found
+            </Title>
+          ) : (
+            <></>
+          )}
           <Flex
             direction={{
               base: displayType == "column" ? "column" : "row",

@@ -183,8 +183,11 @@
 }
 
 .PostContent{
+  div{
+    max-width: 100% !important;
+  }
   img{
-    max-width: 100%;
+    max-width: 100% !important;
     height: auto;
   }
   figure{

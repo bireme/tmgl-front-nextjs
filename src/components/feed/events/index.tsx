@@ -1,4 +1,4 @@
-import { Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
+import { Center, Flex, Grid, LoadingOverlay, Title } from "@mantine/core";
 import { DefaultFeedFilterComponent, ResourceFilters } from "../filters";
 import {
   DefaultResourceDto,
@@ -88,9 +88,13 @@ export const EventsFeed = ({
           )}
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 9 }} order={{ base: 2, sm: 1 }}>
-          <Title order={4} mb={30} fw={400}>
-            Showing {count} of {apiResponse?.totalFound} results found
-          </Title>
+          {apiResponse ? (
+            <Title order={4} mb={30} fw={400}>
+              Showing {count} of {apiResponse?.totalFound} results found
+            </Title>
+          ) : (
+            <></>
+          )}
           <Flex
             direction={{
               base: displayType == "column" ? "column" : "row",

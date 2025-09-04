@@ -36,7 +36,7 @@ export default function Events() {
       setTags(_api.formatTags(resp[0]));
       setPost(resp[0]);
     } catch {
-      console.log("Error while trying to get dimension");
+      console.log("Error while trying to get event");
     }
   }, []);
 
@@ -58,7 +58,7 @@ export default function Events() {
             <BreadCrumbs
               path={[
                 { path: "/", name: "HOME" },
-                { path: "/news", name: "Events" },
+                { path: "/events", name: "Events" },
               ]}
               blackColor={true}
             />
@@ -130,7 +130,8 @@ export default function Events() {
             </Flex>
             <Grid>
               <Grid.Col span={{ md: 12, lg: 8 }} px={20}>
-                {_api.findFeaturedMedia(post, "full") ? (
+                {_api.findFeaturedMedia(post, "full") &&
+                post?.acf?.programee ? (
                   <>
                     <div
                       className={styles.PostFeaturedImage}
@@ -164,21 +165,35 @@ export default function Events() {
                   <></>
                 )}
                 <br />
-                <h4 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
-                  Programme
-                </h4>
-                <div
-                  className={styles.EventImg}
-                  dangerouslySetInnerHTML={{ __html: post?.acf?.programee }}
-                />
-
+                {post?.acf?.programee ? (
+                  <>
+                    <h4
+                      className={`${homeStyles.BlueTitle} ${homeStyles.small}`}
+                    >
+                      Programme
+                    </h4>
+                    <div
+                      className={styles.EventImg}
+                      dangerouslySetInnerHTML={{ __html: post?.acf?.programee }}
+                    />
+                  </>
+                ) : (
+                  <></>
+                )}
                 <h4 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
                   About the event
                 </h4>
-                <div
-                  className={styles.PostSubtitle}
-                  dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
-                />
+                {!post?.acf?.programee ? (
+                  <div
+                    className={styles.PostContent}
+                    dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+                  />
+                ) : (
+                  <div
+                    className={styles.PostSubtitle}
+                    dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
+                  />
+                )}
               </Grid.Col>
               <Grid.Col span={{ md: 12, lg: 4 }}>
                 <h4 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
@@ -190,11 +205,16 @@ export default function Events() {
                   {post.acf?.initial_date} - {post.acf?.final_date}
                 </p>
 
-                <p>
-                  <b>Venue</b>
-                  <br />
-                  {post.acf?.address}
-                </p>
+                {post.acf?.address ? (
+                  <p>
+                    <b>Venue</b>
+                    <br />
+                    {post.acf?.address}
+                  </p>
+                ) : (
+                  <></>
+                )}
+
                 <h4 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
                   Related content
                 </h4>

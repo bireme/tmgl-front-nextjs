@@ -11,8 +11,17 @@ export const initialFilters = (
   setInitialFilterDone: Function,
   country?: string,
   thematicArea?: string,
-  region?: string
+  region?: string,
+  mediaType?: string
 ) => {
+  if (mediaType) {
+    applyFilters([
+      {
+        parameter: "resource_type",
+        query: mediaType,
+      },
+    ]);
+  }
   if (country) {
     applyFilters([
       {
