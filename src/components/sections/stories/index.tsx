@@ -1,9 +1,9 @@
 import { BackgroundImage, Button, Flex, Grid } from "@mantine/core";
+import { GetCustomPostOptions, PostsApi } from "@/services/posts/PostsApi";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";
-import { PostsApi } from "@/services/posts/PostsApi";
 import { lang } from "moment";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/sections.module.scss";
@@ -56,15 +56,31 @@ export const StoriesItem = ({
 
 export interface StoriesSectionProps {
   region?: string;
+  fetchOptions?: GetCustomPostOptions;
 }
-export const StoriesSection = ({ region }: StoriesSectionProps) => {
+export const StoriesSection = ({
+  region,
+  fetchOptions,
+}: StoriesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>();
   const _api = new PostsApi();
 
   //Realizar a Filtragem a partir do region
   const getFeaturedStories = useCallback(async () => {
     try {
-      const result = await _api.getCustomPost("featured_stories", 3);
+      let result;
+      if (!fetchOptions) {
+        result = await _api.getCustomPost("featured_stories", 3);
+      } else {
+        result = await _api.getCustomPost(
+          "featured_stories",
+          3,
+          undefined,
+          undefined,
+          region,
+          fetchOptions
+        );
+      }
       setPosts(result);
     } catch (error: any) {
       console.log("Error while trying to get Featured Stories: ", error);
@@ -78,7 +94,7 @@ export const StoriesSection = ({ region }: StoriesSectionProps) => {
   return (
     <>
       {posts ? (
-        posts.length > 0 ? (
+        posts.length > 3 ? (
           <>
             <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
               Featured Stories

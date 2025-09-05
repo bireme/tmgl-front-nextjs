@@ -14,6 +14,7 @@ import Link from "next/link";
 import { NewsSection } from "@/components/sections/news";
 import { NewsletterSection } from "@/components/sections/newsletter";
 import { PagesApi } from "@/services/pages/PagesApi";
+import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
 import { TrendingSlider } from "@/components/rss/slider";
@@ -21,15 +22,20 @@ import styles from "../styles/pages/home.module.scss";
 
 export default function Home() {
   const _api = new PagesApi();
+  const _postsApi = new PostsApi();
   const [properties, setProperties] = useState();
   const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
   const { setRegionName } = useContext(GlobalContext);
   const [showModal, setShowModal] = useState(false);
+  const [thematicPageTag, setThematicPageTag] = useState();
 
   const getPageProperties = useCallback(async () => {
     try {
       const resp = await _api.getPageProperties("home-global");
+      const thematicPageResp = await _postsApi.getTagBySlug("thematic-page");
+      console.log(thematicPageResp);
+      setThematicPageTag(thematicPageResp[0]?.slug);
       setProperties(resp[0]);
       setAcf(resp[0].acf);
       setSliderImages(resp[0].acf.search.slider_images);
@@ -110,7 +116,9 @@ export default function Home() {
           <TrendingSlider />
         </Container>
         <Container size={"xl"}>
-          <StoriesSection />
+          <StoriesSection
+            fetchOptions={{ tagId: thematicPageTag, excludeTag: true }}
+          />
           <Link
             href={"/featured-stories"}
             style={{

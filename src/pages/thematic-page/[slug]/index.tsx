@@ -20,7 +20,9 @@ import { FixedRelatedVideosSection } from "@/components/videos";
 import { HeroSlider } from "@/components/slider";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
+import { StoriesSection } from "@/components/sections/stories";
 import { TrendingCarrocel } from "@/components/rss/slider";
+import { set } from "zod";
 import styles from "../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
@@ -30,6 +32,8 @@ export default function ThematicPage() {
   const [postProps, setPostProps] = useState<Post>();
   const [news, setNews] = useState<Array<Post>>([]);
   const [events, setEvents] = useState<Array<Post>>([]);
+  const [thematicPageTag, setThematicPageTag] = useState();
+  const [newsTag, setNewsTag] = useState();
   const _api = new PostsApi();
   const {
     query: { slug },
@@ -49,6 +53,9 @@ export default function ThematicPage() {
         let tag = await _api.getTagBySlug(
           postResponse[0]?.acf?.news_tag_filter
         );
+        const thematicPageTagResp = await _api.getTagBySlug("thematic-page");
+        setThematicPageTag(thematicPageTagResp[0]?.id);
+        setNewsTag(tag[0]?.id);
         if (tag) {
           let tagId = tag[0]?.id;
           const newsResponse = await _api.getCustomPost(
@@ -444,6 +451,18 @@ export default function ThematicPage() {
               )}
             </Grid>
           </Container>
+          {thematicPageTag && newsTag ? (
+            <Container size={"xl"}>
+              <StoriesSection
+                fetchOptions={{
+                  tagId: [thematicPageTag, newsTag],
+                  excludeTag: false,
+                }}
+              />
+            </Container>
+          ) : (
+            <></>
+          )}
 
           {properties?.multimedia_items ? (
             <>

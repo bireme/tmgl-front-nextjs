@@ -10,7 +10,7 @@ import { TagItem } from "@/components/feed/resourceitem";
 import { TaxonomiesApi } from "../taxonomies/TaxonomiesApi";
 import { queryType } from "../types/resources";
 
-type GetCustomPostOptions = {
+export type GetCustomPostOptions = {
   /** ID único ou lista de IDs de tag */
   tagId?: number | number[];
   /** Se true, usa tags_exclude (default: incluir com tags) */
