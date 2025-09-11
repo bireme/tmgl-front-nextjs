@@ -77,11 +77,18 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                   queryType: "country",
                   label: "Country",
                   items: apiResponse
-                    ? apiResponse?.countries.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
+                    ? Array.from(
+                        new Map(
+                          apiResponse?.countries.map((c) => [
+                            c.name, // chave para garantir unicidade
+                            {
+                              label: c.name,
+                              ocorrences: undefined,
+                              id: c.id.toString(),
+                            },
+                          ])
+                        ).values()
+                      )
                     : [],
                 },
                 {
@@ -131,7 +138,7 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
         <Grid.Col span={{ base: 12, md: 9 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
             <Title order={4} mb={30} fw={400}>
-              Showing {count} of {apiResponse?.totalItems} results found
+              Showing {items.length} of {apiResponse?.totalItems} results found
             </Title>
           ) : (
             <></>

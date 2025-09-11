@@ -32,6 +32,7 @@ export const JournalsFeed = ({
   const count = 12;
   const [page, setPage] = useState<number>(1);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [dataResp, setDataResp] = useState<DefaultResourceDto>();
   const [filter, setFilter] = useState<queryType[]>([]);
   const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
   const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
@@ -59,6 +60,7 @@ export const JournalsFeed = ({
       );
       setTotalPages(response.totalFound / count);
       setItems(response.data);
+      setDataResp(response);
       if (!apiResponse) {
         setApiResponse(response);
       }
@@ -95,7 +97,7 @@ export const JournalsFeed = ({
         <Grid.Col span={{ base: 12, md: 9 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
             <Title order={4} mb={30} fw={400}>
-              Showing {count} of {apiResponse?.totalFound} results found
+              Showing {items.length} of {dataResp?.totalFound} results found
             </Title>
           ) : (
             <></>

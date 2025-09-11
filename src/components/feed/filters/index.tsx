@@ -47,11 +47,18 @@ export const DefaultFeedFilterComponent = ({
         {
           queryType: "publication_year",
           label: "Year",
-          items: apiResponse?.yearFilter.map((c) => ({
-            label: c.type,
-            ocorrences: c.count,
-            id: undefined,
-          })),
+          items: Array.from(
+            new Map(
+              apiResponse?.yearFilter.map((c) => [
+                c.type, // chave de unicidade
+                {
+                  label: c.type,
+                  ocorrences: c.count,
+                  id: undefined,
+                },
+              ])
+            ).values()
+          ),
         },
         {
           queryType: "resource_type",

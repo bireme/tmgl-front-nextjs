@@ -43,20 +43,32 @@ export class RegulationsAndPolicesService {
       return aKey.localeCompare(bKey);
     });
 
-    const filtered = queryItems
-      ? applyDefaultResourceFilters(queryItems, orderedData)
+    // aplica filtro só se houver itens
+    const hasQuery = Array.isArray(queryItems) && queryItems.length > 0;
+
+    // não deixe o TS inferir union esquisito → anote como unknown
+    const filteredResult: unknown = hasQuery
+      ? applyDefaultResourceFilters(queryItems!, orderedData)
       : orderedData;
 
-    console.log("filtrados", filtered);
+    // normalize para SEMPRE virar array (sem mudar DTOs/funções existentes)
+    const filteredArray = Array.isArray(filteredResult)
+      ? filteredResult
+      : filteredResult &&
+        typeof filteredResult === "object" &&
+        "data" in (filteredResult as any) &&
+        Array.isArray((filteredResult as any).data)
+      ? (filteredResult as any).data
+      : orderedData;
+
+    // paginação
     const pageSize = Math.max(0, count);
-    const window = filtered.slice(start, start + pageSize + 1);
+    const window = filteredArray.slice(start, start + pageSize + 1);
     const hasNext = window.length > pageSize;
     const paginated = hasNext ? window.slice(0, pageSize) : window;
-    console.log("paginated", start);
-    console.log("pagesize", pageSize);
     return {
       data: paginated,
-      totalFound: filtered.length,
+      totalFound: filteredArray.length,
       hasNext,
       countryFilter: mergeFilterItems(
         allResults[0].countryFilter,

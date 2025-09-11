@@ -185,7 +185,7 @@ export const EvidenceMapsFeed = ({
         <Grid.Col span={{ base: 12, md: 9 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
             <Title order={4} mb={30} fw={400}>
-              Showing {count} of {apiResponse?.totalFound} results found
+              Showing {items.length} of {apiResponse?.totalFound} results found
             </Title>
           ) : (
             <></>
