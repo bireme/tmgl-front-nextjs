@@ -35,7 +35,7 @@ export default function Home() {
       const resp = await _api.getPageProperties("home-global");
       const thematicPageResp = await _postsApi.getTagBySlug("thematic-page");
       console.log(thematicPageResp);
-      setThematicPageTag(thematicPageResp[0]?.slug);
+      setThematicPageTag(thematicPageResp[0]?.id);
       setProperties(resp[0]);
       setAcf(resp[0].acf);
       setSliderImages(resp[0].acf.search.slider_images);
@@ -116,9 +116,14 @@ export default function Home() {
           <TrendingSlider />
         </Container>
         <Container size={"xl"}>
-          <StoriesSection
-            fetchOptions={{ tagId: thematicPageTag, excludeTag: true }}
-          />
+          {thematicPageTag ? (
+            <StoriesSection
+              fetchOptions={{ tagId: thematicPageTag, excludeTag: true }}
+            />
+          ) : (
+            <></>
+          )}
+
           <Link
             href={"/featured-stories"}
             style={{

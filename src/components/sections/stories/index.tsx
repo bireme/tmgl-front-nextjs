@@ -94,7 +94,7 @@ export const StoriesSection = ({
   return (
     <>
       {posts ? (
-        posts.length > 3 ? (
+        posts.length >= 3 ? (
           <>
             <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
               Featured Stories

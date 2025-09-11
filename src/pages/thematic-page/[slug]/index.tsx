@@ -451,14 +451,9 @@ export default function ThematicPage() {
               )}
             </Grid>
           </Container>
-          {thematicPageTag && newsTag ? (
+          {thematicPageTag ? (
             <Container size={"xl"}>
-              <StoriesSection
-                fetchOptions={{
-                  tagId: [thematicPageTag, newsTag],
-                  excludeTag: false,
-                }}
-              />
+              <StoriesSection />
             </Container>
           ) : (
             <></>

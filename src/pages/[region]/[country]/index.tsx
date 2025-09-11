@@ -13,8 +13,10 @@ import { EventsSection } from "@/components/sections/events";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
 import { IconCard } from "@/components/cards";
+import { NewsSection } from "@/components/sections/news";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
+import { StoriesSection } from "@/components/sections/stories";
 import { TrendingCarrocel } from "@/components/rss/slider";
 import styles from "../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
@@ -279,6 +281,14 @@ export default function CountryHome() {
           ) : (
             <></>
           )}
+          <Container size={"xl"}>
+            <StoriesSection fetchOptions={{ tagId: 181, excludeTag: true }} />
+          </Container>
+
+          <NewsSection
+            region={region ? region.toString() : undefined}
+            title={"News from WHO"}
+          />
         </>
       ) : (
         <div style={{ height: "100vh" }}>
