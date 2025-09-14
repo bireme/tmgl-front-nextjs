@@ -29,6 +29,7 @@
       margin-bottom: 0px;
     }
     p{
+      text-align: justify;
       color: #000;
       font-family: Roboto;
       font-size: 18px;
@@ -38,6 +39,13 @@
       strong{
         font-weight: 700;
       }
+       img{
+        max-width: 100% !important;
+        height: auto !important;
+      }
+    }
+    img{
+      max-width: 100%;
     }
   }
 }
@@ -68,7 +76,16 @@
       font-style: normal;
       font-weight: 400;
       line-height: 160%; /* 32px */
+      text-align: justify;
+      img{
+        max-width: 100% !important;
+        height: auto !important;
+      }
     }
+    img{
+      max-width: 100%;
+    }
+    
   }
 }
 
@@ -79,7 +96,7 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   float: left;
-  padding-top: 150px;
+  padding-top: 80px;
 
   .Content{
     img{
@@ -104,11 +121,42 @@
       line-height: 160%;
     }
     p{
+      text-align: justify;
       font-family: Roboto;
       font-size: 18px;
       font-style: normal;
       font-weight: 400;
       line-height: 160%; /* 32px */
+      img{
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
+    img{
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    div{
+       width: 100% !important;
+        max-width: 100% !important;
+      img{
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
+    .wp-caption{
+       width: 100% !important;
+        max-width: 100% !important;
+      img{
+        width: 100% !important;
+        max-width: 100% !important;
+      }
     }
   }
+  div{
+      img{
+        width: 100% !important;
+        max-width: 100% !important;
+      }
+    }
 }

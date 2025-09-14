@@ -25,6 +25,7 @@ export default function CountryHome() {
   const router = useRouter();
   const _postApiHelper = new PostsApi();
   const [properties, setProperties] = useState<CountryAcfProps>();
+  const [storiesTag, setStoriesTag] = useState();
   const { setRegionName, setCountryName, globalConfig, countryName } =
     useContext(GlobalContext);
   const [postProps, setPostProps] = useState<Post>();
@@ -49,6 +50,10 @@ export default function CountryHome() {
     const _api = new PostsApi(region ? region.toString() : "");
     if (country) {
       const postResponse = await _api.getPost("countries", country.toString());
+      const TagResp = await _api.getTagBySlug(
+        country.toString().replace(" ", "-")
+      );
+      setStoriesTag(TagResp[0]?.id);
       if (postResponse.length > 0) {
         setCountryName(postResponse[0].title.rendered);
         setPostProps(postResponse[0]);
@@ -282,7 +287,9 @@ export default function CountryHome() {
             <></>
           )}
           <Container size={"xl"}>
-            <StoriesSection fetchOptions={{ tagId: 181, excludeTag: true }} />
+            <StoriesSection
+              fetchOptions={{ tagId: storiesTag, excludeTag: false }}
+            />
           </Container>
 
           <NewsSection

@@ -121,6 +121,8 @@ export interface ThematicPageAcfProps {
   similar_themes_title?: string;
   colaboration_network_title?: string;
   other_events_title?: string;
+  featured_stories_label?: string;
+  featured_stories_item_label?: string;
 }
 
 export interface CommunityInitiative {

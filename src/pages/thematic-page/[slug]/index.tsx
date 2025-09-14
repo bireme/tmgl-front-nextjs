@@ -299,7 +299,9 @@ export default function ThematicPage() {
                       />
                     </div>
                     {news.length > 1 ? (
-                      <div style={{ flex: 1, display: "flex" }}>
+                      <div
+                        style={{ flex: 1, display: "flex", minHeight: "540px" }}
+                      >
                         <DefaultCard
                           fullWidth
                           displayType="column"
@@ -374,7 +376,10 @@ export default function ThematicPage() {
                     align="stretch"
                   >
                     {/* Coluna esquerda */}
-                    <div style={{ flex: 1, display: "flex" }}>
+                    <div
+                      style={{ flex: 1, display: "flex", minHeight: "540px" }}
+                    >
+                      {" "}
                       <ResourceCard
                         fullWidth
                         title={events[0].title.rendered}
@@ -453,7 +458,11 @@ export default function ThematicPage() {
           </Container>
           {thematicPageTag ? (
             <Container size={"xl"}>
-              <StoriesSection />
+              <StoriesSection
+                title={properties?.featured_stories_label}
+                buttonLabel={properties?.featured_stories_item_label}
+                fetchOptions={{ tagId: [thematicPageTag] }}
+              />
             </Container>
           ) : (
             <></>

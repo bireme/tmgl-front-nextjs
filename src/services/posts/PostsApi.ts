@@ -56,21 +56,20 @@ export class PostsApi extends BaseUnauthenticatedApi {
       const _taxApi = new TaxonomiesApi();
       const taxonomies = await _taxApi.getTaxonomies("region");
       const hit = taxonomies?.find(
-        (t) => t?.name == regionString || t?.slug == regionString
+        (t) => t?.name === regionString || t?.slug === regionString
       );
       if (hit) region = [hit.id];
     }
 
     // tags
     let tagQuery = "";
+    let tagIds: number[] = [];
     if (options?.tagId !== undefined) {
-      const ids = Array.isArray(options.tagId)
-        ? options.tagId
-        : [options.tagId];
-      if (ids.length > 0) {
+      tagIds = Array.isArray(options.tagId) ? options.tagId : [options.tagId];
+      if (tagIds.length > 0) {
         tagQuery = options.excludeTag
-          ? `&tags_exclude=${ids.join(",")}`
-          : `&tags=${ids.join(",")}`;
+          ? `&tags_exclude=${tagIds.join(",")}`
+          : `&tags=${tagIds.join(",")}`;
       }
     }
 
@@ -93,25 +92,45 @@ export class PostsApi extends BaseUnauthenticatedApi {
       `${region && region.length ? `&region=${region.join(",")}` : ""}` +
       `${tagQuery}${catQuery}` +
       `&${
-        this._lang == "en"
+        this._lang === "en"
           ? postTypeSlug === "posts" || postTypeSlug === "pages"
             ? `lang=${this._lang}`
             : ""
           : `lang=${this._lang}`
       }`;
-    console.log(url);
+
     const { data } = await this._api.get(url);
 
-    if (options?.excludeCat && catIds.length > 0 && Array.isArray(data)) {
-      const exclude = new Set(catIds);
-      // WP expõe 'categories' para posts e para CPTs que suportam 'category'
-      return data.filter((p: any) => {
-        const cats: number[] = Array.isArray(p?.categories) ? p.categories : [];
-        return cats.every((id) => !exclude.has(id));
-      });
+    // Pós-filtro para garantir a regra mesmo se a API ignorar os params em CPTs.
+    if (!Array.isArray(data)) return data;
+
+    const getNums = (arr: any) => (Array.isArray(arr) ? (arr as number[]) : []);
+
+    let filtered = data as any[];
+
+    // Tags
+    if (tagIds.length > 0) {
+      const tagSet = new Set(tagIds);
+      filtered = options?.excludeTag
+        ? filtered.filter((p) =>
+            getNums(p?.tags).every((id) => !tagSet.has(id))
+          )
+        : filtered.filter((p) => getNums(p?.tags).some((id) => tagSet.has(id)));
     }
 
-    return data;
+    // Categorias (WP expõe 'categories' em posts e CPTs que suportam 'category')
+    if (catIds.length > 0) {
+      const catSet = new Set(catIds);
+      filtered = options?.excludeCat
+        ? filtered.filter((p) =>
+            getNums(p?.categories).every((id) => !catSet.has(id))
+          )
+        : filtered.filter((p) =>
+            getNums(p?.categories).some((id) => catSet.has(id))
+          );
+    }
+
+    return filtered;
   }
 
   public async listPosts(
