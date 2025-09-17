@@ -55,16 +55,17 @@ export function NewsEventsSection({
         >
           {/* Main item */}
           <div style={{ flex: 1, display: "flex", minHeight: "100%" }}>
-            <ResourceCard
-              fullWidth
-              title={items[0].title.rendered}
-              displayType="column"
-              excerpt={removeHTMLTagsAndLimit(items[0].excerpt.rendered, 180)}
-              image={_api.findFeaturedMedia(items[0], "large")}
-              link={`${linkPrefix}/${items[0].slug}`}
-              tags={[]}
-              style={{ height: "100%" }}
-            />
+            <div style={{ height: "100%" }}>
+              <ResourceCard
+                fullWidth
+                title={items[0].title.rendered}
+                displayType="column"
+                excerpt={removeHTMLTagsAndLimit(items[0].excerpt.rendered, 180)}
+                image={_api.findFeaturedMedia(items[0], "large")}
+                link={`${linkPrefix}/${items[0].slug}`}
+                tags={[]}
+              />
+            </div>
           </div>
           
           {/* Other items */}

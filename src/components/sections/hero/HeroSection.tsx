@@ -29,15 +29,10 @@ export function HeroSection({
   blackColor = false,
   className,
 }: HeroSectionProps) {
-  // Convert sliderImages to string array if needed
-  const imageUrls = sliderImages?.map(img => 
-    typeof img === 'string' ? img : img.url
-  );
-
   return (
     <div className={`${styles.HeroSearch} ${small ? styles.small : ""} ${className || ""}`}>
-      {imageUrls && imageUrls.length > 0 && (
-        <HeroSlider images={imageUrls} />
+      {sliderImages && sliderImages.length > 0 && (
+        <HeroSlider images={sliderImages as (AcfImageArray | undefined)[]} />
       )}
 
       <div className={styles.FullContainer}>
