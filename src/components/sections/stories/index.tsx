@@ -14,6 +14,7 @@ export interface StoreisSectionProps {
   href?: string;
   excerpt?: string;
   main?: boolean;
+  buttonLabel?: string;
 }
 export const StoriesItem = ({
   imagePath,
@@ -21,6 +22,7 @@ export const StoriesItem = ({
   href,
   excerpt,
   main,
+  buttonLabel,
 }: StoreisSectionProps) => {
   return (
     <div className={`${styles.StoreisSection} ${main ? styles.main : ""}`}>
@@ -46,7 +48,7 @@ export const StoriesItem = ({
             <></>
           )}
           <Button mt={10}>
-            <a href={href}>Read full story</a>
+            <a href={href}>{buttonLabel ? buttonLabel : "Read full story"}</a>
           </Button>
         </Flex>
       </div>
@@ -57,10 +59,14 @@ export const StoriesItem = ({
 export interface StoriesSectionProps {
   region?: string;
   fetchOptions?: GetCustomPostOptions;
+  title?: string;
+  buttonLabel?: string;
 }
 export const StoriesSection = ({
   region,
   fetchOptions,
+  title,
+  buttonLabel,
 }: StoriesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>();
   const _api = new PostsApi();
@@ -97,12 +103,13 @@ export const StoriesSection = ({
         posts.length >= 3 ? (
           <>
             <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
-              Featured Stories
+              {title ? title : "Featured Stories"}
             </h2>
             <Grid my={50}>
               <Grid.Col span={{ md: 8 }}>
                 <StoriesItem
                   main
+                  buttonLabel={buttonLabel}
                   imagePath={_api.findFeaturedMedia(posts[0], "large")}
                   title={posts[0].title.rendered}
                   excerpt={posts[0].excerpt.rendered}
@@ -111,12 +118,14 @@ export const StoriesSection = ({
               </Grid.Col>
               <Grid.Col span={{ md: 4 }}>
                 <StoriesItem
+                  buttonLabel={buttonLabel}
                   imagePath={_api.findFeaturedMedia(posts[1], "medium")}
                   title={posts[1].title.rendered}
                   excerpt={posts[1].excerpt.rendered}
                   href={`/featured-stories/${posts[1].slug}`}
                 />
                 <StoriesItem
+                  buttonLabel={buttonLabel}
                   imagePath={_api.findFeaturedMedia(posts[2], "medium")}
                   title={posts[2].title.rendered}
                   excerpt={posts[2].excerpt.rendered}

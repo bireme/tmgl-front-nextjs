@@ -53,7 +53,7 @@ export function removeHTMLTagsAndLimit(text: string, limit: number): string {
     strippedText.length > limit
       ? strippedText.substring(0, limit)
       : strippedText;
-  return truncatedText;
+  return truncatedText.replace("[&hellip;]", "");
 }
 export function decodeHtmlEntities(text: string): string {
   let decoded = he.decode(text);
