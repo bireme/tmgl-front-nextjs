@@ -156,6 +156,7 @@ export interface TmsItem {
   title: string;
   url: string;
   image: string;
+  description?: string;
 }
 
 export interface MediaItem {

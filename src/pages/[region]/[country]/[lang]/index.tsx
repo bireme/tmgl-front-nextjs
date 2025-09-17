@@ -13,26 +13,23 @@ import { EventsSection } from "@/components/sections/events";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
 import { IconCard } from "@/components/cards";
-import { NewsEventsSection, JournalsSection, PagesSection } from "@/components/sections";
+import { NewsSection } from "@/components/sections/news";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
 import { TrendingCarrocel } from "@/components/rss/slider";
-import styles from "../../../styles/pages/home.module.scss";
+import styles from "../../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
-export default function CountryHome() {
+export default function CountryLangHome() {
   const router = useRouter();
   const _postApiHelper = new PostsApi();
   const [properties, setProperties] = useState<CountryAcfProps>();
   const { setRegionName, setCountryName, globalConfig, countryName } =
     useContext(GlobalContext);
   const [postProps, setPostProps] = useState<Post>();
-  const [news, setNews] = useState<Array<Post>>([]);
-  const [events, setEvents] = useState<Array<Post>>([]);
-  const [countryTermId, setCountryTermId] = useState<number | null>(null);
   const {
-    query: { country, region },
+    query: { country, region, lang },
   } = router;
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -50,76 +47,19 @@ export default function CountryHome() {
     setRegionName(region ? region.toString() : "");
     setCountryName(country ? country.toString() : "");
     const _api = new PostsApi(region ? region.toString() : "");
-    if (country) {
-      const postResponse = await _api.getPost("countries", country.toString());
+    if (country && lang) {
+      const postResponse = await _api.getPost("countries", country.toString(), lang.toString());
       if (postResponse.length > 0) {
         setCountryName(postResponse[0].title.rendered);
         setPostProps(postResponse[0]);
         setProperties(postResponse[0].acf);
-        
-        // Buscar termo do país para usar como filtro
-        try {
-          console.log("Searching for country term with slug:", country.toString());
-          
-          // Usar API regional para buscar o termo de país
-          const countryTerm = await _api.getCountryBySlug(country.toString());
-          console.log("Country term found in regional API:", countryTerm);
-          
-          // Se não encontrou, tentar com primeira letra maiúscula
-          if (!countryTerm || countryTerm.length === 0) {
-            const capitalizedCountry = country.toString().charAt(0).toUpperCase() + country.toString().slice(1);
-            console.log("Trying with capitalized name:", capitalizedCountry);
-            const countryTermCapitalized = await _api.getCountryBySlug(capitalizedCountry);
-            console.log("Capitalized country term found in regional API:", countryTermCapitalized);
-            
-            if (countryTermCapitalized && countryTermCapitalized.length > 0) {
-              const countryId = countryTermCapitalized[0].id;
-              console.log("Setting countryTermId to:", countryId);
-              setCountryTermId(countryId);
-            }
-          } else {
-            const countryId = countryTerm[0].id;
-            console.log("Setting countryTermId to:", countryId);
-            setCountryTermId(countryId);
-          }
-          
-          // Buscar news e events relacionados ao país
-          // Buscar news do WP geral (não regional)
-          const globalApi = new PostsApi(); // Sem região para acessar WP geral
-          const newsResponse = await globalApi.getCustomPost(
-            "posts",
-            4,
-            undefined,
-            undefined,
-            undefined,
-            { 
-              countryId: [countryTermId || 0],
-            }
-          );
-          setNews(newsResponse);
-          
-          // Buscar events do país (pode manter regional se necessário)
-          const eventsResponse = await _api.getCustomPost(
-            "event",
-            4,
-            undefined,
-            undefined,
-            undefined,
-            {
-              countryId: [countryTermId || 0],
-            }
-          );
-          setEvents(eventsResponse);
-        } catch (error) {
-          console.error("Error fetching country term and related content:", error);
-        }
       }
     }
-  }, [region, country]);
+  }, [region, country, lang]);
 
   useEffect(() => {
     getPageProperties();
-  }, [region, country]);
+  }, [region, country, lang]);
 
   return (
     <>
@@ -146,6 +86,10 @@ export default function CountryHome() {
                     {
                       path: `/${country}`,
                       name: countryName ? countryName.toString() : "",
+                    },
+                    {
+                      path: `/${lang}`,
+                      name: lang ? lang?.toString().toUpperCase() : "",
                     },
                   ]}
                   blackColor={false}
@@ -219,7 +163,6 @@ export default function CountryHome() {
                               : item.title
                             : ""}
                         </h4>
-                        <p>{item.description}</p>
                       </div>
                     );
                   })}
@@ -229,17 +172,6 @@ export default function CountryHome() {
           ) : (
             <></>
           )}
-          <NewsEventsSection
-            news={news}
-            events={events}
-            newsTitle="News from WHO"
-            otherNewsTitle="Other News"
-            eventsTitle="Events"
-            otherEventsTitle="Other Events"
-            showMoreNewsLink="/news"
-            showMoreEventsLink="/events"
-            exploreAllLabel="Explore all"
-          />
           {properties?.embed_content ? (
             <>
               <div className={styles.EmbedContent}>
@@ -274,125 +206,37 @@ export default function CountryHome() {
           <div className={styles.CountryRersources}>
             {properties ? (
               properties?.resources?.length > 0 ? (
-                <Container py={60} size={"xl"}>
+                <Container py={40} size={"xl"}>
                   <h3 className={styles.TitleWithIcon}>Resources</h3>
-                  <Grid
-                    mt={40}
-                    gutter={{ base: 20, md: 30 }}
-                    justify="center"
+                  <Flex
+                    mt={50}
+                    gap={{ base: "20px", md: "3%" }}
+                    justify={"space-around"}
+                    direction={{ base: "column", sm: "row" }}
+                    wrap={"wrap"}
                   >
                     {properties?.resources.map(
                       (resource: CountryAcfResource, index: number) => {
                         return (
-                          <Grid.Col 
+                          <IconCard
+                            title={resource.title}
+                            icon={
+                              <>
+                                <img src={resource.icon} />
+                              </>
+                            }
+                            callBack={() =>
+                              window.open(
+                                decodeHtmlLink(resource.url),
+                                "_blank"
+                              )
+                            }
                             key={index}
-                            span={{ 
-                              base: 12, 
-                              sm: 6, 
-                              md: 4, 
-                              lg: 3 
-                            }}
-                            style={{ 
-                              display: "flex",
-                              justifyContent: "center"
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "100%",
-                                maxWidth: "280px",
-                                height: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                textAlign: "center",
-                                padding: "30px 20px",
-                                backgroundColor: "white",
-                                borderRadius: "12px",
-                                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                                border: "1px solid #e9ecef",
-                                transition: "all 0.3s ease",
-                                cursor: "pointer",
-                                position: "relative",
-                                overflow: "hidden"
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = "translateY(-8px)";
-                                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0, 0, 0, 0.15)";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = "translateY(0)";
-                                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
-                              }}
-                              onClick={() =>
-                                window.open(
-                                  decodeHtmlLink(resource.url),
-                                  "_blank"
-                                )
-                              }
-                            >
-                              <div
-                                style={{
-                                  width: "80px",
-                                  height: "80px",
-                                  marginBottom: "20px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  backgroundColor: "#f8f9fa",
-                                  borderRadius: "50%",
-                                  border: "2px solid #e9ecef"
-                                }}
-                              >
-                                <img 
-                                  src={resource.icon} 
-                                  alt={resource.title}
-                                  style={{
-                                    width: "50px",
-                                    height: "50px",
-                                    objectFit: "contain"
-                                  }}
-                                />
-                              </div>
-                              <h4
-                                style={{
-                                  fontSize: "18px",
-                                  fontWeight: "600",
-                                  color: "#2c3e50",
-                                  margin: "0 0 10px 0",
-                                  lineHeight: "1.4",
-                                  minHeight: "50px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center"
-                                }}
-                              >
-                                {resource.title}
-                              </h4>
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  bottom: "0",
-                                  left: "0",
-                                  right: "0",
-                                  height: "4px",
-                                  background: "linear-gradient(90deg, #3498db, #2980b9)",
-                                  transform: "scaleX(0)",
-                                  transition: "transform 0.3s ease"
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.transform = "scaleX(1)";
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.transform = "scaleX(0)";
-                                }}
-                              />
-                            </div>
-                          </Grid.Col>
+                          />
                         );
                       }
                     )}
-                  </Grid>
+                  </Flex>
                 </Container>
               ) : (
                 <></>
@@ -415,23 +259,11 @@ export default function CountryHome() {
             }
           />
 
-          <JournalsSection
-            country={country ? country.toString() : undefined}
-            region={region ? region.toString() : undefined}
-            title="Journals"
-            archive="journals"
-          />
-
-          <PagesSection
-            countryId={countryTermId || undefined}
-            region={region ? region.toString() : undefined}
-          />
-
-          {/* {region ? (
+          {region ? (
             <EventsSection region={region ? region.toString() : ""} />
           ) : (
             <></>
-          )} */}
+          )}
           {properties?.manual_media ? (
             <>
               <div style={{ float: "left", width: "100%" }}>
@@ -453,9 +285,14 @@ export default function CountryHome() {
           ) : (
             <></>
           )}
-          
+          <Container size={"xl"}>
+            <StoriesSection fetchOptions={{ tagId: 181, excludeTag: true }} />
+          </Container>
 
-          
+          <NewsSection
+            region={region ? region.toString() : undefined}
+            title={"News from WHO"}
+          />
         </>
       ) : (
         <div style={{ height: "100vh" }}>
