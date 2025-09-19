@@ -36,25 +36,9 @@ export class DireveService {
       return yearB - yearA;
     });
 
-    if (queryItems) {
-      orderedData = applyDefaultResourceFilters(queryItems, orderedData);
-    }
-    // aplica filtro só se houver itens
-    const hasQuery = Array.isArray(queryItems) && queryItems.length > 0;
-
-    // não deixe o TS inferir union esquisito → anote como unknown
-    const filteredResult: unknown = hasQuery
-      ? applyDefaultResourceFilters(queryItems!, orderedData)
-      : orderedData;
-
-    // normalize para SEMPRE virar array (sem mudar DTOs/funções existentes)
-    const filteredArray = Array.isArray(filteredResult)
-      ? filteredResult
-      : filteredResult &&
-        typeof filteredResult === "object" &&
-        "data" in (filteredResult as any) &&
-        Array.isArray((filteredResult as any).data)
-      ? (filteredResult as any).data
+    // Aplica filtros apenas uma vez, se existirem
+    const filteredArray = queryItems && queryItems.length > 0
+      ? applyDefaultResourceFilters(queryItems, orderedData)
       : orderedData;
 
     // paginação
@@ -143,7 +127,7 @@ export class DireveService {
             region: d.country
               ? getRegionByCountry([
                   parseMultLangStringAttr(
-                    d.country[0].split("|").map((i) => i.replace("^", "|"))
+                    d.country.split("|").map((i) => i.replace("^", "|"))
                   ).find((i) => i.lang == lang)?.content || "",
                 ])[0]
               : "",

@@ -281,7 +281,7 @@ export class JournalsService {
         a.type.localeCompare(b.type)
       ),
       yearFilter: allResults[0].yearFilter.sort(
-        (a, b) => Number(a.type) + Number(b.type)
+        (a, b) => Number(b.type) - Number(a.type)
       ),
       resourceTypeFilter: allResults[0].resourceTypeFilter?.sort((a, b) =>
         a.type.localeCompare(b.type)
@@ -377,12 +377,17 @@ export class JournalsService {
               };
             }
           ),
-        yearFilter: data.data.diaServerResponse[0].response.docs.map((d) => {
-          return {
-            type: moment(d.created_date, "YYYYMMDD").format("YYYY"),
-            count: 1,
-          };
-        }),
+        yearFilter: (() => {
+          const yearCounts: { [key: string]: number } = {};
+          data.data.diaServerResponse[0].response.docs.forEach((d) => {
+            const year = moment(d.created_date, "YYYYMMDD").format("YYYY");
+            yearCounts[year] = (yearCounts[year] || 0) + 1;
+          });
+          return Object.entries(yearCounts).map(([year, count]) => ({
+            type: year,
+            count: count,
+          }));
+        })(),
       };
     }
     return {

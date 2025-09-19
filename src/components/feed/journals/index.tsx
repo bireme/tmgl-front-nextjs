@@ -30,7 +30,7 @@ export const JournalsFeed = ({
   const [loading, setLoading] = useState(false);
   const _service = new JournalsService();
   const count = 12;
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [dataResp, setDataResp] = useState<DefaultResourceDto>();
   const [filter, setFilter] = useState<queryType[]>([]);
@@ -41,7 +41,7 @@ export const JournalsFeed = ({
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
-    setPage(1);
+    setPage(0);
   };
 
   useEffect(() => {
@@ -53,12 +53,12 @@ export const JournalsFeed = ({
     try {
       const response = await _service.getDefaultResources(
         count,
-        (page - 1) * count,
+        page * count,
         language,
         filter && filter.length > 0 ? filter : undefined,
         "TMGL"
       );
-      setTotalPages(response.totalFound / count);
+      setTotalPages(Math.max(1, Math.ceil(response.totalFound / count)));
       setItems(response.data);
       setDataResp(response);
       if (!apiResponse) {
@@ -102,14 +102,15 @@ export const JournalsFeed = ({
           ) : (
             <></>
           )}
-          <Flex
-            direction={{
-              base: displayType == "column" ? "column" : "row",
-              md: "row",
+          <div 
+            style={{
+              display: "grid",
+              gridTemplateColumns: displayType === "column" 
+                ? "repeat(auto-fit, minmax(300px, 1fr))" 
+                : "1fr",
+              gap: "30px",
+              alignItems: "stretch"
             }}
-            gap={30}
-            wrap={"wrap"}
-            justify={"flex-start"}
           >
             {items.length > 0 ? (
               <>
@@ -166,6 +167,7 @@ export const JournalsFeed = ({
                       ]}
                       target="_self"
                       link={"/journals/" + i.id}
+                      className={styles.GridMode}
                     />
                   );
                 })}
@@ -173,19 +175,24 @@ export const JournalsFeed = ({
             ) : loading ? (
               <></>
             ) : (
-              <Flex
-                style={{ height: "400px", width: "100%" }}
-                justify={"center"}
-                align={"center"}
+              <div
+                style={{ 
+                  height: "400px", 
+                  width: "100%", 
+                  display: "flex", 
+                  justifyContent: "center", 
+                  alignItems: "center",
+                  gridColumn: "1 / -1"
+                }}
               >
                 {apiResponse?.totalFound == 0 ? (
                   <Center>No results found!</Center>
                 ) : (
                   <></>
                 )}
-              </Flex>
+              </div>
             )}
-          </Flex>
+          </div>
           <div className={styles.PaginationContainer}>
             <Pagination
               callBack={setPage}

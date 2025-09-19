@@ -56,7 +56,7 @@ export const MultimediaFeed = ({
         true
       );
 
-      setTotalPages(Math.ceil(response.totalFound / count));
+      setTotalPages(Math.max(1, Math.ceil(response.totalFound / count)));
       setItems(response.data);
       setApiResponse(response);
       if (
@@ -106,14 +106,15 @@ export const MultimediaFeed = ({
           ) : (
             <></>
           )}
-          <Flex
-            direction={{
-              base: displayType == "column" ? "column" : "row",
-              md: "row",
+          <div 
+            style={{
+              display: "grid",
+              gridTemplateColumns: displayType === "column" 
+                ? "repeat(auto-fit, minmax(300px, 1fr))" 
+                : "1fr",
+              gap: "30px",
+              alignItems: "stretch"
             }}
-            gap={30}
-            wrap={"wrap"}
-            justify={"flex-start"}
           >
             {items.length > 0 ? (
               <>
@@ -171,6 +172,7 @@ export const MultimediaFeed = ({
                       ]}
                       target="_blank"
                       link={i.link}
+                      className={styles.GridMode}
                     />
                   );
                 })}
@@ -178,18 +180,29 @@ export const MultimediaFeed = ({
             ) : loading ? (
               <></>
             ) : (
-              <Flex
-                style={{ height: "400px", width: "100%" }}
-                justify={"center"}
-                align={"center"}
-              ></Flex>
+              <div
+                style={{ 
+                  height: "400px", 
+                  width: "100%", 
+                  display: "flex", 
+                  justifyContent: "center", 
+                  alignItems: "center",
+                  gridColumn: "1 / -1"
+                }}
+              >
+                {apiResponse?.totalFound == 0 ? (
+                  <Center>No results found!</Center>
+                ) : (
+                  <></>
+                )}
+              </div>
             )}
-          </Flex>
+          </div>
           <div className={styles.PaginationContainer}>
             <Pagination
               callBack={setPage}
-              currentIndex={page == 0 ? 1 : page}
-              totalPages={totalPages - 1}
+              currentIndex={page}
+              totalPages={totalPages}
             />
           </div>
         </Grid.Col>

@@ -53,7 +53,7 @@ export const DatabaseAndRepositoriesFeed = ({
         "TMGL",
         "databases_bibliography"
       );
-      setTotalPages(response.totalFound / count);
+      setTotalPages(Math.max(1, Math.ceil(response.totalFound / count)));
       setItems(response.data);
       setApiResponse(response);
       if ((country || region || thematicArea) && !initialFilterDone) {
@@ -99,14 +99,15 @@ export const DatabaseAndRepositoriesFeed = ({
             <></>
           )}
 
-          <Flex
-            direction={{
-              base: displayType == "column" ? "column" : "row",
-              md: "row",
+          <div 
+            style={{
+              display: "grid",
+              gridTemplateColumns: displayType === "column" 
+                ? "repeat(auto-fit, minmax(300px, 1fr))" 
+                : "1fr",
+              gap: "30px",
+              alignItems: "stretch"
             }}
-            gap={30}
-            wrap={"wrap"}
-            justify={"flex-start"}
           >
             {items.length > 0 ? (
               <>
@@ -163,6 +164,7 @@ export const DatabaseAndRepositoriesFeed = ({
                       ]}
                       target="_blank"
                       link={i.link}
+                      className={styles.GridMode}
                     />
                   );
                 })}
@@ -170,23 +172,28 @@ export const DatabaseAndRepositoriesFeed = ({
             ) : loading ? (
               <></>
             ) : (
-              <Flex
-                style={{ height: "400px", width: "100%" }}
-                justify={"center"}
-                align={"center"}
+              <div
+                style={{ 
+                  height: "400px", 
+                  width: "100%", 
+                  display: "flex", 
+                  justifyContent: "center", 
+                  alignItems: "center",
+                  gridColumn: "1 / -1"
+                }}
               >
                 {apiResponse?.totalFound == 0 ? (
                   <Center>No results found!</Center>
                 ) : (
                   <></>
                 )}
-              </Flex>
+              </div>
             )}
-          </Flex>
+          </div>
           <div className={styles.PaginationContainer}>
             <Pagination
               callBack={setPage}
-              currentIndex={page == 0 ? 1 : page}
+              currentIndex={page}
               totalPages={totalPages}
             />
           </div>
