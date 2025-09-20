@@ -33,15 +33,18 @@ export type DefaultCardProps = PropsWithChildren<
     displayType: string;
     fullWidth?: boolean;
     size?: string;
+    justify?: string;
   } & HTMLAttributes<HTMLDivElement>
 >;
 
 export const DefaultCard = ({
   displayType,
+
   fullWidth,
   size,
   children,
   className,
+  justify,
   style,
   ...rest
 }: DefaultCardProps) => {
@@ -49,7 +52,7 @@ export const DefaultCard = ({
     <Flex
       direction={displayType === "column" ? "column" : "row"}
       align={displayType === "column" ? "flex-end" : "flex-start"}
-      justify="space-between"
+      justify={justify ? justify : "space-between"}
       gap={30}
       className={`${styles.ResourceCard} ${
         displayType === "column" ? "" : styles.Row
