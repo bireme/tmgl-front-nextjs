@@ -141,15 +141,45 @@ export interface ACFMultimediaItem {
 }
 
 export interface CountryAcfProps {
+  layout: string;
   content: string;
+  other_funding_title?: string;
+  other_periodicals_title?: string;
+  founding_oportunity_title: string;
+  periodicals_title: string;
   slide_images: AcfImageArray[];
+  resources_title: string;
   resources: CountryAcfResource[];
   key_resources: Array<KeyResource>;
+  embed_title: string;
   embed_content: string;
   rss_filter: string;
   multimedia_filter: string;
-  manual_media: MediaItem[];
-  tms_items: TmsItem[];
+  multimedia_title: string;
+  api_filter: string;
+  manual_media: MediaItem[] | false;
+  tms_title: string;
+  tms_items: TmsItem[] | false;
+  translate_labels: TranslateLabels;
+  events_title: string;
+  news_title: string;
+  stories_title: string;
+  stories_button_label: string;
+  research_block_title: string;
+  research_block_content: string;
+  founding_oportunity_heading: HeadingItem;
+  founding_oportunities_items?: smallItemObj[];
+  periodicals_heading: HeadingItem;
+  periodical_items?: smallItemObj[];
+  search_institute_title: string;
+  search_institute_items: CountryAcfResource[];
+  search_group_title: string;
+  search_group_items: CountryAcfResource[];
+}
+
+export interface smallItemObj {
+  title?: string;
+  url?: string;
 }
 
 export interface TmsItem {
@@ -166,13 +196,28 @@ export interface MediaItem {
 }
 
 export interface CountryAcfResource {
-  icon: string;
+  image?: string;
+  icon: string | string;
   title: string;
   url: string;
 }
 
 export interface KeyResource {
   text: string;
+  url: string;
+}
+
+export interface TranslateLabels {
+  news_label: string;
+  events_label: string;
+  rss_label: string;
+  periodics_label: string;
+}
+
+export interface HeadingItem {
+  title: string;
+  image: string | false;
+  description: string;
   url: string;
 }
 

@@ -1,6 +1,7 @@
 import { Button, Container, Flex } from "@mantine/core";
-import { IconArrowRight } from "@tabler/icons-react";
+
 import { FixedRelatedVideosSection } from "@/components/videos";
+import { IconArrowRight } from "@tabler/icons-react";
 import styles from "../../../styles/pages/home.module.scss";
 
 interface MultimediaItem {
@@ -15,6 +16,7 @@ interface MultimediaSectionProps {
   moreMediaUrl?: string;
   exploreAllLabel?: string;
   className?: string;
+  backgroundColor?: string;
 }
 
 export function MultimediaSection({
@@ -22,12 +24,13 @@ export function MultimediaSection({
   relatedVideoTitle = "Related videos",
   moreMediaUrl,
   exploreAllLabel = "Explore all",
+  backgroundColor,
   className,
 }: MultimediaSectionProps) {
   if (!multimediaItems || multimediaItems.length === 0) return null;
 
   return (
-    <div style={{ float: "left", width: "100%" }} className={className}>
+    <div style={{ float: "left", width: "100%", backgroundColor: backgroundColor ?? "iherit" }} className={className}>
       <FixedRelatedVideosSection
         title={relatedVideoTitle}
         items={multimediaItems.map((item) => ({

@@ -1,5 +1,6 @@
 import { Container, LoadingOverlay } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
+
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import styles from "../../../styles/components/sections.module.scss";
@@ -63,9 +64,14 @@ export const PagesSection = ({
   return (
     <div 
       style={{ 
-        backgroundColor: "#F3F3F3",
+        backgroundImage: `url(${pages[0]._embedded?.['wp:featuredmedia']?.[0]?.source_url || ""})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
         width: "100%",
-        padding: "60px 0"
+        padding: "60px 0",
+        color: "white",
+        backgroundColor: "rgba(0, 0, 0, 0.5)"
       }}
       className={className}
     >

@@ -1,23 +1,21 @@
 import { Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
-import {
-  CountryAcfProps,
-  CountryAcfResource,
-  Post,
-} from "@/services/types/posts.dto";
+import { CountryAcfProps, Post } from "@/services/types/posts.dto";
 import { HeroImage, HeroSlider } from "@/components/slider";
-import { decodeHtmlEntities, decodeHtmlLink } from "@/helpers/stringhelper";
+import {
+  JournalsSection,
+  NewsEventsSection,
+  PagesSection,
+} from "@/components/sections";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
-import { EventsSection } from "@/components/sections/events";
+import { CountryResourceSection } from "@/components/sections/countryResourceSection";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
-import { IconCard } from "@/components/cards";
-import { NewsEventsSection, JournalsSection, PagesSection } from "@/components/sections";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
-import { StoriesSection } from "@/components/sections/stories";
 import { TrendingCarrocel } from "@/components/rss/slider";
+import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
@@ -56,22 +54,32 @@ export default function CountryHome() {
         setCountryName(postResponse[0].title.rendered);
         setPostProps(postResponse[0]);
         setProperties(postResponse[0].acf);
-        
+
         // Buscar termo do país para usar como filtro
         try {
-          console.log("Searching for country term with slug:", country.toString());
-          
+          console.log(
+            "Searching for country term with slug:",
+            country.toString()
+          );
+
           // Usar API regional para buscar o termo de país
           const countryTerm = await _api.getCountryBySlug(country.toString());
           console.log("Country term found in regional API:", countryTerm);
-          
+
           // Se não encontrou, tentar com primeira letra maiúscula
           if (!countryTerm || countryTerm.length === 0) {
-            const capitalizedCountry = country.toString().charAt(0).toUpperCase() + country.toString().slice(1);
+            const capitalizedCountry =
+              country.toString().charAt(0).toUpperCase() +
+              country.toString().slice(1);
             console.log("Trying with capitalized name:", capitalizedCountry);
-            const countryTermCapitalized = await _api.getCountryBySlug(capitalizedCountry);
-            console.log("Capitalized country term found in regional API:", countryTermCapitalized);
-            
+            const countryTermCapitalized = await _api.getCountryBySlug(
+              capitalizedCountry
+            );
+            console.log(
+              "Capitalized country term found in regional API:",
+              countryTermCapitalized
+            );
+
             if (countryTermCapitalized && countryTermCapitalized.length > 0) {
               const countryId = countryTermCapitalized[0].id;
               console.log("Setting countryTermId to:", countryId);
@@ -82,7 +90,7 @@ export default function CountryHome() {
             console.log("Setting countryTermId to:", countryId);
             setCountryTermId(countryId);
           }
-          
+
           // Buscar news e events relacionados ao país
           // Buscar news do WP geral (não regional)
           const globalApi = new PostsApi(); // Sem região para acessar WP geral
@@ -92,12 +100,12 @@ export default function CountryHome() {
             undefined,
             undefined,
             undefined,
-            { 
+            {
               countryId: [countryTermId || 0],
             }
           );
           setNews(newsResponse);
-          
+
           // Buscar events do país (pode manter regional se necessário)
           const eventsResponse = await _api.getCustomPost(
             "event",
@@ -111,7 +119,10 @@ export default function CountryHome() {
           );
           setEvents(eventsResponse);
         } catch (error) {
-          console.error("Error fetching country term and related content:", error);
+          console.error(
+            "Error fetching country term and related content:",
+            error
+          );
         }
       }
     }
@@ -191,7 +202,8 @@ export default function CountryHome() {
               </Grid>
             </Container>
           </div>
-          {properties?.tms_items?.length &&
+          {properties?.tms_items &&
+          Array.isArray(properties?.tms_items) &&
           properties?.tms_items?.length > 0 ? (
             <div className={styles.Tms}>
               <Container size={"xl"}>
@@ -271,136 +283,10 @@ export default function CountryHome() {
             <></>
           )}
 
-          <div className={styles.CountryRersources}>
-            {properties ? (
-              properties?.resources?.length > 0 ? (
-                <Container py={60} size={"xl"}>
-                  <h3 className={styles.TitleWithIcon}>Resources</h3>
-                  <Grid
-                    mt={40}
-                    gutter={{ base: 20, md: 30 }}
-                    justify="center"
-                  >
-                    {properties?.resources.map(
-                      (resource: CountryAcfResource, index: number) => {
-                        return (
-                          <Grid.Col 
-                            key={index}
-                            span={{ 
-                              base: 12, 
-                              sm: 6, 
-                              md: 4, 
-                              lg: 3 
-                            }}
-                            style={{ 
-                              display: "flex",
-                              justifyContent: "center"
-                            }}
-                          >
-                            <div
-                              style={{
-                                width: "100%",
-                                maxWidth: "280px",
-                                height: "100%",
-                                display: "flex",
-                                flexDirection: "column",
-                                alignItems: "center",
-                                textAlign: "center",
-                                padding: "30px 20px",
-                                backgroundColor: "white",
-                                borderRadius: "12px",
-                                boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
-                                border: "1px solid #e9ecef",
-                                transition: "all 0.3s ease",
-                                cursor: "pointer",
-                                position: "relative",
-                                overflow: "hidden"
-                              }}
-                              onMouseEnter={(e) => {
-                                e.currentTarget.style.transform = "translateY(-8px)";
-                                e.currentTarget.style.boxShadow = "0 8px 25px rgba(0, 0, 0, 0.15)";
-                              }}
-                              onMouseLeave={(e) => {
-                                e.currentTarget.style.transform = "translateY(0)";
-                                e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.1)";
-                              }}
-                              onClick={() =>
-                                window.open(
-                                  decodeHtmlLink(resource.url),
-                                  "_blank"
-                                )
-                              }
-                            >
-                              <div
-                                style={{
-                                  width: "80px",
-                                  height: "80px",
-                                  marginBottom: "20px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  backgroundColor: "#f8f9fa",
-                                  borderRadius: "50%",
-                                  border: "2px solid #e9ecef"
-                                }}
-                              >
-                                <img 
-                                  src={resource.icon} 
-                                  alt={resource.title}
-                                  style={{
-                                    width: "50px",
-                                    height: "50px",
-                                    objectFit: "contain"
-                                  }}
-                                />
-                              </div>
-                              <h4
-                                style={{
-                                  fontSize: "18px",
-                                  fontWeight: "600",
-                                  color: "#2c3e50",
-                                  margin: "0 0 10px 0",
-                                  lineHeight: "1.4",
-                                  minHeight: "50px",
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center"
-                                }}
-                              >
-                                {resource.title}
-                              </h4>
-                              <div
-                                style={{
-                                  position: "absolute",
-                                  bottom: "0",
-                                  left: "0",
-                                  right: "0",
-                                  height: "4px",
-                                  background: "linear-gradient(90deg, #3498db, #2980b9)",
-                                  transform: "scaleX(0)",
-                                  transition: "transform 0.3s ease"
-                                }}
-                                onMouseEnter={(e) => {
-                                  e.currentTarget.style.transform = "scaleX(1)";
-                                }}
-                                onMouseLeave={(e) => {
-                                  e.currentTarget.style.transform = "scaleX(0)";
-                                }}
-                              />
-                            </div>
-                          </Grid.Col>
-                        );
-                      }
-                    )}
-                  </Grid>
-                </Container>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
-          </div>
+          <CountryResourceSection
+            resources={properties?.resources}
+            title={properties?.resources_title || "Resources"}
+          />
 
           <TrendingCarrocel
             allFilter={
@@ -453,9 +339,6 @@ export default function CountryHome() {
           ) : (
             <></>
           )}
-          
-
-          
         </>
       ) : (
         <div style={{ height: "100vh" }}>

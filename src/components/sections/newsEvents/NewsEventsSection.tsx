@@ -130,7 +130,7 @@ export function NewsEventsSection({
       </Grid>
       <Grid>
         <Grid.Col span={{ base: 6, md: 6 }}>
-          {showMoreEventsLink && (
+          {showMoreEventsLink && news.length > 0 && (
             <Flex
               mt={25}
               gap={10}
@@ -149,7 +149,7 @@ export function NewsEventsSection({
           )}
         </Grid.Col>
         <Grid.Col span={{ base: 6, md: 6 }}>
-          {showMoreNewsLink && (
+          {showMoreNewsLink && events.length > 0 && (
             <Flex
               mt={25}
               gap={10}
