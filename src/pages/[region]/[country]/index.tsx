@@ -1,21 +1,21 @@
 import { Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
-import {
-  CountryAcfProps,
-  CountryAcfResource,
-  Post,
-} from "@/services/types/posts.dto";
+import { CountryAcfProps, Post } from "@/services/types/posts.dto";
 import { HeroImage, HeroSlider } from "@/components/slider";
-import { decodeHtmlEntities, decodeHtmlLink } from "@/helpers/stringhelper";
+import {
+  JournalsSection,
+  NewsEventsSection,
+  PagesSection,
+} from "@/components/sections";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
-import { EventsSection } from "@/components/sections/events";
+import { CountryResourceSection } from "@/components/sections/countryResourceSection";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
-import { IconCard } from "@/components/cards";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
 import { TrendingCarrocel } from "@/components/rss/slider";
+import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
@@ -26,6 +26,9 @@ export default function CountryHome() {
   const { setRegionName, setCountryName, globalConfig, countryName } =
     useContext(GlobalContext);
   const [postProps, setPostProps] = useState<Post>();
+  const [news, setNews] = useState<Array<Post>>([]);
+  const [events, setEvents] = useState<Array<Post>>([]);
+  const [countryTermId, setCountryTermId] = useState<number | null>(null);
   const {
     query: { country, region },
   } = router;
@@ -51,6 +54,76 @@ export default function CountryHome() {
         setCountryName(postResponse[0].title.rendered);
         setPostProps(postResponse[0]);
         setProperties(postResponse[0].acf);
+
+        // Buscar termo do país para usar como filtro
+        try {
+          console.log(
+            "Searching for country term with slug:",
+            country.toString()
+          );
+
+          // Usar API regional para buscar o termo de país
+          const countryTerm = await _api.getCountryBySlug(country.toString());
+          console.log("Country term found in regional API:", countryTerm);
+
+          // Se não encontrou, tentar com primeira letra maiúscula
+          if (!countryTerm || countryTerm.length === 0) {
+            const capitalizedCountry =
+              country.toString().charAt(0).toUpperCase() +
+              country.toString().slice(1);
+            console.log("Trying with capitalized name:", capitalizedCountry);
+            const countryTermCapitalized = await _api.getCountryBySlug(
+              capitalizedCountry
+            );
+            console.log(
+              "Capitalized country term found in regional API:",
+              countryTermCapitalized
+            );
+
+            if (countryTermCapitalized && countryTermCapitalized.length > 0) {
+              const countryId = countryTermCapitalized[0].id;
+              console.log("Setting countryTermId to:", countryId);
+              setCountryTermId(countryId);
+            }
+          } else {
+            const countryId = countryTerm[0].id;
+            console.log("Setting countryTermId to:", countryId);
+            setCountryTermId(countryId);
+          }
+
+          // Buscar news e events relacionados ao país
+          // Buscar news do WP geral (não regional)
+          const globalApi = new PostsApi(); // Sem região para acessar WP geral
+          const newsResponse = await globalApi.getCustomPost(
+            "posts",
+            4,
+            undefined,
+            undefined,
+            undefined,
+            {
+              countryId: [countryTermId || 0],
+            }
+          );
+          setNews(newsResponse);
+
+          // Buscar events do país (pode manter regional se necessário)
+          const eventsResponse = await _api.getCustomPost(
+            "event",
+            4,
+            undefined,
+            undefined,
+            undefined,
+            {
+              countryId: [countryTermId || 0],
+            }
+          );
+          setEvents(eventsResponse);
+        } catch (error) {
+          console.error(
+            "Error fetching country term and related content:",
+            error
+          );
+        }
       }
     }
   }, [region, country]);
@@ -129,7 +202,8 @@ export default function CountryHome() {
               </Grid>
             </Container>
           </div>
-          {properties?.tms_items?.length &&
+          {properties?.tms_items &&
+          Array.isArray(properties?.tms_items) &&
           properties?.tms_items?.length > 0 ? (
             <div className={styles.Tms}>
               <Container size={"xl"}>
@@ -157,6 +231,7 @@ export default function CountryHome() {
                               : item.title
                             : ""}
                         </h4>
+                        <p>{item.description}</p>
                       </div>
                     );
                   })}
@@ -166,6 +241,17 @@ export default function CountryHome() {
           ) : (
             <></>
           )}
+          <NewsEventsSection
+            news={news}
+            events={events}
+            newsTitle="News from WHO"
+            otherNewsTitle="Other News"
+            eventsTitle="Events"
+            otherEventsTitle="Other Events"
+            showMoreNewsLink="/news"
+            showMoreEventsLink="/events"
+            exploreAllLabel="Explore all"
+          />
           {properties?.embed_content ? (
             <>
               <div className={styles.EmbedContent}>
@@ -197,48 +283,10 @@ export default function CountryHome() {
             <></>
           )}
 
-          <div className={styles.CountryRersources}>
-            {properties ? (
-              properties?.resources?.length > 0 ? (
-                <Container py={40} size={"xl"}>
-                  <h3 className={styles.TitleWithIcon}>Resources</h3>
-                  <Flex
-                    mt={50}
-                    gap={{ base: "20px", md: "3%" }}
-                    justify={"space-around"}
-                    direction={{ base: "column", sm: "row" }}
-                    wrap={"wrap"}
-                  >
-                    {properties?.resources.map(
-                      (resource: CountryAcfResource, index: number) => {
-                        return (
-                          <IconCard
-                            title={resource.title}
-                            icon={
-                              <>
-                                <img src={resource.icon} />
-                              </>
-                            }
-                            callBack={() =>
-                              window.open(
-                                decodeHtmlLink(resource.url),
-                                "_blank"
-                              )
-                            }
-                            key={index}
-                          />
-                        );
-                      }
-                    )}
-                  </Flex>
-                </Container>
-              ) : (
-                <></>
-              )
-            ) : (
-              <></>
-            )}
-          </div>
+          <CountryResourceSection
+            resources={properties?.resources}
+            title={properties?.resources_title || "Resources"}
+          />
 
           <TrendingCarrocel
             allFilter={
@@ -253,11 +301,23 @@ export default function CountryHome() {
             }
           />
 
-          {region ? (
+          <JournalsSection
+            country={country ? country.toString() : undefined}
+            region={region ? region.toString() : undefined}
+            title="Journals"
+            archive="journals"
+          />
+
+          <PagesSection
+            countryId={countryTermId || undefined}
+            region={region ? region.toString() : undefined}
+          />
+
+          {/* {region ? (
             <EventsSection region={region ? region.toString() : ""} />
           ) : (
             <></>
-          )}
+          )} */}
           {properties?.manual_media ? (
             <>
               <div style={{ float: "left", width: "100%" }}>

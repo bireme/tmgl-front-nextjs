@@ -36,14 +36,20 @@ export class DireveService {
       return yearB - yearA;
     });
 
-    if (queryItems) {
-      orderedData = applyDefaultResourceFilters(queryItems, orderedData);
-    }
-    const paginated = orderedData.slice(start, start + count);
+    // Aplica filtros apenas uma vez, se existirem
+    const filteredArray = queryItems && queryItems.length > 0
+      ? applyDefaultResourceFilters(queryItems, orderedData)
+      : orderedData;
+
+    // paginação
+    const pageSize = Math.max(0, count);
+    const window = filteredArray.slice(start, start + pageSize + 1);
+    const hasNext = window.length > pageSize;
+    const paginated = hasNext ? window.slice(0, pageSize) : window;
 
     return {
       data: paginated,
-      totalFound: orderedData.length,
+      totalFound: filteredArray.length,
       countryFilter: allResults[0].countryFilter.sort((a, b) =>
         a.type.localeCompare(b.type)
       ),
@@ -121,7 +127,7 @@ export class DireveService {
             region: d.country
               ? getRegionByCountry([
                   parseMultLangStringAttr(
-                    d.country[0].split("|").map((i) => i.replace("^", "|"))
+                    d.country.split("|").map((i) => i.replace("^", "|"))
                   ).find((i) => i.lang == lang)?.content || "",
                 ])[0]
               : "",

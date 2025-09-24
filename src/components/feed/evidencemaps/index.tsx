@@ -13,10 +13,29 @@ import { EvidenceMapsService } from "@/services/apiRepositories/EvidenceMapsServ
 import { GlobalContext } from "@/contexts/globalContext";
 import { Pagination } from "../pagination";
 import { ResourceCard } from "../resourceitem";
-import { ResourceFilters } from "../filters";
+import { ResourceFilters, FilterOption } from "../filters";
 import { chunkArray } from "@/components/layout/helper";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
+
+// Função para remover itens duplicados baseados no label e filtrar labels em branco
+const removeDuplicateItems = (items: FilterOption[]): FilterOption[] => {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    // Remove itens com label vazio, nulo ou apenas espaços em branco
+    if (!item.label || item.label.trim() === '') {
+      return false;
+    }
+    
+    // Remove itens duplicados baseados no label
+    if (seen.has(item.label)) {
+      return false;
+    }
+    
+    seen.add(item.label);
+    return true;
+  });
+};
 
 export const EvidenceMapsFeed = ({
   displayType,
@@ -33,7 +52,7 @@ export const EvidenceMapsFeed = ({
   const [loading, setLoading] = useState(false);
   const _service = new EvidenceMapsService();
   const count = 12;
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [filter, setFilter] = useState<queryType[]>([]);
   const [items, setItems] = useState<EvidenceMapItemDto[]>([]);
@@ -44,18 +63,18 @@ export const EvidenceMapsFeed = ({
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
-    setPage(1);
+    setPage(0);
   };
   const getEvidencemaps = async () => {
     setLoading(true);
     try {
       const response = await _service.getResources(
-        count + 1,
-        (page - 1) * count,
+        count,
+        page * count,
         filter && filter.length > 0 ? filter : undefined
       );
 
-      setTotalPages(Math.ceil(response.totalFound / count));
+      setTotalPages(Math.max(1, Math.ceil(response.totalFound / count)));
       setItems(response.data);
       setApiResponse(response);
       const priority = globalConfig?.acf.evidence_maps_priority;
@@ -63,13 +82,13 @@ export const EvidenceMapsFeed = ({
       let orderedItems;
 
       if (!filter || filter.length === 0) {
-        if (page === 1 && priority != null && priority.length > 0) {
+        if (page === 0 && priority != null && priority.length > 0) {
           let q: queryType = {
             parameter: "django_id",
             query: priority.join(","),
           };
           priorityResult = await _service.getResources(
-            priority.length + 1,
+            priority.length,
             0,
             [q],
             true
@@ -88,7 +107,7 @@ export const EvidenceMapsFeed = ({
             priorityItems.length > 0 ? priorityItems : orderedItems;
           let chunkedItems = chunkArray(
             inOrderItems as EvidenceMapItemDto[],
-            count + 1
+            count
           );
           let auxOriginalItems = response.data;
           // Remove duplicados (que já estão na prioridade daquela página)
@@ -96,7 +115,7 @@ export const EvidenceMapsFeed = ({
           auxOriginalItems = auxOriginalItems.filter(
             (item) => !priorityIdsSet.has(item.id)
           );
-          inOrderItems = chunkedItems[page - 1];
+          inOrderItems = chunkedItems[page];
 
           // Junta os itens priorizados primeiro e os restantes da API depois
           const finalItems = [...inOrderItems, ...auxOriginalItems].slice(
@@ -171,10 +190,12 @@ export const EvidenceMapsFeed = ({
                 {
                   queryType: "descriptor",
                   label: "Thematic area",
-                  items: apiResponse?.thematicAreaFilters.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                  })),
+                  items: removeDuplicateItems(
+                    apiResponse?.thematicAreaFilters.map((c) => ({
+                      label: c.type,
+                      ocorrences: c.count,
+                    })) || []
+                  ),
                 },
               ]}
             />
@@ -185,19 +206,20 @@ export const EvidenceMapsFeed = ({
         <Grid.Col span={{ base: 12, md: 9 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
             <Title order={4} mb={30} fw={400}>
-              Showing {count} of {apiResponse?.totalFound} results found
+              Showing {items.length} of {apiResponse?.totalFound} results found
             </Title>
           ) : (
             <></>
           )}
-          <Flex
-            direction={{
-              base: displayType == "column" ? "column" : "row",
-              md: "row",
+          <div 
+            style={{
+              display: "grid",
+              gridTemplateColumns: displayType === "column" 
+                ? "repeat(auto-fit, minmax(300px, 1fr))" 
+                : "1fr",
+              gap: "30px",
+              alignItems: "stretch"
             }}
-            gap={30}
-            wrap={"wrap"}
-            justify={"flex-start"}
           >
             {items.length > 0 ? (
               <>
@@ -214,6 +236,7 @@ export const EvidenceMapsFeed = ({
                         `${i.excerpt.length > 180 ? "..." : ""}`
                       }
                       link={`/evidence-maps/${i.id}`}
+                      className={styles.GridMode}
                     />
                   );
                 })}
@@ -221,19 +244,24 @@ export const EvidenceMapsFeed = ({
             ) : loading ? (
               <></>
             ) : (
-              <Flex
-                style={{ height: "400px", width: "100%" }}
-                justify={"center"}
-                align={"center"}
+              <div
+                style={{ 
+                  height: "400px", 
+                  width: "100%", 
+                  display: "flex", 
+                  justifyContent: "center", 
+                  alignItems: "center",
+                  gridColumn: "1 / -1"
+                }}
               >
                 {apiResponse?.totalFound == 0 ? (
                   <Center>No results found!</Center>
                 ) : (
                   <></>
                 )}
-              </Flex>
+              </div>
             )}
-          </Flex>
+          </div>
           <div className={styles.PaginationContainer}>
             <Pagination
               callBack={setPage}

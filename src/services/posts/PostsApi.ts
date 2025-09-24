@@ -10,13 +10,16 @@ import { TagItem } from "@/components/feed/resourceitem";
 import { TaxonomiesApi } from "../taxonomies/TaxonomiesApi";
 import { queryType } from "../types/resources";
 
-type GetCustomPostOptions = {
+export type GetCustomPostOptions = {
   /** ID único ou lista de IDs de tag */
   tagId?: number | number[];
   /** Se true, usa tags_exclude (default: incluir com tags) */
   excludeTag?: boolean;
   catId?: number | number[];
   excludeCat?: boolean;
+  /** ID único ou lista de IDs de país */
+  countryId?: number | number[];
+  excludeCountry?: boolean;
 };
 
 export class PostsApi extends BaseUnauthenticatedApi {
@@ -86,12 +89,23 @@ export class PostsApi extends BaseUnauthenticatedApi {
       }
     }
 
+    // países
+    let countryQuery = "";
+    if (options?.countryId !== undefined) {
+      const countryIds = Array.isArray(options.countryId) ? options.countryId : [options.countryId];
+      if (countryIds.length > 0) {
+        countryQuery = options.excludeCountry
+          ? `&country_exclude=${countryIds.join(",")}`
+          : `&country=${countryIds.join(",")}`;
+      }
+    }
+
     const url =
       `${postTypeSlug}?per_page=${perPage ?? process.env.POSTSPERPAGE}` +
       `&_embed&orderby=date&order=desc&acf_format=standard` +
       `${parent !== undefined && parent >= 0 ? `&parent=${parent}` : ""}` +
       `${region && region.length ? `&region=${region.join(",")}` : ""}` +
-      `${tagQuery}${catQuery}` +
+      `${tagQuery}${catQuery}${countryQuery}` +
       `&${
         this._lang == "en"
           ? postTypeSlug === "posts" || postTypeSlug === "pages"
@@ -99,7 +113,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
             : ""
           : `lang=${this._lang}`
       }`;
-
+    console.log(url);
     const { data } = await this._api.get(url);
 
     if (options?.excludeCat && catIds.length > 0 && Array.isArray(data)) {
@@ -219,6 +233,18 @@ export class PostsApi extends BaseUnauthenticatedApi {
     }
   }
 
+  public async getCountryBySlug(slug: string): Promise<any[]> {
+    try {
+      const { data } = await this._api.get(
+        `country?slug=${encodeURIComponent(slug)}`
+      );
+      return data; // retorna todos os objetos do termo de país
+    } catch (error) {
+      console.error("Erro ao buscar país por slug:", error);
+      return [];
+    }
+  }
+
   public async getPostByAcfMetaKey(
     postTypeSlug: string,
     metavalue: string,
@@ -230,23 +256,24 @@ export class PostsApi extends BaseUnauthenticatedApi {
     return data;
   }
 
-  public async getPost(postTypeSlug: string, slug: string) {
+  public async getPost(postTypeSlug: string, slug: string, lang?: string) {
+    const targetLang = lang || this._lang;
     const { data } = await this._api.get(
-      `${postTypeSlug}?slug=${slug}&_embed&acf_format=standard`
+      `${postTypeSlug}?slug=${slug}&_embed&acf_format=standard&lang=${targetLang}`
     );
     //Verify if the client is using another language
     const foundPost = data[0];
     if (foundPost) {
-      if (foundPost?.lang != this._lang) {
+      if (foundPost?.lang != targetLang) {
         //In that case the lang returned is not the same as the user is trying to access, may because de slug is in a diferent language
         //Lets see if there is any translation to this post
         if (foundPost.translations) {
           if (Object.keys(foundPost.translations).length > 0) {
-            if (foundPost.translations[this._lang]) {
+            if (foundPost.translations[targetLang]) {
               const translated_postId: number =
-                foundPost.translations[this._lang];
+                foundPost.translations[targetLang];
               const transalated_response = await this._api.get(
-                `${postTypeSlug}/${translated_postId}?_embed&acf_format=standard`
+                `${postTypeSlug}/${translated_postId}?_embed&acf_format=standard&lang=${targetLang}`
               );
               return [transalated_response.data];
             }

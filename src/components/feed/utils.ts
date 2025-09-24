@@ -64,9 +64,20 @@ export function getRegionByCountry(countries: string[]): string[] {
 
   const itemRegions = regions.filter((region) =>
     region.countries.some((country) =>
-      countries
-        .map((c) => c?.toLocaleLowerCase())
-        .includes(country?.toLocaleLowerCase())
+      countries.some((searchCountry) => {
+        const searchLower = searchCountry?.toLocaleLowerCase().trim();
+        const countryLower = country?.toLocaleLowerCase().trim();
+        
+        // Correspondência exata
+        if (searchLower === countryLower) return true;
+        
+        // Correspondência parcial mais específica - só para casos conhecidos
+        if (searchLower === "united states" && countryLower.includes("united states")) return true;
+        if (searchLower === "united kingdom" && countryLower.includes("united kingdom")) return true;
+        if (searchLower === "korea, republic of" && (countryLower.includes("korea") || countryLower.includes("republic"))) return true;
+        
+        return false;
+      })
     )
   );
   return itemRegions.map((region) => region.region);
@@ -108,16 +119,16 @@ function groupCountriesByRegion(
     const region = acc.find((item) => item.region === country.Region);
 
     if (region) {
-      // Add the country (English name) to the existing region's countries list
+      // Add all language variants of the country to the existing region's countries list
       region.countries.push(country.en);
       region.countries.push(country.es);
       region.countries.push(country.pt);
       region.countries.push(country.fr);
     } else {
-      // Create a new region group
+      // Create a new region group with all language variants
       acc.push({
         region: country.Region,
-        countries: [country.en],
+        countries: [country.en, country.es, country.pt, country.fr],
       });
     }
 

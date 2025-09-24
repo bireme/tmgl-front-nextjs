@@ -1,8 +1,3 @@
-import { Container, LoadingOverlay } from "@mantine/core";
-import {
-  EvidenceMapItem,
-  EvidenceMapsSection,
-} from "@/components/sections/evidence-maps";
 import {
   FirstSection,
   SecondSection,
@@ -12,6 +7,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 
 import { FeaturedStoriesAcf } from "@/services/types/featuredStoriesAcf";
 import { HeroHeader } from "@/components/sections/hero";
+import { LoadingOverlay } from "@mantine/core";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { useRouter } from "next/router";
@@ -28,6 +24,7 @@ export default function FeaturedStories() {
   const getPost = useCallback(async (slug: string) => {
     try {
       const resp = await _api.getPost("featured_stories", slug);
+
       setPost(resp[0]);
       setAcf(resp[0].acf);
     } catch {

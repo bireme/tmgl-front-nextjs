@@ -8,6 +8,21 @@ import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../styles/components/sections.module.scss";
 import { useRouter } from "next/router";
 
+// Export new reusable components
+export { PageHeaderSection } from "./pageHeader/PageHeaderSection";
+export { LayoutToggle } from "./layoutToggle/LayoutToggle";
+export { DescriptionSection } from "./description/DescriptionSection";
+export { HeroSection } from "./hero/HeroSection";
+export { ContentSection } from "./content/ContentSection";
+export { ResourcesSection } from "./resources/ResourcesSection";
+export { NewsEventsSection } from "./newsEvents/NewsEventsSection";
+export { FundingOpportunitiesSection } from "./fundingOpportunities/FundingOpportunitiesSection";
+export { PeriodicalsSection } from "./periodicals/PeriodicalsSection";
+export { FundingAndPeriodicalsSection } from "./fundingAndPeriodicals/FundingAndPeriodicalsSection";
+export { MultimediaSection } from "./multimedia/MultimediaSection";
+export { JournalsSection } from "./journals/JournalsSection";
+export { PagesSection } from "./pages/PagesSection";
+
 export interface TraditionalSectionCardProps {
   iconPath: string;
   title: string;

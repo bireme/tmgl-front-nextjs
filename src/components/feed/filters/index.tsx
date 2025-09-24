@@ -5,6 +5,25 @@ import { DefaultResourceDto } from "@/services/types/defaultResource";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
 
+// Função para remover itens duplicados baseados no label e filtrar labels em branco
+const removeDuplicateItems = (items: FilterOption[]): FilterOption[] => {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    // Remove itens com label vazio, nulo ou apenas espaços em branco
+    if (!item.label || item.label.trim() === '') {
+      return false;
+    }
+    
+    // Remove itens duplicados baseados no label
+    if (seen.has(item.label)) {
+      return false;
+    }
+    
+    seen.add(item.label);
+    return true;
+  });
+};
+
 export const DefaultFeedFilterComponent = ({
   applyFilters,
   apiResponse,
@@ -19,50 +38,66 @@ export const DefaultFeedFilterComponent = ({
         {
           queryType: "Region",
           label: "WHO Regions",
-          items: apiResponse?.regionFilter.map((c) => ({
-            label: c.type,
-            ocorrences: c.count,
-            id: undefined,
-          })),
+          items: removeDuplicateItems(
+            apiResponse?.regionFilter.map((c) => ({
+              label: c.type,
+              ocorrences: c.count,
+              id: undefined,
+            })) || []
+          ),
         },
         {
           queryType: "country",
           label: "Country",
-          items: apiResponse?.countryFilter.map((c) => ({
-            label: c.type,
-            ocorrences: c.count,
-            id: undefined,
-          })),
+          items: removeDuplicateItems(
+            apiResponse?.countryFilter.map((c) => ({
+              label: c.type,
+              ocorrences: c.count,
+              id: undefined,
+            })) || []
+          ),
         },
-
         {
           queryType: "descriptor",
           label: "Thematic area",
-          items: apiResponse?.thematicAreaFilter.map((c) => ({
-            label: c.type,
-            ocorrences: c.count,
-            id: undefined,
-          })),
+          items: removeDuplicateItems(
+            apiResponse?.thematicAreaFilter.map((c) => ({
+              label: c.type,
+              ocorrences: c.count,
+              id: undefined,
+            })) || []
+          ),
         },
         {
           queryType: "publication_year",
           label: "Year",
-          items: apiResponse?.yearFilter.map((c) => ({
-            label: c.type,
-            ocorrences: c.count,
-            id: undefined,
-          })),
+          items: removeDuplicateItems(
+            Array.from(
+              new Map(
+                apiResponse?.yearFilter.map((c) => [
+                  c.type, // chave de unicidade
+                  {
+                    label: c.type,
+                    ocorrences: c.count,
+                    id: undefined,
+                  },
+                ])
+              ).values()
+            ) || []
+          ),
         },
         {
           queryType: "resource_type",
           label: "Media Type",
-          items: apiResponse.resourceTypeFilter
-            ? apiResponse?.resourceTypeFilter.map((c) => ({
-                label: c.type,
-                ocorrences: c.count,
-                id: undefined,
-              }))
-            : [],
+          items: removeDuplicateItems(
+            apiResponse.resourceTypeFilter
+              ? apiResponse?.resourceTypeFilter.map((c) => ({
+                  label: c.type,
+                  ocorrences: c.count,
+                  id: undefined,
+                }))
+              : []
+          ),
         },
       ]}
     />

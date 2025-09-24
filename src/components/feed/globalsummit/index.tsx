@@ -34,6 +34,7 @@ export const GlobalSummitFeed = ({
   const count = 12;
   const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [dataResp, setDataResp] = useState<DefaultResourceDto>();
   const [filter, setFilter] = useState<queryType[]>([]);
   const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
   const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
@@ -53,9 +54,10 @@ export const GlobalSummitFeed = ({
         filter && filter.length > 0 ? filter : undefined
       );
 
-      setTotalPages(Math.ceil(response.totalFound / count));
+      setTotalPages(Math.max(1, Math.ceil(response.totalFound / count)));
       setItems(response.data);
       setApiResponse(response);
+
       if ((country || region || thematicArea) && !initialFilterDone) {
         initialFilters(
           applyFilters,
@@ -146,19 +148,20 @@ export const GlobalSummitFeed = ({
         <Grid.Col span={{ base: 12, md: 9 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
             <Title order={4} mb={30} fw={400}>
-              Showing {count} of {apiResponse?.totalFound} results found
+              Showing {items.length} of {apiResponse?.totalFound} results found
             </Title>
           ) : (
             <></>
           )}
-          <Flex
-            direction={{
-              base: displayType == "column" ? "column" : "row",
-              md: "row",
+          <div 
+            style={{
+              display: "grid",
+              gridTemplateColumns: displayType === "column" 
+                ? "repeat(auto-fit, minmax(300px, 1fr))" 
+                : "1fr",
+              gap: "30px",
+              alignItems: "stretch"
             }}
-            gap={30}
-            wrap={"wrap"}
-            justify={"flex-start"}
           >
             {items.length > 0 ? (
               <>
@@ -191,6 +194,7 @@ export const GlobalSummitFeed = ({
                       target="_blank"
                       type={i.documentType}
                       link={i.link}
+                      className={styles.GridMode}
                     />
                   );
                 })}
@@ -198,19 +202,24 @@ export const GlobalSummitFeed = ({
             ) : loading ? (
               <></>
             ) : (
-              <Flex
-                style={{ height: "400px", width: "100%" }}
-                justify={"center"}
-                align={"center"}
+              <div
+                style={{ 
+                  height: "400px", 
+                  width: "100%", 
+                  display: "flex", 
+                  justifyContent: "center", 
+                  alignItems: "center",
+                  gridColumn: "1 / -1"
+                }}
               >
                 {apiResponse?.totalFound == 0 ? (
                   <Center>No results found!</Center>
                 ) : (
                   <></>
                 )}
-              </Flex>
+              </div>
             )}
-          </Flex>
+          </div>
           <div className={styles.PaginationContainer}>
             <Pagination
               callBack={setPage}

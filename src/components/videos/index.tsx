@@ -60,14 +60,16 @@ export const VideoItem = ({ title, href, main, thumbnail }: VideoItemProps) => {
 export interface FixedRelatedVideosSectionProps {
   items: VideoItemProps[];
   title?: string;
+  backgroundColor?: string;
 }
 
 export const FixedRelatedVideosSection = ({
   items,
   title,
+  backgroundColor,
 }: FixedRelatedVideosSectionProps) => {
   return (
-    <div className={styles.RelatedVideosSection}>
+    <div className={styles.RelatedVideosSection} style={{ backgroundColor: backgroundColor ?? "inherit" }}  >
       <Container size={"xl"}>
         {items?.length > 0 ? (
           <>

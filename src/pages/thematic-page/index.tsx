@@ -3,9 +3,7 @@ import { IconLayoutGrid, IconLayoutList } from "@tabler/icons-react";
 import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
-import { FeedSection } from "@/components/feed";
 import { GlobalContext } from "@/contexts/globalContext";
-import { NewsFeed } from "@/components/feed/news";
 import { ThematicPagesFeed } from "@/components/feed/thematicpages";
 import styles from "../../styles/pages/home.module.scss";
 

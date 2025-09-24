@@ -20,6 +20,7 @@ export interface ResourceCardProps {
   type?: string;
   fullWidth?: boolean;
   demo?: boolean;
+  className?: string;
 }
 
 export interface TagItem {
@@ -32,15 +33,18 @@ export type DefaultCardProps = PropsWithChildren<
     displayType: string;
     fullWidth?: boolean;
     size?: string;
+    justify?: string;
   } & HTMLAttributes<HTMLDivElement>
 >;
 
 export const DefaultCard = ({
   displayType,
+
   fullWidth,
   size,
   children,
   className,
+  justify,
   style,
   ...rest
 }: DefaultCardProps) => {
@@ -48,7 +52,7 @@ export const DefaultCard = ({
     <Flex
       direction={displayType === "column" ? "column" : "row"}
       align={displayType === "column" ? "flex-end" : "flex-start"}
-      justify="space-between"
+      justify={justify ? justify : "space-between"}
       gap={30}
       className={`${styles.ResourceCard} ${
         displayType === "column" ? "" : styles.Row
@@ -75,6 +79,7 @@ export const ResourceCard = ({
   type,
   fullWidth = false,
   demo = false,
+  className,
 }: ResourceCardProps) => {
   const isPdf = (thumb: string | string[]): boolean => {
     if (type == "Pdf") return true;
@@ -137,6 +142,7 @@ export const ResourceCard = ({
       fullWidth={fullWidth}
       displayType={displayType}
       size={size}
+      className={className}
       style={{
         opacity: demo ? 0.6 : 1,
         pointerEvents: demo ? "none" : "auto",

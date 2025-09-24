@@ -11,9 +11,8 @@ export class MenusApi extends BaseUnauthenticatedApi {
       `/menu-locations/${menuSlug}${this._lang ? `?lang=${this._lang}` : ""}`
     );
 
-    return data;
+    return data.filter((menu: MenuItemDTO) => menu.title !== "Search Collection");
   }
-
   public async getMenus(): Promise<MenuItemDTO[]> {
     const { data } = await this._api.get("/menu-locations");
     return data;

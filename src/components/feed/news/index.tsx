@@ -17,26 +17,25 @@ import styles from "../../../styles/components/resources.module.scss";
 export const NewsFeed = ({ displayType }: { displayType: string }) => {
   const [loading, setLoading] = useState(false);
   const count = 12;
-  const [page, setPage] = useState<number>(1);
+  const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
   const [items, setItems] = useState<Post[]>([]);
   const [apiResponse, setApiResponse] = useState<ListPostsDto>();
   const _api = new PostsApi();
 
   const applyFilters = async (queryList?: queryType[]) => {
-    getPosts(queryList, true);
+    setPage(0);
+    getPosts(queryList, false);
   };
   const getPosts = async (filter?: queryType[], resetPage?: boolean) => {
-    if (resetPage) setPage(1);
-
     setLoading(true);
     const response = await _api.listPosts(
       "posts",
       count,
-      resetPage ? 1 : page,
+      page + 1, // API espera 1-based, mas mantemos 0-based internamente
       filter
     );
-    setTotalPages(Math.ceil(response.totalItems / count));
+    setTotalPages(Math.max(1, Math.ceil(response.totalItems / count)));
     setApiResponse(response);
     setItems(response.data);
     setLoading(false);
@@ -77,11 +76,18 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                   queryType: "country",
                   label: "Country",
                   items: apiResponse
-                    ? apiResponse?.countries.map((c) => ({
-                        label: c.name,
-                        ocorrences: undefined,
-                        id: c.id.toString(),
-                      }))
+                    ? Array.from(
+                        new Map(
+                          apiResponse?.countries.map((c) => [
+                            c.name, // chave para garantir unicidade
+                            {
+                              label: c.name,
+                              ocorrences: undefined,
+                              id: c.id.toString(),
+                            },
+                          ])
+                        ).values()
+                      )
                     : [],
                 },
                 {
@@ -131,19 +137,20 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
         <Grid.Col span={{ base: 12, md: 9 }} order={{ base: 2, sm: 1 }}>
           {apiResponse ? (
             <Title order={4} mb={30} fw={400}>
-              Showing {count} of {apiResponse?.totalItems} results found
+              Showing {items.length} of {apiResponse?.totalItems} results found
             </Title>
           ) : (
             <></>
           )}
-          <Flex
-            direction={{
-              base: displayType == "column" ? "column" : "row",
-              md: "row",
+          <div 
+            style={{
+              display: "grid",
+              gridTemplateColumns: displayType === "column" 
+                ? "repeat(auto-fit, minmax(300px, 1fr))" 
+                : "1fr",
+              gap: "30px",
+              alignItems: "stretch"
             }}
-            gap={30}
-            wrap={"wrap"}
-            justify={"flex-start"}
           >
             {items.length > 0 ? (
               <>
@@ -162,6 +169,7 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
                         ) + `${i.excerpt.rendered.length > 180 ? "..." : ""}`
                       }
                       link={`/news/${i.slug}`}
+                      className={styles.GridMode}
                     />
                   );
                 })}
@@ -169,19 +177,24 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
             ) : loading ? (
               <></>
             ) : (
-              <Flex
-                style={{ height: "400px", width: "100%" }}
-                justify={"center"}
-                align={"center"}
+              <div
+                style={{ 
+                  height: "400px", 
+                  width: "100%", 
+                  display: "flex", 
+                  justifyContent: "center", 
+                  alignItems: "center",
+                  gridColumn: "1 / -1"
+                }}
               >
                 {apiResponse?.totalItems == 0 ? (
                   <Center>No results found!</Center>
                 ) : (
                   <></>
                 )}
-              </Flex>
+              </div>
             )}
-          </Flex>
+          </div>
           <div className={styles.PaginationContainer}>
             <Pagination
               callBack={setPage}

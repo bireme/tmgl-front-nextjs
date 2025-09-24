@@ -13,34 +13,42 @@ export const Pagination = ({
   totalPages,
   callBack,
 }: PaginationProps) => {
+  // currentIndex agora é baseado em 0 (0, 1, 2, ...)
+  // mas exibimos baseado em 1 (1, 2, 3, ...)
+  const displayIndex = currentIndex + 1;
+  
   return (
     <Flex className={styles.Pagination} gap={5} wrap={"wrap"}>
       <a
-        className={currentIndex - 1 < 1 ? styles.disabled : ""}
+        className={currentIndex <= 0 ? styles.disabled : ""}
         onClick={() => {
-          callBack(currentIndex - 1);
+          if (currentIndex > 0) {
+            callBack(currentIndex - 1);
+          }
         }}
       >
         Prev{" "}
       </a>
       {Array.from(
         { length: totalPages ? (totalPages > 100 ? 100 : totalPages) : 1 },
-        (_, i) => i + 1
-      ).map((i, k) => {
+        (_, i) => i
+      ).map((i) => {
         return (
           <a
-            key={k}
+            key={i}
             onClick={() => callBack(i)}
-            className={i == currentIndex ? styles.active : ""}
+            className={i === currentIndex ? styles.active : ""}
           >
-            {i}
+            {i + 1}
           </a>
         );
       })}
       <a
-        className={currentIndex + 1 > totalPages ? styles.disabled : ""}
+        className={currentIndex >= totalPages - 1 ? styles.disabled : ""}
         onClick={() => {
-          callBack(currentIndex + 1);
+          if (currentIndex < totalPages - 1) {
+            callBack(currentIndex + 1);
+          }
         }}
       >
         Next

@@ -20,12 +20,14 @@ export interface NewsSectionProps {
   posType?: string;
   archive?: string;
   includeDemo?: boolean;
+  country?: string;
 }
 export const NewsSection = ({
   region,
   title,
   posType,
   archive,
+  country,
   includeDemo,
 }: NewsSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
