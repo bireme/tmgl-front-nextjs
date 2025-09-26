@@ -64,19 +64,12 @@ export const PagesSection = ({
   return (
     <div 
       style={{ 
-        backgroundImage: `url(${pages[0]._embedded?.['wp:featuredmedia']?.[0]?.source_url || ""})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        width: "100%",
-        padding: "60px 0",
-        color: "white",
-        backgroundColor: "rgba(0, 0, 0, 0.5)"
+        backgroundImage: `url(${pages[0]._embedded?.['wp:featuredmedia']?.[0]?.source_url || ""})`
       }}
-      className={className}
+      className={`${styles.PagesSection} ${className || ""}`}
     >
       {pages.map((page, index) => (
-        <Container key={page.id} size="xl" style={{ marginBottom: "40px" }}>
+        <Container key={page.id} size="xl" className={styles.PageContainer}>
           <h3 className={styles.TitleWithIcon}>
             {page.title.rendered}
           </h3>

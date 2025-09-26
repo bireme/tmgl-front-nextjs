@@ -140,7 +140,7 @@ export default function ThematicPage() {
 
           {thematicPageTag ? (
             <Container size={"xl"}>
-              <StoriesSection />
+              <StoriesSection buttonLabel={properties?.explore_all_label || "see more"} title={properties?.featured_stories_label || "Featured stories"} />
             </Container>
           ) : null}
 

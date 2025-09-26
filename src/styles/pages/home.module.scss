@@ -377,6 +377,106 @@
   }
 }
 
+.ResourcesGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 40px;
+  justify-content: flex-start;
+
+  @media (min-width: 768px) {
+    gap: 30px;
+  }
+}
+
+.ResourceItem {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+
+  @media (min-width: 576px) {
+    width: calc(50% - 10px);
+  }
+
+  @media (min-width: 768px) {
+    width: calc(33.333% - 20px);
+  }
+
+  @media (min-width: 992px) {
+    width: calc(25% - 22.5px);
+  }
+}
+
+.ResourceCard {
+  width: 100%;
+  max-width: 280px;
+  min-width: 160px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 30px 20px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e9ecef;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  }
+}
+
+.ResourceIcon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  border-radius: 50%;
+  border: 2px solid #e9ecef;
+}
+
+.ResourceIconImage {
+  width: 50px;
+  height: 50px;
+  object-fit: contain;
+}
+
+.ResourceTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ResourceBottomBar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #3498db, #2980b9);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+
+  .ResourceCard:hover & {
+    transform: scaleX(1);
+  }
+}
+
 .TitleWithIcon{
   text-transform: capitalize;
   padding-left: 40px;

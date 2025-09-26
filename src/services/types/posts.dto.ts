@@ -106,6 +106,7 @@ export interface ThematicPageAcfProps {
   news_tag_filter: string;
   events_tag_filter: string;
   show_more_news_link: string;
+  featured_stories_label: string;
   show_more_events_link: string;
   multimedia_items: ACFMultimediaItem[];
   more_media_url: string;
@@ -211,6 +212,7 @@ export interface TranslateLabels {
   news_label: string;
   events_label: string;
   rss_label: string;
+  rss_see_more_label: string;
   periodics_label: string;
 }
 

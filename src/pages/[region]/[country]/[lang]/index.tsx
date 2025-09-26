@@ -98,6 +98,7 @@ export default function CountryHome() {
 
           // Buscar news e events relacionados ao país
           // Buscar news do WP geral (não regional)
+          console.log("countryTermId", countryTermId);
           const globalApi = new PostsApi(); // Sem região para acessar WP geral
           const newsResponse = await globalApi.getCustomPost(
             "posts",
@@ -288,7 +289,7 @@ export default function CountryHome() {
           {properties?.embed_content ? (
             <>
               <div className={styles.EmbedContent}>
-                <Container size={"xl"}>
+                {/* <Container size={"xl"}>
                   <h3 className={styles.TitleWithIcon}>
                     TM Research Analytics{" "}
                   </h3>
@@ -299,7 +300,7 @@ export default function CountryHome() {
                         : ""
                     )}
                   </p>
-                </Container>
+                </Container> */}
                 {properties?.embed_content ? (
                   <iframe
                     ref={iframeRef}
@@ -324,6 +325,7 @@ export default function CountryHome() {
                   : undefined
                 : undefined
             }
+            title={properties?.translate_labels.rss_label || "Recent literature reviews"}
             rssString={
               properties?.rss_filter ? properties?.rss_filter : undefined
             }
@@ -392,7 +394,7 @@ export default function CountryHome() {
           />
 
           <Container size={"xl"}> 
-            <StoriesSection fetchOptions={{ countryId: countryTermId || undefined, excludeCountry: false, tagId: thematicPageTag, excludeTag: true }} />
+            <StoriesSection title={properties?.stories_title || "Featured stories"} fetchOptions={{ countryId: countryTermId || undefined, excludeCountry: false, tagId: thematicPageTag, excludeTag: true }} />
           </Container>
 
           {properties?.manual_media ? (
@@ -400,6 +402,7 @@ export default function CountryHome() {
               <div style={{ float: "left", width: "100%", backgroundColor: "#D9D9D9" }}>
 
                 <FixedRelatedVideosSection
+                  title={properties?.multimedia_title || "Related videos"}
                   items={
                     properties?.manual_media
                       ? properties?.manual_media?.map((item) => {
