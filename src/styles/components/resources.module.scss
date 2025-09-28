@@ -184,16 +184,19 @@
       height: 200px;
       min-height: 200px;
       width: 40%;
+      max-width: 300px;
       overflow: hidden;
       scrollbar-width: none;
-      position: relative  ;
+      position: relative;
+      flex-shrink: 0;
     }
     .CardImage::-webkit-scrollbar {
         display: none; /* Chrome, Safari */
       }
     .CardContent{
-      width: 80%;
+      flex: 1;
       max-width: 100%;
+      padding-left: 20px;
     }
     .Tags{
       display: none;

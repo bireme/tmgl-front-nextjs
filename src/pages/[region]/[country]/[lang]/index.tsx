@@ -191,7 +191,7 @@ export default function CountryHome() {
                   <div className={styles.SideContent}>
                     {properties?.key_resources && (
                       <div className={styles.KeyResources}>
-                        <h3>Links to key resources</h3>
+                        <h3>{properties?.translate_labels.key_resources_label || "Links to key resources"}</h3>
                         {properties?.key_resources.map((keyR, key) => {
                           return (
                             <p key={key}>

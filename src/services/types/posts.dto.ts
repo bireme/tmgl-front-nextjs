@@ -214,6 +214,7 @@ export interface TranslateLabels {
   rss_label: string;
   rss_see_more_label: string;
   periodics_label: string;
+  key_resources_label: string;
 }
 
 export interface HeadingItem {

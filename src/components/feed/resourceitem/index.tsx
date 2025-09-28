@@ -52,7 +52,7 @@ export const DefaultCard = ({
     <Flex
       direction={displayType === "column" ? "column" : "row"}
       align={displayType === "column" ? "flex-end" : "flex-start"}
-      justify={justify ? justify : "space-between"}
+      justify={justify ? justify : displayType === "column" ? "space-between" : "flex-start"}
       gap={30}
       className={`${styles.ResourceCard} ${
         displayType === "column" ? "" : styles.Row
@@ -150,77 +150,86 @@ export const ResourceCard = ({
       }}
     >
       {image && displayType !== "column" ? cardImage() : <></>}
-      <div className={styles.CardContent}>
-        {image && displayType === "column" ? cardImage() : <></>}
-        <small>{type}</small>
-        <h3>{title}</h3>
-        <p>{excerpt}</p>
-      </div>
-      <Flex style={{ width: "100%" }} direction="column">
-        <Flex mb={20} wrap="wrap" gap={5} className={styles.Tags}>
-          {tags
-            ?.filter((tag) => tag.type === "descriptor")
-            .map((tag) => (
-              <Badge
-                onClick={() => applyTag("thematicArea", tag.name)}
-                size="md"
-                key={tag.name}
-                color={colors.descriptor}
-              >
-                {tag.name}
-              </Badge>
-            ))}
-          {tags
-            ?.filter((tag) => tag.type === "region")
-            .map((tag) => (
-              <Badge
-                onClick={() => applyTag("region", tag.name)}
-                size="md"
-                key={tag.name}
-                color={colors.region}
-              >
-                {tag.name}
-              </Badge>
-            ))}
-          {tags
-            ?.filter((tag) => tag.type === "country")
-            .map((tag) => (
-              <Badge
-                onClick={() => applyTag("country", tag.name)}
-                size="md"
-                key={tag.name}
-                color={colors.country}
-              >
-                {tag.name}
-              </Badge>
-            ))}
-          {tags
-            ?.filter((tag) => tag.type === "type")
-            .map((tag) => (
-              <Badge size="md" key={tag.name} color={colors.type}>
-                {tag.name}
-              </Badge>
-            ))}
-          {tags
-            ?.filter(
-              (tag) =>
-                tag.type === "year" &&
-                moment(tag.name, moment.ISO_8601, true).isValid()
-            )
-            .map((tag) => (
-              <Badge size="md" key={tag.name} color={colors.descriptor}>
-                {tag.name}
-              </Badge>
-            ))}
-        </Flex>
-        <Flex
-          align="flex-end"
-          justify="flex-end"
-          style={{ height: displayType === "column" ? "auto" : "100%" }}
-        >
-          <a className={styles.buttonLink} href={link} target={target}>
-            <IconArrowRight />
-          </a>
+      <Flex 
+        direction="column" 
+        style={{ 
+          flex: 1, 
+          width: displayType === "column" ? "100%" : "auto",
+          justifyContent: displayType === "column" ? "space-between" : "flex-start"
+        }}
+      >
+        <div className={styles.CardContent}>
+          {image && displayType === "column" ? cardImage() : <></>}
+          <small>{type}</small>
+          <h3>{title}</h3>
+          <p>{excerpt}</p>
+        </div>
+        <Flex style={{ width: "100%" }} direction="column">
+          <Flex mb={20} wrap="wrap" gap={5} className={styles.Tags}>
+            {tags
+              ?.filter((tag) => tag.type === "descriptor")
+              .map((tag) => (
+                <Badge
+                  onClick={() => applyTag("thematicArea", tag.name)}
+                  size="md"
+                  key={tag.name}
+                  color={colors.descriptor}
+                >
+                  {tag.name}
+                </Badge>
+              ))}
+            {tags
+              ?.filter((tag) => tag.type === "region")
+              .map((tag) => (
+                <Badge
+                  onClick={() => applyTag("region", tag.name)}
+                  size="md"
+                  key={tag.name}
+                  color={colors.region}
+                >
+                  {tag.name}
+                </Badge>
+              ))}
+            {tags
+              ?.filter((tag) => tag.type === "country")
+              .map((tag) => (
+                <Badge
+                  onClick={() => applyTag("country", tag.name)}
+                  size="md"
+                  key={tag.name}
+                  color={colors.country}
+                >
+                  {tag.name}
+                </Badge>
+              ))}
+            {tags
+              ?.filter((tag) => tag.type === "type")
+              .map((tag) => (
+                <Badge size="md" key={tag.name} color={colors.type}>
+                  {tag.name}
+                </Badge>
+              ))}
+            {tags
+              ?.filter(
+                (tag) =>
+                  tag.type === "year" &&
+                  moment(tag.name, moment.ISO_8601, true).isValid()
+              )
+              .map((tag) => (
+                <Badge size="md" key={tag.name} color={colors.descriptor}>
+                  {tag.name}
+                </Badge>
+              ))}
+          </Flex>
+          <Flex
+            align="flex-end"
+            justify="flex-end"
+            style={{ height: displayType === "column" ? "auto" : "100%" }}
+          >
+            <a className={styles.buttonLink} href={link} target={target}>
+              <IconArrowRight />
+            </a>
+          </Flex>
         </Flex>
       </Flex>
     </DefaultCard>
