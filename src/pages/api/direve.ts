@@ -23,7 +23,7 @@ export default async function handler(
 
     const url = `${baseUrl}search/${query ? `?fq=${query}&` : "?"}${
       count ? `count=${count}` : ""
-    }${q ? `&q=${q}` : ""}${start ? `&start=${start}` : ""}&lang=${lang}`;
+    }${q ? `&q=${q}` : ""}${start ? `&start=${start}` : ""}&lang=${lang}&sort=created_date%20DESC`;
 
     const response = await axios.get(url, { headers: { apiKey: apiKey } });
     return res.status(200).json({ data: response.data, status: true });

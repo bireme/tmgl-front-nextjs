@@ -18,6 +18,8 @@ interface FundingAndPeriodicalsSectionProps {
   showMorePeriodicalsLink?: string;
   exploreAllLabel?: string;
   className?: string;
+  hideExploreAllPeriodicals?: boolean;
+  hideExploreAllFunding?: boolean;
 }
 
 export function FundingAndPeriodicalsSection({
@@ -32,6 +34,8 @@ export function FundingAndPeriodicalsSection({
   showMoreFundingLink,
   showMorePeriodicalsLink,
   exploreAllLabel = "Explore all",
+  hideExploreAllPeriodicals = false,
+  hideExploreAllFunding = false,
   className,
 }: FundingAndPeriodicalsSectionProps) {
   // Se não há dados para exibir, não renderiza nada
@@ -70,7 +74,7 @@ export function FundingAndPeriodicalsSection({
       </Grid>
       <Grid>
         <Grid.Col span={{ base: 6, md: 6 }}>
-          {showMoreFundingLink && (fundingHeading || fundingOpportunities.length > 0) && (
+          {!hideExploreAllFunding && showMoreFundingLink && (fundingHeading || fundingOpportunities.length > 0) && (
             <Flex
               mt={25}
               gap={10}
@@ -89,7 +93,7 @@ export function FundingAndPeriodicalsSection({
           )}
         </Grid.Col>
         <Grid.Col span={{ base: 6, md: 6 }}>
-          {showMorePeriodicalsLink && (periodicalsHeading || periodicals.length > 0) && (
+          {!hideExploreAllPeriodicals && showMorePeriodicalsLink && (periodicalsHeading || periodicals.length > 0) && (
             <Flex
               mt={25}
               gap={10}

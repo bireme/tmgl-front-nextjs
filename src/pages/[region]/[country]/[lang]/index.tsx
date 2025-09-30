@@ -1,8 +1,9 @@
-import { Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
+import { Button, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { CountryAcfProps, Post } from "@/services/types/posts.dto";
+import { NewsEventsItem } from "@/services/types/newsEvents.dto";
+import { DefaultResourceItemDto } from "@/services/types/defaultResource";
 import {
   FundingAndPeriodicalsSection,
-  JournalsSection,
   NewsEventsSection,
   PagesSection,
 } from "@/components/sections";
@@ -20,6 +21,8 @@ import { TrendingCarrocel } from "@/components/rss/slider";
 import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
+import { DireveService } from "@/services/apiRepositories/DireveService";
+import { IconArrowRight } from "@tabler/icons-react";
 
 export default function CountryHome() {
   const router = useRouter();
@@ -27,15 +30,50 @@ export default function CountryHome() {
   const [properties, setProperties] = useState<CountryAcfProps>();
   const { setRegionName, setCountryName, globalConfig, countryName } =
     useContext(GlobalContext);
+    const _service = new DireveService();    
   const [postProps, setPostProps] = useState<Post>();
-  const [news, setNews] = useState<Array<Post>>([]);
-  const [events, setEvents] = useState<Array<Post>>([]);
+  const [news, setNews] = useState<Array<NewsEventsItem>>([]);
+  const [events, setEvents] = useState<Array<NewsEventsItem>>([]);
+  const { language } = useContext(GlobalContext);
   const [countryTermId, setCountryTermId] = useState<number | null>(null);
   const {
-    query: { country, region },
+    query: { country, region, lang },
   } = router;
   const [thematicPageTag, setThematicPageTag] = useState();
   const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  // Função para mapear Post para NewsEventsItem
+  const mapPostToNewsEventsItem = (post: Post): NewsEventsItem => ({
+    id: post.id,
+    slug: post.slug,
+    title: post.title,
+    excerpt: post.excerpt,
+    featured_media: post.featured_media,
+    _embedded: post._embedded
+  });
+
+  // Função para mapear DefaultResourceItemDto para NewsEventsItem
+  const mapDireveToNewsEventsItem = (item: DefaultResourceItemDto): NewsEventsItem => ({
+    id: parseInt(item.id) || 0,
+    slug: item.link.split('/').pop() || item.id,
+    title: { rendered: item.title },
+    excerpt: { rendered: item.excerpt },
+    featured_media: 0,
+    _embedded: item.thumbnail ? {
+      "wp:featuredmedia": [{
+        id: 0,
+        media_details: {
+          sizes: {
+            thumbnail: { source_url: item.thumbnail, width: 150, height: 150 },
+            medium: { source_url: item.thumbnail, width: 300, height: 200 },
+            large: { source_url: item.thumbnail, width: 600, height: 400 },
+            full: { source_url: item.thumbnail, width: 1200, height: 800 }
+          }
+        },
+        source_url: item.thumbnail
+      }]
+    } : undefined
+  });
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -66,9 +104,10 @@ export default function CountryHome() {
             "Searching for country term with slug:",
             country.toString()
           );
-
+          const globalApi = new PostsApi();
+          let countryId = null;
           // Usar API regional para buscar o termo de país
-          const countryTerm = await _api.getCountryBySlug(country.toString());
+          const countryTerm = await globalApi.getCountryBySlug(country.toString());
           console.log("Country term found in regional API:", countryTerm);
 
           // Se não encontrou, tentar com primeira letra maiúscula
@@ -77,7 +116,7 @@ export default function CountryHome() {
               country.toString().charAt(0).toUpperCase() +
               country.toString().slice(1);
             console.log("Trying with capitalized name:", capitalizedCountry);
-            const countryTermCapitalized = await _api.getCountryBySlug(
+            const countryTermCapitalized = await globalApi.getCountryBySlug(
               capitalizedCountry
             );
             console.log(
@@ -86,20 +125,19 @@ export default function CountryHome() {
             );
 
             if (countryTermCapitalized && countryTermCapitalized.length > 0) {
-              const countryId = countryTermCapitalized[0].id;
+               countryId = countryTermCapitalized[0].id;
               console.log("Setting countryTermId to:", countryId);
               setCountryTermId(countryId);
             }
           } else {
-            const countryId = countryTerm[0].id;
+             countryId = countryTerm[0].id;
             console.log("Setting countryTermId to:", countryId);
             setCountryTermId(countryId);
           }
 
           // Buscar news e events relacionados ao país
           // Buscar news do WP geral (não regional)
-          console.log("countryTermId", countryTermId);
-          const globalApi = new PostsApi(); // Sem região para acessar WP geral
+          // Sem região para acessar WP geral
           const newsResponse = await globalApi.getCustomPost(
             "posts",
             4,
@@ -107,23 +145,26 @@ export default function CountryHome() {
             undefined,
             undefined,
             {
-              countryId: [countryTermId || 0],
+              countryId: [countryId || 0],
             }
           );
-          setNews(newsResponse);
+         
+          console.log("newsResponse", newsResponse);
+          setNews(newsResponse.map(mapPostToNewsEventsItem));
 
-          // Buscar events do país (pode manter regional se necessário)
-          const eventsResponse = await _api.getCustomPost(
-            "event",
+          //Buscando events no FIAdmin
+          const eventsResponse = await _service.getDefaultResources(
             4,
-            undefined,
-            undefined,
-            undefined,
-            {
-              countryId: [countryTermId || 0],
-            }
+            0,
+            'pt-br',
+            [{parameter: "country", query: country.toString()}],
           );
-          setEvents(eventsResponse);
+          console.log("eventsResponse", eventsResponse);
+          setEvents(eventsResponse.data.map(mapDireveToNewsEventsItem));
+
+
+          
+          //setEvents(eventsResponse);
         } catch (error) {
           console.error(
             "Error fetching country term and related content:",
@@ -132,7 +173,7 @@ export default function CountryHome() {
         }
       }
     }
-  }, [region, country]);
+    }, [region, country]);
 
   useEffect(() => {
     getPageProperties();
@@ -345,6 +386,8 @@ export default function CountryHome() {
               fundingTitle={properties?.founding_oportunity_title || "Oportunidades de Financiamento"}
               periodicalsTitle={properties?.periodicals_title|| "Periódicos"}
               exploreAllLabel="Explore all"
+              hideExploreAllPeriodicals={true}
+              hideExploreAllFunding={true}
             />
           )}
 
@@ -394,7 +437,25 @@ export default function CountryHome() {
           />
 
           <Container size={"xl"}> 
-            <StoriesSection title={properties?.stories_title || "Featured stories"} fetchOptions={{ countryId: countryTermId || undefined, excludeCountry: false, tagId: thematicPageTag, excludeTag: true }} />
+            <StoriesSection buttonLabel={properties?.stories_button_label || "see more"} title={properties?.stories_title || "Featured stories"} fetchOptions={{ countryId: countryTermId || undefined, excludeCountry: false, tagId: thematicPageTag, excludeTag: true }} />
+            
+                    {properties?.stories_url && (
+                      <Flex
+                        mt={25}
+                        gap={10}
+                        align={"center"}
+                        onClick={() => {
+                          // Handle more media action
+                        }}
+                        component="a"
+                        style={{ cursor: "pointer" }}
+                      >
+                        {properties.stories_button_label || "see more"}{" "}
+                        <Button size={"xs"} p={5}>
+                          <IconArrowRight stroke={1} />
+                        </Button>
+                      </Flex>
+                    )}
           </Container>
 
           {properties?.manual_media ? (
@@ -415,6 +476,26 @@ export default function CountryHome() {
                       : []
                   }
                 />
+
+                <Container mt={0} pt={0} mb={40} size={"xl"}>
+                    {properties.multimedia_filter && (
+                      <Flex
+                        mt={25}
+                        gap={10}
+                        align={"center"}
+                        onClick={() => {
+                          // Handle more media action
+                        }}
+                        component="a"
+                        style={{ cursor: "pointer" }}
+                      >
+                        {properties.translate_labels.rss_see_more_label}{" "}
+                        <Button size={"xs"} p={5}>
+                          <IconArrowRight stroke={1} />
+                        </Button>
+                      </Flex>
+                    )}
+                  </Container>
               </div>
             </>
           ) : (

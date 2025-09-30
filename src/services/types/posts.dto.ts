@@ -143,6 +143,7 @@ export interface ACFMultimediaItem {
 
 export interface CountryAcfProps {
   layout: string;
+  stories_url: string;
   content: string;
   other_funding_title?: string;
   other_periodicals_title?: string;

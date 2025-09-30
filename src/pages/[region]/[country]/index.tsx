@@ -94,6 +94,7 @@ export default function CountryHome() {
           // Buscar news e events relacionados ao país
           // Buscar news do WP geral (não regional)
           const globalApi = new PostsApi(); // Sem região para acessar WP geral
+          
           const newsResponse = await globalApi.getCustomPost(
             "posts",
             4,
@@ -104,6 +105,7 @@ export default function CountryHome() {
               countryId: [countryTermId || 0],
             }
           );
+
           setNews(newsResponse);
 
           // Buscar events do país (pode manter regional se necessário)

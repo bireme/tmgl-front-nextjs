@@ -2,24 +2,11 @@ import { Button, Container, Flex, Grid } from "@mantine/core";
 import { DefaultCard, ResourceCard } from "@/components/feed/resourceitem";
 
 import { IconArrowRight } from "@tabler/icons-react";
-import { Post } from "@/services/types/posts.dto";
+import { NewsEventsItem, NewsEventsSectionProps } from "@/services/types/newsEvents.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
-
-interface NewsEventsSectionProps {
-  news: Post[];
-  events: Post[];
-  newsTitle?: string;
-  otherNewsTitle?: string;
-  eventsTitle?: string;
-  otherEventsTitle?: string;
-  showMoreNewsLink?: string;
-  showMoreEventsLink?: string;
-  exploreAllLabel?: string;
-  className?: string;
-}
 
 export function NewsEventsSection({
   news,
@@ -35,8 +22,44 @@ export function NewsEventsSection({
 }: NewsEventsSectionProps) {
   const _api = new PostsApi();
   const router = useRouter();
+
+  // Método genérico para encontrar featured media
+  const findFeaturedMedia = (item: NewsEventsItem, size?: string): string => {
+    const fm = item?._embedded?.["wp:featuredmedia"]?.[0];
+    if (!fm) return "";
+
+    const sizes = fm.media_details?.sizes;
+    let url: string | undefined;
+
+    if (sizes) {
+      // Ordem de prioridade para fallback
+      const order = ["thumbnail", "medium", "large", "full"] as const;
+
+      if (size && size !== "full") {
+        url = sizes[size as keyof typeof sizes]?.source_url || undefined;
+      } else if (size === "full") {
+        url = sizes.full?.source_url || undefined;
+      }
+      if (!url) {
+        for (const key of order) {
+          const candidate = sizes[key]?.source_url;
+          if (candidate) {
+            url = candidate;
+            break;
+          }
+        }
+      }
+    }
+    if (!url) {
+      url = fm.source_url;
+    }
+    return url
+      ? url +
+          (url.includes(".webp") ? "" : !url.includes("avif") ? ".webp" : "")
+      : "";
+  };
   const renderNewsEventsColumn = (
-    items: Post[],
+    items: NewsEventsItem[],
     title: string,
     otherTitle: string,
     linkPrefix: string
@@ -65,7 +88,7 @@ export function NewsEventsSection({
                     items[0].excerpt.rendered,
                     180
                   )}
-                  image={_api.findFeaturedMedia(items[0], "large")}
+                  image={findFeaturedMedia(items[0], "large")}
                   link={`${linkPrefix}/${items[0].slug}`}
                   tags={[]}
                 />
