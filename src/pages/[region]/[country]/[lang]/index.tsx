@@ -23,6 +23,7 @@ import styles from "../../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 import { DireveService } from "@/services/apiRepositories/DireveService";
 import { IconArrowRight } from "@tabler/icons-react";
+import { _optional } from "zod/v4/core";
 
 export default function CountryHome() {
   const router = useRouter();
@@ -35,6 +36,7 @@ export default function CountryHome() {
   const [news, setNews] = useState<Array<NewsEventsItem>>([]);
   const [events, setEvents] = useState<Array<NewsEventsItem>>([]);
   const { language } = useContext(GlobalContext);
+  const [regionalCountryTermId, setRegionalCountryTermId] = useState<number | null>(null);
   const [countryTermId, setCountryTermId] = useState<number | null>(null);
   const {
     query: { country, region, lang },
@@ -135,6 +137,25 @@ export default function CountryHome() {
             setCountryTermId(countryId);
           }
 
+          const regionalCountryTerm = await _api.getCountryBySlug(country.toString());
+          if (!regionalCountryTerm || regionalCountryTerm.length === 0) {
+            const capitalizedCountry =
+              country.toString().charAt(0).toUpperCase() +
+              country.toString().slice(1);
+            const countryTermCapitalized = await _api.getCountryBySlug(
+              capitalizedCountry
+            );
+
+            if (countryTermCapitalized && countryTermCapitalized.length > 0) {
+               countryId = countryTermCapitalized[0].id;
+              setRegionalCountryTermId(countryId);
+            }
+          } else {
+            countryId = countryTerm[0].id;
+            setRegionalCountryTermId(countryId);
+          }
+
+          
           // Buscar news e events relacionados ao país
           // Buscar news do WP geral (não regional)
           // Sem região para acessar WP geral
@@ -425,7 +446,7 @@ export default function CountryHome() {
           </Container>
                     
           <PagesSection
-            countryId={countryTermId || undefined}
+            countryId={regionalCountryTermId || undefined}
             region={region ? region.toString() : undefined}
           />
           
