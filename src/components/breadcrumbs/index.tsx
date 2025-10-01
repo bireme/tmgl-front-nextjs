@@ -22,7 +22,7 @@ export const BreadCrumbs = ({ path, blackColor }: BreadCrumbsProps) => {
         return (
           <a key={key} href={`${item.path}`}>
             <span>
-              {removeHTMLTagsAndLimit(item.name, 40)}
+              {removeHTMLTagsAndLimit(item.name, 40).replace("-", " ")}
               {item.name.length > 40 ? "..." : ""}
             </span>{" "}
             <span className={styles.separator}>
