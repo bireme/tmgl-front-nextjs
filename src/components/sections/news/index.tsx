@@ -129,7 +129,7 @@ export const NewsSection = ({
                         `${item.title.rendered.length > 65 ? "..." : ""}`
                       }
                       type={moment(item.date).format("DD MMM , YYYY")}
-                      image={_api.findFeaturedMedia(item, "full")}
+                      image={_api.findFeaturedMedia(item, "full") ? _api.findFeaturedMedia(item, "full") : "/public/local/png/defaultImage.png"}
                       tags={_api.getPostTags(item).map((t) => {
                         return {
                           name:

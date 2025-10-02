@@ -409,6 +409,8 @@ export default function CountryHome() {
               exploreAllLabel="Explore all"
               hideExploreAllPeriodicals={true}
               hideExploreAllFunding={true}
+              hideSeeMoreButtonFunding={true}
+              hideSeeMoreButtonPeriodicals={true}
             />
           )}
 

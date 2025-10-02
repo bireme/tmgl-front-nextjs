@@ -20,6 +20,8 @@ interface FundingAndPeriodicalsSectionProps {
   className?: string;
   hideExploreAllPeriodicals?: boolean;
   hideExploreAllFunding?: boolean;
+  hideSeeMoreButtonFunding?: boolean;
+  hideSeeMoreButtonPeriodicals?: boolean;
 }
 
 export function FundingAndPeriodicalsSection({
@@ -36,6 +38,8 @@ export function FundingAndPeriodicalsSection({
   exploreAllLabel = "Explore all",
   hideExploreAllPeriodicals = false,
   hideExploreAllFunding = false,
+  hideSeeMoreButtonFunding = false,
+  hideSeeMoreButtonPeriodicals = false,
   className,
 }: FundingAndPeriodicalsSectionProps) {
   // Se não há dados para exibir, não renderiza nada
@@ -55,6 +59,7 @@ export function FundingAndPeriodicalsSection({
             otherFundingTitle={otherFundingTitle}
             showMoreFundingLink={showMoreFundingLink}
             exploreAllLabel={exploreAllLabel}
+            hideSeeMoreButton={hideSeeMoreButtonFunding}
             className=""
           />
         )}
@@ -68,6 +73,7 @@ export function FundingAndPeriodicalsSection({
             otherPeriodicalsTitle={otherPeriodicalsTitle}
             showMorePeriodicalsLink={showMorePeriodicalsLink}
             exploreAllLabel={exploreAllLabel}
+            hideSeeMoreButton={hideSeeMoreButtonPeriodicals}
             className=""
           />
         )}

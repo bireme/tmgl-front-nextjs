@@ -6,7 +6,8 @@ import {
   NewsEventsSection,
   PagesSection,
 } from "@/components/sections";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
+import { EmbedIframe } from "@/components/embed/EmbedIframe";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { CountryResourceSection } from "@/components/sections/countryResourceSection";
@@ -32,17 +33,6 @@ export default function CountryHome() {
   const {
     query: { country, region },
   } = router;
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  useEffect(() => {
-    const handleMessage = (event: MessageEvent) => {
-      if (event.data?.type === "resize" && iframeRef.current) {
-        iframeRef.current.style.height = `${event.data.height + 200}px`;
-      }
-    };
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, []);
 
   const getPageProperties = useCallback(async () => {
     setRegionName(region ? region.toString() : "");
@@ -270,11 +260,10 @@ export default function CountryHome() {
                   </p>
                 </Container>
                 {properties?.embed_content ? (
-                  <iframe
-                    ref={iframeRef}
-                    src={properties?.embed_content}
+                  <EmbedIframe
+                    src={properties.embed_content}
                     width="100%"
-                    height="600"
+                    height={600}
                   />
                 ) : (
                   <></>

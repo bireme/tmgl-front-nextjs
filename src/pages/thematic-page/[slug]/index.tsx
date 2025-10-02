@@ -8,7 +8,7 @@ import { Container, LoadingOverlay } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 
 import { PostsApi } from "@/services/posts/PostsApi";
-import { StoriesSection } from "@/components/sections/stories";
+import { ManualStoriesSection, StoriesSection } from "@/components/sections/stories";
 import { TrendingCarrocel } from "@/components/rss/slider";
 import {
   HeroSection,
@@ -138,9 +138,13 @@ export default function ThematicPage() {
             exploreAllLabel={properties?.explore_all_label}
           />
 
-          {thematicPageTag ? (
+          {properties?.fetured_stories_items ? (
             <Container size={"xl"}>
-              <StoriesSection buttonLabel={properties?.explore_all_label || "see more"} title={properties?.featured_stories_label || "Featured stories"} />
+              <ManualStoriesSection 
+                posts={properties?.fetured_stories_items}
+                title={properties?.featured_stories_label || "Featured stories"}
+                buttonLabel={properties?.explore_all_label || "see more"}
+                  />
             </Container>
           ) : null}
 

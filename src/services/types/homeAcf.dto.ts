@@ -79,5 +79,6 @@ export interface HomeAcf {
   region_resources_title: string;
   region_resources_subtitle: string;
   resources: ItemResource[];
+  embed_content?: string;
   collaboration_network_items: AcfImageArray[];
 }

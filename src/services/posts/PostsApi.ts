@@ -317,4 +317,50 @@ export class PostsApi extends BaseUnauthenticatedApi {
       return [];
     }
   }
+
+  /**
+   * Busca a featured image de um post pelo ID e retorna a URL como string
+   * @param postId - ID do post
+   * @param size - Tamanho da imagem desejado (thumbnail, medium, large, full)
+   * @returns URL da featured image ou string vazia se não encontrada
+   */
+  public async getFeaturedImageById(postId: number, size: string = "medium"): Promise<string> {
+    try {
+      const { data } = await this._api.get(`media?parent=${postId}&per_page=1`);
+      
+      if (data && data.length > 0) {
+        const media = data[0];
+        const sizes = media.media_details?.sizes;
+        
+        if (sizes) {
+          // Ordem de prioridade para fallback
+          const order = ["thumbnail", "medium", "large", "full"] as const;
+          
+          if (size && size !== "full") {
+            const url = sizes[size as keyof typeof sizes]?.source_url;
+            if (url) return url;
+          } else if (size === "full") {
+            const url = sizes.full?.source_url;
+            if (url) return url;
+          }
+          
+          // Fallback para qualquer tamanho disponível
+          for (const key of order) {
+            const candidate = sizes[key]?.source_url;
+            if (candidate) {
+              return candidate;
+            }
+          }
+        }
+        
+        // Fallback para source_url original
+        return media.source_url || "";
+      }
+      
+      return "";
+    } catch (error) {
+      console.error("Error while trying to get featured image:", error);
+      return "";
+    }
+  }
 }

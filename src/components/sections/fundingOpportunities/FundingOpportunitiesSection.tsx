@@ -14,6 +14,7 @@ interface FundingOpportunitiesSectionProps {
   showMoreFundingLink?: string;
   exploreAllLabel?: string;
   className?: string;
+  hideSeeMoreButton?: boolean;
 }
 
 export function FundingOpportunitiesSection({
@@ -21,9 +22,7 @@ export function FundingOpportunitiesSection({
   fundingHeading,
   fundingTitle = "Funding Opportunities",
   otherFundingTitle = "Other Funding Opportunities",
-  showMoreFundingLink,
-  exploreAllLabel = "Explore all",
-  className,
+  hideSeeMoreButton = false,
 }: FundingOpportunitiesSectionProps) {
   const router = useRouter();
 
@@ -55,7 +54,7 @@ export function FundingOpportunitiesSection({
                   displayType="column"
                   excerpt={heading?.description || ""}
                   image={heading?.image && typeof heading.image === 'string' ? heading.image : ""}
-                  link={heading?.url || "#"}
+                  link={!hideSeeMoreButton ? heading?.url || "#" : undefined}
                   tags={[]}
                 />
               </div>

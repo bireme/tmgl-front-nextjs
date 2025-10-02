@@ -10,7 +10,7 @@ import styles from "../../../styles/components/resources.module.scss";
 export interface ResourceCardProps {
   title: string;
   excerpt: string;
-  link: string;
+  link?: string;
   displayType: string;
   image?: string;
   tags?: Array<TagItem>;
@@ -221,6 +221,7 @@ export const ResourceCard = ({
                 </Badge>
               ))}
           </Flex>
+          {link && (
           <Flex
             align="flex-end"
             justify="flex-end"
@@ -229,7 +230,8 @@ export const ResourceCard = ({
             <a className={styles.buttonLink} href={link} target={target}>
               <IconArrowRight />
             </a>
-          </Flex>
+          </Flex> 
+          )}
         </Flex>
       </Flex>
     </DefaultCard>

@@ -14,6 +14,7 @@ interface PeriodicalsectionProps {
   showMorePeriodicalsLink?: string;
   exploreAllLabel?: string;
   className?: string;
+  hideSeeMoreButton?: boolean;
 }
 
 export function PeriodicalsSection({
@@ -21,9 +22,7 @@ export function PeriodicalsSection({
   periodicalsHeading,
   periodicalsTitle = "Periodicals",
   otherPeriodicalsTitle = "Other Periodicals",
-  showMorePeriodicalsLink,
-  exploreAllLabel = "Explore all",
-  className,
+  hideSeeMoreButton,
 }: PeriodicalsectionProps) {
   const router = useRouter();
 
@@ -55,7 +54,7 @@ export function PeriodicalsSection({
                   displayType="column"
                   excerpt={heading?.description || ""}
                   image={heading?.image && typeof heading.image === 'string' ? heading.image : ""}
-                  link={heading?.url || "#"}
+                  link={!hideSeeMoreButton ? heading?.url || "#" : undefined}
                   tags={[]}
                 />
               </div>

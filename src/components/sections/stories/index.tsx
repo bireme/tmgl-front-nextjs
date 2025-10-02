@@ -143,3 +143,6 @@ export const StoriesSection = ({
     </>
   );
 };
+
+// Export the ManualStoriesSection component
+export { ManualStoriesSection } from "./ManualStoriesSection";

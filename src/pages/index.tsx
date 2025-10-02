@@ -19,11 +19,11 @@ import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
 import { TrendingSlider } from "@/components/rss/slider";
 import styles from "../styles/pages/home.module.scss";
+import { EmbedIframe } from "@/components/embed/EmbedIframe";
 
 export default function Home() {
   const _api = new PagesApi();
   const _postsApi = new PostsApi();
-  const [properties, setProperties] = useState();
   const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
   const { setRegionName } = useContext(GlobalContext);
@@ -36,7 +36,7 @@ export default function Home() {
       const thematicPageResp = await _postsApi.getTagBySlug("thematic-page");
       console.log(thematicPageResp);
       setThematicPageTag(thematicPageResp[0]?.id);
-      setProperties(resp[0]);
+      
       setAcf(resp[0].acf);
       setSliderImages(resp[0].acf.search.slider_images);
     } catch {
@@ -86,6 +86,7 @@ export default function Home() {
           includeDemo={true}
         />
       </div>
+      
       <div className={styles.TrandingAndFeatured}>
         <Container
           size={"xl"}
@@ -146,6 +147,19 @@ export default function Home() {
       <EventsSection />
       <div className={styles.NewsContainer}>
         <NewsSection title={"News from WHO"} />
+
+        {acf?.embed_content && (
+      <div className={styles.EmbedContent}>
+        <Container size={"xl"}>
+
+        <EmbedIframe
+          src={acf?.embed_content}
+          width="100%"
+          height={1300}
+        /> 
+        </Container>
+        
+      </div>)}
         {acf?.manual_media && acf.manual_media.length >= 3 ? (
           <FixedRelatedVideosSection
             items={[
@@ -169,7 +183,6 @@ export default function Home() {
         ) : (
           <></>
         )}
-
         <NewsletterSection />
       </div>
     </>
