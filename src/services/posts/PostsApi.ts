@@ -125,6 +125,27 @@ export class PostsApi extends BaseUnauthenticatedApi {
       });
     }
 
+    // Filtragem adicional para tags (caso o WordPress não respeite tags_exclude)
+    if (options?.excludeTag && options?.tagId && Array.isArray(data)) {
+      const excludeTagIds = Array.isArray(options.tagId) ? options.tagId : [options.tagId];
+      const exclude = new Set(excludeTagIds);
+      
+      return data.filter((p: any) => {
+        // Verificar tags diretas do post
+        const postTags: number[] = Array.isArray(p?.tags) ? p.tags : [];
+        if (postTags.some((id) => exclude.has(id))) {
+          return false;
+        }
+        
+        // Verificar tags via _embedded["wp:term"]
+        const embeddedTags = p?._embedded?.["wp:term"]?.flat() || [];
+        const wpTags = embeddedTags.filter((term: any) => term.taxonomy === "post_tag");
+        const wpTagIds = wpTags.map((tag: any) => tag.id);
+        
+        return !wpTagIds.some((id: number) => exclude.has(id));
+      });
+    }
+
     return data;
   }
 

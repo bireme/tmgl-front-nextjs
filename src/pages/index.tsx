@@ -146,7 +146,7 @@ export default function Home() {
       </div>
       <EventsSection />
       <div className={styles.NewsContainer}>
-        <NewsSection title={"News from WHO"} />
+        <NewsSection  excludedTagIds={[181]} title={"News from WHO"} />
 
         {acf?.embed_content && (
       <div className={styles.EmbedContent}>

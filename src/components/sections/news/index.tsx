@@ -20,15 +20,15 @@ export interface NewsSectionProps {
   posType?: string;
   archive?: string;
   includeDemo?: boolean;
-  country?: string;
+  excludedTagIds?: number[];
 }
 export const NewsSection = ({
   region,
   title,
   posType,
   archive,
-  country,
   includeDemo,
+  excludedTagIds,
 }: NewsSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
   const [demoTagId, setDemoTagId] = useState<number>();
@@ -38,22 +38,54 @@ export const NewsSection = ({
       const demoTag = await _api.getTagBySlug("demo");
       if (posType) {
         setDemoTagId(demoTag ? demoTag[0].id : undefined);
+        
+        // Preparar opções de exclusão de tags
+        let tagOptions: any = {};
+        
+        // Se includeDemo for false, excluir tag demo
+        if (includeDemo !== true && demoTag && demoTag[0]) {
+          tagOptions.tagId = demoTag[0].id;
+          tagOptions.excludeTag = true;
+        }
+        
+        // Se excludedTagIds for fornecido, adicionar essas tags à exclusão
+        if (excludedTagIds && excludedTagIds.length > 0) {
+          if (tagOptions.tagId) {
+            // Se já temos uma tag para excluir, combinar com as novas
+            const existingTagId = Array.isArray(tagOptions.tagId) ? tagOptions.tagId : [tagOptions.tagId];
+            tagOptions.tagId = [...existingTagId, ...excludedTagIds];
+          } else {
+            // Se não temos tags para excluir ainda, usar apenas as fornecidas
+            tagOptions.tagId = excludedTagIds;
+            tagOptions.excludeTag = true;
+          }
+        }
+        
+        console.log("NewsSection - excludedTagIds:", excludedTagIds);
+        console.log("NewsSection - tagOptions:", tagOptions);
+        
         const resp = await _api.getCustomPost(
           posType,
           4,
           undefined,
           undefined,
           region,
-          includeDemo == true
-            ? undefined
-            : {
-                tagId: demoTag[0].id,
-                excludeTag: true,
-              }
+          Object.keys(tagOptions).length > 0 ? tagOptions : undefined
         );
         setPosts(resp.reverse());
       } else {
         const cat = await _api.getCategoryBySlug("thematic-page");
+        
+        // Preparar opções de exclusão de tags para posts normais
+        let tagOptions: any = {};
+        if (excludedTagIds && excludedTagIds.length > 0) {
+          tagOptions.tagId = excludedTagIds;
+          tagOptions.excludeTag = true;
+        }
+        
+        console.log("NewsSection (posts) - excludedTagIds:", excludedTagIds);
+        console.log("NewsSection (posts) - tagOptions:", tagOptions);
+        
         const resp = await _api.getCustomPost(
           "posts",
           4,
@@ -64,15 +96,16 @@ export const NewsSection = ({
             ? {
                 catId: cat.id,
                 excludeCat: true,
+                ...(Object.keys(tagOptions).length > 0 ? tagOptions : {}),
               }
-            : undefined
+            : Object.keys(tagOptions).length > 0 ? tagOptions : undefined
         );
         setPosts(resp);
       }
     } catch (error: any) {
       console.log("Error while getting news", error);
     }
-  }, []);
+  }, [excludedTagIds]);
   useEffect(() => {
     getNews();
   }, [getNews]);
