@@ -448,7 +448,7 @@ export default function CountryHome() {
           </Container>
                     
           <PagesSection
-            countryId={regionalCountryTermId || undefined}
+            countrySlug={country ? country.toString() : undefined}
             region={region ? region.toString() : undefined}
           />
           

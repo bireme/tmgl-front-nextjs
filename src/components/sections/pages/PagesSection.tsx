@@ -6,41 +6,45 @@ import { PostsApi } from "@/services/posts/PostsApi";
 import styles from "../../../styles/components/sections.module.scss";
 
 export interface PagesSectionProps {
-  countryId?: number;
   region?: string;
   className?: string;
+  countrySlug?: string;
 }
 
 export const PagesSection = ({
-  countryId,
   region,
   className,
+  countrySlug,
 }: PagesSectionProps) => {
   const [pages, setPages] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
+  const [ countryId, setCountryId ] =  useState<number | undefined>(undefined);
   const _api = new PostsApi(region); // Usar API regional
   
   const getPages = useCallback(async () => {
-    if (!countryId) {
-      console.log("No countryId provided");
-      return;
+    if (!countryId && countrySlug) {
+      const countryTerms = await _api.getCountryBySlug(countrySlug);
+      console.log("Country terms found:", countryTerms);
+      setCountryId(countryTerms[0].id);
     }
     
     setLoading(true);
-    try {
-      console.log("Searching for pages with countryId:", countryId, "in region:", region);
-      const resp = await _api.getCustomPost(
-        "pages",
-        50, // Buscar mais páginas para ter todas
-        undefined,
-        undefined,
-        undefined,
-        { countryId: [countryId] }
-      );
-      console.log("Found pages:", resp.length, resp);
-      setPages(resp);
-    } catch (error: any) {
-      console.log("Error while getting pages", error);
+    if (countryId) {
+      try {
+        console.log("Searching for pages with countryId:", countryId, "in region:", region);
+        const resp = await _api.getCustomPost(
+          "pages",
+          50, // Buscar mais páginas para ter todas
+          undefined,
+          undefined,
+          undefined,
+          { countryId: [countryId] }
+        );
+        console.log("Found pages:", resp.length, resp);
+        setPages(resp);
+      } catch (error: any) {
+        console.log("Error while getting pages", error);
+      }
     }
     setLoading(false);
   }, [countryId, region]);
