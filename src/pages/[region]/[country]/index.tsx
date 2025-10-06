@@ -300,7 +300,7 @@ export default function CountryHome() {
           />
 
           <PagesSection
-            countryId={countryTermId || undefined}
+            countrySlug={country ? country.toString() : undefined}
             region={region ? region.toString() : undefined}
           />
 
