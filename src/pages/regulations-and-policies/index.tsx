@@ -20,7 +20,7 @@ export default function RegulationAndPolices() {
           blackColor
           path={[
             { path: "/", name: "HOME" },
-            { path: "/legislations", name: "Legislations" },
+            { path: "/regulations-and-policies", name: "Regulations And Policies" },
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
