@@ -45,6 +45,7 @@ export const GlobalConfigAcfSchema = z.object({
     filter_rss: z.string().optional(),
     region_filters: z.array(RegionFilterSchema),
     thematic_area_description: z.string().optional(),
+    thematic_page_tag: z.number(),
   }),
 });
 
