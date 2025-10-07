@@ -113,7 +113,6 @@ export class PostsApi extends BaseUnauthenticatedApi {
             : ""
           : `lang=${this._lang}`
       }`;
-    console.log(url);
     const { data } = await this._api.get(url);
 
     if (options?.excludeCat && catIds.length > 0 && Array.isArray(data)) {

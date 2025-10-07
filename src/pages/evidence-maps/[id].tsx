@@ -39,7 +39,6 @@ export default function EvidenceMap() {
         setTags(_service.formatTags(response, language));
       }
     } catch (e) {
-      console.log("Error while trying to get Evidence Map", e);
     }
   };
 

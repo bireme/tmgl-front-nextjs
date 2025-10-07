@@ -12,6 +12,12 @@ export default function Multimedia() {
   const { globalConfig } = useContext(GlobalContext);
   const router = useRouter();
   const { country, region, thematicArea, mediaType } = router.query;
+
+  console.log("country", country);
+  console.log("region", region);
+  console.log("thematicArea", thematicArea);
+  console.log("mediaType", mediaType);
+
   const [displayType, setDisplayType] = useState<string>("column");
   return (
     <>

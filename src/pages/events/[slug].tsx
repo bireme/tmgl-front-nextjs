@@ -36,7 +36,6 @@ export default function Events() {
       setTags(_api.formatTags(resp[0]));
       setPost(resp[0]);
     } catch {
-      console.log("Error while trying to get event");
     }
   }, []);
 

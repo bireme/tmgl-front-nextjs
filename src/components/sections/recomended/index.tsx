@@ -78,7 +78,6 @@ export const RecomendedArticlesSection = ({
       );
       setPosts(resp);
     } catch (error: any) {
-      console.log("Error while getting Articles", error);
     }
   }, []);
 
@@ -135,7 +134,6 @@ export const RelatedArticlesSection = ({
         callBack(resp.length);
       }
     } catch (error: any) {
-      console.log("Error while getting Articles", error);
     }
   }, []);
 

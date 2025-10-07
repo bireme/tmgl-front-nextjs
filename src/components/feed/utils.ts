@@ -14,38 +14,39 @@ export const initialFilters = (
   region?: string,
   mediaType?: string
 ) => {
+  // Coleta todos os filtros em um array
+  const filters: queryType[] = [];
+  
   if (mediaType) {
-    applyFilters([
-      {
-        parameter: "resource_type",
-        query: mediaType,
-      },
-    ]);
+    filters.push({
+      parameter: "resource_type",
+      query: mediaType,
+    });
   }
   if (country) {
-    applyFilters([
-      {
-        parameter: "country",
-        query: country,
-      },
-    ]);
+    filters.push({
+      parameter: "country",
+      query: country,
+    });
   }
   if (region) {
-    applyFilters([
-      {
-        parameter: "region",
-        query: region,
-      },
-    ]);
+    filters.push({
+      parameter: "region",
+      query: region,
+    });
   }
   if (thematicArea) {
-    applyFilters([
-      {
-        parameter: "descriptor",
-        query: thematicArea,
-      },
-    ]);
+    filters.push({
+      parameter: "descriptor",
+      query: thematicArea,
+    });
   }
+  
+  // Aplica todos os filtros de uma vez
+  if (filters.length > 0) {
+    applyFilters(filters);
+  }
+  
   setLoading(false);
   setInitialFilterDone(true);
 };

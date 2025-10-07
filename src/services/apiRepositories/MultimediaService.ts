@@ -103,7 +103,6 @@ export class MultimediaService {
         ),
       };
     } catch (error) {
-      console.log(error);
       throw new Error("Error while searching medias");
     }
   };

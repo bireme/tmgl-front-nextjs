@@ -278,7 +278,6 @@ export class DireveService {
 
       return responseDto;
     } catch (error) {
-      console.log(error);
       throw new Error("Error while searching events");
     }
   };

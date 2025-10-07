@@ -47,7 +47,7 @@ export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
 
   return (
     <div className={styles.Filters}>
-      <form onSubmit={form.onSubmit((values) => console.log(values))}>
+      <form onSubmit={form.onSubmit((values) => {})}>
         <h4>Filters</h4>
         <h5>Search</h5>
         <Input size={"md"} placeholder="Search for something" />

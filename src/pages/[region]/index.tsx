@@ -57,7 +57,6 @@ export default function RegionHome() {
       setAcf(resp[0].acf);
       setSliderImages(resp[0].acf.search.slider_images);
     } catch {
-      console.log("Error while get home properties");
     }
   }, [region, globalConfig]);
 
@@ -163,7 +162,7 @@ export default function RegionHome() {
                 <TrendingSlider />
               </Container>
               <Container size={"xl"}>
-                <StoriesSection region={region ? region.toString() : ""} />
+                <StoriesSection region={region ? region.toString() : ""} fetchOptions={{ tagId: globalConfig?.acf.thematic_page_tag, excludeTag: true }}/>
                 <h2 className={styles.TitleWithIcon}> Events</h2>
               </Container>
             </div>

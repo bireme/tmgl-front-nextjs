@@ -64,7 +64,6 @@ export const EventsFeed = ({
         );
       }
     } catch (error) {
-      console.log("Error while fetching Events");
     }
     setLoading(false);
   };

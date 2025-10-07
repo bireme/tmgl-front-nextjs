@@ -34,10 +34,8 @@ export default function Journal() {
         const response = await _service.getItem(id.toString());
         setItem(response);
         setTags(_service.formatTags(response, language));
-        console.log(_service.formatTags(response, language));
       }
     } catch (e) {
-      console.log("Error while trying to get Journal");
     }
   };
 

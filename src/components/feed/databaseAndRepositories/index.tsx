@@ -67,7 +67,6 @@ export const DatabaseAndRepositoriesFeed = ({
         );
       }
     } catch (error) {
-      console.log("Error while fetching Database and Repositories");
     }
     setLoading(false);
   };

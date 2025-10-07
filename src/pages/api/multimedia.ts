@@ -35,7 +35,6 @@ async function getItems(
 ) {
   baseUrl += "/multimedia/search/";
   const url = `${baseUrl}?lang=${lang}&q=${q}&fq=${fq}&sort=created_date%20desc&count=${count}&start=${offset}`;
-  console.log(url);
   const response = await axios.get(url);
   return response;
 }

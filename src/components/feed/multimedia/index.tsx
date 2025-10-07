@@ -39,6 +39,7 @@ export const MultimediaFeed = ({
   const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
   const { language } = useContext(GlobalContext);
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
+  const [filterType, setFilterType] = useState<string>("AND");
 
   const applyFilters = async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
@@ -74,8 +75,6 @@ export const MultimediaFeed = ({
         );
       }
     } catch (error) {
-      console.log(error);
-      console.log("Error while fetching Multimedias");
     }
     setLoading(false);
   };

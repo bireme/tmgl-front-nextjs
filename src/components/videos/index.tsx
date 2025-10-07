@@ -140,7 +140,6 @@ export const RelatedVideosSection = ({ filter }: RelatedVideosSectionProps) => {
       const response = await _service.getResources(3, 0, [], language);
       if (response) setItems(response.data);
     } catch {
-      console.log("error while fetching multimedia");
     }
   };
 
@@ -223,7 +222,6 @@ export const RecentMultimediaItems = ({
       );
       if (response) setItems(response.data);
     } catch {
-      console.log("error while fetching multimedia");
     }
   };
 

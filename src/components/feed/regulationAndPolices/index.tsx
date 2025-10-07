@@ -67,7 +67,6 @@ export const RegulationsAndPolicesFeed = ({
         );
       }
     } catch (error) {
-      console.log("Error while fetching Legislations");
     }
     setLoading(false);
   };

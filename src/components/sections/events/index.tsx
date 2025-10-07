@@ -36,7 +36,6 @@ export const EventsSection = ({ region }: EventsSectionProps) => {
         setEvent(resp.data[0]);
       }
     } catch (error) {
-      console.log("Error while trying to get events");
     }
   };
 

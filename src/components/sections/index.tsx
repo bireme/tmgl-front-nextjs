@@ -61,7 +61,6 @@ export const DimensionsSection = ({ items }: { items?: ItemResource[] }) => {
       const result = await _api.getCustomPost("dimensions", 20, 0);
       setPosts(result);
     } catch (error: any) {
-      console.log("Error while trying to get Dimensions: ", error);
     }
   }, []);
 

@@ -28,7 +28,6 @@ export default function FeaturedStories() {
       setPost(resp[0]);
       setAcf(resp[0].acf);
     } catch {
-      console.log("Error while trying to get featured_stories");
       router.push("/404");
     }
   }, []);

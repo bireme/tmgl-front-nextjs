@@ -75,7 +75,6 @@ export const JournalsFeed = ({
         );
       }
     } catch (error) {
-      console.log("Error while fetching journals");
     }
     setLoading(false);
   };

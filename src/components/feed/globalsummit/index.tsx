@@ -69,8 +69,6 @@ export const GlobalSummitFeed = ({
         );
       }
     } catch (error) {
-      console.log(error);
-      console.log("Error while fetching Legislations");
     }
     setLoading(false);
   };

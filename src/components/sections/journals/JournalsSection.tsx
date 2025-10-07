@@ -62,7 +62,6 @@ export const JournalsSection = ({
       
       setItems(response.data);
     } catch (error: any) {
-      console.log("Error while getting journals", error);
     }
     setLoading(false);
   }, [country, region, language]);

@@ -24,14 +24,12 @@ export const PagesSection = ({
   const getPages = useCallback(async () => {
     if (!countryId && countrySlug) {
       const countryTerms = await _api.getCountryBySlug(countrySlug);
-      console.log("Country terms found:", countryTerms);
       setCountryId(countryTerms[0].id);
     }
     
     setLoading(true);
     if (countryId) {
       try {
-        console.log("Searching for pages with countryId:", countryId, "in region:", region);
         const resp = await _api.getCustomPost(
           "pages",
           50, // Buscar mais páginas para ter todas
@@ -40,10 +38,8 @@ export const PagesSection = ({
           undefined,
           { countryId: [countryId] }
         );
-        console.log("Found pages:", resp.length, resp);
         setPages(resp);
       } catch (error: any) {
-        console.log("Error while getting pages", error);
       }
     }
     setLoading(false);

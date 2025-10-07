@@ -61,8 +61,6 @@ export const NewsSection = ({
           }
         }
         
-        console.log("NewsSection - excludedTagIds:", excludedTagIds);
-        console.log("NewsSection - tagOptions:", tagOptions);
         
         const resp = await _api.getCustomPost(
           posType,
@@ -83,8 +81,6 @@ export const NewsSection = ({
           tagOptions.excludeTag = true;
         }
         
-        console.log("NewsSection (posts) - excludedTagIds:", excludedTagIds);
-        console.log("NewsSection (posts) - tagOptions:", tagOptions);
         
         const resp = await _api.getCustomPost(
           "posts",
@@ -103,7 +99,6 @@ export const NewsSection = ({
         setPosts(resp);
       }
     } catch (error: any) {
-      console.log("Error while getting news", error);
     }
   }, [excludedTagIds]);
   useEffect(() => {

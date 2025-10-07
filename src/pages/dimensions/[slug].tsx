@@ -45,7 +45,6 @@ export default function Dimensions() {
       const resp = await _api.getCustomPost("dimensions", 10, fatherId);
       setChildren(resp);
     } catch (error: any) {
-      console.log("Error while getting Childrens", error);
     }
   };
 
@@ -55,7 +54,6 @@ export default function Dimensions() {
       setPost(resp[0]);
       await getArticles(resp[0].id);
     } catch {
-      console.log("Error while trying to get dimension");
     }
   }, []);
 

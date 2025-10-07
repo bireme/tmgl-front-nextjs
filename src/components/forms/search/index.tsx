@@ -20,7 +20,6 @@ export const SearchForm = ({ title, subtitle, small }: AcfSearch) => {
         router.push(process.env.BASE_SEARCH_URL);
       }
     } catch (error) {
-      console.log(error);
     }
   };
 

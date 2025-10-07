@@ -98,7 +98,6 @@ export class EvidenceMapsService {
         }
       );
     }
-    console.log(data.data.diaServerResponse);
     let responseDto: EvidenceMapsServiceDto = {
       totalFound: data.data.diaServerResponse[0].response.numFound,
       data: responseItems,

@@ -44,7 +44,6 @@ export default function Content() {
           setParent(parentResp[parentResp.length - 1]);
         }
       } catch (error) {
-        console.log("Error while trying to get page", error);
       }
     },
     [pathSegments]

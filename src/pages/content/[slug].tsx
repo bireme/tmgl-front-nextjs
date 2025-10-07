@@ -53,7 +53,6 @@ export default function Content() {
         setParent(parentResp);
       }
     } catch {
-      console.log("Error while trying to get page");
     }
   }, []);
 

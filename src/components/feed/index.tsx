@@ -88,7 +88,6 @@ export const TrendingTopicsFeedSection = ({ filter }: { filter?: string }) => {
   const { globalConfig } = useContext(GlobalContext);
   const [count, setCount] = useState<number>(9);
   const getPosts = async (qs?: string, ct?: number) => {
-    console.log(filter);
     try {
       const data = await FetchRSSFeed(
         0,
@@ -99,9 +98,6 @@ export const TrendingTopicsFeedSection = ({ filter }: { filter?: string }) => {
       );
       setPosts(data);
     } catch {
-      console.log(
-        "Error while trying to get Recent Literature Review from RSS"
-      );
     }
   };
 

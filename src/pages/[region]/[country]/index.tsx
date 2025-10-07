@@ -47,37 +47,25 @@ export default function CountryHome() {
 
         // Buscar termo do país para usar como filtro
         try {
-          console.log(
-            "Searching for country term with slug:",
-            country.toString()
-          );
 
           // Usar API regional para buscar o termo de país
           const countryTerm = await _api.getCountryBySlug(country.toString());
-          console.log("Country term found in regional API:", countryTerm);
 
           // Se não encontrou, tentar com primeira letra maiúscula
           if (!countryTerm || countryTerm.length === 0) {
             const capitalizedCountry =
               country.toString().charAt(0).toUpperCase() +
               country.toString().slice(1);
-            console.log("Trying with capitalized name:", capitalizedCountry);
             const countryTermCapitalized = await _api.getCountryBySlug(
               capitalizedCountry
-            );
-            console.log(
-              "Capitalized country term found in regional API:",
-              countryTermCapitalized
             );
 
             if (countryTermCapitalized && countryTermCapitalized.length > 0) {
               const countryId = countryTermCapitalized[0].id;
-              console.log("Setting countryTermId to:", countryId);
               setCountryTermId(countryId);
             }
           } else {
             const countryId = countryTerm[0].id;
-            console.log("Setting countryTermId to:", countryId);
             setCountryTermId(countryId);
           }
 

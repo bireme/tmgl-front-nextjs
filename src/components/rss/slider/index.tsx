@@ -114,10 +114,12 @@ export const TrendingCarrocel = ({
   title,
   rssString,
   allFilter,
+  exploreAllLabel,
 }: {
   title?: string;
   rssString?: string;
   allFilter?: string;
+  exploreAllLabel?: string;
 }) => {
   const [setEmbla] = useState<any>(null);
   const { globalConfig, regionName } = useContext(GlobalContext);
@@ -207,7 +209,7 @@ export const TrendingCarrocel = ({
               component="a"
               style={{ cursor: "pointer" }}
             >
-              Explore all{" "}
+              {exploreAllLabel ? exploreAllLabel : "Explore all"}
               <Button size={"xs"} p={5}>
                 <IconArrowRight stroke={1} />
               </Button>

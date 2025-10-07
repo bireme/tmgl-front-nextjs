@@ -17,7 +17,6 @@ export function applyDefaultResourceFilters(
   queryItems: queryType[],
   orderedData: DefaultResourceItemDto[]
 ): DefaultResourceItemDto[] {
-  console.log("aplicando filtros");
 
   const stringParameter = queryItems.filter((q) => q.parameter === "title");
   const resourceTypeFilter = queryItems
@@ -42,6 +41,11 @@ export function applyDefaultResourceFilters(
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "region")
     .map((q) => q.query);
 
+    console.log("queryItems", queryItems);
+
+  // Apply all filters with AND logic between filter types
+  // Each filter reduces the dataset further, creating an AND relationship
+  
   if (regionFilters.length) {
     orderedData = orderedData.filter((item) =>
       regionFilters
@@ -53,8 +57,8 @@ export function applyDefaultResourceFilters(
   if (countryFilters.length) {
     orderedData = orderedData.filter((item) =>
       countryFilters
-        .map((c) => c.toLocaleLowerCase())
-        .includes(item.country?.toLocaleLowerCase() ?? "")
+        .map((c) => c.trim().toLocaleLowerCase())
+        .includes(item.country?.trim().toLocaleLowerCase() ?? "")
     );
   }
 
@@ -69,7 +73,6 @@ export function applyDefaultResourceFilters(
   }
 
   if (resourceTypeFilter.length) {
-    console.log(orderedData);
     orderedData = orderedData.filter((item) =>
       resourceTypeFilter.includes(
         item.documentType?.trim().toLocaleLowerCase()
@@ -79,33 +82,6 @@ export function applyDefaultResourceFilters(
     );
   }
 
-  if (stringParameter.length > 0) {
-    console.log(stringParameter);
-    orderedData = orderedData.filter(
-      (item) =>
-        item.title
-          .toLowerCase()
-          ?.trim()
-          .includes(stringParameter[0].query.toLowerCase()) ||
-        item.excerpt
-          .toLowerCase()
-          ?.trim()
-          .includes(stringParameter[0].query.toLowerCase())
-    );
-  }
-
-  if (yearFilters.length) {
-    orderedData = orderedData.filter((item) =>
-      yearFilters.includes(item.year?.trim() ? item.year?.trim() : "")
-    );
-  }
-  if (countryFilters.length) {
-    orderedData = orderedData.filter((item) =>
-      countryFilters
-        .map((c) => c.trim().toLocaleLowerCase())
-        .includes(item.country?.trim().toLocaleLowerCase() ?? "")
-    );
-  }
   if (documentFilters.length) {
     orderedData = orderedData.filter((item) =>
       documentFilters.includes(
@@ -113,6 +89,12 @@ export function applyDefaultResourceFilters(
           ? item.documentType?.trim().toLocaleLowerCase()
           : ""
       )
+    );
+  }
+
+  if (yearFilters.length) {
+    orderedData = orderedData.filter((item) =>
+      yearFilters.includes(item.year?.trim() ? item.year?.trim() : "")
     );
   }
 
@@ -124,10 +106,6 @@ export function applyDefaultResourceFilters(
           .toLowerCase()
       )
       .filter(Boolean);
-
-    console.log("Filtros normalizados:", filters);
-
-    const before = orderedData.length;
 
     orderedData = orderedData.filter((item) => {
       const rawAreas = Array.isArray(item?.thematicArea)
@@ -147,12 +125,22 @@ export function applyDefaultResourceFilters(
         filters.some((f) => x === f || x.startsWith(f + "/"))
       );
 
-      if (hit) {
-        // debug opcional para ver quais bateram
-        // console.log("HIT:", { areas: rawAreas, item });
-      }
       return hit;
     });
+  }
+
+  if (stringParameter.length > 0) {
+    orderedData = orderedData.filter(
+      (item) =>
+        item.title
+          .toLowerCase()
+          ?.trim()
+          .includes(stringParameter[0].query.toLowerCase()) ||
+        item.excerpt
+          .toLowerCase()
+          ?.trim()
+          .includes(stringParameter[0].query.toLowerCase())
+    );
   }
 
   return orderedData;

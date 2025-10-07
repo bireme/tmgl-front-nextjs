@@ -41,7 +41,6 @@ export default function CountryHome() {
   const {
     query: { country, region, lang },
   } = router;
-  const [thematicPageTag, setThematicPageTag] = useState();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Função para mapear Post para NewsEventsItem
@@ -89,8 +88,6 @@ export default function CountryHome() {
 
   const getPageProperties = useCallback(async () => {
     setRegionName(region ? region.toString() : "");
-    const thematicPageResp = await _postApiHelper.getTagBySlug("thematic-page");
-      setThematicPageTag(thematicPageResp[0]?.id);
     setCountryName(country ? country.toString() : "");
     const _api = new PostsApi(region ? region.toString() : "");
     if (country) {
@@ -102,38 +99,26 @@ export default function CountryHome() {
 
         // Buscar termo do país para usar como filtro
         try {
-          console.log(
-            "Searching for country term with slug:",
-            country.toString()
-          );
           const globalApi = new PostsApi();
           let countryId = null;
           // Usar API regional para buscar o termo de país
           const countryTerm = await globalApi.getCountryBySlug(country.toString());
-          console.log("Country term found in regional API:", countryTerm);
 
           // Se não encontrou, tentar com primeira letra maiúscula
           if (!countryTerm || countryTerm.length === 0) {
             const capitalizedCountry =
               country.toString().charAt(0).toUpperCase() +
               country.toString().slice(1);
-            console.log("Trying with capitalized name:", capitalizedCountry);
             const countryTermCapitalized = await globalApi.getCountryBySlug(
               capitalizedCountry
-            );
-            console.log(
-              "Capitalized country term found in regional API:",
-              countryTermCapitalized
             );
 
             if (countryTermCapitalized && countryTermCapitalized.length > 0) {
                countryId = countryTermCapitalized[0].id;
-              console.log("Setting countryTermId to:", countryId);
               setCountryTermId(countryId);
             }
           } else {
              countryId = countryTerm[0].id;
-            console.log("Setting countryTermId to:", countryId);
             setCountryTermId(countryId);
           }
 
@@ -170,7 +155,6 @@ export default function CountryHome() {
             }
           );
          
-          console.log("newsResponse", newsResponse);
           setNews(newsResponse.map(mapPostToNewsEventsItem));
 
           //Buscando events no FIAdmin
@@ -180,7 +164,6 @@ export default function CountryHome() {
             'pt-br',
             [{parameter: "country", query: country.toString()}],
           );
-          console.log("eventsResponse", eventsResponse);
           setEvents(eventsResponse.data.map(mapDireveToNewsEventsItem));
 
 
@@ -323,7 +306,7 @@ export default function CountryHome() {
               }
               showMoreNewsLink={"/news"}
               showMoreEventsLink={"/events"}
-              exploreAllLabel={"Explore all"}
+              exploreAllLabel={properties?.translate_labels.rss_see_more_label || "Explore all"}
             />
           ) : (
             <></>
@@ -351,18 +334,6 @@ export default function CountryHome() {
           {properties?.embed_content ? (
             <>
               <div className={styles.EmbedContent}>
-                {/* <Container size={"xl"}>
-                  <h3 className={styles.TitleWithIcon}>
-                    TM Research Analytics{" "}
-                  </h3>
-                  <p>
-                    {decodeHtmlEntities(
-                      globalConfig?.acf.tm_research_analytics_descriptor
-                        ? globalConfig?.acf.tm_research_analytics_descriptor
-                        : ""
-                    )}
-                  </p>
-                </Container> */}
                 {properties?.embed_content ? (
                   <iframe
                     ref={iframeRef}
@@ -391,6 +362,7 @@ export default function CountryHome() {
             rssString={
               properties?.rss_filter ? properties?.rss_filter : undefined
             }
+            exploreAllLabel={properties?.translate_labels.rss_see_more_label || "Explore all"}
           />
 
           {(properties?.founding_oportunity_heading || 
@@ -460,8 +432,7 @@ export default function CountryHome() {
           />
 
           <Container size={"xl"}> 
-            <StoriesSection buttonLabel={properties?.stories_button_label || "see more"} title={properties?.stories_title || "Featured stories"} fetchOptions={{ countryId: countryTermId || undefined, excludeCountry: false, tagId: thematicPageTag, excludeTag: true }} />
-            
+            <StoriesSection region={region ? region.toString() : ""} buttonLabel={properties?.stories_button_label || "see more"} title={properties?.stories_title || "Featured stories"} fetchOptions={{ countryId: countryTermId || undefined, excludeCountry: false, tagId: globalConfig?.acf.thematic_page_tag, excludeTag: true }} />
                     {properties?.stories_url && (
                       <Flex
                         mt={25}

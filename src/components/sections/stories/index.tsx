@@ -89,7 +89,6 @@ export const StoriesSection = ({
       }
       setPosts(result);
     } catch (error: any) {
-      console.log("Error while trying to get Featured Stories: ", error);
     }
   }, []);
 

@@ -28,7 +28,6 @@ export const FooterLayout = () => {
 
       //TODO: FooterRight Bottom
     } catch (err: any) {
-      console.log("Error while fetching footer menus");
     }
   };
 

@@ -31,7 +31,6 @@ export default function Dimensions() {
 
       setPost(resp[0]);
     } catch {
-      console.log("Error while trying to get dimension");
     }
   }, []);
 

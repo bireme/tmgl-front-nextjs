@@ -43,5 +43,6 @@ export interface GlobalConfigAcf {
     database_repositories_descriptions?: string;
     filter_rss?: string;
     region_filters: RegionFilter[];
+    thematic_page_tag: number;
   };
 }

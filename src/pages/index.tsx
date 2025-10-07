@@ -34,13 +34,11 @@ export default function Home() {
     try {
       const resp = await _api.getPageProperties("home-global");
       const thematicPageResp = await _postsApi.getTagBySlug("thematic-page");
-      console.log(thematicPageResp);
       setThematicPageTag(thematicPageResp[0]?.id);
       
       setAcf(resp[0].acf);
       setSliderImages(resp[0].acf.search.slider_images);
     } catch {
-      console.log("Error while get home properties");
     }
   }, []);
 

@@ -131,8 +131,6 @@ export const EvidenceMapsFeed = ({
         initialFilters(response);
       }
     } catch (error) {
-      console.log(error);
-      console.log("Error while fetching Evidencemaps");
     }
     setLoading(false);
   };

@@ -29,7 +29,6 @@ export default function TrendingTopics() {
       const resp = await _api.getPost("trending_topics", slug);
       setPost(resp[0]);
     } catch {
-      console.log("Error while trying to get dimension");
     }
   }, []);
 
