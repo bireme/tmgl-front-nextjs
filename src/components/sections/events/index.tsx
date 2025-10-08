@@ -19,29 +19,46 @@ import { useRouter } from "next/router";
 
 interface EventsSectionProps {
   region?: string;
+  excludedTagIds?: number[];
 }
 
-export const EventsSection = ({ region }: EventsSectionProps) => {
+export const EventsSection = ({ region, excludedTagIds }: EventsSectionProps) => {
   //DefaultImage if event has no image
   const eventImage = "/local/png/img-events.png";
   const router = useRouter();
   const [event, setEvent] = useState<Post>();
-  let _api = new PostsApi();
+  const _api = new PostsApi(region);
 
-  const getEvents = async () => {
-    if (region) _api = new PostsApi(region);
+  const getEvents = useCallback(async () => {
+    let api = new PostsApi();
+    if (region) api = new PostsApi(region);
     try {
-      const resp = await _api.listPosts("event", 10, 1);
-      if (resp.data.length > 0) {
-        setEvent(resp.data[0]);
+      // Preparar opções de exclusão de tags
+      let tagOptions: any = {};
+      
+      // Se excludedTagIds for fornecido, adicionar essas tags à exclusão
+      if (excludedTagIds && excludedTagIds.length > 0) {
+        tagOptions.tagId = excludedTagIds;
+        tagOptions.excludeTag = true;
       }
-    } catch (error) {
-    }
-  };
+      
+      const resp = await api.getCustomPost(
+        "event",
+        10,
+        undefined,
+        undefined,
+        region,
+        Object.keys(tagOptions).length > 0 ? tagOptions : undefined
+      );
+      if (resp.length > 0) {
+        setEvent(resp[0]);
+      }
+    } catch (error) {}
+  }, [region, excludedTagIds]);
 
   useEffect(() => {
     getEvents();
-  }, []);
+  }, [getEvents]);
 
   return event ? (
     <>

@@ -1,7 +1,5 @@
 import { Button, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { CountryAcfProps, Post } from "@/services/types/posts.dto";
-import { NewsEventsItem } from "@/services/types/newsEvents.dto";
-import { DefaultResourceItemDto } from "@/services/types/defaultResource";
 import {
   FundingAndPeriodicalsSection,
   NewsEventsSection,
@@ -12,18 +10,20 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { CountryResourceSection } from "@/components/sections/countryResourceSection";
+import { DefaultResourceItemDto } from "@/services/types/defaultResource";
+import { DireveService } from "@/services/apiRepositories/DireveService";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
+import { IconArrowRight } from "@tabler/icons-react";
+import { NewsEventsItem } from "@/services/types/newsEvents.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
 import { TrendingCarrocel } from "@/components/rss/slider";
+import { _optional } from "zod/v4/core";
 import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
-import { DireveService } from "@/services/apiRepositories/DireveService";
-import { IconArrowRight } from "@tabler/icons-react";
-import { _optional } from "zod/v4/core";
 
 export default function CountryHome() {
   const router = useRouter();
@@ -31,12 +31,14 @@ export default function CountryHome() {
   const [properties, setProperties] = useState<CountryAcfProps>();
   const { setRegionName, setCountryName, globalConfig, countryName } =
     useContext(GlobalContext);
-    const _service = new DireveService();    
+  const _service = new DireveService();
   const [postProps, setPostProps] = useState<Post>();
   const [news, setNews] = useState<Array<NewsEventsItem>>([]);
   const [events, setEvents] = useState<Array<NewsEventsItem>>([]);
   const { language } = useContext(GlobalContext);
-  const [regionalCountryTermId, setRegionalCountryTermId] = useState<number | null>(null);
+  const [regionalCountryTermId, setRegionalCountryTermId] = useState<
+    number | null
+  >(null);
   const [countryTermId, setCountryTermId] = useState<number | null>(null);
   const {
     query: { country, region, lang },
@@ -50,30 +52,52 @@ export default function CountryHome() {
     title: post.title,
     excerpt: post.excerpt,
     featured_media: post.featured_media,
-    _embedded: post._embedded
+    _embedded: post._embedded,
   });
 
   // Função para mapear DefaultResourceItemDto para NewsEventsItem
-  const mapDireveToNewsEventsItem = (item: DefaultResourceItemDto): NewsEventsItem => ({
+  const mapDireveToNewsEventsItem = (
+    item: DefaultResourceItemDto
+  ): NewsEventsItem => ({
     id: parseInt(item.id) || 0,
-    slug: item.link.split('/').pop() || item.id,
+    slug: item.link.split("/").pop() || item.id,
     title: { rendered: item.title },
     excerpt: { rendered: item.excerpt },
     featured_media: 0,
-    _embedded: item.thumbnail ? {
-      "wp:featuredmedia": [{
-        id: 0,
-        media_details: {
-          sizes: {
-            thumbnail: { source_url: item.thumbnail, width: 150, height: 150 },
-            medium: { source_url: item.thumbnail, width: 300, height: 200 },
-            large: { source_url: item.thumbnail, width: 600, height: 400 },
-            full: { source_url: item.thumbnail, width: 1200, height: 800 }
-          }
-        },
-        source_url: item.thumbnail
-      }]
-    } : undefined
+    _embedded: item.thumbnail
+      ? {
+          "wp:featuredmedia": [
+            {
+              id: 0,
+              media_details: {
+                sizes: {
+                  thumbnail: {
+                    source_url: item.thumbnail,
+                    width: 150,
+                    height: 150,
+                  },
+                  medium: {
+                    source_url: item.thumbnail,
+                    width: 300,
+                    height: 200,
+                  },
+                  large: {
+                    source_url: item.thumbnail,
+                    width: 600,
+                    height: 400,
+                  },
+                  full: {
+                    source_url: item.thumbnail,
+                    width: 1200,
+                    height: 800,
+                  },
+                },
+              },
+              source_url: item.thumbnail,
+            },
+          ],
+        }
+      : undefined,
   });
 
   useEffect(() => {
@@ -102,7 +126,9 @@ export default function CountryHome() {
           const globalApi = new PostsApi();
           let countryId = null;
           // Usar API regional para buscar o termo de país
-          const countryTerm = await globalApi.getCountryBySlug(country.toString());
+          const countryTerm = await globalApi.getCountryBySlug(
+            country.toString()
+          );
 
           // Se não encontrou, tentar com primeira letra maiúscula
           if (!countryTerm || countryTerm.length === 0) {
@@ -114,15 +140,17 @@ export default function CountryHome() {
             );
 
             if (countryTermCapitalized && countryTermCapitalized.length > 0) {
-               countryId = countryTermCapitalized[0].id;
+              countryId = countryTermCapitalized[0].id;
               setCountryTermId(countryId);
             }
           } else {
-             countryId = countryTerm[0].id;
+            countryId = countryTerm[0].id;
             setCountryTermId(countryId);
           }
 
-          const regionalCountryTerm = await _api.getCountryBySlug(country.toString());
+          const regionalCountryTerm = await _api.getCountryBySlug(
+            country.toString()
+          );
           if (!regionalCountryTerm || regionalCountryTerm.length === 0) {
             const capitalizedCountry =
               country.toString().charAt(0).toUpperCase() +
@@ -132,7 +160,7 @@ export default function CountryHome() {
             );
 
             if (countryTermCapitalized && countryTermCapitalized.length > 0) {
-               countryId = countryTermCapitalized[0].id;
+              countryId = countryTermCapitalized[0].id;
               setRegionalCountryTermId(countryId);
             }
           } else {
@@ -140,7 +168,6 @@ export default function CountryHome() {
             setRegionalCountryTermId(countryId);
           }
 
-          
           // Buscar news e events relacionados ao país
           // Buscar news do WP geral (não regional)
           // Sem região para acessar WP geral
@@ -154,20 +181,18 @@ export default function CountryHome() {
               countryId: [countryId || 0],
             }
           );
-         
+
           setNews(newsResponse.map(mapPostToNewsEventsItem));
 
           //Buscando events no FIAdmin
           const eventsResponse = await _service.getDefaultResources(
             4,
             0,
-            'pt-br',
-            [{parameter: "country", query: country.toString()}],
+            "pt-br",
+            [{ parameter: "country", query: country.toString() }]
           );
           setEvents(eventsResponse.data.map(mapDireveToNewsEventsItem));
 
-
-          
           //setEvents(eventsResponse);
         } catch (error) {
           console.error(
@@ -177,7 +202,7 @@ export default function CountryHome() {
         }
       }
     }
-    }, [region, country]);
+  }, [region, country]);
 
   useEffect(() => {
     getPageProperties();
@@ -236,7 +261,10 @@ export default function CountryHome() {
                   <div className={styles.SideContent}>
                     {properties?.key_resources && (
                       <div className={styles.KeyResources}>
-                        <h3>{properties?.translate_labels.key_resources_label || "Links to key resources"}</h3>
+                        <h3>
+                          {properties?.translate_labels.key_resources_label ||
+                            "Links to key resources"}
+                        </h3>
                         {properties?.key_resources.map((keyR, key) => {
                           return (
                             <p key={key}>
@@ -306,7 +334,9 @@ export default function CountryHome() {
               }
               showMoreNewsLink={"/news"}
               showMoreEventsLink={"/events"}
-              exploreAllLabel={properties?.translate_labels.rss_see_more_label || "Explore all"}
+              exploreAllLabel={
+                properties?.translate_labels.rss_see_more_label || "Explore all"
+              }
             />
           ) : (
             <></>
@@ -358,26 +388,38 @@ export default function CountryHome() {
                   : undefined
                 : undefined
             }
-            title={properties?.translate_labels.rss_label || "Recent literature reviews"}
+            title={
+              properties?.translate_labels.rss_label ||
+              "Recent literature reviews"
+            }
             rssString={
               properties?.rss_filter ? properties?.rss_filter : undefined
             }
-            exploreAllLabel={properties?.translate_labels.rss_see_more_label || "Explore all"}
+            exploreAllLabel={
+              properties?.translate_labels.rss_see_more_label || "Explore all"
+            }
           />
 
-          {(properties?.founding_oportunity_heading || 
+          {(properties?.founding_oportunity_heading ||
             properties?.periodicals_heading ||
-            properties?.founding_oportunities_items?.length || 
+            properties?.founding_oportunities_items?.length ||
             properties?.periodical_items?.length) && (
             <FundingAndPeriodicalsSection
-              fundingOpportunities={properties?.founding_oportunities_items || []}
+              fundingOpportunities={
+                properties?.founding_oportunities_items || []
+              }
               periodicals={properties?.periodical_items || []}
               fundingHeading={properties?.founding_oportunity_heading}
-              otherFundingTitle={properties?.other_funding_title || "Chamadas em aberto"}
+              otherFundingTitle={
+                properties?.other_funding_title || "Chamadas em aberto"
+              }
               otherPeriodicalsTitle={properties?.other_periodicals_title || ""}
               periodicalsHeading={properties?.periodicals_heading}
-              fundingTitle={properties?.founding_oportunity_title || "Oportunidades de Financiamento"}
-              periodicalsTitle={properties?.periodicals_title|| "Periódicos"}
+              fundingTitle={
+                properties?.founding_oportunity_title ||
+                "Oportunidades de Financiamento"
+              }
+              periodicalsTitle={properties?.periodicals_title || "Periódicos"}
               exploreAllLabel="Explore all"
               hideExploreAllPeriodicals={true}
               hideExploreAllFunding={true}
@@ -386,76 +428,99 @@ export default function CountryHome() {
             />
           )}
 
-          <Container size={"xl"}> 
-                <Grid>
-                  <Grid.Col span={6}> 
-                  {properties?.search_institute_items && properties.search_institute_items.length > 0 && (
-                      <CountryResourceSection
-                        resources={properties.search_institute_items.map(i => {
-                          return {
-                            title: i.title,
-                            url: i.url,
-                            icon: i.image as string,
-                          }
-                        })}
-                        title={properties?.search_institute_title || "Instituições de pesquisa"}
-                      />
-                    )}
-                  </Grid.Col>
-                  <Grid.Col span={6}> 
-                  {properties?.search_group_title && properties.search_group_items.length > 0 && (
-                      <CountryResourceSection
-                        resources={properties.search_group_items.map(i => {
-                          return {
-                            title: i.title,
-                            url: i.url,
-                            icon: i.image as string,
-                          }
-                        })}
-                        title={properties?.search_group_title || "Grupos de pesquisa"}
-                      />
-                    )}
-                  </Grid.Col>
-                </Grid>
+          <Container size={"xl"}>
+            <Grid>
+              <Grid.Col span={6}>
+                {properties?.search_institute_items &&
+                  properties.search_institute_items.length > 0 && (
+                    <CountryResourceSection
+                      resources={properties.search_institute_items.map((i) => {
+                        return {
+                          title: i.title,
+                          url: i.url,
+                          icon: i.image as string,
+                        };
+                      })}
+                      title={
+                        properties?.search_institute_title ||
+                        "Instituições de pesquisa"
+                      }
+                    />
+                  )}
+              </Grid.Col>
+              <Grid.Col span={6}>
+                {properties?.search_group_title &&
+                  properties.search_group_items.length > 0 && (
+                    <CountryResourceSection
+                      resources={properties.search_group_items.map((i) => {
+                        return {
+                          title: i.title,
+                          url: i.url,
+                          icon: i.image as string,
+                        };
+                      })}
+                      title={
+                        properties?.search_group_title || "Grupos de pesquisa"
+                      }
+                    />
+                  )}
+              </Grid.Col>
+            </Grid>
           </Container>
-                    
+
           <PagesSection
+            buttonLabel={
+              properties?.translate_labels.rss_see_more_label || "see more"
+            }
             countrySlug={country ? country.toString() : undefined}
             region={region ? region.toString() : undefined}
           />
-          
-
 
           <CountryResourceSection
             resources={properties?.resources}
             title={properties?.resources_title || "Resources"}
           />
 
-          <Container size={"xl"}> 
-            <StoriesSection region={region ? region.toString() : ""} buttonLabel={properties?.stories_button_label || "see more"} title={properties?.stories_title || "Featured stories"} fetchOptions={{ countryId: countryTermId || undefined, excludeCountry: false, tagId: globalConfig?.acf.thematic_page_tag, excludeTag: true }} />
-                    {properties?.stories_url && (
-                      <Flex
-                        mt={25}
-                        gap={10}
-                        align={"center"}
-                        onClick={() => {
-                          // Handle more media action
-                        }}
-                        component="a"
-                        style={{ cursor: "pointer" }}
-                      >
-                        {properties.stories_button_label || "see more"}{" "}
-                        <Button size={"xs"} p={5}>
-                          <IconArrowRight stroke={1} />
-                        </Button>
-                      </Flex>
-                    )}
+          <Container size={"xl"}>
+            <StoriesSection
+              regionApi={region ? region.toString() : undefined}
+              buttonLabel={properties?.stories_button_label || "see more"}
+              title={properties?.stories_title || "Featured stories"}
+              fetchOptions={{
+                countryId: countryTermId || undefined,
+                excludeCountry: false,
+                tagId: globalConfig?.acf.thematic_page_tag,
+                excludeTag: true,
+              }}
+            />
+            {properties?.stories_url && (
+              <Flex
+                mt={25}
+                gap={10}
+                align={"center"}
+                onClick={() => {
+                  // Handle more media action
+                }}
+                component="a"
+                style={{ cursor: "pointer" }}
+              >
+                {properties.stories_button_label || "see more"}{" "}
+                <Button size={"xs"} p={5}>
+                  <IconArrowRight stroke={1} />
+                </Button>
+              </Flex>
+            )}
           </Container>
 
           {properties?.manual_media ? (
             <>
-              <div style={{ float: "left", width: "100%", backgroundColor: "#D9D9D9" }}>
-
+              <div
+                style={{
+                  float: "left",
+                  width: "100%",
+                  backgroundColor: "#D9D9D9",
+                }}
+              >
                 <FixedRelatedVideosSection
                   title={properties?.multimedia_title || "Related videos"}
                   items={
@@ -471,25 +536,25 @@ export default function CountryHome() {
                   }
                 />
 
-                <Container mt={0} pt={0} mb={40} size={"xl"}>
-                    {properties.multimedia_filter && (
-                      <Flex
-                        mt={25}
-                        gap={10}
-                        align={"center"}
-                        onClick={() => {
-                          // Handle more media action
-                        }}
-                        component="a"
-                        style={{ cursor: "pointer" }}
-                      >
-                        {properties.translate_labels.rss_see_more_label}{" "}
-                        <Button size={"xs"} p={5}>
-                          <IconArrowRight stroke={1} />
-                        </Button>
-                      </Flex>
-                    )}
-                  </Container>
+                <Container mt={-40} pt={0} mb={40} size={"xl"}>
+                  {properties.multimedia_filter && (
+                    <Flex
+                      mt={25}
+                      gap={10}
+                      align={"center"}
+                      onClick={() => {
+                        window.open(properties.multimedia_filter, "self");
+                      }}
+                      component="a"
+                      style={{ cursor: "pointer" }}
+                    >
+                      {properties.translate_labels.rss_see_more_label}{" "}
+                      <Button size={"xs"} p={5}>
+                        <IconArrowRight stroke={1} />
+                      </Button>
+                    </Flex>
+                  )}
+                </Container>
               </div>
             </>
           ) : (

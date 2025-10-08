@@ -508,3 +508,19 @@
     margin-top: 0px;
   }
 }
+
+.NewsEventsContainer {
+  @media (max-width: 768px) {
+    flex-direction: column;
+    
+    > div {
+      flex: 1 1 100% !important;
+      padding-right: 0 !important;
+      margin-bottom: 40px;
+      
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}

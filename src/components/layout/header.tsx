@@ -388,11 +388,12 @@ export const HeaderLayout = () => {
         >
           <div
             className={styles.MegaMenu}
+            
             onClick={(e) => {
               e.stopPropagation();
             }}
           >
-            <Grid>
+            <Grid style={{ flexShrink: 0 }}>
               <Grid.Col span={{ base: 12, md: 5 }}>
                 <h2
                   style={{
@@ -420,12 +421,13 @@ export const HeaderLayout = () => {
               </Grid.Col>
             </Grid>
 
-            <Grid>
-              <Grid.Col span={{ base: 12, md: 4 }}>
+            <Grid style={{ flex: 1}}>
+              <Grid.Col span={{ base: 12, md: 4 }} style={{ height: "100%" }}>
                 <nav>{renderSubItemsNav()}</nav>
               </Grid.Col>
               <Grid.Col
                 span={{ base: 12, md: 8 }}
+                  
                 className={styles.MegaMenuRightSection}
               >
                 <Flex mt={20} style={{ height: "100%" }}>

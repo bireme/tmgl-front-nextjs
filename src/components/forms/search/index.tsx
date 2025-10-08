@@ -25,8 +25,8 @@ export const SearchForm = ({ title, subtitle, small }: AcfSearch) => {
 
   return (
     <Flex
-      className={`${styles.SearchForm}`}
-      py={{ base: 40, md: 0 }}
+      className={`${styles.SearchForm} ${small ? styles.small : ""}`}
+      py={{ base: small ? 120 : 40, md: 0 }}
       align={{ base: "flex-end", md: "center" }}
     >
       <form>

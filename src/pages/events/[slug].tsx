@@ -6,10 +6,8 @@ import {
   Grid,
   LoadingOverlay,
 } from "@mantine/core";
-import { IconPrinter, IconShare, IconShare3 } from "@tabler/icons-react";
-import { countWords, extimateTime } from "@/helpers/stringhelper";
-import moment, { lang } from "moment";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { IconPrinter, IconShare, } from "@tabler/icons-react";
+import { useCallback, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { Post } from "@/services/types/posts.dto";
@@ -179,20 +177,21 @@ export default function Events() {
                 ) : (
                   <></>
                 )}
-                <h4 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
-                  About the event
-                </h4>
-                {!post?.acf?.programee ? (
-                  <div
-                    className={styles.PostContent}
-                    dangerouslySetInnerHTML={{ __html: post.content.rendered }}
-                  />
-                ) : (
-                  <div
-                    className={styles.PostSubtitle}
-                    dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
-                  />
-                )}
+                {post.acf?.about && 
+                (
+                  <>
+                    <h4 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
+                      About the event
+                    </h4>
+                      <div
+                        className={styles.PostContent}
+                        dangerouslySetInnerHTML={{ __html: post.acf?.about }}
+                      />
+                  </>
+                )
+                }
+                
+                
               </Grid.Col>
               <Grid.Col span={{ md: 12, lg: 4 }}>
                 <h4 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>

@@ -427,11 +427,13 @@
     border-radius: 0px 0px 16px 16px;
     box-shadow: inset 0px 4px 16px 0px rgba(0, 0, 0, 0.25);
     position: absolute;
-    background: #F6F6F6;
+    background: #f9f9f9;
     left: 50%;
     transform:translateX(-50%);
     width: calc(81.25rem * 1);
-    min-height: 75vh;
+    height: 75vh;
+    display: flex;
+    flex-direction: column;
     @media (max-width: '750px') {
       width: 100%;
       overflow-y: scroll;
@@ -503,7 +505,8 @@
       
     }
     .MegaMenuRightSection{
-      
+      height: 100%;
+      height: 55vh;
     }
   }
   

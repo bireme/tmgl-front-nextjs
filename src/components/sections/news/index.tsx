@@ -170,14 +170,14 @@ export const NewsSection = ({
                         item.excerpt
                           ? removeHTMLTagsAndLimit(
                               decodeHtmlEntities(item.excerpt.rendered),
-                              120
+                              100
                             ) +
-                            `${item.excerpt.rendered.length > 120 ? "..." : ""}`
+                            `${item.excerpt.rendered.length > 100 ? "..." : ""}`
                           : item.acf?.content
                           ? removeHTMLTagsAndLimit(
                               decodeHtmlEntities(item.acf.content),
-                              120
-                            ) + `${item.acf.content.length > 120 ? "..." : ""}`
+                              100
+                            ) + `${item.acf.content.length > 100 ? "..." : ""}`
                           : "--"
                       }
                     />

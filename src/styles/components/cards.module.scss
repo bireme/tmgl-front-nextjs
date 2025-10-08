@@ -1,6 +1,14 @@
 .IconCard{
   min-width: 22%;
+  @media (max-width: '750px') {
+    min-width: 40%;
+    width: 40%;
+  }
   &.Small{
+    @media (max-width: '750px') {
+      min-width: 40%;
+      width: 40%;
+    }
     max-width: 80%;
     width: 80%;
     .cardContent{

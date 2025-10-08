@@ -165,7 +165,7 @@ export const ResourceCard = ({
           <p>{excerpt}</p>
         </div>
         <Flex style={{ width: "100%" }} direction="column">
-          <Flex mb={20} wrap="wrap" gap={5} className={styles.Tags}>
+          <Flex mb={20} wrap="wrap" gap={5} className={styles.Tags} >
             {tags
               ?.filter((tag) => tag.type === "descriptor")
               .map((tag) => (

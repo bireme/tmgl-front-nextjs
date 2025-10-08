@@ -1,5 +1,6 @@
 import { Container, Flex } from "@mantine/core";
 import { IconCard, ImageCard } from "@/components/cards";
+
 import { decodeHtmlLink } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
 
@@ -30,6 +31,8 @@ export function ResourcesSection({
 }: ResourcesSectionProps) {
   return (
     <div className={`${styles.CountryRersources} ${className || ""}`}>
+
+      
       {/* Similar Themes Section */}
       {similarThemes && similarThemes.length > 0 && (
         <Container py={40} size={"xl"}>
@@ -40,7 +43,7 @@ export function ResourcesSection({
             mt={50}
             gap={{ base: "20px", md: "3%" }}
             justify={"space-around"}
-            direction={{ base: "column", sm: "row" }}
+            direction={{ base: "row", sm: "row" }}
             wrap={"wrap"}
           >
             {similarThemes.map((theme, index) => {
@@ -78,7 +81,7 @@ export function ResourcesSection({
             mt={50}
             gap={{ base: "20px", md: "3%" }}
             justify={"space-around"}
-            direction={{ base: "column", sm: "row" }}
+            direction={{ base: "row", sm: "row" }}
             wrap={"wrap"}
           >
             {resources.map((resource, index) => {
