@@ -30,28 +30,9 @@ export async function middleware(request: NextRequest) {
     //   path: "/",
     // });
     return response;
-  } else {
-    //Caso não tenha parametro na url mas tenha no cookie vamos verificar o cookie
-    const langFromCookie = request.cookies.get("lang")?.value;
-    const fullUrl = request.nextUrl.toString();
-    //Caso exista parametro no cookie e ele não en que é o padrão, também verifico se não são rotas externas ou de api
-    //Se a condição for atendida significa que o usuário veio de uma página traduzida então ele vai querer continuar vendo conteúdo traduzido.
-    if (
-      langFromCookie != "en" &&
-      (fullUrl.includes(
-        process.env.BASE_URL ? process.env.BASE_URL : "http://localhost:3000"
-      ) ||
-        fullUrl.includes("http://localhost:3000")) &&
-      !fullUrl.includes("api") &&
-      !fullUrl.includes("customRoute")
-    ) {
-      const url = request.nextUrl.clone();
-      if (langFromCookie) {
-        url.searchParams.set("lang", langFromCookie);
-        return NextResponse.redirect(url);
-      }
-    }
   }
+  // Removido o redirect com lang na URL, pois o cookie já é suficiente
+  // e o parâmetro na URL estava sendo propagado para as requisições de API
 
   return NextResponse.next();
 }
