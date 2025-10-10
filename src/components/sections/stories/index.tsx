@@ -57,39 +57,47 @@ export const StoriesItem = ({
 };
 
 export interface StoriesSectionProps {
+  regionApi?: string;
   region?: string;
   fetchOptions?: GetCustomPostOptions;
   title?: string;
   buttonLabel?: string;
 }
 export const StoriesSection = ({
+  regionApi,
   region,
   fetchOptions,
   title,
   buttonLabel,
 }: StoriesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>();
-  const _api = new PostsApi();
+  const _api = new PostsApi(regionApi ? regionApi : undefined);
 
   //Realizar a Filtragem a partir do region
   const getFeaturedStories = useCallback(async () => {
     try {
       let result;
       if (!fetchOptions) {
-        result = await _api.getCustomPost("featured_stories", 3);
+        result = await _api.getCustomPost(
+          "featured_stories",
+          3,
+          undefined,
+          undefined,
+          !regionApi ? region : undefined
+        );
       } else {
         result = await _api.getCustomPost(
           "featured_stories",
           3,
           undefined,
           undefined,
-          region,
+          !regionApi ? region : undefined,
           fetchOptions
         );
       }
       setPosts(result);
-    } catch (error: any) {
-    }
+      console.log(result);
+    } catch (error: any) {}
   }, []);
 
   useEffect(() => {

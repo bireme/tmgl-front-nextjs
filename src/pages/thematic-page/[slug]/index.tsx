@@ -5,18 +5,18 @@ import {
   ThematicPageAcfProps,
 } from "@/services/types/posts.dto";
 import { Container, LoadingOverlay } from "@mantine/core";
+import {
+  ContentSection,
+  HeroSection,
+  MultimediaSection,
+  NewsEventsSection,
+  ResourcesSection,
+} from "@/components/sections";
+import { ManualStoriesSection, StoriesSection } from "@/components/sections/stories";
 import { useCallback, useEffect, useState } from "react";
 
 import { PostsApi } from "@/services/posts/PostsApi";
-import { ManualStoriesSection, StoriesSection } from "@/components/sections/stories";
 import { TrendingCarrocel } from "@/components/rss/slider";
-import {
-  HeroSection,
-  ContentSection,
-  ResourcesSection,
-  NewsEventsSection,
-  MultimediaSection,
-} from "@/components/sections";
 import { useRouter } from "next/router";
 
 export default function ThematicPage() {

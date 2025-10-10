@@ -1,4 +1,4 @@
-import { Container, LoadingOverlay } from "@mantine/core";
+import { Button, Container, LoadingOverlay } from "@mantine/core";
 import { useCallback, useEffect, useState } from "react";
 
 import { Post } from "@/services/types/posts.dto";
@@ -9,24 +9,26 @@ export interface PagesSectionProps {
   region?: string;
   className?: string;
   countrySlug?: string;
+  buttonLabel?: string;
 }
 
 export const PagesSection = ({
   region,
   className,
   countrySlug,
+  buttonLabel,
 }: PagesSectionProps) => {
   const [pages, setPages] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
-  const [ countryId, setCountryId ] =  useState<number | undefined>(undefined);
+  const [countryId, setCountryId] = useState<number | undefined>(undefined);
   const _api = new PostsApi(region); // Usar API regional
-  
+
   const getPages = useCallback(async () => {
     if (!countryId && countrySlug) {
       const countryTerms = await _api.getCountryBySlug(countrySlug);
       setCountryId(countryTerms[0].id);
     }
-    
+
     setLoading(true);
     if (countryId) {
       try {
@@ -39,8 +41,7 @@ export const PagesSection = ({
           { countryId: [countryId] }
         );
         setPages(resp);
-      } catch (error: any) {
-      }
+      } catch (error: any) {}
     }
     setLoading(false);
   }, [countryId, region]);
@@ -62,23 +63,33 @@ export const PagesSection = ({
   }
 
   return (
-    <div 
-      style={{ 
-        backgroundImage: `url(${pages[0]._embedded?.['wp:featuredmedia']?.[0]?.source_url || ""})`
+    <div
+      style={{
+        backgroundImage: `url(${
+          pages[0]._embedded?.["wp:featuredmedia"]?.[0]?.source_url || ""
+        })`,
       }}
       className={`${styles.PagesSection} ${className || ""}`}
     >
       {pages.map((page, index) => (
         <Container key={page.id} size="xl" className={styles.PageContainer}>
-          <h3 className={styles.TitleWithIcon}>
-            {page.title.rendered}
-          </h3>
-          <div 
+          <h3 className={styles.TitleWithIcon}>{page.title.rendered}</h3>
+          <div
             className="post-content"
             dangerouslySetInnerHTML={{
               __html: page.content?.rendered || "",
             }}
           />
+          <Button
+            size={"md"}
+            onClick={() =>
+              window.open(
+                process.env.BASE_URL + "/" + region + "/content/" + page.slug
+              )
+            }
+          >
+            {buttonLabel ? buttonLabel : "Read more"}
+          </Button>
         </Container>
       ))}
     </div>

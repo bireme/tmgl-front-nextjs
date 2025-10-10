@@ -1,4 +1,10 @@
 .SearchForm{
+
+  &.small{
+    @media screen and (max-width: 750px) {
+      
+    }
+  }
   width: 100%;
   height: 100%;
   form{

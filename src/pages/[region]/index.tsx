@@ -1,4 +1,4 @@
-import { Center, Container, Flex } from "@mantine/core";
+import { Button, Center, Container, Flex } from "@mantine/core";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
@@ -8,6 +8,7 @@ import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
+import { IconArrowRight } from "@tabler/icons-react";
 import { ImageSection } from "@/components/video";
 import { NewsSection } from "@/components/sections/news";
 import { NewsletterSection } from "@/components/sections/newsletter";
@@ -166,9 +167,10 @@ export default function RegionHome() {
                 <h2 className={styles.TitleWithIcon}> Events</h2>
               </Container>
             </div>
-            <EventsSection />
+            <EventsSection excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]} />
             <div className={styles.NewsContainer}>
               <NewsSection
+                excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]}
                 region={region ? region.toString() : ""}
                 title={"News from WHO"}
               />
@@ -187,7 +189,27 @@ export default function RegionHome() {
                     };
                   })}
                 />
+                <Container mt={-40} pt={0} mb={40} size={"xl"}>
+                {acf.more_media_url && (
+                    <Flex
+                      mt={25}
+                      gap={10}
+                      align={"center"}
+                      onClick={() => {
+                        window.open(acf.more_media_url, "self");
+                      }}
+                      component="a"
+                      style={{ cursor: "pointer" }}
+                    >
+                       See More
+                      <Button size={"xs"} p={5}>
+                        <IconArrowRight stroke={1} />
+                      </Button>
+                    </Flex>
+                  )}
+                </Container>
               </div>
+              
             ) : (
               <></>
             )}

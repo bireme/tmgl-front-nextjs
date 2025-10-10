@@ -23,12 +23,12 @@ export async function middleware(request: NextRequest) {
   const lang = request.nextUrl.searchParams.get("lang");
 
   if (lang) {
-    //Caso o parametro esteja na URL ele vai para o cookie
+    //Caso o parametro esteja na URL ele vai para o cookie (DESATIVADO TEMPORARIAMENTE)
     const response = NextResponse.next();
-    response.cookies.set("lang", lang, {
-      httpOnly: false,
-      path: "/",
-    });
+    // response.cookies.set("lang", lang, {
+    //   httpOnly: false,
+    //   path: "/",
+    // });
     return response;
   } else {
     //Caso não tenha parametro na url mas tenha no cookie vamos verificar o cookie

@@ -3,6 +3,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 
 import { AcfImageArray } from "@/services/types/featuredStoriesAcf";
 import { DimensionsSection } from "@/components/sections";
+import { EmbedIframe } from "@/components/embed/EmbedIframe";
 import { EventsSection } from "@/components/sections/events";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
@@ -19,27 +20,23 @@ import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
 import { TrendingSlider } from "@/components/rss/slider";
 import styles from "../styles/pages/home.module.scss";
-import { EmbedIframe } from "@/components/embed/EmbedIframe";
 
 export default function Home() {
   const _api = new PagesApi();
   const _postsApi = new PostsApi();
   const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
-  const { setRegionName } = useContext(GlobalContext);
+  const { setRegionName, globalConfig } = useContext(GlobalContext);
   const [showModal, setShowModal] = useState(false);
-  const [thematicPageTag, setThematicPageTag] = useState();
 
   const getPageProperties = useCallback(async () => {
     try {
       const resp = await _api.getPageProperties("home-global");
-      const thematicPageResp = await _postsApi.getTagBySlug("thematic-page");
-      setThematicPageTag(thematicPageResp[0]?.id);
       
+
       setAcf(resp[0].acf);
       setSliderImages(resp[0].acf.search.slider_images);
-    } catch {
-    }
+    } catch {}
   }, []);
 
   useEffect(() => {
@@ -84,7 +81,7 @@ export default function Home() {
           includeDemo={true}
         />
       </div>
-      
+
       <div className={styles.TrandingAndFeatured}>
         <Container
           size={"xl"}
@@ -115,9 +112,9 @@ export default function Home() {
           <TrendingSlider />
         </Container>
         <Container size={"xl"}>
-          {thematicPageTag ? (
+          {globalConfig?.acf.thematic_page_tag ? (
             <StoriesSection
-              fetchOptions={{ tagId: thematicPageTag, excludeTag: true }}
+              fetchOptions={{ tagId: globalConfig?.acf.thematic_page_tag, excludeTag: true }}
             />
           ) : (
             <></>
@@ -142,23 +139,23 @@ export default function Home() {
           <h2 className={styles.TitleWithIcon}> Events</h2>
         </Container>
       </div>
-      <EventsSection />
+      <EventsSection excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]} />
       <div className={styles.NewsContainer}>
-        <NewsSection  excludedTagIds={[181]} title={"News from WHO"} />
+        <NewsSection excludedTagIds={[181]} title={"News from WHO"} />
 
         {acf?.embed_content && (
-      <div className={styles.EmbedContent}>
-        <Container size={"xl"}>
-
-        <EmbedIframe
-          src={acf?.embed_content}
-          width="100%"
-          height={1300}
-        /> 
-        </Container>
-        
-      </div>)}
+          <div className={styles.EmbedContent}>
+            <Container size={"xl"}>
+              <EmbedIframe
+                src={acf?.embed_content}
+                width="100%"
+                height={1300}
+              />
+            </Container>
+          </div>
+        )}
         {acf?.manual_media && acf.manual_media.length >= 3 ? (
+          <>
           <FixedRelatedVideosSection
             items={[
               {
@@ -178,6 +175,29 @@ export default function Home() {
               },
             ]}
           />
+          {acf.more_media_url && (
+            <Container mt={0} pt={0} mb={40} size={"xl"}>
+<Flex
+              mt={25}
+              gap={10}
+              align={"center"}
+              onClick={() => {
+                window.open(acf.more_media_url, "self");
+              }}
+              component="a"
+              style={{ cursor: "pointer" }}
+            >
+               See More
+              <Button size={"xs"} p={5}>
+                <IconArrowRight stroke={1} />
+              </Button>
+            </Flex>
+
+            </Container>
+            
+          )}
+
+          </>
         ) : (
           <></>
         )}
