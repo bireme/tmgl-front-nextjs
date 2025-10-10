@@ -284,3 +284,25 @@
     background-color: #eee;
   }
 }
+
+.ResourcesGrid {
+  display: grid;
+  gap: 30px;
+  align-items: stretch;
+
+  &.columnMode {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 30%));
+    
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(auto-fit, minmax(280px, 48%));
+    }
+    
+    @media (max-width: 750px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &.rowMode {
+    grid-template-columns: 1fr;
+  }
+}

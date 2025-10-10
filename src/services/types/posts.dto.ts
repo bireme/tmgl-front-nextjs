@@ -142,10 +142,16 @@ export interface ACFMultimediaItem {
   url: string;
 }
 
+export interface AcfOtherVersionItem {
+  description: string;
+  link: string;
+}
+
 export interface CountryAcfProps {
   layout: string;
   stories_url: string;
   content: string;
+  other_version: AcfOtherVersionItem;
   other_funding_title?: string;
   other_periodicals_title?: string;
   founding_oportunity_title: string;
