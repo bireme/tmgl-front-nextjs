@@ -1,4 +1,4 @@
-import { Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
+import { Alert, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { CountryAcfProps, Post } from "@/services/types/posts.dto";
 import { HeroImage, HeroSlider } from "@/components/slider";
 import {
@@ -160,6 +160,13 @@ export default function CountryHome() {
                       __html: properties?.content ? properties?.content : "",
                     }}
                   />
+                  {
+                    properties?.other_version && (
+                      <Alert mt={20} style={{cursor: "pointer"}} onClick={() => router.push(properties?.other_version.link)} color="blue">
+                        {properties?.other_version.description}
+                      </Alert>
+                    )
+                  }
                 </Grid.Col>
                 <Grid.Col span={{ md: 3, base: 12 }} px={20}>
                   <div className={styles.SideContent}>

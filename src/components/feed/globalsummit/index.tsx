@@ -152,14 +152,7 @@ export const GlobalSummitFeed = ({
             <></>
           )}
           <div 
-            style={{
-              display: "grid",
-              gridTemplateColumns: displayType === "column" 
-                ? "repeat(auto-fit, minmax(300px, 1fr))" 
-                : "1fr",
-              gap: "30px",
-              alignItems: "stretch"
-            }}
+            className={`${styles.ResourcesGrid} ${displayType === "column" ? styles.columnMode : styles.rowMode}`}
           >
             {items.length > 0 ? (
               <>

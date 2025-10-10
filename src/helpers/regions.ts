@@ -5,7 +5,7 @@ export function getRegionName(region: string) {
     case "emro":
       return "Eastern Mediterranean";
     case "euro":
-      return "Europa";
+      return "Europe";
     case "afro":
       return "Africa";
     case "wpro":
