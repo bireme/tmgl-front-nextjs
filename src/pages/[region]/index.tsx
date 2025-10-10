@@ -167,7 +167,9 @@ export default function RegionHome() {
                 <h2 className={styles.TitleWithIcon}> Events</h2>
               </Container>
             </div>
-            <EventsSection excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]} />
+            {globalConfig?.acf.thematic_page_tag && (
+              <EventsSection excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]} />
+            )}
             <div className={styles.NewsContainer}>
               <NewsSection
                 excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]}
