@@ -35,7 +35,6 @@ export default function CountryHome() {
   const [postProps, setPostProps] = useState<Post>();
   const [news, setNews] = useState<Array<NewsEventsItem>>([]);
   const [events, setEvents] = useState<Array<NewsEventsItem>>([]);
-  const { language } = useContext(GlobalContext);
   const [regionalCountryTermId, setRegionalCountryTermId] = useState<
     number | null
   >(null);
@@ -282,44 +281,44 @@ export default function CountryHome() {
             </Container>
           </div>
           {properties?.tms_items &&
-          Array.isArray(properties?.tms_items) &&
-          properties?.tms_items?.length > 0 ? (
-            <div className={styles.Tms}>
-              <Container size={"xl"}>
-                <h3 className={styles.TitleWithIcon}>
-                  {properties?.tms_title || "Traditional Medicine Systems"}
-                </h3>
-                <Flex
-                  justify={"center"}
-                  align={"center"}
-                  wrap={"wrap"}
-                  direction={{ base: "column", md: "row" }}
-                  gap={25}
-                >
-                  {properties?.tms_items?.map((item, index) => {
-                    return (
-                      <div onClick={() => item.url ? router.push(item.url) : undefined} className={styles.TmsItem} key={index}>
-                        <div
-                          className={styles.TmsImage}
-                          style={{ backgroundImage: `url(${item.image})  ` }}
-                        />
-                        <h4>
-                          {item.title
-                            ? item.title.length > 120
-                              ? item.title.substring(0, 120) + "..."
-                              : item.title
-                            : ""}
-                        </h4>
-                        <p>{item.description}</p>
-                      </div>
-                    );
-                  })}
-                </Flex>
-              </Container>
-            </div>
-          ) : (
-            <></>
-          )}
+            Array.isArray(properties?.tms_items) &&
+            properties?.tms_items?.length > 0 ? (
+              <div className={styles.Tms}>
+                <Container size={"xl"}>
+                  <h3 className={styles.TitleWithIcon}>
+                    {properties?.tms_title || "Traditional Medicine Systems"}
+                  </h3>
+                  <Flex
+                    justify={"center"}
+                    align={"center"}
+                    wrap={"wrap"}
+                    direction={{ base: "column", md: "row" }}
+                    gap={25}
+                  >
+                    {properties?.tms_items?.map((item, index) => {
+                      return (
+                        <div onClick={() => item.url ? router.push(item.url) : undefined} className={styles.TmsItem} key={index}>
+                          <div
+                            className={styles.TmsImage}
+                            style={{ backgroundImage: `url(${item.image})  ` }}
+                          />
+                          <h4>
+                            {item.title
+                              ? item.title.length > 120
+                                ? item.title.substring(0, 120) + "..."
+                                : item.title
+                              : ""}
+                          </h4>
+                          <p>{item.description}</p>
+                        </div>
+                      );
+                    })}
+                  </Flex>
+                </Container>
+              </div>
+            ) : (
+              <></>
+            )}
           {properties?.news_title || properties?.events_title ? (
             <NewsEventsSection
               news={news}

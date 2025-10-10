@@ -41,6 +41,7 @@ export const PagesSection = ({
           { countryId: [countryId] }
         );
         setPages(resp);
+        console.log(resp);
       } catch (error: any) {}
     }
     setLoading(false);
@@ -77,7 +78,7 @@ export const PagesSection = ({
           <div
             className="post-content"
             dangerouslySetInnerHTML={{
-              __html: page.content?.rendered || "",
+              __html: page.content?.rendered.split("</p>")[0] || "",
             }}
           />
           <Button
