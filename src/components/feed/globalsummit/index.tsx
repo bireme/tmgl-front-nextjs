@@ -111,13 +111,15 @@ export const GlobalSummitFeed = ({
                   })),
                 },
                 {
-                  queryType: "thematic_area",
+                  queryType: "descriptor",
                   label: "Thematic area",
-                  items: apiResponse?.thematicAreaFilter.map((c) => ({
-                    label: c.type,
-                    ocorrences: c.count,
-                    id: undefined,
-                  })),
+                  items: apiResponse?.thematicAreaFilter
+                    .filter((c) => c.type && c.type.trim() !== "")
+                    .map((c) => ({
+                      label: c.type,
+                      ocorrences: c.count,
+                      id: undefined,
+                    })),
                 },
                 {
                   queryType: "document_type",

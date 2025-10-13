@@ -21,7 +21,7 @@ export function applyDefaultResourceFilters(
   const stringParameter = queryItems.filter((q) => q.parameter === "title");
   const resourceTypeFilter = queryItems
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "resource_type")
-    .map((q) => q.query);
+    .map((q) => q.query.toLowerCase());
   const modalityFilter = queryItems
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "modality_type")
     .map((q) => q.query);
@@ -41,7 +41,6 @@ export function applyDefaultResourceFilters(
     .filter((q) => q.parameter.toLocaleLowerCase().trim() === "region")
     .map((q) => q.query);
 
-    console.log("queryItems", queryItems);
 
   // Apply all filters with AND logic between filter types
   // Each filter reduces the dataset further, creating an AND relationship
@@ -73,18 +72,17 @@ export function applyDefaultResourceFilters(
   }
 
   if (resourceTypeFilter.length) {
-    orderedData = orderedData.filter((item) =>
-      resourceTypeFilter.includes(
-        item.documentType?.trim().toLocaleLowerCase()
-          ? item.documentType?.trim().toLocaleLowerCase()
-          : ""
-      )
-    );
+    orderedData = orderedData.filter((item) => {
+      const itemResourceType = item.resourceType?.trim().toLocaleLowerCase()
+        ? item.resourceType?.trim().toLocaleLowerCase()
+        : "";
+      return resourceTypeFilter.includes(itemResourceType);
+    });
   }
 
   if (documentFilters.length) {
     orderedData = orderedData.filter((item) =>
-      documentFilters.includes(
+      documentFilters.map(f => f.toLowerCase()).includes(
         item.documentType?.trim().toLocaleLowerCase()
           ? item.documentType?.trim().toLocaleLowerCase()
           : ""

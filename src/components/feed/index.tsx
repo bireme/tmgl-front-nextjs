@@ -14,6 +14,13 @@ import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";
 import { PostItem } from "./post/postItem";
 import { PostsApi } from "@/services/posts/PostsApi";
+
+// Export all feed components
+export { EventsFeed } from "./events";
+export { NewsFeed } from "./news";
+export { MultimediaFeed } from "./multimedia";
+export { DatabaseAndRepositoriesFeed } from "./databaseAndRepositories";
+export { StoriesFeed } from "./stories";
 import styles from "../../styles/components/feed.module.scss";
 
 export interface FeedSectionProps {

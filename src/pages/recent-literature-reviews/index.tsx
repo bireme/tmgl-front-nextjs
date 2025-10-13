@@ -4,14 +4,26 @@ import { FeedSection, TrendingTopicsFeedSection } from "@/components/feed";
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
 import styles from "../../styles/pages/pages.module.scss";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 export default function TrendingTopics() {
   const { globalConfig } = useContext(GlobalContext);
   const router = useRouter();
   const { filter } = router.query;
-  if (!router.isReady) return null;
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient || !router.isReady) {
+    return (
+      <Container size={"xl"} py={60}>
+        <div>Loading...</div>
+      </Container>
+    );
+  }
   return (
     <>
       <Container size={"xl"} py={60}>

@@ -69,7 +69,7 @@ export const DefaultFeedFilterComponent = ({
           ),
         },
         {
-          queryType: "publication_year",
+          queryType: "year",
           label: "Year",
           items: removeDuplicateItems(
             Array.from(

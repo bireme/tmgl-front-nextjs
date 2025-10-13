@@ -108,7 +108,7 @@ export class GlobalSummitService {
         allResults[1].yearFilter,
         allResults[2].yearFilter,
         allResults[3].yearFilter
-      ).sort((a, b) => Number(a.type) + Number(b.type)),
+      ).sort((a, b) => Number(b.type) - Number(a.type)),
     };
   };
 
@@ -298,8 +298,8 @@ export class GlobalSummitService {
           return { type: r, count: 99 };
         }),
         thematicAreaFilter:
-          data.data.diaServerResponse[0].facet_counts.facet_fields.thematic_area_display.map(
-            (i) => {
+          data.data.diaServerResponse[0].facet_counts.facet_fields.thematic_area_display
+            .map((i) => {
               let type = i[0]
                 .split("|")
                 .map((i) => i.replace("^", "|"))
@@ -308,8 +308,8 @@ export class GlobalSummitService {
                 type: type ? type : "",
                 count: parseInt(i[1]),
               };
-            }
-          ),
+            })
+            .filter((item) => item.type && item.type.trim() !== ""),
         yearFilter:
           data.data.diaServerResponse[0].facet_counts.facet_fields.publication_year.map(
             (y) => {

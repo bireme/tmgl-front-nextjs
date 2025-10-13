@@ -14,26 +14,39 @@ import moment from "moment";
 import { queryType } from "@/services/types/resources";
 import styles from "../../../styles/components/resources.module.scss";
 
-export const NewsFeed = ({ displayType }: { displayType: string }) => {
+export const NewsFeed = ({
+  displayType,
+  country,
+  region,
+  thematicArea,
+}: {
+  displayType: string;
+  country?: string;
+  region?: string;
+  thematicArea?: string;
+}) => {
   const [loading, setLoading] = useState(false);
   const count = 12;
   const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
+  const [filter, setFilter] = useState<queryType[]>([]);
   const [items, setItems] = useState<Post[]>([]);
   const [apiResponse, setApiResponse] = useState<ListPostsDto>();
+  const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
   const _api = new PostsApi();
 
   const applyFilters = async (queryList?: queryType[]) => {
+    setFilter(queryList ? queryList : []);
     setPage(0);
-    getPosts(queryList, false);
   };
-  const getPosts = async (filter?: queryType[], resetPage?: boolean) => {
+  
+  const getPosts = async () => {
     setLoading(true);
     const response = await _api.listPosts(
       "posts",
       count,
       page + 1, // API espera 1-based, mas mantemos 0-based internamente
-      filter
+      filter && filter.length > 0 ? filter : undefined
     );
     setTotalPages(Math.max(1, Math.ceil(response.totalItems / count)));
     setApiResponse(response);
@@ -41,9 +54,67 @@ export const NewsFeed = ({ displayType }: { displayType: string }) => {
     setLoading(false);
   };
 
+  // Função específica para inicializar filtros de posts do WordPress
+  const initialWordPressFilters = async () => {
+    if (!(country || region || thematicArea) || initialFilterDone) {
+      return;
+    }
+
+    setLoading(true);
+    const filters: queryType[] = [];
+
+    // Converter thematicArea slug para ID se necessário
+    if (thematicArea) {
+      try {
+        const tags = await _api.getTagBySlug(thematicArea);
+        if (tags && tags.length > 0) {
+          filters.push({
+            parameter: "tags",
+            query: tags[0].id.toString(),
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching tag by slug:", error);
+      }
+    }
+
+    // Para country e region, vamos usar os valores diretos por enquanto
+    // (pode precisar de conversão similar se necessário)
+    if (country) {
+      filters.push({
+        parameter: "country",
+        query: country,
+      });
+    }
+
+    if (region) {
+      filters.push({
+        parameter: "region", 
+        query: region,
+      });
+    }
+
+    // Aplicar filtros se existirem
+    if (filters.length > 0) {
+      applyFilters(filters);
+    }
+
+    setLoading(false);
+    setInitialFilterDone(true);
+  };
+
+  // Effect para aplicar filtros iniciais da URL
   useEffect(() => {
-    getPosts();
-  }, [page]);
+    initialWordPressFilters();
+  }, [country, region, thematicArea, initialFilterDone]);
+
+  // Effect para buscar dados quando filtros ou página mudam
+  useEffect(() => {
+    // Só busca dados se os filtros iniciais já foram aplicados ou se não há parâmetros da URL
+    if (initialFilterDone || (!country && !region && !thematicArea)) {
+      getPosts();
+    }
+  }, [page, filter, initialFilterDone]);
 
   return (
     <>

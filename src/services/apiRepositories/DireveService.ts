@@ -11,13 +11,81 @@ import {
 import { getDescriptorTags, getRegionByCountry } from "@/components/feed/utils";
 import moment, { lang } from "moment";
 
-import { DefaultResourceDto } from "../types/defaultResource";
+import { DefaultResourceDto, DefaultResourceItemDto } from "../types/defaultResource";
 import { RepositoryApiResponse } from "../types/repositoryTypes";
 import { TagItem } from "@/components/feed/resourceitem";
 import axios from "axios";
 import { queryType } from "../types/resources";
+import { PostsApi } from "../posts/PostsApi";
+import { Post } from "../types/posts.dto";
 
 export class DireveService {
+  /**
+   * Gera filtros a partir dos dados mesclados
+   */
+  private generateFiltersFromMergedData(mergedData: DefaultResourceItemDto[]) {
+    // Extrair valores únicos para cada filtro, garantindo que são strings
+    const countries = [...new Set(mergedData.map(item => item.country).filter(Boolean))] as string[];
+    const regions = [...new Set(mergedData.map(item => item.region).filter(Boolean))] as string[];
+    const documentTypes = [...new Set(mergedData.map(item => item.documentType).filter(Boolean))] as string[];
+    const resourceTypes = [...new Set(mergedData.map(item => item.resourceType).filter(Boolean))] as string[];
+    const years = [...new Set(mergedData.map(item => item.year).filter(Boolean))] as string[];
+    const modalities = [...new Set(mergedData.map(item => item.modality).filter(Boolean))] as string[];
+    
+    // Extrair thematic areas (pode ser array)
+    const allThematicAreas = mergedData.flatMap(item => 
+      Array.isArray(item.thematicArea) ? item.thematicArea : [item.thematicArea]
+    ).filter(Boolean) as string[];
+    const uniqueThematicAreas = [...new Set(allThematicAreas)];
+
+    return {
+      countryFilter: countries.map(country => ({ type: country, count: 0 })),
+      regionFilter: regions.map(region => ({ type: region, count: 0 })),
+      documentTypeFilter: documentTypes.map(docType => ({ type: docType, count: 0 })),
+      resourceTypeFilter: resourceTypes.map(resType => ({ type: resType, count: 0 })),
+      yearFilter: years.map(year => ({ type: year, count: 0 })),
+      thematicAreaFilter: uniqueThematicAreas.map(area => ({ type: area, count: 0 })),
+      eventFilter: modalities.map(modality => ({ type: modality, count: 0 })),
+    };
+  }
+
+  /**
+   * Converte posts do WordPress para o formato DefaultResourceItemDto
+   */
+  private convertWpPostsToDefaultResource(wpPosts: Post[]): DefaultResourceItemDto[] {
+    return wpPosts.map((post: Post) => {
+      // Extrair países e regiões dos termos embedded
+      const countries = post._embedded?.["wp:term"]?.flat()?.filter(term => term.taxonomy === "country") || [];
+      const regions = post._embedded?.["wp:term"]?.flat()?.filter(term => term.taxonomy === "region") || [];
+      const tags = post._embedded?.["wp:term"]?.flat()?.filter(term => term.taxonomy === "post_tag") || [];
+
+      // Extrair thumbnail da featured media
+      const featuredMedia = post._embedded?.["wp:featuredmedia"]?.[0];
+      const thumbnail = featuredMedia?.media_details?.sizes?.medium?.source_url || 
+                       featuredMedia?.media_details?.sizes?.thumbnail?.source_url ||
+                       featuredMedia?.source_url || "";
+
+      // Extrair ano da data
+      const year = post.date ? moment(post.date).format("YYYY") : "";
+
+      const baseUrl = process.env.BASE_URL;
+      return {
+        id: post.id.toString(),
+        link: `${baseUrl}/events/${post.slug}`,
+        title: post.title.rendered,
+        excerpt: post.excerpt.rendered,
+        country: countries.length > 0 ? countries[0].name : undefined,
+        region: regions.length > 0 ? regions[0].name : undefined,
+        thumbnail: thumbnail,
+        thematicArea: tags.length > 0 ? tags.map(t => t.name) : undefined,
+        documentType: "Event", // Posts do WordPress são eventos
+        resourceType: "Event",
+        year: year,
+        modality: undefined, // Não disponível em posts do WordPress
+      };
+    });
+  }
+
   public getDefaultResources = async (
     count: number,
     start: number,
@@ -27,8 +95,17 @@ export class DireveService {
     const allResults = await Promise.all([
       this.getDireveResources(10000, 0, lang!),
     ]);
+    const _api = new PostsApi();
+    const allWpEvents = await _api.getCustomPost("event", 100, 0);
 
-    const mergedData = allResults.flatMap((r) => r.data);
+    // Converter posts do WordPress para o formato DefaultResourceItemDto
+    const convertedWpEvents = this.convertWpPostsToDefaultResource(allWpEvents);
+
+    // Juntar dados do Direve com posts convertidos do WordPress
+    const mergedData = [
+      ...allResults.flatMap((r) => r.data),
+      ...convertedWpEvents
+    ];
 
     let orderedData = mergedData.sort((a, b) => {
       const yearA = parseInt(a.year || "0");
@@ -41,6 +118,9 @@ export class DireveService {
       ? applyDefaultResourceFilters(queryItems, orderedData)
       : orderedData;
 
+    // Gerar filtros a partir dos dados mesclados
+    const mergedFilters = this.generateFiltersFromMergedData(mergedData);
+
     // paginação
     const pageSize = Math.max(0, count);
     const window = filteredArray.slice(start, start + pageSize + 1);
@@ -50,23 +130,25 @@ export class DireveService {
     return {
       data: paginated,
       totalFound: filteredArray.length,
-      countryFilter: allResults[0].countryFilter.sort((a, b) =>
+      countryFilter: mergedFilters.countryFilter.sort((a, b) =>
         a.type.localeCompare(b.type)
       ),
-      documentTypeFilter: allResults[0].documentTypeFilter.sort((a, b) =>
+      documentTypeFilter: mergedFilters.documentTypeFilter.sort((a, b) =>
         a.type.localeCompare(b.type)
       ),
-      eventFilter: allResults[0].eventFilter?.sort((a, b) =>
+      eventFilter: mergedFilters.eventFilter.sort((a, b) =>
         a.type.localeCompare(b.type)
       ),
-      regionFilter: allResults[0].regionFilter,
-      thematicAreaFilter: allResults[0].thematicAreaFilter.sort((a, b) =>
+      regionFilter: mergedFilters.regionFilter.sort((a, b) =>
         a.type.localeCompare(b.type)
       ),
-      yearFilter: allResults[0].yearFilter.sort(
-        (a, b) => Number(a.type) + Number(b.type)
+      thematicAreaFilter: mergedFilters.thematicAreaFilter.sort((a, b) =>
+        a.type.localeCompare(b.type)
       ),
-      resourceTypeFilter: allResults[0].resourceTypeFilter?.sort((a, b) =>
+      yearFilter: mergedFilters.yearFilter.sort(
+        (a, b) => Number(b.type) - Number(a.type)
+      ),
+      resourceTypeFilter: mergedFilters.resourceTypeFilter.sort((a, b) =>
         a.type.localeCompare(b.type)
       ),
     };

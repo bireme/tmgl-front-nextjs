@@ -53,21 +53,26 @@ export const EventsFeed = ({
       setTotalPages(Math.max(1, Math.ceil(response.totalFound / count)));
       setItems(response.data);
       setApiResponse(response);
-      if ((country || region || thematicArea) && !initialFilterDone) {
-        initialFilters(
-          applyFilters,
-          setLoading,
-          setInitialFilterDone,
-          country,
-          thematicArea,
-          region
-        );
-      }
     } catch (error) {
     }
     setLoading(false);
   };
 
+  // Effect para aplicar filtros iniciais da URL
+  useEffect(() => {
+    if ((country || region || thematicArea) && !initialFilterDone) {
+      initialFilters(
+        applyFilters,
+        setLoading,
+        setInitialFilterDone,
+        country,
+        thematicArea,
+        region
+      );
+    }
+  }, [country, region, thematicArea, initialFilterDone]);
+
+  // Effect para buscar dados quando filtros ou página mudam
   useEffect(() => {
     getEvents();
   }, [page, filter, thematicArea, region, country]);
@@ -109,7 +114,7 @@ export const EventsFeed = ({
                         `${i.title.length > 120 ? "..." : ""}`
                       }
                       excerpt={
-                        removeHTMLTagsAndLimit(i.excerpt, 180) +
+                        removeHTMLTagsAndLimit(i.excerpt, 180).replace(/<\/?[^>]+(>|$)/g, "").replace(/&nbsp;/g, " ") +
                         `${i.excerpt.length > 180 ? "..." : ""}`
                       }
                       tags={[

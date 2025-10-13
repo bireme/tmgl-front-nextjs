@@ -7,10 +7,13 @@ import { FeedSection } from "@/components/feed";
 import { GlobalContext } from "@/contexts/globalContext";
 import { NewsFeed } from "@/components/feed/news";
 import styles from "../../styles/pages/home.module.scss";
+import { useRouter } from "next/router";
 
 export default function News() {
   const { globalConfig } = useContext(GlobalContext);
   const [displayType, setDisplayType] = useState<string>("column");
+  const router = useRouter();
+  const { country, region, thematicArea } = router.query;
 
   return (
     <>
@@ -47,7 +50,12 @@ export default function News() {
             {globalConfig?.acf.news_description}
           </p>
         </Flex>
-        <NewsFeed displayType={displayType} />
+        <NewsFeed
+          thematicArea={thematicArea ? thematicArea.toString() : undefined}
+          country={country ? country.toString() : undefined}
+          region={region ? region.toString() : undefined}
+          displayType={displayType}
+        />
       </Container>
     </>
   );
