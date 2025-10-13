@@ -134,7 +134,7 @@ export default function ThematicPage() {
             eventsTitle={properties?.events_title}
             otherEventsTitle={properties?.other_events_title}
             showMoreNewsLink={properties?.show_more_news_link}
-            showMoreEventsLink={properties?.show_more_news_link}
+            showMoreEventsLink={properties?.show_more_events_link}
             exploreAllLabel={properties?.explore_all_label}
           />
 
