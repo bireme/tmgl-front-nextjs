@@ -41,7 +41,7 @@ export default function FeaturedStoryPage({ post }: FeaturedStoryPageProps) {
         
         <Grid mt={40}>
           <Grid.Col span={{ base: 12, md: 8 }}>
-            <Stack spacing={30}>
+            <Stack >
               <Title order={1} className={styles.TitleWithIcon}>
                 {post.title.rendered}
               </Title>
@@ -63,9 +63,9 @@ export default function FeaturedStoryPage({ post }: FeaturedStoryPageProps) {
               
               {tags.length > 0 && (
                 <div>
-                  <Text weight={600} mb={10}>Tags:</Text>
+                  <Text  mb={10}>Tags:</Text>
                   <Text size="sm" color="dimmed">
-                    {tags.map(tag => tag.label).join(", ")}
+                    {tags.map(tag => tag).join(", ")}
                   </Text>
                 </div>
               )}
@@ -73,9 +73,9 @@ export default function FeaturedStoryPage({ post }: FeaturedStoryPageProps) {
           </Grid.Col>
           
           <Grid.Col span={{ base: 12, md: 4 }}>
-            <Stack spacing={20}>
+            <Stack >
               <div>
-                <Text weight={600} mb={5}>Published:</Text>
+                <Text  mb={5}>Published:</Text>
                 <Text size="sm" color="dimmed">
                   {new Date(post.date).toLocaleDateString()}
                 </Text>
@@ -83,7 +83,7 @@ export default function FeaturedStoryPage({ post }: FeaturedStoryPageProps) {
               
               {post.excerpt.rendered && (
                 <div>
-                  <Text weight={600} mb={5}>Summary:</Text>
+                  <Text  mb={5}>Summary:</Text>
                   <Text size="sm" color="dimmed">
                     {removeHTMLTagsAndLimit(post.excerpt.rendered, 200)}
                   </Text>
