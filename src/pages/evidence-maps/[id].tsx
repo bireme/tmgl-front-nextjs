@@ -1,4 +1,4 @@
-import { Badge, Container, Flex, Grid } from "@mantine/core";
+import { Badge, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare } from "@tabler/icons-react";
 import moment, { lang } from "moment";
 import { useContext, useEffect, useState } from "react";
@@ -20,6 +20,7 @@ export default function EvidenceMap() {
   const [openShareModal, setOpenShareModal] = useState(false);
   const [tags, setTags] = useState<Array<TagItem>>([]);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const { language } = useContext(GlobalContext);
   const {
     query: { id },
@@ -32,6 +33,7 @@ export default function EvidenceMap() {
   };
 
   const getItem = async () => {
+    setLoading(true);
     try {
       if (id) {
         const response = await _service.getItem(id.toString());
@@ -39,6 +41,8 @@ export default function EvidenceMap() {
         setTags(_service.formatTags(response, language));
       }
     } catch (e) {
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -51,6 +55,7 @@ export default function EvidenceMap() {
 
   return (
     <>
+      <LoadingOverlay visible={loading} style={{ position: "fixed" }} />
       <Container size={"xl"} py={40}>
         <BreadCrumbs
           blackColor

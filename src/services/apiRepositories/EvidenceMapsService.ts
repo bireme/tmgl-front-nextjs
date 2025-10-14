@@ -172,8 +172,6 @@ export class EvidenceMapsService {
       ? getDescriptorTags(item.descriptors)
       : [];
 
-    if (descriptors.length > 0) descriptors = descriptors.slice(0, 1);
-
     // let engCountries = item.countries?.map((c) => {
     //   const item = c.countryLangs.find((cl) => cl.lang == "en");
     //   if (item && item.countryName) {

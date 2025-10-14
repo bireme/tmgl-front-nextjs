@@ -148,6 +148,7 @@ export default function ThematicPage() {
             </Container>
           ) : null}
 
+
           <MultimediaSection
             multimediaItems={properties?.multimedia_items}
             relatedVideoTitle={properties?.releated_video_title}
