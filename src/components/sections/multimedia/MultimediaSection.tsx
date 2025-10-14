@@ -3,6 +3,7 @@ import { Button, Container, Flex } from "@mantine/core";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { IconArrowRight } from "@tabler/icons-react";
 import styles from "../../../styles/pages/home.module.scss";
+import { useRouter } from "next/router";
 
 interface MultimediaItem {
   title: string;
@@ -28,7 +29,7 @@ export function MultimediaSection({
   className,
 }: MultimediaSectionProps) {
   if (!multimediaItems || multimediaItems.length === 0) return null;
-
+  const router = useRouter();
   return (
     <div style={{ float: "left", width: "100%", backgroundColor: backgroundColor ?? "iherit" }} className={className}>
       <FixedRelatedVideosSection
@@ -46,7 +47,8 @@ export function MultimediaSection({
             gap={10}
             align={"center"}
             onClick={() => {
-              // Handle more media action
+              moreMediaUrl &&
+              router.push(moreMediaUrl);
             }}
             component="a"
             style={{ cursor: "pointer" }}

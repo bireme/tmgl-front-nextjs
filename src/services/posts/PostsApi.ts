@@ -157,7 +157,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
     const response = await this._api.get<Post[]>(
       `${postTypeSlug}?per_page=${
         perPage ? perPage : process.env.POSTSPERPAGE
-      }&page=${page}&_embed&orderby=date&order=desc&acf_format=standard${
+      }&page=${page}&_embed=wp:term&orderby=date&order=desc&acf_format=standard${
         queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
       }`
     );
@@ -225,20 +225,35 @@ export class PostsApi extends BaseUnauthenticatedApi {
       }));
     }
 
-    const tags = item._embedded?.["wp:term"]
+    // Buscar tags de tm-dimension (descriptors)
+    const dimensions = item._embedded?.["wp:term"]
       ?.flat()
       .filter((term) => term.taxonomy === "tm-dimension");
 
-    let tagsTags: TagItem[] = [];
+    let dimensionTags: TagItem[] = [];
 
-    if (tags) {
-      tagsTags = tags.map((c) => ({
+    if (dimensions) {
+      dimensionTags = dimensions.map((c) => ({
         name: decodeHtmlEntities(c.name),
         type: "descriptor",
       }));
     }
 
-    return countryTags.concat(regionTags).concat(tagsTags);
+    // Buscar tags regulares (post_tag)
+    const postTags = item._embedded?.["wp:term"]
+      ?.flat()
+      .filter((term) => term.taxonomy === "post_tag");
+
+    let regularTags: TagItem[] = [];
+
+    if (postTags) {
+      regularTags = postTags.map((c) => ({
+        name: decodeHtmlEntities(c.name),
+        type: "descriptor",
+      }));
+    }
+
+    return countryTags.concat(regionTags).concat(dimensionTags).concat(regularTags);
   }
 
   public async getTagBySlug(slug: string): Promise<any[]> {

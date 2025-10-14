@@ -13,30 +13,32 @@ import { PostsApi } from "@/services/posts/PostsApi";
 import { useRouter } from "next/router";
 
 export default function FeaturedStories() {
-  const _api = new PostsApi();
+  
   const [post, setPost] = useState<Post>();
   const [acf, setAcf] = useState<FeaturedStoriesAcf>();
   const router = useRouter();
+  
   const {
-    query: { slug },
+    query: { slug, region },
   } = router;
 
-  const getPost = useCallback(async (slug: string) => {
+  const getPost = useCallback(async (slug: string, regionParam?: string) => {
     try {
+      const _api = new PostsApi(regionParam ? regionParam.toString() : "");
       const resp = await _api.getPost("featured_stories", slug);
 
       setPost(resp[0]);
       setAcf(resp[0].acf);
     } catch {
-      router.push("/404");
+      console.log("Post not found");
     }
   }, []);
 
   useEffect(() => {
     if (slug && router.isReady) {
-      getPost(slug.toString());
+      getPost(slug.toString(), region?.toString());
     }
-  }, [getPost, slug, router.isReady]);
+  }, [getPost, slug, region, router.isReady]);
 
   return (
     <>
