@@ -28,8 +28,9 @@ export function MultimediaSection({
   backgroundColor,
   className,
 }: MultimediaSectionProps) {
-  if (!multimediaItems || multimediaItems.length === 0) return null;
   const router = useRouter();
+  
+  if (!multimediaItems || multimediaItems.length === 0) return null;
   return (
     <div style={{ float: "left", width: "100%", backgroundColor: backgroundColor ?? "iherit" }} className={className}>
       <FixedRelatedVideosSection
