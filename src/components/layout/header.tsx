@@ -52,15 +52,37 @@ export const HeaderLayout = () => {
 
   useEffect(() => {
     const handleScroll = () => {
+      // Desativa o comportamento de scroll no responsivo (max-width: 1024px)
+      if (window.innerWidth <= 1024) {
+        setIsScrolled(false);
+        return;
+      }
+      
       if (window.scrollY > 0) {
         setIsScrolled(true);
       } else {
         setIsScrolled(false);
       }
     };
+    
+    // Também verifica no resize da janela
+    const handleResize = () => {
+      if (window.innerWidth <= 1024) {
+        setIsScrolled(false);
+      } else {
+        handleScroll();
+      }
+    };
+    
     window.addEventListener("scroll", handleScroll);
+    window.addEventListener("resize", handleResize);
+    
+    // Verifica no carregamento inicial
+    handleResize();
+    
     return () => {
       window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", handleResize);
     };
   }, []);
 
@@ -75,6 +97,20 @@ export const HeaderLayout = () => {
     getMenus();
   }, []);
 
+  // Impede scroll do body quando menu responsivo estiver aberto
+  useEffect(() => {
+    if (responsiveMenuOpen || megaMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    // Cleanup quando componente desmontar
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [responsiveMenuOpen, megaMenuOpen]);
+
   const renderMegaMenuWithItems = () => {
     return (
       <div
@@ -83,17 +119,19 @@ export const HeaderLayout = () => {
           backgroundImage: `url(${process.env.WP_BASE_URL}${selectedSubItem?.attr})`,
         }}
       >
-        {thirdLevelItems?.map((item, key) => {
-          return (
-            <a
-              className={styles.InternalItem}
-              href={parseWpLink(item ? item.url : "")}
-              key={key}
-            >
-              {decodeHtmlEntities(item.title)}
-            </a>
-          );
-        })}
+        <div className={styles.InternalItemsWrapper}>
+          {thirdLevelItems?.map((item, key) => {
+            return (
+              <a
+                className={styles.InternalItem}
+                href={parseWpLink(item ? item.url : "")}
+                key={key}
+              >
+                {decodeHtmlEntities(item.title)}
+              </a>
+            );
+          })}
+        </div>
         <a
           onClick={() => {}}
           href={parseWpLink(selectedSubItem ? selectedSubItem.url : "")}
@@ -167,13 +205,12 @@ export const HeaderLayout = () => {
         <>
           <img
             alt={"menu-image"}
-            width={selectedSubItem.attr ? "100%" : "20%"}
             src={
               selectedSubItem.attr
                 ? `${process.env.WP_BASE_URL}${selectedSubItem.attr}`
                 : "/local/png/defaultimage.png"
             }
-            className={styles.SelectedMenuItemFullImage}
+            className={`${styles.SelectedMenuItemFullImage} ${selectedSubItem.attr ? styles.selectedSubItem  : ""}`}
           />{" "}
           <a
             onClick={() => {}}
@@ -191,12 +228,12 @@ export const HeaderLayout = () => {
             <Grid.Col span={{ base: 12, md: 4 }}>
               <img
                 alt={"menu-image"}
-                width={selectedSubItem.attr ? "100%" : "20%"}
                 src={
                   selectedSubItem.attr
                     ? `${process.env.WP_BASE_URL}${selectedSubItem.attr}`
                     : "/local/png/defaultimage.png"
                 }
+                className={`${styles.SelectedMenuItemFullImage} ${selectedSubItem.attr ? styles.selectedSubItem  : ""}`}
               />
             </Grid.Col>
             <Grid.Col span={{ base: 12, md: 8 }}>
@@ -430,7 +467,7 @@ export const HeaderLayout = () => {
                   
                 className={styles.MegaMenuRightSection}
               >
-                <Flex mt={20} style={{ height: "100%" }}>
+                <Flex mt={20} style={{ height: "100%" }} direction={"column"}>
                   {selectedSubItem
                     ? thirdLevelItems
                       ? renderMegaMenuWithItems()

@@ -9,7 +9,7 @@
   .eachSlide > div{
     height: 85vh;
     @media (max-width: '750px') {
-      height: 86vh;
+      height: 100vh;
     }
     &::before{
       position: absolute;
