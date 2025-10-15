@@ -28,6 +28,7 @@ export default function Home() {
   const [acf, setAcf] = useState<HomeAcf>();
   const { setRegionName, globalConfig } = useContext(GlobalContext);
   const [showModal, setShowModal] = useState(false);
+  const cacheRandom = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
 
   const getPageProperties = useCallback(async () => {
     try {
@@ -150,7 +151,7 @@ export default function Home() {
           <div className={styles.EmbedContent}>
             <Container size={"xl"}>
               <EmbedIframe
-                src={acf?.embed_content}
+                src={`${acf?.embed_content}?v=${cacheRandom}`}
                 width="100%"
                 height={1300}
               />
