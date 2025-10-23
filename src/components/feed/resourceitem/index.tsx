@@ -1,5 +1,5 @@
 import { Badge, Flex, LoadingOverlay } from "@mantine/core";
-import { HTMLAttributes, useEffect, useState } from "react";
+import { HTMLAttributes, useEffect, useState, useRef } from "react";
 import { IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
 
 import { IframeThumbNail } from "../multimedia/pdf_thumbnail";
@@ -67,20 +67,77 @@ export const DefaultCard = ({
   );
 };
 
-export const ResourceCard = ({
-  title,
-  excerpt,
-  link,
-  displayType,
-  image,
-  tags,
-  size,
-  target = "_self",
-  type,
-  fullWidth = false,
-  demo = false,
-  className,
-}: ResourceCardProps) => {
+// Lazy loading component for thumbnails
+const LazyThumbnail = ({ 
+  image, 
+  type, 
+  displayType 
+}: { 
+  image: string; 
+  type?: string; 
+  displayType: string; 
+}) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const [hasLoaded, setHasLoaded] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasLoaded) {
+          setIsVisible(true);
+          setHasLoaded(true);
+        }
+      },
+      { threshold: 0.1, rootMargin: '50px' }
+    );
+
+    if (ref.current) {
+      observer.observe(ref.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasLoaded]);
+
+  return (
+    <div ref={ref} style={{ minHeight: '200px' }}>
+      {isVisible ? (
+        <ThumbnailContent image={image} type={type} displayType={displayType} />
+      ) : (
+        <div 
+          className={styles.CardImage}
+          style={{ 
+            background: 'linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#999',
+            fontSize: '14px',
+            fontWeight: '500'
+          }}
+        >
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ marginBottom: '8px' }}>📹</div>
+            <div>Loading...</div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+// Extracted thumbnail content component
+const ThumbnailContent = ({ 
+  image, 
+  type, 
+  displayType 
+}: { 
+  image: string; 
+  type?: string; 
+  displayType: string; 
+}) => {
+  const [imageError, setImageError] = useState(false);
+
   const isPdf = (thumb: string | string[]): boolean => {
     if (type == "Pdf") return true;
     if (Array.isArray(thumb)) thumb = thumb[0];
@@ -96,6 +153,109 @@ export const ResourceCard = ({
     return /\.(jpg|jpeg|png|gif|bmp|webp|svg)$/.test(url);
   };
 
+  const isVideo = (thumb: string | string[]): boolean => {
+    if (Array.isArray(thumb)) thumb = thumb[0];
+    if (typeof thumb !== "string") return false;
+    return thumb.includes("youtube") || thumb.includes("vimeo") || thumb.includes("youtu.be");
+  };
+
+  // Show fallback if image failed to load
+  if (imageError || !image) {
+    return (
+      <div
+        className={styles.CardImage}
+        style={{ 
+          background: 'linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: '#999',
+          fontSize: '14px',
+          fontWeight: '500'
+        }}
+      >
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ marginBottom: '8px' }}>
+            {type === "Video" ? "📹" : type === "Pdf" ? "📄" : "🖼️"}
+          </div>
+          <div>{type || "Media"}</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isPdf(image)) {
+    return <IframeThumbNail url={image} type="pdf" />;
+  }
+  
+  if (isImage(image)) {
+    return (
+      <div
+        className={styles.CardImage}
+        style={{ 
+          backgroundImage: `url(${image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat'
+        }}
+        onError={() => setImageError(true)}
+      >
+        {type === "Video" && (
+          <IconPlayerPlay
+            color="white"
+            size={30}
+            style={{
+              position: "absolute",
+              bottom: "10px",
+              right: "10px",
+              background: "rgba(0,0,0,0.7)",
+              borderRadius: "50%",
+              padding: "5px"
+            }}
+          />
+        )}
+      </div>
+    );
+  }
+
+  // Fallback for other types
+  return (
+    <div
+      className={styles.CardImage}
+      style={{ 
+        background: 'linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        color: '#999',
+        fontSize: '14px',
+        fontWeight: '500'
+      }}
+    >
+      <div style={{ textAlign: 'center' }}>
+        <div style={{ marginBottom: '8px' }}>
+          {type === "Video" ? "📹" : type === "Pdf" ? "📄" : "🖼️"}
+        </div>
+        <div>{type || "Media"}</div>
+      </div>
+    </div>
+  );
+};
+
+export const ResourceCard = ({
+  title,
+  excerpt,
+  link,
+  displayType,
+  image,
+  tags,
+  size,
+  target = "_self",
+  type,
+  fullWidth = false,
+  demo = false,
+  className,
+}: ResourceCardProps) => {
   const colors = {
     country: "#69A221",
     descriptor: "#8B142A",
@@ -109,32 +269,9 @@ export const ResourceCard = ({
 
   const cardImage = () => {
     if (image) {
-      if (isPdf(image)) {
-        return <IframeThumbNail url={image} type="pdf" />;
-      }
-      if (isImage(image)) {
-        return (
-          <div
-            className={styles.CardImage}
-            style={{ backgroundImage: `url(${image})` }}
-          >
-            {type === "Video" && (
-              <IconPlayerPlay
-                color="white"
-                size={30}
-                style={{
-                  position: "absolute",
-                  bottom: "10px",
-                  right: "10px",
-                  background: "black 2px 2px 2px",
-                }}
-              />
-            )}
-          </div>
-        );
-      }
-      return <></>;
+      return <LazyThumbnail image={image} type={type} displayType={displayType} />;
     }
+    return <></>;
   };
 
   return (

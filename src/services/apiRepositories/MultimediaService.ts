@@ -144,50 +144,67 @@ export class MultimediaService {
       const docs = [];
       const docsRaw = data.data.diaServerResponse[0].response.docs;
 
-      for (const d of docsRaw) {
-        if (thumbnail) {
-          if (d.media_type === "video") {
-            try {
-              const thumbnail = await this.getVideoThumbnail(d);
-              d.thumbnail = thumbnail;
-            } catch (err) {
-              console.warn("Erro ao gerar thumbnail de vídeo:", err);
-              d.thumbnail = "";
-            }
-          } else {
-            d.thumbnail = d.link[0];
+      // Process thumbnails in parallel for better performance
+      if (thumbnail) {
+        // Separate videos and images for different processing
+        const videoItems = docsRaw.filter(d => d.media_type === "video");
+        const imageItems = docsRaw.filter(d => 
+          d.media_type === "Imagem fixa" || d.media_type === "Slide"
+        );
 
-            if (d.media_type === "Imagem fixa" || d.media_type === "Slide") {
-              const cachedPath = this.getCachedThumbnailPath(d.thumbnail);
+        // Process videos in parallel with better error handling
+        const videoPromises = videoItems.map(async (d) => {
+          try {
+            const thumbnail = await this.getVideoThumbnail(d);
+            d.thumbnail = thumbnail || "/local/jpeg/multimedia.jpg";
+          } catch (err) {
+            console.warn("Erro ao gerar thumbnail de vídeo:", err);
+            d.thumbnail = "/local/jpeg/multimedia.jpg"; // Fallback image
+          }
+          return d;
+        });
 
-              try {
-                const head = await fetch(cachedPath, { method: "HEAD" });
-
-                if (head.ok) {
-                  // Imagem já existe no servidor
-                  d.thumbnail = cachedPath;
-                } else {
-                  // Chama a API pra gerar e salvar
-                  const { data } = await axios.post(`/api/pdf-image`, {
-                    url: d.thumbnail,
-                  });
-                  d.thumbnail = data.file;
-                }
-              } catch (err) {
-                console.warn("Erro ao verificar ou gerar thumbnail:", err);
-                try {
-                  const { data } = await axios.post(`/api/pdf-image`, {
-                    url: d.thumbnail,
-                  });
-                  d.thumbnail = data.file;
-                } catch (fallbackErr) {
-                  console.warn("Erro total ao gerar thumbnail:", fallbackErr);
-                  d.thumbnail = "";
-                }
-              }
-            }
+        // Check existing thumbnails for images in batch
+        let thumbnailCheckResults = {};
+        if (imageItems.length > 0) {
+          try {
+            const urls = imageItems.map(d => d.link[0]);
+            const { data } = await axios.post('/api/check-thumbnails', { urls });
+            thumbnailCheckResults = data.results.reduce((acc: any, result: any) => {
+              acc[result.url] = result;
+              return acc;
+            }, {});
+          } catch (err) {
+            console.warn("Erro ao verificar thumbnails em lote:", err);
           }
         }
+
+        // Process images with batch check results
+        const imagePromises = imageItems.map(async (d) => {
+          d.thumbnail = d.link[0];
+          const checkResult = thumbnailCheckResults[d.thumbnail];
+          
+          if (checkResult && checkResult.exists) {
+            d.thumbnail = checkResult.thumbnail;
+          } else {
+            try {
+              const { data } = await axios.post(`/api/pdf-image`, {
+                url: d.thumbnail,
+              });
+              d.thumbnail = data.file;
+            } catch (err) {
+              console.warn("Erro ao gerar thumbnail:", err);
+              d.thumbnail = "";
+            }
+          }
+          return d;
+        });
+
+        // Wait for all thumbnails to be processed in parallel
+        await Promise.all([...videoPromises, ...imagePromises]);
+      }
+
+      for (const d of docsRaw) {
 
         docs.push({
           excerpt: d.description ? d.description[0] : "",
@@ -422,37 +439,18 @@ export class MultimediaService {
   };
 
   public getVideoThumbnail = async (obj: MultimediaObject): Promise<string> => {
-    let videoId: string;
     const url = obj.link[0];
 
-    if (url.includes("vimeo")) {
-      videoId = url.split("vimeo.com/")[1];
-      const vimeoProps = await axios.get(
-        `https://vimeo.com/api/v2/video/${videoId}.json`
-      );
-      return vimeoProps.data[0].thumbnail_large;
+    try {
+      // Use our proxy API to avoid CORS issues and handle API changes
+      const { data } = await axios.post('/api/video-thumbnail', { url }, {
+        timeout: 3000 // 3 second timeout to avoid hanging
+      });
+      return data.thumbnail || "/local/jpeg/multimedia.jpg";
+    } catch (error) {
+      console.warn("Erro ao obter thumbnail de vídeo:", error);
+      return "/local/jpeg/multimedia.jpg";
     }
-
-    if (url.includes("youtube") || url.includes("youtu.be")) {
-      try {
-        const parsedUrl = new URL(url);
-        const params = new URLSearchParams(parsedUrl.search);
-        videoId = params.get("v") ?? "";
-
-        if (!videoId) {
-          const pathSegments = parsedUrl.pathname.split("/");
-          videoId = pathSegments[pathSegments.length - 1];
-        }
-
-        if (videoId.includes("?")) videoId = videoId.split("?")[0];
-
-        return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
-      } catch (e) {
-        console.warn("Erro ao parsear URL do YouTube:", url);
-      }
-    }
-
-    return "/local/jpeg/multimedia.jpg";
   };
 
   public getCachedThumbnailPath(url: string): string {

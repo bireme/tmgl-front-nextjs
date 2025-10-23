@@ -35,10 +35,14 @@ export default async function handler(
       return res.status(200).json({ file: imgPublic });
     }
 
-    // Baixa o PDF
+    // Baixa o PDF com timeout maior e retry
     const response = await axios.get(url, {
       responseType: "arraybuffer",
-      timeout: 1000,
+      timeout: 5000, // Aumentado de 1000 para 5000ms
+      maxRedirects: 5,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; TMGL-Thumbnail-Generator/1.0)',
+      },
     });
     const pdfBuffer = response.data;
 
@@ -52,11 +56,11 @@ export default async function handler(
     const renderWidth = Math.round((pageWidth / pageHeight) * renderHeight);
 
     const convert = fromBuffer(pdfBuffer, {
-      density: 120,
+      density: 100, // Reduzido de 120 para 100 para processar mais rápido
       savePath: outputPath,
       saveFilename: hash + "_raw",
       format: "png",
-      quality: 80,
+      quality: 70, // Reduzido de 80 para 70 para arquivos menores
       width: renderWidth,
       height: renderHeight,
     });
@@ -66,9 +70,9 @@ export default async function handler(
     const rawFile = path.join(THUMBS_DIR, `${hash}_raw.1.png`);
     const finalFile = path.join(THUMBS_DIR, `${hash}.png`);
 
-    // 📸 Recorta thumbnail 800x600 do topo da imagem renderizada
-    const targetWidth = 800;
-    const targetHeight = 600;
+    // 📸 Recorta thumbnail 400x300 do topo da imagem renderizada (menor para carregar mais rápido)
+    const targetWidth = 400;
+    const targetHeight = 300;
 
     const image = sharp(rawFile);
     const resized = await image.resize({ height: targetHeight }).toBuffer();

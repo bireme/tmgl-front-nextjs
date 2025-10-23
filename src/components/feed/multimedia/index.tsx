@@ -4,7 +4,7 @@ import {
   DefaultResourceDto,
   DefaultResourceItemDto,
 } from "@/services/types/defaultResource";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback, useMemo } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { MultimediaService } from "@/services/apiRepositories/MultimediaService";
@@ -41,12 +41,12 @@ export const MultimediaFeed = ({
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
   const [filterType, setFilterType] = useState<string>("AND");
 
-  const applyFilters = async (queryList?: queryType[]) => {
+  const applyFilters = useCallback(async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(0);
-  };
+  }, []);
 
-  const getMedias = async () => {
+  const getMedias = useCallback(async () => {
     setLoading(true);
     try {
       const response = await _service.getDefaultResources(
@@ -75,13 +75,96 @@ export const MultimediaFeed = ({
         );
       }
     } catch (error) {
+      console.error("Error loading multimedia:", error);
     }
     setLoading(false);
-  };
+  }, [page, filter, language, country, region, thematicArea, mediaType, initialFilterDone, applyFilters]);
 
   useEffect(() => {
     if (globalConfig) getMedias();
-  }, [page, filter, thematicArea, region, country, globalConfig, mediaType]);
+  }, [globalConfig, getMedias]);
+
+  const renderItems = useMemo(() => {
+    if (items.length > 0) {
+      return items.map((i, k) => (
+        <ResourceCard
+          image={i.thumbnail}
+          displayType={displayType}
+          key={`${i.id}-${k}`} // Better key using ID
+          type={i.documentType ? i.documentType : "Multimedia"}
+          title={
+            i.title
+              ? removeHTMLTagsAndLimit(i.title, 120) +
+                `${i.title.length > 120 ? "..." : ""}`
+              : ""
+          }
+          excerpt={
+            i.excerpt
+              ? removeHTMLTagsAndLimit(i.excerpt, 180) +
+                `${i.excerpt.length > 180 ? "..." : ""}`
+              : ""
+          }
+          tags={[
+            ...(i.country
+              ? [
+                  {
+                    name: i.country,
+                    type: "country",
+                  },
+                ]
+              : []),
+            ...(i.region
+              ? [
+                  {
+                    name: i.region,
+                    type: "region",
+                  },
+                ]
+              : []),
+            ...(Array.isArray(i.thematicArea)
+              ? i.thematicArea
+                  .filter((tag) => tag.trim() !== "")
+                  .map((tag) => ({
+                    name: tag,
+                    type: "descriptor",
+                  }))
+              : i.thematicArea
+              ? [
+                  {
+                    name: i.thematicArea,
+                    type: "descriptor",
+                  },
+                ]
+              : []),
+          ]}
+          target="_blank"
+          link={i.link}
+          className={styles.GridMode}
+        />
+      ));
+    } else if (loading) {
+      return <></>;
+    } else {
+      return (
+        <div
+          style={{ 
+            height: "400px", 
+            width: "100%", 
+            display: "flex", 
+            justifyContent: "center", 
+            alignItems: "center",
+            gridColumn: "1 / -1"
+          }}
+        >
+          {apiResponse?.totalFound == 0 ? (
+            <Center>No results found!</Center>
+          ) : (
+            <></>
+          )}
+        </div>
+      );
+    }
+  }, [items, displayType, loading, apiResponse?.totalFound]);
 
   return (
     <>
@@ -108,87 +191,7 @@ export const MultimediaFeed = ({
           <div 
             className={`${styles.ResourcesGrid} ${displayType === "column" ? styles.columnMode : styles.rowMode}`}
           >
-            {items.length > 0 ? (
-              <>
-                {items.map((i, k) => {
-                  return (
-                    <ResourceCard
-                      image={i.thumbnail}
-                      displayType={displayType}
-                      key={k}
-                      type={i.documentType ? i.documentType : "Multimedia"}
-                      title={
-                        i.title
-                          ? removeHTMLTagsAndLimit(i.title, 120) +
-                            `${i.title.length > 120 ? "..." : ""}`
-                          : ""
-                      }
-                      excerpt={
-                        i.excerpt
-                          ? removeHTMLTagsAndLimit(i.excerpt, 180) +
-                            `${i.excerpt.length > 180 ? "..." : ""}`
-                          : ""
-                      }
-                      tags={[
-                        ...(i.country
-                          ? [
-                              {
-                                name: i.country,
-                                type: "country",
-                              },
-                            ]
-                          : []),
-                        ...(i.region
-                          ? [
-                              {
-                                name: i.region,
-                                type: "region",
-                              },
-                            ]
-                          : []),
-                        ...(Array.isArray(i.thematicArea)
-                          ? i.thematicArea
-                              .filter((tag) => tag.trim() !== "")
-                              .map((tag) => ({
-                                name: tag,
-                                type: "descriptor",
-                              }))
-                          : i.thematicArea
-                          ? [
-                              {
-                                name: i.thematicArea,
-                                type: "descriptor",
-                              },
-                            ]
-                          : []),
-                      ]}
-                      target="_blank"
-                      link={i.link}
-                      className={styles.GridMode}
-                    />
-                  );
-                })}
-              </>
-            ) : loading ? (
-              <></>
-            ) : (
-              <div
-                style={{ 
-                  height: "400px", 
-                  width: "100%", 
-                  display: "flex", 
-                  justifyContent: "center", 
-                  alignItems: "center",
-                  gridColumn: "1 / -1"
-                }}
-              >
-                {apiResponse?.totalFound == 0 ? (
-                  <Center>No results found!</Center>
-                ) : (
-                  <></>
-                )}
-              </div>
-            )}
+            {renderItems}
           </div>
           <div className={styles.PaginationContainer}>
             <Pagination
