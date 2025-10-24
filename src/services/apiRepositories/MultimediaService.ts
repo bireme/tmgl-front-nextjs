@@ -165,7 +165,7 @@ export class MultimediaService {
         });
 
         // Check existing thumbnails for images in batch
-        let thumbnailCheckResults = {};
+        let thumbnailCheckResults: Record<string, any> = {};
         if (imageItems.length > 0) {
           try {
             const urls = imageItems.map(d => d.link[0]);

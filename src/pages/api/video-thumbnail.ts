@@ -45,7 +45,7 @@ export default async function handler(
           throw new Error("No thumbnail from oEmbed");
         }
       } catch (oembedError) {
-        console.warn("Vimeo oEmbed failed, trying fallback:", oembedError.message);
+        console.warn("Vimeo oEmbed failed, trying fallback:", oembedError instanceof Error ? oembedError.message : String(oembedError));
         // Fallback: try to construct thumbnail URL from video ID
         // This is a guess based on Vimeo's pattern, may not always work
         thumbnailUrl = `https://i.vimeocdn.com/video/${videoId}_640x360.jpg`;
@@ -71,7 +71,7 @@ export default async function handler(
 
         thumbnailUrl = `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`;
       } catch (e) {
-        console.warn("YouTube URL parsing failed:", e.message);
+        console.warn("YouTube URL parsing failed:", e instanceof Error ? e.message : String(e));
         throw new Error("Invalid YouTube URL");
       }
     } else {
