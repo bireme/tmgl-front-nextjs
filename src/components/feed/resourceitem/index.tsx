@@ -358,7 +358,7 @@ export const ResourceCard = ({
                 </Badge>
               ))}
           </Flex>
-          {link && (
+          {link && !demo && (
           <Flex
             align="flex-end"
             justify="flex-end"

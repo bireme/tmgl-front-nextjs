@@ -51,7 +51,7 @@ export const ThematicPagesFeed = ({ displayType }: { displayType: string }) => {
     const flat = typeof groups?.flat === "function" ? groups.flat() : groups;
 
     return (Array.isArray(flat) ? flat : []).some(
-      (t: any) => t?.taxonomy === "post_tag" && t?.name === "demo"
+      (t: any) => t?.taxonomy === "post_tag" && t?.name === "Under Development"
     );
   }
 
