@@ -8,6 +8,14 @@ import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../styles/components/sections.module.scss";
 import { useRouter } from "next/router";
 
+// Normalize and resolve target URL: if external (http/https), return as-is; else prefix with /dimensions/
+const resolveTarget = (value?: string): string => {
+  const raw = (value ?? "").trim();
+  const cleaned = raw.replace(/^@+/, "");
+  if (/^https?:\/\//i.test(cleaned)) return cleaned;
+  return `/dimensions/${cleaned}`;
+};
+
 // Export new reusable components
 export { PageHeaderSection } from "./pageHeader/PageHeaderSection";
 export { LayoutToggle } from "./layoutToggle/LayoutToggle";
@@ -84,7 +92,7 @@ export const DimensionsSection = ({ items }: { items?: ItemResource[] }) => {
                 <TraditionalSectionCard
                   key={key}
                   iconPath={_api.findFeaturedMedia(dimension, "full")}
-                  target={`/dimensions/${dimension.slug}`}
+                  target={resolveTarget(dimension.slug)}
                   title={dimension.title.rendered}
                 />
               );
@@ -94,7 +102,7 @@ export const DimensionsSection = ({ items }: { items?: ItemResource[] }) => {
                 <TraditionalSectionCard
                   key={key}
                   iconPath={item.icon}
-                  target={item.url}
+                  target={resolveTarget(item.url)}
                   title={item.title}
                 />
               );

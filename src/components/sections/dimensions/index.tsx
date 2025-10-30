@@ -57,7 +57,7 @@ export const RegionalDimensions = ({
                     key={key}
                     sm={true}
                     iconPath={dimension.icon.url}
-                    target={`${region ? "/" + region : ""}/dimensions/${
+                    target={dimension.global_slug.includes("https") || dimension.global_slug.includes("http") ? dimension.global_slug : `${region ? "/" + region : ""}/dimensions/${
                       dimension.global_slug
                     }`}
                     title={dimension.title}
