@@ -12,12 +12,14 @@ export default async function handler(
   const { url } = req.method === "POST" ? req.body : req.query;
 
   if (!url || typeof url !== "string") {
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(400).json({ error: "URL inválida" });
   }
 
   // Check cache first
   const cached = thumbnailCache.get(url);
   if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(200).json({ thumbnail: cached.thumbnail });
   }
 
@@ -82,6 +84,7 @@ export default async function handler(
     // Cache the result
     thumbnailCache.set(url, { thumbnail: thumbnailUrl, timestamp: Date.now() });
     
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(200).json({ thumbnail: thumbnailUrl });
   } catch (error) {
     console.warn("Erro ao obter thumbnail de vídeo:", error);
@@ -90,6 +93,7 @@ export default async function handler(
     // Cache the fallback too
     thumbnailCache.set(url, { thumbnail: fallbackThumbnail, timestamp: Date.now() });
     
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(200).json({ thumbnail: fallbackThumbnail });
   }
 }

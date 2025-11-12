@@ -8,6 +8,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method !== "POST") {
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(405).json({ message: "Method not permited" });
   }
 
@@ -26,8 +27,10 @@ export default async function handler(
     }${q ? `&q=${q}` : ""}${start ? `&start=${start}` : ""}&lang=${lang}&sort=created_date%20DESC`;
 
     const response = await axios.get(url, { headers: { apiKey: apiKey } });
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(200).json({ data: response.data, status: true });
   } catch (error) {
     console.error("Error while fecthing LIS resources:");
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
   }
 }
