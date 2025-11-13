@@ -1,3 +1,52 @@
+
+
+.LogoContent{
+  width: 45%;
+ 
+  .LogoTextContent{
+    padding-left: 15px;
+    border-left: solid black 2px;
+    .LogoRegionNameText{
+      text-decoration: none;
+      color: black;
+      font-size: 1.2rem;
+        font-weight: 600;
+        line-height: 160%;
+        line-height: 1.5rem;
+    }
+    .LogoSubText{
+        text-decoration: none;
+        color: black;
+        font-size: 1.1rem;
+        font-weight: 600;
+        line-height: 160%;
+        line-height: 1.2rem;
+      small{
+        font-size: 0.9rem;
+        font-weight: 500;
+        line-height: 160%;
+        line-height: 1rem;
+      }
+      
+    }
+  }
+  @media (max-width: '750px') {
+    width: 80%;
+    .LogoTextContent{
+      .LogoRegionNameText{
+        font-size: 0.9rem;
+      }
+      .LogoSubText{
+        font-size: 0.8rem;
+        line-height: 0.85rem;
+        small{
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+}
+
 .SelectedMenuItemFullImage{
   width: 20%;
   @media screen and (max-width: 750px) {
@@ -23,7 +72,7 @@
   align-items: flex-start;
   position: relative;
   overflow: visible;
-  background-size: cover;
+  background-size: contain;
   background-position: center center;
   background-repeat: no-repeat;
   @media screen and (max-width: 750px) {
@@ -117,7 +166,7 @@
         font-size: 30px !important;
       }
       img{
-        width: 45px !important;
+        width: 120px !important;
       }
       .BrandContent{
         .InfoNavContainer{
@@ -142,7 +191,7 @@
       width: 10%;
       right: 0px;
       position: absolute;
-      top: 5px;
+      top: 15px;
     }
   }
 }
@@ -166,10 +215,13 @@
       }
     }
     img{
-      width: 72px;
+      width: 140px;
     }
     .BrandContent{
       width: 100%;
+      @media (max-width: '750px') {
+        width: 15%;
+      }
       a{
         color:#000000;
         text-decoration: none;
@@ -193,7 +245,7 @@
         a{
           cursor: pointer;
           color:  #282824;
-          text-align: center;
+          text-align: left;
           font-family: Roboto;
           font-size: 16px;
           font-style: normal;
@@ -238,7 +290,7 @@
         font-size: 30px;
       }
       img{
-        width: 45px;
+        width: 140px;
       }
       .BrandContent{
         .InfoNavContainer{
@@ -372,16 +424,42 @@
   }
 }
 
+
 .FooterLayout{
   width: 100%;
   float: left;
   padding: 70px 0px 0px 0px;
   background: #D9D9D9;
+
+  .FooterImages{
+    width: 30%;
+    @media (max-width: '750px') {
+      width: 100%;
+    }
+    a{
+      text-decoration: none !important;
+    }
+    .FooterImageItem{
+      a{
+        text-decoration: none !important;
+      }
+      span{
+        border-top: solid black 3px;
+        padding-top: 15px;
+        font-size: 1.3rem;
+        font-weight: 500;
+        line-height: 160%;
+        line-height: 1.5rem;
+        color: black;
+        text-decoration: none !important;
+      }
+    }
+  }
  
   @media (max-width: '750px') {
     .FooterImages{
       padding: 10px 0px;
-      border-top: solid black 1px;
+
       border-bottom: solid black 1px,
     }
     width: 100%;

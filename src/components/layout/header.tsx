@@ -293,10 +293,27 @@ export const HeaderLayout = () => {
           justify={"center"}
           className={styles.LogoContainer}
         >
-          <Flex direction={"column"}>
-            <a href={`/`}>
-              <img src={logoSource} alt="brand-logo" id={"BrandLogo"} />
-            </a>
+          <Flex direction={"row"} align={"center"} className={styles.LogoContent} gap={"10px"}>
+            <div>
+              <a href={`/`}>
+                <img src={logoSource} alt="brand-logo" id={"BrandLogo"} />
+              </a>
+            </div>
+            <Flex className={styles.LogoTextContent} direction={"column"} justify={"flex-end"} align={"flex-start"}>
+              <a className={styles.LogoRegionNameText} href={`/${regionName ? regionName : ""}`}>
+                {countryName ? countryName : getRegionName(regionName)}
+              </a>
+              <a href={`/${regionName ? regionName : ""}`} className={styles.LogoSubText}>
+                {
+                  countryName || getRegionName(regionName) ? (
+                    <small>The WHO Traditional <br/> Medicine Global Library</small>
+                  ) : (
+                    <>The WHO Traditional <br/> Medicine Global Library</>
+                  )
+                }
+                
+              </a>
+            </Flex>
           </Flex>
           <Flex
             direction={"column"}
@@ -305,20 +322,12 @@ export const HeaderLayout = () => {
           >
             <Flex
               direction={"row"}
-              justify={"space-between"}
+              justify={"flex-end"}
               align={"center"}
               className={`${styles.SuperiorFlex} ${
                 getRegionName(regionName) ? styles.HasRegion : ""
               }`}
             >
-              <a href={`/${regionName ? regionName : ""}`}>
-                <p>
-                  TMGL{" "}
-                  <span>
-                    {countryName ? countryName : getRegionName(regionName)}
-                  </span>
-                </p>
-              </a>
               <div className={styles.ResponsiveMenuButton}>
                 {!responsiveMenuOpen ? (
                   <>
@@ -381,11 +390,10 @@ export const HeaderLayout = () => {
               className={`${styles.InfoNavContainer} ${
                 opened ? styles.Opened : ""
               }`}
-              justify={"space-between"}
+              align={"flex-end"}
+              justify={"flex-end"}
             >
-              <a href={`/${regionName ? regionName : ""}`}>
-                <small>The WHO Traditional Medicine Global Library</small>
-              </a>
+              
               <Flex className={styles.InfoNav} justify={"fle-end"} gap={"16px"}>
                 {regMenu?.map((item, key) => {
                   return (
