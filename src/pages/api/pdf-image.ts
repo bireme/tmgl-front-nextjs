@@ -18,6 +18,7 @@ export default async function handler(
   const { url } = req.method === "POST" ? req.body : req.query;
 
   if (!url || typeof url !== "string") {
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(400).json({ error: "URL inválida" });
   }
 
@@ -32,6 +33,7 @@ export default async function handler(
     }
 
     if (fs.existsSync(imgPath)) {
+      res.setHeader("X-Frame-Options", "SAMEORIGIN");
       return res.status(200).json({ file: imgPublic });
     }
 
@@ -99,9 +101,11 @@ export default async function handler(
 
     opcional: fs.unlinkSync(rawFile);
 
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(200).json({ file: imgPublic });
   } catch (err) {
     console.error("Erro ao gerar thumbnail:", err);
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(200).json({ file: DEFAULT_IMG });
   }
 }

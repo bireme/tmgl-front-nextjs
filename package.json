@@ -6,7 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate-pdf": "node scripts/generate-pdf.js",
+    "generate-pdf:manual": "node scripts/generate-pdf.js TECHNICAL_MANUAL.md",
+    "generate-pdf:sitemap": "node scripts/generate-pdf.js MAPA_DO_SITE.md"
   },
   "dependencies": {
     "@coveops/vimeo-thumbnail": "^1.0.2",
@@ -63,6 +66,7 @@
     "@types/xml2js": "^0.4.14",
     "eslint": "^8",
     "eslint-config-next": "14.2.4",
+    "marked": "^16.4.1",
     "postcss": "^8.4.39",
     "postcss-preset-mantine": "^1.15.0",
     "postcss-simple-vars": "^7.0.1",

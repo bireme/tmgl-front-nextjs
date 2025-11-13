@@ -29,8 +29,10 @@ export default async function handler(
       explicitArray: false,
     });
 
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     res.status(200).json(jsonData);
   } catch (error) {
     console.error("Error while searching RSS FEED:", error);
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
   }
 }

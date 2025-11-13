@@ -15,12 +15,14 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   if (req.method !== "POST") {
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(405).json({ message: "Method not permited" });
   }
   var CryptoJS = require("crypto-js");
   const { email } = req.body;
 
   if (!email || typeof email !== "string") {
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(400).json({ message: "Email is a required field" });
   }
 
@@ -31,6 +33,7 @@ export default async function handler(
     );
     var originalKey = bytesToKey.toString(CryptoJS.enc.Utf8);
   } else {
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(500).json({ message: "MailChimp Config not found" });
   }
 
@@ -38,6 +41,7 @@ export default async function handler(
   const LIST_ID = process.env.MAILCHIMP_LIST_ID;
   const DATA_CENTER = process.env.MAILCHIMP_DATA_CENTER;
   if (!API_KEY || !LIST_ID || !DATA_CENTER) {
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(500).json({ message: "MailChimp Config not found" });
   }
   const url = `https://${DATA_CENTER}.api.mailchimp.com/3.0/lists/${LIST_ID}/members`;
@@ -48,6 +52,7 @@ export default async function handler(
       { headers: { Authorization: `apikey ${API_KEY}` } }
     );
 
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(200).json({
       message: "Subscribed successfully",
       status: true,
@@ -56,6 +61,7 @@ export default async function handler(
   } catch (error: any) {
     const errorMessage =
       error.response?.data?.detail || "Erro while subscribing";
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(200).json({ message: errorMessage, status: false });
   }
 }

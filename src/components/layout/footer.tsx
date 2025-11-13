@@ -1,4 +1,4 @@
-import { Container, Flex, Grid } from "@mantine/core";
+import { Container, Divider, Flex, Grid } from "@mantine/core";
 import { decodeHtmlEntities, parseWpLink } from "@/helpers/stringhelper";
 import { useContext, useEffect, useState } from "react";
 
@@ -78,8 +78,12 @@ export const FooterLayout = () => {
               {globalConfig?.acf?.footerimages?.map((item, index) => {
                 return (
                   <a href={item.url} key={index}>
-                    <img src={item.image + ".webp"} key={index} width={"80%"} />
-                  </a>
+                    <Flex direction={"column"} justify={"center"} gap={"15px"} align={"flex-start"} className={styles.FooterImageItem}>
+                      <img src={item.image + ".webp"} key={index} width={"50%"} />
+                      
+                      <span>The WHO Traditional <br/> Medicine Global Library</span>
+                    </Flex>
+                </a>
                 );
               })}
             </Flex>

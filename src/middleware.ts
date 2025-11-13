@@ -29,12 +29,15 @@ export async function middleware(request: NextRequest) {
     //   httpOnly: false,
     //   path: "/",
     // });
+    response.headers.set("X-Frame-Options", "SAMEORIGIN");
     return response;
   }
   // Removido o redirect com lang na URL, pois o cookie já é suficiente
   // e o parâmetro na URL estava sendo propagado para as requisições de API
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set("X-Frame-Options", "SAMEORIGIN");
+  return response;
 }
 
 export const config = {

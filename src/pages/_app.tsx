@@ -38,7 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <GlobalProvider>
         <GlobalConfigLoader />
         <Modal
-          title={"The WHO Traditional Medicine Global Library"}
+          title={"The WHO Traditional  Medicine Global Library"}
           onClose={() => handleAgreeWarning()}
           opened={warningModal}
         >

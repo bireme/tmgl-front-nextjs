@@ -8,6 +8,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method !== "POST") {
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(405).json({ message: "Method not permited" });
   }
 
@@ -26,6 +27,7 @@ export default async function handler(
         apiKey,
         lang ? lang : "en"
       );
+      res.setHeader("X-Frame-Options", "SAMEORIGIN");
       if (response)
         return res.status(200).json({ data: response.data, status: true });
       return res.status(404).json({ data: {}, status: false });
@@ -39,12 +41,14 @@ export default async function handler(
         apiKey,
         lang ? lang : "en"
       );
+      res.setHeader("X-Frame-Options", "SAMEORIGIN");
       if (response)
         return res.status(200).json({ data: response.data, status: true });
       return res.status(404).json({ data: {}, status: false });
     }
   } catch (error) {
     console.error("Error while fecthing LIS resources:", error);
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     return res.status(400).json({ data: {}, status: false });
   }
 }

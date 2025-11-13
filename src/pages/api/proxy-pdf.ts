@@ -27,6 +27,7 @@ export default async function handler(
     const buffer = await response.arrayBuffer();
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", 'inline; filename="proxy.pdf"');
+    res.setHeader("X-Frame-Options", "SAMEORIGIN");
     res.send(Buffer.from(buffer));
   } catch (err) {
     console.error(`Erro no proxy PDF: ${err}`);
@@ -37,6 +38,7 @@ export default async function handler(
 // HTML com imagem fallback:
 function fallback(res: NextApiResponse, type?: string) {
   res.setHeader("Content-Type", "text/html");
+  res.setHeader("X-Frame-Options", "SAMEORIGIN");
   res.status(200).send(`
     <html>
       <head>
