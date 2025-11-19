@@ -45,7 +45,7 @@ Global homepage of TMGL with all main sections of the site.
 - ✅ Traditional Medicine Dimensions section
 - ✅ Thematic Pages
 - ✅ Recent Literature Reviews (slider)
-- ✅ Featured Stories
+- ✅ Featured stories
 - ✅ Events
 - ✅ News from WHO
 - ✅ Newsletter subscription
@@ -71,7 +71,7 @@ Customized homepage for each WHO region.
 - ✅ Regional Dimensions
 - ✅ Collaboration Network
 - ✅ Recent Literature Review
-- ✅ Regional Featured Stories
+- ✅ Regional Featured stories
 - ✅ Regional Events
 - ✅ Regional News
 - ✅ Newsletter
@@ -170,7 +170,7 @@ Customized homepage for each WHO region.
 
 ---
 
-### 6. Featured Stories
+### 6. Featured stories
 
 | Property | Value |
 |----------|-------|
@@ -322,7 +322,7 @@ Customized homepage for each WHO region.
 
 ---
 
-### Regional Featured Stories
+### Regional Featured stories
 
 | Property | Value |
 |----------|-------|

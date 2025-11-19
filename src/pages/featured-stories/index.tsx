@@ -32,13 +32,13 @@ export default function FeaturedStories() {
         <BreadCrumbs
           path={[
             { path: "/", name: "HOME" },
-            { path: "/featured-stories", name: "Featured Stories" },
+            { path: "/featured-stories", name: "Featured stories" },
           ]}
           blackColor={true}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            Featured Stories
+            Featured stories
           </h3>
 
           <div>
