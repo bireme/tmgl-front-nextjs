@@ -30,6 +30,7 @@ export async function middleware(request: NextRequest) {
     //   path: "/",
     // });
     response.headers.set("X-Frame-Options", "SAMEORIGIN");
+    response.headers.set("Permissions-Policy", 'vibrate=(self); usermedia=*; microphone=(); payment=(); sync-xhr=(self "teste.tmgl.org")');
     return response;
   }
   // Removido o redirect com lang na URL, pois o cookie já é suficiente
@@ -37,6 +38,7 @@ export async function middleware(request: NextRequest) {
 
   const response = NextResponse.next();
   response.headers.set("X-Frame-Options", "SAMEORIGIN");
+  response.headers.set("Permissions-Policy", 'vibrate=(self); usermedia=*; microphone=(); payment=(); sync-xhr=(self "teste.tmgl.org")');
   return response;
 }
 
