@@ -1,4 +1,4 @@
-.imageCardImage{
+.imageCardImage {
   width: 100%;
   height: 200px;
   background-size: cover;
@@ -6,59 +6,75 @@
   background-position: center center;
 }
 
-.fixSearchForm{
+.Disclaimer {
+  p {
+    font-size: 1rem !important;
+    margin-bottom: 0px !important;
+    margin-top: 0px !important;
+    font-weight: 400 !important;
+  }
+}
+
+.fixSearchForm {
   width: 100%;
   height: 60vh;
 }
-.CollaborationNetworkContainer{
+
+.CollaborationNetworkContainer {
   background-color: #D2E2E9;
   float: left;
   width: 100%;
-  h2{
+
+  h2 {
     font-family: "Roboto Serif";
     font-size: 1.7rem;
     margin-bottom: 40px;
   }
 }
-.researchBlockContent{
-  p{
+
+.researchBlockContent {
+  p {
     font-size: 1.3rem;
   }
 }
-.CollaborationNetworkItem{
+
+.CollaborationNetworkItem {
   width: 100%;
   height: 120px;
   background-position: center center;
   background-repeat: no-repeat;
-  background-size: contain ;
+  background-size: contain;
   display: flex;
   align-items: baseline;
 }
-.CollaborationNetworkItemContainer{
+
+.CollaborationNetworkItemContainer {
   max-width: 250px;
   width: 250px;
   text-align: center;
 }
 
 
-.TmsItem{
+.TmsItem {
   cursor: pointer;
   max-width: 22%;
   min-width: 22%;
   border-radius: 16px;
   background: #F3F3F2;
   box-shadow: 0px 0px 17px 0px rgb(0 0 0 / 31%);
-  padding: 10px; 
+  padding: 10px;
   margin-top: 10px;
   margin-bottom: 40px;
   min-height: 340px;
   max-height: 340px;
   overflow: hidden;
+
   @media (max-width: '1000px') {
     max-width: 100%;
     min-width: 100%;
   }
-  .TmsImage{
+
+  .TmsImage {
     width: 100%;
     height: 240px;
     background-position: center center;
@@ -66,42 +82,48 @@
     background-repeat: no-repeat;
     border-radius: 8px;
   }
-  h4{
+
+  h4 {
     font-size: 1.1rem;
     margin-bottom: 0px;
     margin-top: 15px;
   }
 }
 
-.HeroSearch{
+.HeroSearch {
   width: 100%;
   height: 65vh;
   position: relative;
+
   @media (max-width: '750px') {
     height: 90vh;
   }
-  &.small{
+
+  &.small {
     height: 65vh;
   }
 }
 
-.Tag{
-  span{
+.Tag {
+  span {
     cursor: pointer;
   }
 }
-.FullContainer{
+
+.FullContainer {
   width: 100%;
   height: 100%;
-  >div{
+
+  >div {
     width: 100%;
     height: 100%;
   }
 }
 
-.TraditionalMedicine{
+.TraditionalMedicine {
   text-align: center;
-  h2{
+
+  h2 {
     display: flex;
     width: 100%;
     justify-content: center;
@@ -113,51 +135,61 @@
     font-weight: 800;
     line-height: normal;
     color: white;
+
     @media (max-width: '750px') {
       flex-direction: column;
     }
   }
-  h4{
+
+  h4 {
     color: white;
     text-align: center;
     font-family: Roboto;
     font-size: 20px;
     font-style: normal;
     font-weight: 400;
-    line-height: 140%; /* 28px */
+    line-height: 140%;
+    /* 28px */
     max-width: 700px;
-    margin:3px
+    margin: 3px
   }
 }
-.TrandingAndFeaturedContainer{
+
+.TrandingAndFeaturedContainer {
   height: 650px;
+
   @media (max-width: '750px') {
     height: 850px;
   }
 }
-.TrendingText{
+
+.TrendingText {
   width: 30%;
+
   @media (max-width: '750px') {
     width: 100%;
     margin-top: 0px;
     text-align: center;
     float: left;
   }
+
   float: left;
   color: var(--Colors-Pure-Black, #000);
   font-family: Roboto;
   font-size: 20px;
   font-style: normal;
   font-weight: 300;
-  line-height: 140%; /* 28px */
+  line-height: 140%;
+  /* 28px */
   margin-top: 60px;
   z-index: 999;
 }
-.DescriptionThin{
+
+.DescriptionThin {
   font-weight: 300;
 }
 
-.BlueTitle{
+.BlueTitle {
   font-family: Roboto Serif;
   font-size: 2.2rem;
   margin-top: 0px;
@@ -167,12 +199,14 @@
   text-underline-position: from-font;
   text-decoration-skip-ink: none;
   color: #006CB0;
-  &.small{
+
+  &.small {
     font-size: 1.5rem;
   }
-  
+
 }
-.Description{
+
+.Description {
   font-family: Roboto;
   font-size: 1.1rem;
   font-weight: 400;
@@ -182,105 +216,119 @@
   text-align: justify;
 }
 
-.linkTitle{
-    color: black;
-    text-decoration: none;
-    font-family: 'Roboto Serif';
-    font-size: 1.1rem;
-    font-weight: bold;
-  }
+.linkTitle {
+  color: black;
+  text-decoration: none;
+  font-family: 'Roboto Serif';
+  font-size: 1.1rem;
+  font-weight: bold;
+}
 
-.TitleWithIcon{
+.TitleWithIcon {
   @media (max-width: '750px') {
-    &.center{
+    &.center {
       text-align: center;
       align-items: center;
     }
+
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
     font-size: 26px;
-    &.small{
+
+    &.small {
       font-size: 24px;
-      img{
+
+      img {
         width: 28px;
       }
     }
   }
+
   display: flex;
   gap: 5px;
   font-family: "Roboto Serif";
   font-size: 34px;
-  &.small{
+
+  &.small {
     font-size: 24px;
-    img{
+
+    img {
       width: 28px;
     }
   }
+
   font-style: normal;
   font-weight: 800;
   line-height: normal;
 }
 
-.TrandingAndFeatured{
-  background: linear-gradient(15deg, rgba(255, 255, 255, 1) 2%, rgba(255, 218, 185, 1) 33%, rgba(173, 216, 230, 1) 61%, rgba(95, 144, 195, 1) 100%);;
+.TrandingAndFeatured {
+  background: linear-gradient(15deg, rgba(255, 255, 255, 1) 2%, rgba(255, 218, 185, 1) 33%, rgba(173, 216, 230, 1) 61%, rgba(95, 144, 195, 1) 100%);
+  ;
   min-height: 100vh;
   background-position: center center;
   float: left;
   width: 100%;
 }
 
-.NewsContainer{
+.NewsContainer {
   float: left;
   width: 100%;
 }
 
 
-.TmPageContent{
+.TmPageContent {
   background-color: #F3F3F3;
   margin-top: 0px;
   padding: 40px 0px;
-  h2{
+
+  h2 {
     color: #006CB0;
     font-size: 2rem;
     font-weight: 700;
     font-family: "Roboto Serif";
   }
-  
-  p{
+
+  p {
     color: #000;
     font-size: 1.2rem;
     font-weight: 300;
     font-family: "Roboto";
-    margin-top: 10px ;
+    margin-top: 10px;
     margin-bottom: 20px;
     text-align: justify;
     line-height: 2rem;
   }
-  .SideContent{
-    position:sticky;
+
+  .SideContent {
+    position: sticky;
     margin-top: 40px;
     top: 80px;
-    .SideImage{
+
+    .SideImage {
       max-width: 100%;
       width: 100%;
       border-radius: 8px;
     }
-    .KeyResources{
+
+    .KeyResources {
       margin-top: 20px;
       font-size: 1rem;
       font-weight: 300;
       border-radius: 10px;
       padding: 15px;
       box-shadow: #0000002e 0px 4px 16px 0px;
-      h3{
+
+      h3 {
         font-size: 1.1rem;
         font-weight: 700;
         margin-bottom: 5px;
         margin-top: 0px;
         font-family: "Roboto Serif";
       }
-      p{
+
+      p {
         font-size: 1rem;
         font-weight: 300;
         margin-top: 10px;
@@ -288,63 +336,71 @@
         line-height: 1.3rem;
         text-align: left;
       }
-      a{
+
+      a {
         text-decoration: none;
         color: #006CB0;
-        &:hover{
+
+        &:hover {
           font-weight: 600;
         }
       }
     }
   }
-  
+
 }
 
-.CountryContent{
+.CountryContent {
   background-color: #F3F3F3;
   margin-top: -40px;
   padding: 40px 0px;
-  h2{
+
+  h2 {
     color: #006CB0;
     font-size: 2rem;
     font-weight: 700;
     font-family: "Roboto Serif";
   }
-  
-  p{
+
+  p {
     color: #000;
     font-size: 1.2rem;
     font-weight: 300;
     font-family: "Roboto";
-    margin-top: 10px ;
+    margin-top: 10px;
     margin-bottom: 20px;
     text-align: justify;
     line-height: 2rem;
   }
-  .SideContent{
-    position:sticky;
+
+  .SideContent {
+    position: sticky;
     margin-top: 40px;
     top: 80px;
-    .SideImage{
+
+    .SideImage {
       max-width: 100%;
       width: 100%;
       border-radius: 8px;
     }
-    .KeyResources{
+
+    .KeyResources {
       margin-top: 20px;
       font-size: 1rem;
       font-weight: 300;
       border-radius: 10px;
       padding: 15px;
       box-shadow: #0000002e 0px 4px 16px 0px;
-      h3{
+
+      h3 {
         font-size: 1.1rem;
         font-weight: 700;
         margin-bottom: 5px;
         margin-top: 0px;
         font-family: "Roboto Serif";
       }
-      p{
+
+      p {
         font-size: 1rem;
         font-weight: 300;
         margin-top: 10px;
@@ -352,24 +408,28 @@
         line-height: 1.3rem;
         text-align: left;
       }
-      a{
+
+      a {
         text-decoration: none;
         color: #006CB0;
-        &:hover{
+
+        &:hover {
           font-weight: 600;
         }
       }
     }
   }
-  
+
 }
-.EmbedContent{
-  iframe{
-    border:none;
+
+.EmbedContent {
+  iframe {
+    border: none;
   }
 }
-.CountryRersources{
-  h4{
+
+.CountryRersources {
+  h4 {
     font-family: "Roboto Serif";
     font-size: 1.5rem;
     font-weight: 700;
@@ -478,7 +538,7 @@
   }
 }
 
-.TitleWithIcon{
+.TitleWithIcon {
   text-transform: capitalize;
   padding-left: 40px;
   background-image: url('../../../public/local/svg/simbol.svg');
@@ -491,6 +551,7 @@
   font-weight: 800;
   line-height: normal;
   max-width: 50vw;
+
   @media (max-width: '750px') {
     width: 100%;
     max-width: 100%;
@@ -498,10 +559,11 @@
 }
 
 
-.CountryRss{
-  padding:40px 0px;
+.CountryRss {
+  padding: 40px 0px;
   background-color: #cdd3e7;
-  h4{
+
+  h4 {
     font-family: "Roboto Serif";
     font-size: 1.5rem;
     font-weight: 700;
@@ -513,12 +575,12 @@
 .NewsEventsContainer {
   @media (max-width: 768px) {
     flex-direction: column;
-    
-    > div {
+
+    >div {
       flex: 1 1 100% !important;
       padding-right: 0 !important;
       margin-bottom: 40px;
-      
+
       &:last-child {
         margin-bottom: 0;
       }

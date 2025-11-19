@@ -149,6 +149,7 @@ export interface AcfOtherVersionItem {
 
 export interface CountryAcfProps {
   layout: string;
+  disclaimer?: string;
   stories_url: string;
   content: string;
   other_version: AcfOtherVersionItem;
