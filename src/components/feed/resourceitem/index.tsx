@@ -299,7 +299,7 @@ export const ResourceCard = ({
           {image && displayType === "column" ? cardImage() : <></>}
           <small>{type}</small>
           <h3>{title}</h3>
-          <p>{excerpt}</p>
+          <p style={{minHeight: displayType === "column" ? "100px" : "auto"}}>{excerpt}</p>
         </div>
         <Flex style={{ width: "100%" }} direction="column">
           <Flex mb={20} wrap="wrap" gap={5} className={styles.Tags} >

@@ -110,7 +110,7 @@ export const StoriesSection = ({
         posts.length >= 3 ? (
           <>
             <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
-              {title ? title : "Featured Stories"}
+              {title ? title : "Featured stories"}
             </h2>
             <Grid my={50}>
               <Grid.Col span={{ md: 8 }}>

@@ -243,7 +243,7 @@ export default function CountryHome() {
             <>
               <div className={styles.EmbedContent}>
                 <Container size={"xl"}>
-                  <h3 className={styles.TitleWithIcon}>
+                  {/* <h3 className={styles.TitleWithIcon}>
                     TM Research Analytics{" "}
                   </h3>
                   <p>
@@ -252,9 +252,8 @@ export default function CountryHome() {
                         ? globalConfig?.acf.tm_research_analytics_descriptor
                         : ""
                     )}
-                  </p>
-                </Container>
-                {properties?.embed_content ? (
+                  </p> */}
+                  {properties?.embed_content ? (
                   <EmbedIframe
                     src={properties.embed_content}
                     width="100%"
@@ -263,6 +262,8 @@ export default function CountryHome() {
                 ) : (
                   <></>
                 )}
+                </Container>
+                
               </div>
             </>
           ) : (

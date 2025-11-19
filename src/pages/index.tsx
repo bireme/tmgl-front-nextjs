@@ -76,7 +76,7 @@ export default function Home() {
       </ImageSection>
       <div className={styles.NewsContainer}>
         <NewsSection
-          title={"Thematic Pages"}
+          title={"Thematic pages"}
           posType="thematic-pages"
           archive="thematic-page"
           includeDemo={true}

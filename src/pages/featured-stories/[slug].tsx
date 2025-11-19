@@ -46,9 +46,9 @@ export default function FeaturedStories() {
             post={post}
             path={[
               { path: "/", name: "HOME" },
-              { path: "/featured-stories", name: "Featured Stories" },
+              { path: "/featured-stories", name: "Featured stories" },
             ]}
-            type="Featured Stories"
+            type="Featured stories"
           />
           {acf ? (
             <>

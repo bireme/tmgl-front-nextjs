@@ -156,7 +156,7 @@ export const NewsSection = ({
                         removeHTMLTagsAndLimit(item.title.rendered, 65) +
                         `${item.title.rendered.length > 65 ? "..." : ""}`
                       }
-                      type={moment(item.date).format("DD MMM , YYYY")}
+                      type={""}
                       image={_api.findFeaturedMedia(item, "full") ? _api.findFeaturedMedia(item, "full") : "/public/local/png/defaultImage.png"}
                       tags={_api.getPostTags(item).map((t) => {
                         return {

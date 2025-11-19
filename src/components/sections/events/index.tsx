@@ -86,14 +86,7 @@ export const EventsSection = ({ region, excludedTagIds }: EventsSectionProps) =>
                 )}
               </p>
               <Flex direction={{ base: "column", md: "row" }} gap={15}>
-                <a
-                  key={0}
-                  style={{ color: "white", textDecoration: "none" }}
-                  target="_blank"
-                  href={"/events/" + event?.slug}
-                >
-                  <Button>Event Page</Button>
-                </a>
+                
                 {event?.acf?.releated_content ? (
                   event?.acf?.releated_content.map((item: any, key: number) => (
                     <a

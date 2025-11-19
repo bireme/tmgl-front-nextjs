@@ -98,8 +98,8 @@ export const JournalsSection = ({
                       link={`/${archive}/${item.id}`}
                       title={
                         item.title
-                          ? removeHTMLTagsAndLimit(item.title, 65) +
-                            `${item.title.length > 65 ? "..." : ""}`
+                          ? removeHTMLTagsAndLimit(item.title, 45) +
+                            `${item.title.length > 45 ? "..." : ""}`
                           : ""
                       }
                       type={item.year || ""}
