@@ -19,6 +19,7 @@ import { TrendingCarrocel } from "@/components/rss/slider";
 import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
+import { IconAlertCircleFilled } from "@tabler/icons-react";
 
 export default function CountryHome() {
   const router = useRouter();
@@ -72,7 +73,7 @@ export default function CountryHome() {
           // Buscar news e events relacionados ao país
           // Buscar news do WP geral (não regional)
           const globalApi = new PostsApi(); // Sem região para acessar WP geral
-          
+
           const newsResponse = await globalApi.getCustomPost(
             "posts",
             4,
@@ -154,6 +155,16 @@ export default function CountryHome() {
             <Container size={"xl"} my={40}>
               <Grid>
                 <Grid.Col span={{ md: 9, base: 12 }} px={20}>
+                  {properties?.disclaimer && (
+                    <div className={styles.Disclaimer}>
+                      <Alert color="yellow">
+                        <Flex align={"center"} gap={10}>
+                          <IconAlertCircleFilled size={60} color={"#dab526"} />
+                          <div dangerouslySetInnerHTML={{ __html: properties?.disclaimer }} />
+                        </Flex>
+                      </Alert>
+                    </div>
+                  )}
                   <h2>{postProps.title.rendered}</h2>
                   <div
                     dangerouslySetInnerHTML={{
@@ -162,7 +173,7 @@ export default function CountryHome() {
                   />
                   {
                     properties?.other_version && (
-                      <Alert mt={20} style={{cursor: "pointer"}} onClick={() => router.push(properties?.other_version.link)} color="blue">
+                      <Alert mt={20} style={{ cursor: "pointer" }} onClick={() => router.push(properties?.other_version.link)} color="blue">
                         {properties?.other_version.description}
                       </Alert>
                     )
@@ -190,8 +201,8 @@ export default function CountryHome() {
             </Container>
           </div>
           {properties?.tms_items &&
-          Array.isArray(properties?.tms_items) &&
-          properties?.tms_items?.length > 0 ? (
+            Array.isArray(properties?.tms_items) &&
+            properties?.tms_items?.length > 0 ? (
             <div className={styles.Tms}>
               <Container size={"xl"}>
                 <h3 className={styles.TitleWithIcon}>
@@ -254,16 +265,16 @@ export default function CountryHome() {
                     )}
                   </p> */}
                   {properties?.embed_content ? (
-                  <EmbedIframe
-                    src={properties.embed_content}
-                    width="100%"
-                    height={600}
-                  />
-                ) : (
-                  <></>
-                )}
+                    <EmbedIframe
+                      src={properties.embed_content}
+                      width="100%"
+                      height={600}
+                    />
+                  ) : (
+                    <></>
+                  )}
                 </Container>
-                
+
               </div>
             </>
           ) : (
@@ -312,12 +323,12 @@ export default function CountryHome() {
                   items={
                     properties?.manual_media
                       ? properties?.manual_media?.map((item) => {
-                          return {
-                            title: item.title,
-                            href: item.url,
-                            thumbnail: item.image.sizes.medium_large,
-                          };
-                        })
+                        return {
+                          title: item.title,
+                          href: item.url,
+                          thumbnail: item.image.sizes.medium_large,
+                        };
+                      })
                       : []
                   }
                 />
