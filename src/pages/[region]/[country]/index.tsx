@@ -143,8 +143,8 @@ export default function CountryHome() {
                 />
                 <div className={styles.fixSearchForm}>
                   <SearchForm
-                    title="Discover a comprehensive resource for traditional medicine."
-                    subtitle="Access a wealth of scientific and technical information, regional insights, and global strategies."
+                    title="Discover a comprehensive resource for traditional medicine"
+                    subtitle="Access a wealth of scientific and technical information, regional insights and global strategies"
                   />
                 </div>
               </Container>

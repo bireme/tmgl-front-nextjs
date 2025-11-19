@@ -72,7 +72,7 @@ export const EventsSection = ({ region, excludedTagIds }: EventsSectionProps) =>
           }')`,
         }}
       >
-        <Container size={"xl"} py={80}>
+        <Flex py={80} px={'12%'}>
           <Flex
             direction={"column"}
             justify={"space-between"}
@@ -128,7 +128,7 @@ export const EventsSection = ({ region, excludedTagIds }: EventsSectionProps) =>
               </Flex>
             </div>
           </Flex>
-        </Container>
+        </Flex>
       </div>
     </>
   ) : (

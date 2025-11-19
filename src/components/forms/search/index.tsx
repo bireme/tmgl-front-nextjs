@@ -35,7 +35,7 @@ export const SearchForm = ({ title, subtitle, small }: AcfSearch) => {
         <Flex gap={10}>
           <Input
             className={styles.HeroFormInput}
-            size={"lg"}
+            size={"md"}
             onChange={(e) => {
               setSearchString(e.target.value);
             }}
@@ -52,7 +52,7 @@ export const SearchForm = ({ title, subtitle, small }: AcfSearch) => {
               handleSearch();
             }}
             className={styles.FormButton}
-            size={"lg"}
+            size={"md"}
           >
             Search
           </Button>

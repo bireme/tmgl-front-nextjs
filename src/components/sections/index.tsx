@@ -82,7 +82,7 @@ export const DimensionsSection = ({ items }: { items?: ItemResource[] }) => {
         mt={80}
         direction={{ base: "row" }}
         wrap={"wrap"}
-        gap={{ md: 80, base: 20 }}
+        gap={{ md: 40, base: 20 }}
         justify={"center"}
         align={"center"}
       >

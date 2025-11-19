@@ -65,7 +65,7 @@ export default function Home() {
         </div>
       </div>
       <ImageSection>
-        <Container size={"xl"} py={"5%"} className={styles.TraditionalMedicine}>
+        <Container size={"xl"} py={"3%"} className={styles.TraditionalMedicine}>
           <h2>{acf?.tmd.title}</h2>
           <Center m={0} p={0}>
             <h4>{acf?.tmd.subtitle}</h4>

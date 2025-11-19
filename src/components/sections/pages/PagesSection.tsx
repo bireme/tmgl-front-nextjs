@@ -26,7 +26,7 @@ export const PagesSection = ({
   const getPages = useCallback(async () => {
     if (!countryId && countrySlug) {
       const countryTerms = await _api.getCountryBySlug(countrySlug);
-      setCountryId(countryTerms[0].id);
+      setCountryId(countryTerms[0]?.id || undefined);
     }
 
     setLoading(true);
