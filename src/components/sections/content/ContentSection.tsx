@@ -30,12 +30,6 @@ export function ContentSection({
       <Container size={"xl"} my={40}>
         <Grid>
           <Grid.Col span={{ md: 9, base: 12 }} px={20}>
-            <h2>{title}</h2>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: content || "",
-              }}
-            />
             {disclaimer && (
               <div className={styles.Disclaimer}>
                 <Alert color="yellow">
@@ -46,6 +40,13 @@ export function ContentSection({
                 </Alert>
               </div>
             )}
+            <h2>{title}</h2>
+            <div
+              dangerouslySetInnerHTML={{
+                __html: content || "",
+              }}
+            />
+
           </Grid.Col>
           <Grid.Col span={{ md: 3, base: 12 }} px={20}>
             <div className={styles.SideContent}>
