@@ -6,6 +6,16 @@
 .pnp.js
 .yarn/install-state.gz
 
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.test.local
+.env.test.local.backup
+.env.test.local.backup.2
+.env.test.local.backup.3
+
 #cacheThumbs
 /public/thumbs
 
