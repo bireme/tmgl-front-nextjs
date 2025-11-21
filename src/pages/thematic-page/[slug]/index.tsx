@@ -100,7 +100,9 @@ export default function ThematicPage() {
             blackColor={false}
           />
 
+
           <ContentSection
+            disclaimer={properties?.disclaimer}
             title={postProps.title.rendered}
             content={properties?.content || ""}
             communityInitiatives={properties?.community_iniciatives}
@@ -140,11 +142,11 @@ export default function ThematicPage() {
 
           {properties?.fetured_stories_items ? (
             <Container size={"xl"}>
-              <ManualStoriesSection 
+              <ManualStoriesSection
                 posts={properties?.fetured_stories_items}
                 title={properties?.featured_stories_label || "Featured stories"}
                 buttonLabel={properties?.explore_all_label || "see more"}
-                  />
+              />
             </Container>
           ) : null}
 

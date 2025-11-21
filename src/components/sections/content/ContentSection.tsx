@@ -1,6 +1,7 @@
-import { Container, Grid } from "@mantine/core";
+import { Alert, Container, Flex, Grid } from "@mantine/core";
 import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
+import { IconAlertCircleFilled } from "@tabler/icons-react";
 
 interface CommunityInitiative {
   url: string;
@@ -13,6 +14,7 @@ interface ContentSectionProps {
   communityInitiatives?: CommunityInitiative[];
   communityInitiativesTitle?: string;
   className?: string;
+  disclaimer?: string;
 }
 
 export function ContentSection({
@@ -21,6 +23,7 @@ export function ContentSection({
   communityInitiatives,
   communityInitiativesTitle,
   className,
+  disclaimer,
 }: ContentSectionProps) {
   return (
     <div className={`${styles.TmPageContent} ${className || ""}`}>
@@ -33,6 +36,16 @@ export function ContentSection({
                 __html: content || "",
               }}
             />
+            {disclaimer && (
+              <div className={styles.Disclaimer}>
+                <Alert color="yellow">
+                  <Flex align={"center"} gap={10}>
+                    <IconAlertCircleFilled size={60} color={"#dab526"} />
+                    <div dangerouslySetInnerHTML={{ __html: disclaimer }} />
+                  </Flex>
+                </Alert>
+              </div>
+            )}
           </Grid.Col>
           <Grid.Col span={{ md: 3, base: 12 }} px={20}>
             <div className={styles.SideContent}>

@@ -93,6 +93,7 @@ export interface ListPostsDto {
 }
 
 export interface ThematicPageAcfProps {
+  disclaimer?: string;
   search: {
     title: string;
     subtitle: string;
