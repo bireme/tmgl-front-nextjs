@@ -217,7 +217,7 @@ export default function CountryHome() {
                 >
                   {properties?.tms_items?.map((item, index) => {
                     return (
-                      <div className={styles.TmsItem} key={index}>
+                      <div onClick={() => router.push(item.url)} className={styles.TmsItem} key={index}>
                         <div
                           className={styles.TmsImage}
                           style={{ backgroundImage: `url(${item.image})  ` }}
