@@ -13,7 +13,7 @@ export const mantineTheme = createTheme({
       "#8ADAFF",
       "#4DC6FF",
       "#0FB3FF",
-      "#0093D5",
+      "#007EB6",
       "#0073A8",
       "#005780",
       "#003B57",
