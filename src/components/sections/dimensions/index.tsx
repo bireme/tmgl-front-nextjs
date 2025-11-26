@@ -5,6 +5,7 @@ import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { TraditionalSectionCard } from "..";
 import { cookies } from "next/headers";
 import styles from "../../../styles/components/sections.module.scss";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export interface RegionalDimensionsProps {
   region: string;
@@ -24,7 +25,7 @@ export const RegionalDimensions = ({
       <Container size={"xl"} py={60}>
         <Grid>
           <Grid.Col span={{ base: 12, md: 4.5 }}>
-            <h2 className={styles.TitleWithIcon}>{acf.tmd.title}</h2>
+            <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter(acf.tmd.title)}</h2>
             <div dangerouslySetInnerHTML={{ __html: acf.tmd.subtitle }} />
             {/* {acf.tmd?.explore_page ? (
               <>

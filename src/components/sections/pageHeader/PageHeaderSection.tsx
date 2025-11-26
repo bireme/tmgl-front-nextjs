@@ -1,6 +1,7 @@
 import { Flex } from "@mantine/core";
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import styles from "../../../styles/pages/home.module.scss";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 interface BreadcrumbItem {
   path: string;
@@ -26,9 +27,9 @@ export function PageHeaderSection({
     <>
       <BreadCrumbs blackColor={blackColor} path={breadcrumbs} />
       <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
-        <h3 className={`${styles.TitleWithIcon} ${className || ""}`} style={{ margin: "5px" }}>
-          {title}
-        </h3>
+        <h1 className={`${styles.TitleWithIcon} ${className || ""}`} style={{ margin: "5px" }}>
+          {capitalizeFirstLetter(title)}
+        </h1>
         {rightContent && <div>{rightContent}</div>}
       </Flex>
     </>

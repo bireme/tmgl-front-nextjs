@@ -2,6 +2,7 @@ import { Button, Container, Flex } from "@mantine/core";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
+  capitalizeFirstLetter,
 } from "@/helpers/stringhelper";
 import { useCallback, useContext, useEffect, useState } from "react";
 
@@ -125,7 +126,7 @@ export const NewsSection = ({
         <Container size={"xl"} py={80}>
           {title && posts.length > 0 ? (
             <>
-              <h2 className={styles.TitleWithIcon}>{title}</h2>
+              <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter(title)}</h2>
             </>
           ) : (
             <></>

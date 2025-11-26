@@ -1,4 +1,4 @@
-import { Container, Grid, Image } from "@mantine/core";
+import { Container, Grid, Image, Tooltip } from "@mantine/core";
 
 import { FeaturedStoriesAcf } from "@/services/types/featuredStoriesAcf";
 import styles from "../../../../styles/components/feature-stories.module.scss";
@@ -40,14 +40,23 @@ export const SecondSection = ({ acf }: SectionProps) => {
             />
           </Grid.Col>
           <Grid.Col span={{ md: 4 }} p={40}>
-            <Image
-              alt={acf.second_session.imagem.alt}
-              src={acf.second_session.imagem.url}
-              radius={"md"}
-              width={"100%"}
-            />
+            <Tooltip 
+              label={acf.second_session.imagem.description} 
+              position="top"
+              multiline
+              w={220}
+            >
+              <Image
+                alt={acf.second_session.imagem.alt}
+                src={acf.second_session.imagem.url}
+                aria-description={acf.second_session.imagem.description}
+                aria-label={acf.second_session.imagem.description}
+                radius={"md"}
+                width={"100%"}
+              />
+            </Tooltip>
+            
             <p>{acf.second_session.imagem.caption}</p>
-            <small>{acf.second_session.imagem.description}</small>
           </Grid.Col>
         </Grid>
       </Container>

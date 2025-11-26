@@ -4,6 +4,7 @@ import { PostsApi } from "@/services/posts/PostsApi";
 import { StoriesItem } from "./index";
 import { useEffect, useState } from "react";
 import styles from "../../../styles/components/sections.module.scss";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export interface ManualStoriesSectionProps {
   posts: Array<ResumedPost>;
@@ -47,7 +48,7 @@ export const ManualStoriesSection = ({
       {posts && posts.length >= 3 ? (
         <>
           <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
-            {title ? title : "Featured stories"}
+            {capitalizeFirstLetter(title ? title : "Featured stories")}
           </h2>
           <Grid my={50}>
             <Grid.Col span={{ md: 8 }}>

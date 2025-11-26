@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import styles from "../../../styles/components/sections.module.scss";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export interface PagesSectionProps {
   region?: string;
@@ -74,7 +75,7 @@ export const PagesSection = ({
     >
       {pages.map((page, index) => (
         <Container key={page.id} size="xl" className={styles.PageContainer}>
-          <h3 className={styles.TitleWithIcon}>{page.title.rendered}</h3>
+          <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter(page.title.rendered)}</h2>
           <div
             className="post-content"
             dangerouslySetInnerHTML={{

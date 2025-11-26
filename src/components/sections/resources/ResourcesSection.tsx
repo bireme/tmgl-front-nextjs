@@ -1,7 +1,7 @@
 import { Container, Flex } from "@mantine/core";
 import { IconCard, ImageCard } from "@/components/cards";
 
-import { decodeHtmlLink } from "@/helpers/stringhelper";
+import { decodeHtmlLink, capitalizeFirstLetter } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
 
 interface ResourceItem {
@@ -36,9 +36,9 @@ export function ResourcesSection({
       {/* Similar Themes Section */}
       {similarThemes && similarThemes.length > 0 && (
         <Container py={40} size={"xl"}>
-          <h3 className={styles.TitleWithIcon}>
-            {similarThemesTitle || "Related Themes"}
-          </h3>
+          <h2 className={styles.TitleWithIcon}>
+            {capitalizeFirstLetter(similarThemesTitle || "Related Themes")}
+          </h2>
           <Flex
             mt={50}
             gap={{ base: "20px", md: "3%" }}
@@ -74,9 +74,9 @@ export function ResourcesSection({
       {/* Resources Section */}
       {resources && resources.length > 0 && (
         <Container py={40} size={"xl"}>
-          <h3 className={styles.TitleWithIcon}>
-            {resourcesTitle || "Resources"}
-          </h3>
+          <h2 className={styles.TitleWithIcon}>
+            {capitalizeFirstLetter(resourcesTitle || "Resources")}
+          </h2>
           <Flex
             mt={50}
             gap={{ base: "20px", md: "3%" }}

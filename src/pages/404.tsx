@@ -2,6 +2,7 @@
 
 import { Button, Container, Flex, Grid } from "@mantine/core";
 
+import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/pages/pages.module.scss";
 import { useEffect } from "react";
@@ -11,7 +12,11 @@ export default function Custom404() {
   const router = useRouter();
 
   return (
-    <Container size={"xl"} py={150}>
+    <>
+      <Head>
+        <title>Page Not Found - The WHO Traditional Medicine Global Library</title>
+      </Head>
+      <Container size={"xl"} py={150}>
       <Grid className={styles.NotFoundPage}>
         <Grid.Col span={{ base: 12, md: 6.5 }}>
           <img src={"/local/svg/404.svg"} width={"100%"} />
@@ -38,6 +43,7 @@ export default function Custom404() {
           </Flex>
         </Grid.Col>
       </Grid>
-    </Container>
+      </Container>
+    </>
   );
 }

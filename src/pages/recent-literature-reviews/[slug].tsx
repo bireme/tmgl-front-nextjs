@@ -6,6 +6,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { RecomendedArticlesSection } from "@/components/sections/recomended";
@@ -38,6 +39,9 @@ export default function TrendingTopics() {
 
   return (
     <>
+      <Head>
+        <title>{post?.title.rendered ? `${post.title.rendered} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       {post ? (
         <>
           <Container mt={80} size={"xl"}>
@@ -50,7 +54,7 @@ export default function TrendingTopics() {
             />
           </Container>
           <Container mt={40} size={"md"}>
-            <h3 className={styles.TitleWithIcon}>Recent Literature Review</h3>
+            <p className={styles.CategoryLabel}>Recent Literature Review</p>
             <h1 className={styles.PostTitle}>{post.title.rendered}</h1>
             <div
               className={styles.PostSubtitle}

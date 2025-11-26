@@ -10,6 +10,7 @@ import { IconPrinter, IconShare, } from "@tabler/icons-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import Head from "next/head";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { ShareModal } from "@/components/share";
@@ -42,13 +43,16 @@ export default function Events() {
   }, [getPost, slug]);
 
   const tagColors = {
-    country: "#69A221",
+    country: "#54831B",
     descriptor: "#8B142A",
     region: "#3F6114",
   };
 
   return (
     <>
+      <Head>
+        <title>{post?.title.rendered ? `${post.title.rendered} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       {post ? (
         <>
           <Container mt={80} size={"xl"}>
@@ -61,7 +65,7 @@ export default function Events() {
             />
           </Container>
           <Container mt={40} size={"xl"}>
-            <h3 className={styles.TitleWithIcon}>Events</h3>
+            <p className={styles.CategoryLabel}>Events</p>
             <h1 className={styles.PostTitle}>{post.title.rendered}</h1>
             <div
               className={styles.PostSubtitle}
@@ -164,11 +168,11 @@ export default function Events() {
                 <br />
                 {post?.acf?.programee ? (
                   <>
-                    <h4
+                    <h2
                       className={`${homeStyles.BlueTitle} ${homeStyles.small}`}
                     >
                       Programme
-                    </h4>
+                    </h2>
                     <div
                       className={styles.EventImg}
                       dangerouslySetInnerHTML={{ __html: post?.acf?.programee }}
@@ -180,9 +184,9 @@ export default function Events() {
                 {post.acf?.about && 
                 (
                   <>
-                    <h4 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
+                    <h2 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
                       About the event
-                    </h4>
+                    </h2>
                       <div
                         className={styles.PostContent}
                         dangerouslySetInnerHTML={{ __html: post.acf?.about }}
@@ -194,9 +198,9 @@ export default function Events() {
                 
               </Grid.Col>
               <Grid.Col span={{ md: 12, lg: 4 }}>
-                <h4 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
+                <h2 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
                   Event Data
-                </h4>
+                </h2>
                 <p>
                   <b>Date</b>
                   <br />
@@ -213,9 +217,9 @@ export default function Events() {
                   <></>
                 )}
 
-                <h4 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
+                <h2 className={`${homeStyles.BlueTitle} ${homeStyles.small}`}>
                   Related content
-                </h4>
+                </h2>
                 {post.acf?.releated_content ? (
                   post.acf?.releated_content.map((item: any, key: number) => (
                     <a

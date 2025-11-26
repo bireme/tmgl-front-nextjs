@@ -7,6 +7,7 @@ import { MultimediaObject } from "@/services/types/multimediaTypes";
 import { MultimediaService } from "@/services/apiRepositories/MultimediaService";
 import { queryType } from "@/services/types/resources";
 import styles from "../../styles/components/video.module.scss";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export interface VideoItemProps {
   title: string;
@@ -74,7 +75,7 @@ export const FixedRelatedVideosSection = ({
         {items?.length > 0 ? (
           <>
             <h2 className={styles.TitleWithIcon}>
-              {title ? title : "Related videos"}
+              {capitalizeFirstLetter(title ? title : "Related videos")}
             </h2>
             <Flex
               className={styles.RelatedVideosSectionFlex}
@@ -234,7 +235,7 @@ export const RecentMultimediaItems = ({
       <Container size={"xl"}>
         {items?.length > 0 ? (
           <>
-            <h2 className={styles.TitleWithIcon}>Related Media</h2>
+            <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("RELATED MEDIA")}</h2>
             <Flex className={styles.RelatedVideosSectionFlex} gap={20}>
               <div className={styles.MainVideo}>
                 <VideoItem

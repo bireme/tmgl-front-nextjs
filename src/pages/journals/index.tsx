@@ -4,9 +4,11 @@ import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { JournalsFeed } from "@/components/feed/journals";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export default function Journals() {
   const { globalConfig } = useContext(GlobalContext);
@@ -15,6 +17,9 @@ export default function Journals() {
   const [displayType, setDisplayType] = useState<string>("column");
   return (
     <>
+      <Head>
+        <title>Journals - The WHO Traditional Medicine Global Library</title>
+      </Head>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
           blackColor
@@ -25,7 +30,7 @@ export default function Journals() {
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            Journals
+            {capitalizeFirstLetter("JOURNALS")}
           </h3>
 
           <div>

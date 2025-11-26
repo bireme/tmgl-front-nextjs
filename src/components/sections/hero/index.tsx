@@ -9,7 +9,7 @@ import { MediaApi } from "@/services/media/MediaApi";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { colors } from "@/helpers/colors";
-import { decodeHtmlEntities } from "@/helpers/stringhelper";
+import { decodeHtmlEntities, capitalizeFirstLetter } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/sections.module.scss";
 
 export interface HeroHeaderProps {
@@ -55,7 +55,7 @@ export const HeroHeader = ({ post, path, type }: HeroHeaderProps) => {
             <BreadCrumbs path={path} />
           </div>
           <div>
-            <h2 className={styles.TitleWithIcon}>{type}</h2>
+            <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter(type)}</h2>
             <h1>
               {acfs?.long_title
                 ? acfs?.long_title

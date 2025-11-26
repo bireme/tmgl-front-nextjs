@@ -18,6 +18,7 @@ import { useCallback, useEffect, useState } from "react";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { TrendingCarrocel } from "@/components/rss/slider";
 import { useRouter } from "next/router";
+import Head from "next/head";
 
 export default function ThematicPage() {
   const router = useRouter();
@@ -80,6 +81,9 @@ export default function ThematicPage() {
 
   return (
     <>
+      <Head>
+        <title>{postProps?.title.rendered} - The WHO Traditional Medicine Global Library</title>
+      </Head>
       {postProps ? (
         <>
           <HeroSection

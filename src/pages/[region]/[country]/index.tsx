@@ -13,13 +13,14 @@ import { BreadCrumbs } from "@/components/breadcrumbs";
 import { CountryResourceSection } from "@/components/sections/countryResourceSection";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { SearchForm } from "@/components/forms/search";
 import { TrendingCarrocel } from "@/components/rss/slider";
-import { decodeHtmlEntities } from "@/helpers/stringhelper";
+import { decodeHtmlEntities, capitalizeFirstLetter } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
-import { IconAlertCircleFilled } from "@tabler/icons-react";
+import { IconAlertCircleFilled, IconInfoCircle } from "@tabler/icons-react";
 
 export default function CountryHome() {
   const router = useRouter();
@@ -115,6 +116,9 @@ export default function CountryHome() {
 
   return (
     <>
+      <Head>
+        <title>{countryName ? `${countryName} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       {postProps ? (
         <>
           <div className={styles.HeroSearch}>
@@ -155,24 +159,25 @@ export default function CountryHome() {
             <Container size={"xl"} my={40}>
               <Grid>
                 <Grid.Col span={{ md: 9, base: 12 }} px={20}>
-                  {properties?.disclaimer && (
-                    <div className={styles.Disclaimer}>
-                      <Alert color="yellow">
-                        <Flex align={"center"} gap={10}>
-                          <IconAlertCircleFilled size={60} color={"#dab526"} />
-                          <div dangerouslySetInnerHTML={{ __html: properties?.disclaimer }} />
-                        </Flex>
-                      </Alert>
-                    </div>
-                  )}
+                  
                   <h2>{postProps.title.rendered}</h2>
                   <div
                     dangerouslySetInnerHTML={{
                       __html: properties?.content ? properties?.content : "",
                     }}
                   />
+                  {properties?.disclaimer && (
+                    <div className={styles.Disclaimer}>
+                      <Alert color="blue">
+                        <Flex align={"center"} gap={10}>
+                          <IconInfoCircle size={60} color={"blue"} />
+                          <div dangerouslySetInnerHTML={{ __html: properties?.disclaimer }} />
+                        </Flex>
+                      </Alert>
+                    </div>
+                  )}
                   {
-                    properties?.other_version && (
+                    properties?.other_version && properties?.other_version.description != "" && (
                       <Alert mt={20} style={{ cursor: "pointer" }} onClick={() => router.push(properties?.other_version.link)} color="blue">
                         {properties?.other_version.description}
                       </Alert>
@@ -206,7 +211,7 @@ export default function CountryHome() {
             <div className={styles.Tms}>
               <Container size={"xl"}>
                 <h3 className={styles.TitleWithIcon}>
-                  Traditional Medicine Systems
+                  {capitalizeFirstLetter("TRADITIONAL MEDICINE SYSTEMS")}
                 </h3>
                 <Flex
                   justify={"center"}

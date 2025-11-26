@@ -49,8 +49,9 @@ export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
     <div className={styles.Filters}>
       <form onSubmit={form.onSubmit((values) => {})}>
         <h4>Filters</h4>
-        <h5>Search</h5>
-        <Input size={"md"} placeholder="Search for something" />
+        <Input.Wrapper label="Search">
+          <Input size={"md"} placeholder="Search for something" />
+        </Input.Wrapper>
 
         {/* <div className={styles.FilterGroup}>
           <h5>
@@ -166,12 +167,15 @@ export const TrendingTopicsFiltersForm = ({
     <div className={styles.Filters}>
       <form onSubmit={form.onSubmit((values) => setQueryString(values.query))}>
         <h4>Filters</h4>
-        <h5>Search</h5>
-        <Input
-          size={"md"}
-          placeholder="Search for something"
-          {...form.getInputProps("query")}
-        />
+        <Input.Wrapper label="Search">
+          <Input
+            component="input"
+            size={"md"}
+            placeholder="Search for something"
+            {...form.getInputProps("query")}
+          />
+        </Input.Wrapper>
+        
         <Button mt={20} type="submit" size={"md"} fullWidth>
           {" "}
           Apply{" "}

@@ -361,7 +361,7 @@
   width: 100%;
   min-height: 214px;
   position: relative;
-  background-color: #0073A8;
+  background-color: black;
   >div{height: 100%;
     >div{
       height: 100%;
@@ -425,9 +425,29 @@
 }
 
 
+// Category label (used for non-heading styled text)
+.CategoryLabel{
+    text-transform: capitalize;
+    padding-left: 40px;
+    background-image: url('../../../public/local/svg/simbol.svg');
+    background-position: left center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    font-family: "Roboto Serif";
+    font-size: 26px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    max-width: 50vw;
+    margin: 0;
+    @media (max-width: '750px') {
+      width: 100%;
+      max-width: 100%;
+    }
+}
 
 .TitleWithIcon{
-    text-transform: capitalize;
+    text-transform: none;
     padding-left: 40px;
     background-image: url('../../../public/local/svg/simbol.svg');
     background-position: left center;

@@ -5,7 +5,7 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";
 import { lang } from "moment";
-import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
+import { removeHTMLTagsAndLimit, capitalizeFirstLetter } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/sections.module.scss";
 
 export interface StoreisSectionProps {
@@ -47,8 +47,8 @@ export const StoriesItem = ({
           ) : (
             <></>
           )}
-          <Button mt={10}>
-            <a href={href} target="">{buttonLabel ? buttonLabel : "Read full story"}</a>
+          <Button mt={10} component="a" href={href} target="_blank">
+            {buttonLabel ? buttonLabel : "Read full story"}
           </Button>
         </Flex>
       </div>
@@ -110,7 +110,7 @@ export const StoriesSection = ({
         posts.length >= 3 ? (
           <>
             <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
-              {title ? title : "Featured stories"}
+              {capitalizeFirstLetter(title ? title : "Featured stories")}
             </h2>
             <Grid my={50}>
               <Grid.Col span={{ md: 8 }}>

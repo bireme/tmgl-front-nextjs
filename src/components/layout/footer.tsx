@@ -63,7 +63,7 @@ export const FooterLayout = () => {
   }, []);
 
   return (
-    <>
+    <footer>
       <div className={styles.FooterLayout}>
         <Container size={"xl"}>
           <Flex direction={{ base: "column", md: "row" }}>
@@ -139,6 +139,6 @@ export const FooterLayout = () => {
           </center>
         </Container>
       </div>
-    </>
+    </footer>
   );
 };

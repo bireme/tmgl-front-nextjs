@@ -6,6 +6,7 @@ import {
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { HeroHeader } from "@/components/sections/hero";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -40,6 +41,9 @@ export default function Dimensions() {
 
   return (
     <>
+      <Head>
+        <title>{post?.title.rendered ? `${decodeHtmlEntities(post.title.rendered)} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       {post ? (
         <>
           <HeroHeader

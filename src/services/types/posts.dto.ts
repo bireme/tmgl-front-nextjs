@@ -198,6 +198,7 @@ export interface TmsItem {
   url: string;
   image: string;
   description?: string;
+  tooltip_description?: string;
 }
 
 export interface MediaItem {

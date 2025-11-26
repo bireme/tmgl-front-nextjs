@@ -180,3 +180,10 @@ export function removeHtmlTags(inputString: string): string {
 
   return noEntities.trim();
 }
+
+export function capitalizeFirstLetter(text: string): string {
+  if (!text || text.length === 0) {
+    return text;
+  }
+  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+}

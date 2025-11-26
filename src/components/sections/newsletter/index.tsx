@@ -71,6 +71,8 @@ export const NewsletterSection = () => {
                 key={form.key("email")}
                 {...form.getInputProps("email")}
                 size={"md"}
+                aria-label="Email address"
+                placeholder="Enter your email"
               />
               <Button type={"submit"} size={"md"}>
                 Subscribe

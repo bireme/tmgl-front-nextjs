@@ -141,7 +141,7 @@
     }
   }
 
-  h4 {
+  h3 {
     color: white;
     text-align: center;
     font-family: Roboto;
@@ -538,8 +538,30 @@
   }
 }
 
-.TitleWithIcon {
+// Category label (used for non-heading styled text)
+.CategoryLabel {
   text-transform: capitalize;
+  padding-left: 40px;
+  background-image: url('../../../public/local/svg/simbol.svg');
+  background-position: left center;
+  background-size: contain;
+  background-repeat: no-repeat;
+  font-family: "Roboto Serif";
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 800;
+  line-height: normal;
+  max-width: 50vw;
+  margin: 0;
+
+  @media (max-width: '750px') {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+.TitleWithIcon {
+  text-transform: none;
   padding-left: 40px;
   background-image: url('../../../public/local/svg/simbol.svg');
   background-position: left center;

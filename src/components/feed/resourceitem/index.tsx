@@ -257,7 +257,7 @@ export const ResourceCard = ({
   className,
 }: ResourceCardProps) => {
   const colors = {
-    country: "#69A221",
+    country: "#54831B",
     descriptor: "#8B142A",
     region: "#3F6114",
     type: "#1A4B8C",

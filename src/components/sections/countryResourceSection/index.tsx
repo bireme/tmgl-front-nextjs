@@ -1,7 +1,7 @@
 import { Container } from "@mantine/core";
 
 import { CountryAcfResource } from "@/services/types/posts.dto";
-import { decodeHtmlLink } from "@/helpers/stringhelper";
+import { decodeHtmlLink, capitalizeFirstLetter } from "@/helpers/stringhelper";
 import styles from "@/styles/pages/home.module.scss";
 
 interface CountryResourceSectionProps {
@@ -20,7 +20,7 @@ export function CountryResourceSection({
   return (
     <div className={styles.CountryRersources}>
       <Container py={60} size={"xl"}>
-        <h3 className={styles.TitleWithIcon}>{title}</h3>
+        <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter(title)}</h2>
         <div className={styles.ResourcesGrid}>
           {resources.map((resource: CountryAcfResource, index: number) => {
             return (

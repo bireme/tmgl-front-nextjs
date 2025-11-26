@@ -1,0 +1,33 @@
+.skipLink {
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  background-color: #005a9c;
+  color: #ffffff;
+  padding: 12px 24px;
+  text-decoration: none;
+  font-weight: bold;
+  border-radius: 0 0 4px 0;
+  z-index: 10000;
+  font-size: 16px;
+  transition: all 0.2s ease-in-out;
+
+  &:focus {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: auto;
+    height: auto;
+    overflow: visible;
+    outline: 3px solid #ffbf47;
+    outline-offset: 0;
+  }
+
+  &:hover {
+    background-color: #003d6b;
+  }
+}
+

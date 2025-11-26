@@ -20,13 +20,14 @@ import { useCallback, useContext, useEffect, useState } from "react";
 import { DimensionMultitab } from "@/components/multitab/dimension";
 import { DimensionRelatedResources } from "@/services/types/dimensionsAcf";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { HeroHeader } from "@/components/sections/hero";
 import { IconArrowRight } from "@tabler/icons-react";
 import { IconCard } from "@/components/cards";
 import { MediaApi } from "@/services/media/MediaApi";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
-import { decodeHtmlEntities } from "@/helpers/stringhelper";
+import { decodeHtmlEntities, capitalizeFirstLetter } from "@/helpers/stringhelper";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
@@ -63,6 +64,9 @@ export default function Dimensions() {
 
   return (
     <>
+      <Head>
+        <title>{post?.title.rendered ? `${decodeHtmlEntities(post.title.rendered)} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       {post ? (
         <>
           <HeroHeader
@@ -147,7 +151,7 @@ export default function Dimensions() {
           <div style={{ background: "#FBFBFB" }}>
             {post.acf?.related_resources?.length > 0 ? (
               <Container py={40} size={"xl"}>
-                <h2 className={styles.TitleWithIcon}>Related Resources</h2>
+                <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("RELATED RESOURCES")}</h2>
                 <Flex mt={50} gap={"3%"} justify={"space-around"}>
                   {post.acf.related_resources.map(
                     (resource: DimensionRelatedResources, index: number) => {

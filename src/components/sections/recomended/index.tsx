@@ -22,10 +22,8 @@ export const ArticleItem = ({ excerpt, title, href }: ArticleItemProps) => {
     <div className={styles.ArticleItem}>
       <h3>{title}</h3>
       <p>{excerpt}</p>
-      <Button size={"xs"}>
-        <a href={href}>
-          <IconArrowRight color="white" stroke={1} />
-        </a>
+      <Button size={"xs"} component="a" href={href}>
+        <IconArrowRight color="white" stroke={1} />
       </Button>
     </div>
   );
@@ -43,10 +41,8 @@ export const RelatedArticleItem = ({
         <p>{excerpt}</p>
       </div>
 
-      <Button size={"xs"}>
-        <a href={href}>
-          <IconArrowRight stroke={1} />
-        </a>
+      <Button size={"xs"} component="a" href={href}>
+        <IconArrowRight stroke={1} />
       </Button>
     </div>
   );
