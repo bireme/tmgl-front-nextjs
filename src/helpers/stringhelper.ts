@@ -185,5 +185,9 @@ export function capitalizeFirstLetter(text: string): string {
   if (!text || text.length === 0) {
     return text;
   }
-  return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  const firstChar = text.charAt(0);
+  if (firstChar === firstChar.toUpperCase()) {
+    return text;
+  }
+  return firstChar.toUpperCase() + text.slice(1);
 }
