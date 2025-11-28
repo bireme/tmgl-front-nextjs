@@ -33,7 +33,7 @@ export default function GlobalSummit() {
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
-          <h3 className={styles.TitleWithIcon}>{capitalizeFirstLetter("WHO TM GLOBAL SUMMIT")}</h3>
+          <h3 className={styles.TitleWithIcon}>{capitalizeFirstLetter("WHO TM Global summit")}</h3>
 
           <div>
             <IconLayoutGrid

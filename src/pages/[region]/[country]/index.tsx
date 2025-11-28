@@ -211,7 +211,7 @@ export default function CountryHome() {
             <div className={styles.Tms}>
               <Container size={"xl"}>
                 <h3 className={styles.TitleWithIcon}>
-                  {capitalizeFirstLetter("TRADITIONAL MEDICINE SYSTEMS")}
+                  {capitalizeFirstLetter("Traditional medicine systems")}
                 </h3>
                 <Flex
                   justify={"center"}

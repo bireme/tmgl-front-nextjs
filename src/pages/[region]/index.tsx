@@ -160,7 +160,7 @@ export default function RegionHome() {
                 className={styles.TrandingAndFeaturedContainer}
               >
                 <h2 className={styles.TitleWithIcon}>
-                  {capitalizeFirstLetter("RECENT LITERATURE REVIEW")}
+                  {capitalizeFirstLetter("Recent Literature Review")}
                 </h2>
                 <div className={styles.TrendingText}>
                   <p>{acf?.text_trending_topics}</p>
@@ -169,7 +169,7 @@ export default function RegionHome() {
               </Container>
               <Container size={"xl"}>
                 <StoriesSection region={region ? region.toString() : ""} fetchOptions={{ tagId: globalConfig?.acf.thematic_page_tag, excludeTag: true }}/>
-                <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("EVENTS")}</h2>
+                <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Events")}</h2>
               </Container>
             </div>
             {globalConfig?.acf.thematic_page_tag && (

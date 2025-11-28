@@ -30,7 +30,7 @@ export default function EvidenceMaps() {
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            {capitalizeFirstLetter("EVIDENCE MAPS")}
+            {capitalizeFirstLetter("Evidence maps")}
           </h3>
 
           <div>

@@ -39,7 +39,7 @@ export default function TrendingTopics() {
           ]}
           blackColor={true}
         />
-        <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("RECENT LITERATURE REVIEW")}</h2>
+        <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Recent Literature Review")}</h2>
         <p>{globalConfig?.acf.trending_description}</p>
         <TrendingTopicsFeedSection
           filter={filter ? filter.toString() : undefined}

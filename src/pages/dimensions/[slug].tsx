@@ -151,7 +151,7 @@ export default function Dimensions() {
           <div style={{ background: "#FBFBFB" }}>
             {post.acf?.related_resources?.length > 0 ? (
               <Container py={40} size={"xl"}>
-                <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("RELATED RESOURCES")}</h2>
+                <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Related resources")}</h2>
                 <Flex mt={50} gap={"3%"} justify={"space-around"}>
                   {post.acf.related_resources.map(
                     (resource: DimensionRelatedResources, index: number) => {

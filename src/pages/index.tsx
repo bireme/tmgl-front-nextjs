@@ -95,7 +95,7 @@ export default function Home() {
           className={styles.TrandingAndFeaturedContainer}
         >
           <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
-            {capitalizeFirstLetter("RECENT LITERATURE REVIEWS")}
+            {capitalizeFirstLetter("Recent Literature Reviews")}
           </h2>
           <div className={styles.TrendingText}>
             <p>{acf?.text_trending_topics}</p>
@@ -142,7 +142,7 @@ export default function Home() {
             </Flex>
           </Link>
           <br></br>
-          <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("EVENTS")}</h2>
+          <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Events")}</h2>
         </Container>
       </div>
       {globalConfig?.acf.thematic_page_tag && (

@@ -225,19 +225,30 @@
     font-size: 0.86rem;
     margin-bottom: 5px;
   }
-  h3{
-    font-family: 'Roboto Serif';
-    font-size: 18px;
-    font-weight: 700;
-    line-height: 24.4px;
-    text-align: left;
-    text-underline-position: from-font;
-    text-decoration-skip-ink: none;
-    margin-bottom: 10px;
-    margin-top: 5px;
-    max-width: 100%;
-        line-break: break-all;
+  .HeadingWrapper {
+    display: block;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    min-height: 80.2px;
+    -webkit-box-orient: vertical;
+      h3{
+          font-family: 'Roboto Serif';
+          font-size: 18px;
+          font-weight: 700;
+          line-height: 24.4px;
+          text-align: left;
+          text-underline-position: from-font;
+          text-decoration-skip-ink: none;
+          margin-bottom: 10px;
+          margin-top: 5px;
+          max-width: 100%;
+          
+      }
   }
+
   p{
     margin-top: 0px;
     margin-bottom: 0px;

@@ -30,7 +30,7 @@ export default function DatabaseRepositories() {
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
-          <h3 className={styles.TitleWithIcon}>{capitalizeFirstLetter("DATABASE & REPOSITORIES")}</h3>
+          <h3 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Database  & repositories")}</h3>
 
           <div>
             <IconLayoutGrid

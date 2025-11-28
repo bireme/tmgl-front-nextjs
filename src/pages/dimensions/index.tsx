@@ -35,7 +35,7 @@ export default function Dimensions() {
           mt={30}
         >
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            {capitalizeFirstLetter("DIMENSIONS")}
+            {capitalizeFirstLetter("Dimensions")}
           </h3>
 
           <div>

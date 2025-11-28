@@ -284,6 +284,18 @@
     background-image: linear-gradient(180deg, #0C2B64 5.19%, rgba(12, 43, 100, 0.00) 99.96%) , url('../../../public/local/png/img-events.png');
     background-position: bottom center;
   }
+  >div{
+    width: 100%;
+    max-width: 1720px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--mantine-spacing-md);
+    padding-right: var(--mantine-spacing-md);
+    @media (min-width: 768px) {
+      padding-left: var(--mantine-spacing-xl);
+      padding-right: var(--mantine-spacing-xl);
+    }
+  }
   .EventsContent{
     h2{
       color: white;
@@ -301,7 +313,6 @@
       font-weight: 300;
       line-height: 160%; /* 25.6px */
     }
-    width: 45%;
     height: 100%;
     @media (max-width: '750px') {
       width: 100%;

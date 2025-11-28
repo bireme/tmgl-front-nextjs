@@ -235,7 +235,7 @@ export const RecentMultimediaItems = ({
       <Container size={"xl"}>
         {items?.length > 0 ? (
           <>
-            <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("RELATED MEDIA")}</h2>
+            <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Related media")}</h2>
             <Flex className={styles.RelatedVideosSectionFlex} gap={20}>
               <div className={styles.MainVideo}>
                 <VideoItem

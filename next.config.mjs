@@ -19,7 +19,7 @@ const nextConfig = {
     DIREV_API_KEY: process.env.DIREV_API_KEY,
     DIREV_API_URL: process.env.DIREV_API_URL,
     LIS_API_URL: process.env.LIS_API_URL,
-    JOURNALS_API_URL: process.env.JOURNALS_API_URL,
+    Journals_API_URL: process.env.Journals_API_URL,
     MULTIMEDIA_API_URL: process.env.MULTIMEDIA_API_URL,
     FIADMIN_URL: process.env.FIADMIN_URL
   },

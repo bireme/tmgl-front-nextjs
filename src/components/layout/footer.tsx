@@ -106,14 +106,6 @@ export const FooterLayout = () => {
                     })}
                   </div>
 
-                  <div>
-                    <p>
-                      <a>About Us</a>
-                    </p>
-                    <p>
-                      <a>User Support</a>
-                    </p>
-                  </div>
                 </Flex>
               </Grid.Col>
             </Grid>
