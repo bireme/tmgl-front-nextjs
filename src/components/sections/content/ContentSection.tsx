@@ -1,7 +1,7 @@
 import { Alert, Container, Flex, Grid } from "@mantine/core";
 import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
-import { IconAlertCircleFilled } from "@tabler/icons-react";
+import {  IconInfoCircle } from "@tabler/icons-react";
 
 interface CommunityInitiative {
   url: string;
