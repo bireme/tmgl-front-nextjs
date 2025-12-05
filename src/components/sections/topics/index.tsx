@@ -25,11 +25,16 @@ export const TrendingTopicSection = ({
         <div dangerouslySetInnerHTML={{ __html: excerpt }} />
       </div>
       <div className={styles.TrendingLink}>
-        <a href={href} className={styles.TrendingButton}>
-          <Button p={8} radius={"md"} size={"sm"}>
-            <IconArrowRight size={19} stroke={1.5} />
-          </Button>
-        </a>
+        <Button
+          p={8}
+          radius={"md"}
+          size={"sm"}
+          component="a"
+          href={href}
+          className={styles.TrendingButton}
+        >
+          <IconArrowRight size={19} stroke={1.5} />
+        </Button>
       </div>
     </Flex>
   );

@@ -4,7 +4,7 @@ import { NewsEventsItem, NewsEventsSectionProps } from "@/services/types/newsEve
 
 import { IconArrowRight } from "@tabler/icons-react";
 import { PostsApi } from "@/services/posts/PostsApi";
-import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
+import { removeHTMLTagsAndLimit, capitalizeFirstLetter } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
@@ -76,7 +76,7 @@ export function NewsEventsSection({
           minHeight: "100%"
         }}
       >
-        <h3 className={styles.TitleWithIcon}>{title}</h3>
+        <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter(title)}</h2>
         <Flex
           gap="30px"
           wrap="wrap"

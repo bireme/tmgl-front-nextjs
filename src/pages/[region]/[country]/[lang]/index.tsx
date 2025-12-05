@@ -14,6 +14,7 @@ import { DefaultResourceItemDto } from "@/services/types/defaultResource";
 import { DireveService } from "@/services/apiRepositories/DireveService";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { IconArrowRight } from "@tabler/icons-react";
 import { NewsEventsItem } from "@/services/types/newsEvents.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -21,7 +22,7 @@ import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
 import { TrendingCarrocel } from "@/components/rss/slider";
 import { _optional } from "zod/v4/core";
-import { decodeHtmlEntities } from "@/helpers/stringhelper";
+import { decodeHtmlEntities, capitalizeFirstLetter } from "@/helpers/stringhelper";
 import styles from "../../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
@@ -209,6 +210,9 @@ export default function CountryHome() {
 
   return (
     <>
+      <Head>
+        <title>{countryName ? `${countryName} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       {postProps ? (
         <>
           <div className={styles.HeroSearch}>
@@ -293,7 +297,7 @@ export default function CountryHome() {
               <div className={styles.Tms}>
                 <Container size={"xl"}>
                   <h3 className={styles.TitleWithIcon}>
-                    {properties?.tms_title || "Traditional Medicine Systems"}
+                    {capitalizeFirstLetter(properties?.tms_title || "TRADITIONAL MEDICINE SYSTEMS")}
                   </h3>
                   <Flex
                     justify={"center"}
@@ -352,7 +356,7 @@ export default function CountryHome() {
             <Container size={"xl"} mt={80} mb={80}>
               <div className={styles.ResearchBlock}>
                 <h3 className={styles.TitleWithIcon}>
-                  {properties?.research_block_title || "Research"}
+                  {capitalizeFirstLetter(properties?.research_block_title || "RESEARCH")}
                 </h3>
                 <div className={styles.researchBlockContent}>
                   <div

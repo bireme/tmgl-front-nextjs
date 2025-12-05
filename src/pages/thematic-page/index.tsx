@@ -4,8 +4,10 @@ import { useContext, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { ThematicPagesFeed } from "@/components/feed/thematicpages";
 import styles from "../../styles/pages/home.module.scss";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export default function News() {
   const { globalConfig } = useContext(GlobalContext);
@@ -13,6 +15,9 @@ export default function News() {
 
   return (
     <>
+      <Head>
+        <title>Thematic Pages - The WHO Traditional Medicine Global Library</title>
+      </Head>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
           blackColor
@@ -23,7 +28,7 @@ export default function News() {
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            Thematic pages
+            {capitalizeFirstLetter("Thematic  pages")}
           </h3>
 
           <div>

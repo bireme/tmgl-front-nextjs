@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { LoadingOverlay } from "@mantine/core";
 import { useRouter } from "next/router";
 
@@ -35,6 +36,9 @@ export default function CustomRoute() {
 
   return (
     <>
+      <Head>
+        <title>Loading - The WHO Traditional Medicine Global Library</title>
+      </Head>
       <LoadingOverlay visible={true} />
     </>
   );

@@ -9,6 +9,7 @@ import {
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { Multitabs } from "@/components/multitab";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -71,6 +72,9 @@ export default function Content() {
 
   return (
     <>
+      <Head>
+        <title>{post?.title.rendered ? `${post.title.rendered} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       {post ? (
         <>
           <Container mt={80} size={"xl"}>
@@ -83,11 +87,11 @@ export default function Content() {
           <Container mt={40} size={releatedNumber > 0 ? "xl" : "lg"}>
             <Grid>
               <Grid.Col span={releatedNumber > 0 ? 9 : 12} px={20}>
-                <h3 className={styles.TitleWithIcon}>
+                <p className={styles.CategoryLabel}>
                   {decodeHtmlEntities(
                     parent?.title?.rendered ? parent.title.rendered : ""
                   )}
-                </h3>
+                </p>
                 <h1 className={styles.PostTitle}>{post.title.rendered}</h1>
 
                 <div className={styles.PostProps}>

@@ -7,6 +7,7 @@ import { EmbedIframe } from "@/components/embed/EmbedIframe";
 import { EventsSection } from "@/components/sections/events";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { IconArrowRight } from "@tabler/icons-react";
@@ -20,6 +21,7 @@ import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
 import { TrendingSlider } from "@/components/rss/slider";
 import styles from "../styles/pages/home.module.scss";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export default function Home() {
   const _api = new PagesApi();
@@ -47,6 +49,9 @@ export default function Home() {
 
   return (
     <>
+      <Head>
+        <title>Home - The WHO Traditional Medicine Global Library</title>
+      </Head>
       <Modal
         title={"Warning"}
         onClose={() => setShowModal(false)}
@@ -68,7 +73,7 @@ export default function Home() {
         <Container size={"xl"} py={"3%"} className={styles.TraditionalMedicine}>
           <h2>{acf?.tmd.title}</h2>
           <Center m={0} p={0}>
-            <h4>{acf?.tmd.subtitle}</h4>
+            <h3>{acf?.tmd.subtitle}</h3>
           </Center>
 
           <DimensionsSection items={acf?.itens} />
@@ -90,7 +95,7 @@ export default function Home() {
           className={styles.TrandingAndFeaturedContainer}
         >
           <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
-            Recent literature reviews
+            {capitalizeFirstLetter("Recent Literature Reviews")}
           </h2>
           <div className={styles.TrendingText}>
             <p>{acf?.text_trending_topics}</p>
@@ -137,7 +142,7 @@ export default function Home() {
             </Flex>
           </Link>
           <br></br>
-          <h2 className={styles.TitleWithIcon}> Events</h2>
+          <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Events")}</h2>
         </Container>
       </div>
       {globalConfig?.acf.thematic_page_tag && (

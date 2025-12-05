@@ -72,56 +72,58 @@ export const EventsSection = ({ region, excludedTagIds }: EventsSectionProps) =>
           }')`,
         }}
       >
-        <Flex py={80} px={'12%'}>
-          <Flex
-            direction={"column"}
-            justify={"space-between"}
-            className={styles.EventsContent}
-          >
-            <div>
-              <h2>{event?.title.rendered}</h2>
-              <p>
-                {removeHtmlTags(
-                  event?.excerpt?.rendered ? event?.excerpt?.rendered : ""
-                )}
-              </p>
-              <Flex direction={{ base: "column", md: "row" }} gap={15}>
-                
-                {event?.acf?.releated_content ? (
-                  event?.acf?.releated_content.map((item: any, key: number) => (
-                    <a
-                      key={key}
-                      style={{ color: "white", textDecoration: "none" }}
-                      target="_blank"
-                      href={item.type == "Link" ? item.link : item.file}
-                    >
-                      <Button>{item.label}</Button>
-                    </a>
-                  ))
-                ) : (
-                  <></>
-                )}
-              </Flex>
-            </div>
-            <div>
-              <Flex
-                mt={25}
-                gap={10}
-                align={"center"}
-                onClick={() => {
-                  router.push("/events");
-                }}
-                component="a"
-                style={{ cursor: "pointer" }}
-              >
-                Explore all events{" "}
-                <Button size={"xs"} p={5}>
-                  <IconArrowRight stroke={1} />
-                </Button>
-              </Flex>
-            </div>
+        <div>
+          <Flex py={80} px={'12%'}>
+            <Flex
+              direction={"column"}
+              justify={"space-between"}
+              className={styles.EventsContent}
+            >
+              <div>
+                <h2>{event?.title.rendered}</h2>
+                <p>
+                  {removeHtmlTags(
+                    event?.excerpt?.rendered ? event?.excerpt?.rendered : ""
+                  )}
+                </p>
+                <Flex direction={{ base: "column", md: "row" }} gap={15}>
+                  
+                  {event?.acf?.releated_content ? (
+                    event?.acf?.releated_content.map((item: any, key: number) => (
+                      <a
+                        key={key}
+                        style={{ color: "white", textDecoration: "none" }}
+                        target="_blank"
+                        href={item.type == "Link" ? item.link : item.file}
+                      >
+                        <Button>{item.label}</Button>
+                      </a>
+                    ))
+                  ) : (
+                    <></>
+                  )}
+                </Flex>
+              </div>
+              <div>
+                <Flex
+                  mt={25}
+                  gap={10}
+                  align={"center"}
+                  onClick={() => {
+                    router.push("/events");
+                  }}
+                  component="a"
+                  style={{ cursor: "pointer" }}
+                >
+                  Explore all events{" "}
+                  <Button size={"xs"} p={5}>
+                    <IconArrowRight stroke={1} />
+                  </Button>
+                </Flex>
+              </div>
+            </Flex>
           </Flex>
-        </Flex>
+          </div>
       </div>
     </>
   ) : (

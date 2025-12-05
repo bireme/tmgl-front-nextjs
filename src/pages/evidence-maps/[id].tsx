@@ -7,6 +7,7 @@ import { BreadCrumbs } from "@/components/breadcrumbs";
 import { EvidenceMapItemDto } from "@/services/types/evidenceMapsDto";
 import { EvidenceMapsService } from "@/services/apiRepositories/EvidenceMapsService";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { ShareModal } from "@/components/share";
 import { TableauEmbed } from "@stoddabr/react-tableau-embed-live";
 import { TagItem } from "@/components/feed/resourceitem";
@@ -27,7 +28,7 @@ export default function EvidenceMap() {
   } = router;
   const _service = new EvidenceMapsService();
   const tagColors = {
-    country: "#69A221",
+    country: "#54831B",
     descriptor: "#8B142A",
     region: "#3F6114",
   };
@@ -55,6 +56,9 @@ export default function EvidenceMap() {
 
   return (
     <>
+      <Head>
+        <title>{item?.title ? `${item.title} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       <LoadingOverlay visible={loading} style={{ position: "fixed" }} />
       <Container size={"xl"} py={40}>
         <BreadCrumbs
@@ -69,13 +73,13 @@ export default function EvidenceMap() {
         <br />
         <Grid>
           <Grid.Col pr={{ md: 30 }} span={{ md: 9, xs: 12, base: 12 }}>
-            <h5
-              className={`${styles.TitleWithIcon} ${styles.small}`}
+            <p
+              className={`${styles.CategoryLabel} ${styles.small}`}
               style={{ margin: "5px" }}
             >
               Evidence Maps
-            </h5>
-            <h3 className={`${styles.BlueTitle}`}>{item?.title}</h3>
+            </p>
+            <h1 className={`${styles.BlueTitle}`}>{item?.title}</h1>
             <p className={`${styles.Description}`}>{item?.excerpt}</p>
             <Flex
               className={styles.CatAndFunctions}
@@ -148,7 +152,7 @@ export default function EvidenceMap() {
           </Grid.Col>
           <Grid.Col pt={{ md: 60 }} span={{ md: 3, xs: 12, base: 12 }}>
             <div className={pageStyles.MapDetails}>
-              <h5>Map Details</h5>
+              <h2>Map Details</h2>
               {item?.releatedDocuments ? (
                 <>
                   <p>

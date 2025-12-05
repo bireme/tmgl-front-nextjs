@@ -1,7 +1,7 @@
 import { Alert, Container, Flex, Grid } from "@mantine/core";
 import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/home.module.scss";
-import { IconAlertCircleFilled } from "@tabler/icons-react";
+import {  IconInfoCircle } from "@tabler/icons-react";
 
 interface CommunityInitiative {
   url: string;
@@ -30,23 +30,23 @@ export function ContentSection({
       <Container size={"xl"} my={40}>
         <Grid>
           <Grid.Col span={{ md: 9, base: 12 }} px={20}>
-            {disclaimer && (
-              <div className={styles.Disclaimer}>
-                <Alert color="yellow">
-                  <Flex align={"center"} gap={10}>
-                    <IconAlertCircleFilled size={60} color={"#dab526"} />
-                    <div dangerouslySetInnerHTML={{ __html: disclaimer }} />
-                  </Flex>
-                </Alert>
-              </div>
-            )}
+            
             <h2>{title}</h2>
             <div
               dangerouslySetInnerHTML={{
                 __html: content || "",
               }}
             />
-
+            { disclaimer && disclaimer != "" && (
+              <div className={styles.Disclaimer}>
+                <Alert color="blue">
+                  <Flex align={"center"} gap={10}>
+                    <IconInfoCircle size={60} color={"blue"} />
+                    <div dangerouslySetInnerHTML={{ __html: disclaimer }} />
+                  </Flex>
+                </Alert>
+              </div>
+            )}
           </Grid.Col>
           <Grid.Col span={{ md: 3, base: 12 }} px={20}>
             <div className={styles.SideContent}>

@@ -20,10 +20,8 @@ export const EvidenceMapItem = ({ title, excerpt, href }: EvidenceMapProps) => {
     >
       <h3>{title}</h3>
       <p>{excerpt}</p>
-      <Button size={"xs"} p={5}>
-        <a href={href}>
-          <IconArrowRight />
-        </a>
+      <Button size={"xs"} p={5} component="a" href={href}>
+        <IconArrowRight />
       </Button>
     </Flex>
   );
@@ -56,12 +54,16 @@ export const EvidenceMapsSection = () => {
             href="/"
           />
         </Flex>
-        <a href={""} className={styles.MoreLink}>
-          Explore more evidence maps{" "}
-          <Button size={"xs"} p={5}>
-            <IconArrowRight />
-          </Button>
-        </a>
+        <Button
+          size={"xs"}
+          p={5}
+          component="a"
+          href={""}
+          className={styles.MoreLink}
+          variant="transparent"
+        >
+          Explore more evidence maps <IconArrowRight />
+        </Button>
       </Container>
     </div>
   );

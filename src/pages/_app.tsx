@@ -13,6 +13,7 @@ import { GlobalConfigLoader } from "@/contexts/GlobalConfigLoader";
 import { GlobalProvider } from "@/contexts/globalContext";
 import { GptWidget } from "@/components/gpt";
 import { HeaderLayout } from "@/components/layout/header";
+import { SkipLink } from "@/components/layout/skip-link";
 import { mantineTheme } from "@styles/mantine-theme";
 import { useRouter } from "next/router";
 
@@ -37,6 +38,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <MantineProvider theme={mantineTheme}>
       <GlobalProvider>
         <GlobalConfigLoader />
+        <SkipLink />
         <Modal
           title={"The WHO Traditional  Medicine Global Library"}
           onClose={() => handleAgreeWarning()}
@@ -72,7 +74,9 @@ export default function App({ Component, pageProps }: AppProps) {
           </Button>
         </Modal>
         <HeaderLayout />
-        <Component {...pageProps} />
+        <main id="main-content">
+          <Component {...pageProps} />
+        </main>
         <GptWidget />
         <FooterLayout />
       </GlobalProvider>

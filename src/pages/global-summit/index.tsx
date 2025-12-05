@@ -5,8 +5,10 @@ import { useContext, useState } from "react";
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
 import { GlobalSummitFeed } from "@/components/feed/globalsummit";
+import Head from "next/head";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export default function GlobalSummit() {
   const { globalConfig } = useContext(GlobalContext);
@@ -16,6 +18,9 @@ export default function GlobalSummit() {
   const [displayType, setDisplayType] = useState<string>("column");
   return (
     <>
+      <Head>
+        <title>WHO TM Global Summit - The WHO Traditional Medicine Global Library</title>
+      </Head>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
           blackColor
@@ -28,7 +33,7 @@ export default function GlobalSummit() {
           ]}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
-          <h3 className={styles.TitleWithIcon}>WHO TM Global Summit</h3>
+          <h3 className={styles.TitleWithIcon}>{capitalizeFirstLetter("WHO TM Global summit")}</h3>
 
           <div>
             <IconLayoutGrid

@@ -5,9 +5,11 @@ import { useContext, useState } from "react";
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { FeedSection } from "@/components/feed";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { NewsFeed } from "@/components/feed/news";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export default function News() {
   const { globalConfig } = useContext(GlobalContext);
@@ -17,6 +19,9 @@ export default function News() {
 
   return (
     <>
+      <Head>
+        <title>News from WHO GTMC - The WHO Traditional Medicine Global Library</title>
+      </Head>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
           blackColor
@@ -27,7 +32,7 @@ export default function News() {
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            News from WHO GTMC
+            {capitalizeFirstLetter("News from WHO GTMC")}
           </h3>
 
           <div>

@@ -223,8 +223,27 @@
   }
 }
 
-.TitleWithIcon{
+// Category label for pages (used before h1 to maintain semantic hierarchy)
+.CategoryLabel{
     text-transform: capitalize;
+    padding-left: 40px;
+    background-image: url('../../../public/local/svg/simbol.svg');
+    background-position: left center;
+    background-size: contain;
+    background-repeat: no-repeat;
+    font-family: "Roboto Serif";
+    font-size: 26px;
+    font-style: normal;
+    font-weight: 800;
+    line-height: normal;
+    max-width: 50vw;
+    @media (max-width: '750px') {
+        max-width: 80vw;
+    }
+}
+
+.TitleWithIcon{
+    text-transform: none;
     padding-left: 40px;
     background-image: url('../../../public/local/svg/simbol.svg');
     background-position: left center;
@@ -239,6 +258,7 @@
     @media (max-width: '750px') {
       width: 100%;
       max-width: 100%;
+      padding-left: 75px;
     }
 }
 .NotFoundPage{

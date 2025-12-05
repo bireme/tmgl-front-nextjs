@@ -48,6 +48,7 @@ export default function Document() {
             `,
           }}
         />
+        <title>The WHO Traditional Medicine Global Library</title>
       </Head>
       <body>
         <Main />

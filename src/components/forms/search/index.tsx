@@ -36,6 +36,7 @@ export const SearchForm = ({ title, subtitle, small }: AcfSearch) => {
           <Input
             className={styles.HeroFormInput}
             size={"md"}
+            aria-label="Search"
             onChange={(e) => {
               setSearchString(e.target.value);
             }}

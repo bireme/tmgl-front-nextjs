@@ -6,8 +6,10 @@ import { BreadCrumbs } from "@/components/breadcrumbs";
 import { DimensionsFeed } from "@/components/feed/dimensions";
 import { DimensionsSection } from "@/components/sections";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { ImageSection } from "@/components/video";
 import styles from "../../styles/pages/home.module.scss";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export default function Dimensions() {
   const { globalConfig } = useContext(GlobalContext);
@@ -15,6 +17,9 @@ export default function Dimensions() {
 
   return (
     <>
+      <Head>
+        <title>Traditional Medicine Dimensions - The WHO Traditional Medicine Global Library</title>
+      </Head>
       {/* <BreadCrumbs
           blackColor
           path={[
@@ -30,7 +35,7 @@ export default function Dimensions() {
           mt={30}
         >
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            Dimensions
+            {capitalizeFirstLetter("Dimensions")}
           </h3>
 
           <div>
@@ -56,11 +61,11 @@ export default function Dimensions() {
             Traditional Medicine Dimensions
           </h2>
           <Center m={0} p={0}>
-            <h4>
+            <h3>
               The Traditional Medicine Dimensions, derived from the Gujarat
               Declaration, form the core pillars of TMGL. Advancing these
               dimensions contributes to achieving health and well-being for all.
-            </h4>
+            </h3>
           </Center>
 
           <DimensionsSection />

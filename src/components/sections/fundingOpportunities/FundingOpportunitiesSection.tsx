@@ -5,6 +5,7 @@ import { HeadingItem, smallItemObj } from "@/services/types/posts.dto";
 import { IconArrowRight } from "@tabler/icons-react";
 import styles from "../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 interface FundingOpportunitiesSectionProps {
   fundingOpportunities: smallItemObj[];
@@ -36,7 +37,7 @@ export function FundingOpportunitiesSection({
     return (
       <>
         <Grid.Col span={{ md: 6, base: 12 }} pr={20}>
-          <h3 className={styles.TitleWithIcon}>{title}</h3>
+          <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter(title)}</h2>
           <Flex
             gap="30px"
             wrap="wrap"

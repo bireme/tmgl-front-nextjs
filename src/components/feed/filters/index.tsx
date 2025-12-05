@@ -184,18 +184,19 @@ export const ResourceFilters = ({
   return (
     <div className={styles.FilterContent}>
       <h3>Filters</h3>
-      <Input.Label>Search</Input.Label>
-      <Input
-        placeholder="Search for something"
-        radius={"sm"}
-        value={queryString}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            submit();
-          }
-        }}
-        onChange={(e) => setQueryString(e.target.value)}
-      />
+      <Input.Wrapper label="Search">
+        <Input
+          placeholder="Search for something"
+          radius={"sm"}
+          value={queryString}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              submit();
+            }
+          }}
+          onChange={(e) => setQueryString(e.target.value)}
+        />
+      </Input.Wrapper>
 
       {filters
         ?.filter((f) => f.items.length > 0)

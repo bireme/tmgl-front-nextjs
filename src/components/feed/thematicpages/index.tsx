@@ -40,6 +40,7 @@ export const ThematicPagesFeed = ({ displayType }: { displayType: string }) => {
       resetPage ? 1 : page,
       filter
     );
+    console.log(response);
     setTotalPages(Math.ceil(response.totalItems / count));
     setApiResponse(response);
     setItems(response.data.reverse());
@@ -145,6 +146,7 @@ export const ThematicPagesFeed = ({ displayType }: { displayType: string }) => {
               <>
                 {items.map((i, k) => {
                   const acf: ThematicPageAcfProps = i.acf;
+                  const image = _api.findFeaturedMedia(i, "medium");
                   return (
                     <ResourceCard
                       demo={hasDemoTag(i)}
@@ -152,7 +154,7 @@ export const ThematicPagesFeed = ({ displayType }: { displayType: string }) => {
                       key={k}
                       title={i.title.rendered}
                       tags={_api.formatTags(i)}
-                      image={_api.findFeaturedMedia(i, "medium")}
+                      image={image ? image : "/public/local/png/defaultImage.png"}
                       excerpt={
                         removeHTMLTagsAndLimit(
                           decodeHtmlEntities(acf.content),

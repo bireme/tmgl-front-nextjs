@@ -163,21 +163,47 @@ export const HeaderLayout = () => {
       return (
         <a
           key={key}
-          onClick={() => {
+          href={'#'}
+          onClick={(e) => {
             if (prev) {
-              router.push(item.url);
+              e.preventDefault();
+              router.push(parseWpLink(item.url));
               handleCloseMegaMenu();
             } else {
               if (item.children.length > 0) {
+                e.preventDefault();
                 setThirdLevelItems(item.children);
                 setSelectedSubItem(item);
               } else {
                 setThirdLevelItems(undefined);
                 setSelectedSubItem(item);
                 if (mediaQueryMatches) {
-                  router.push(item.url);
+                  e.preventDefault();
+                  router.push(parseWpLink(item.url));
                   handleCloseMegaMenu();
                   setResponsiveMenuOpen(false);
+                }
+              }
+            }
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              if (prev) {
+                router.push(parseWpLink(item.url));
+                handleCloseMegaMenu();
+              } else {
+                if (item.children.length > 0) {
+                  setThirdLevelItems(item.children);
+                  setSelectedSubItem(item);
+                } else {
+                  setThirdLevelItems(undefined);
+                  setSelectedSubItem(item);
+                  if (mediaQueryMatches) {
+                    router.push(parseWpLink(item.url));
+                    handleCloseMegaMenu();
+                    setResponsiveMenuOpen(false);
+                  }
                 }
               }
             }
@@ -185,6 +211,8 @@ export const HeaderLayout = () => {
           className={`${
             selectedSubItem?.ID == item.ID && !prev ? styles.selected : ""
           }`}
+          aria-haspopup={item.children.length > 0 ? "true" : undefined}
+          aria-expanded={item.children.length > 0 && selectedSubItem?.ID == item.ID && !prev ? true : undefined}
         >
           {decodeHtmlEntities(item.title ? item.title : "")}
           {selectedSubItem?.ID == item.ID && !prev ? (
@@ -260,303 +288,448 @@ export const HeaderLayout = () => {
   };
 
   return (
-    <div
-      className={`${styles.HeaderContent} ${
-        isScrolled ? styles.scrolled : ""
-      } ${opened ? styles.Opened : ""}`}
-    >
-      <Container size={"xl"}>
-        {isScrolled ? (
-          <div className={styles.HeaderActionContainer}>
-            <div
-              className={`${styles.HeaderActionButton} ${
-                !opened ? styles.HeaderActionOpened : ""
-              } `}
-            >
-              <a
-                className={styles.ScrolledButton}
-                onClick={() => {
-                  setOpened(opened ? false : true);
-                }}
+    <header className={styles.Header}>
+      <div
+        className={`${styles.HeaderContent} ${
+          isScrolled ? styles.scrolled : ""
+        } ${opened ? styles.Opened : ""}`}
+      >
+        <Container size={"xl"}>
+          {isScrolled ? (
+            <div className={styles.HeaderActionContainer}>
+              <div
+                className={`${styles.HeaderActionButton} ${
+                  !opened ? styles.HeaderActionOpened : ""
+                } `}
               >
-                {opened ? <IconX /> : <IconMenu2 />}
-              </a>
+                <button
+                  className={styles.ScrolledButton}
+                  onClick={() => {
+                    setOpened(opened ? false : true);
+                  }}
+                  aria-expanded={opened}
+                  aria-label="Toggle menu"
+                  aria-controls="main-navigation"
+                  type="button"
+                  style={{ 
+                    background: 'none', 
+                    border: 'none', 
+                    padding: 0, 
+                    margin: 0,
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'inherit',
+                    font: 'inherit'
+                  }}
+                >
+                  {opened ? <IconX /> : <IconMenu2 />}
+                </button>
+              </div>
+            </div>
+          ) : (
+            <></>
+          )}
+          <Flex
+            gap={"10px"}
+            direction={"row"}
+            align={"center"}
+            justify={"center"}
+            className={styles.LogoContainer}
+          >
+            <Flex direction={"row"} align={"center"} className={styles.LogoContent} gap={"10px"}>
+              <div>
+                <a href={`/`}>
+                  <img src={logoSource} alt="brand-logo" id={"BrandLogo"} />
+                </a>
+              </div>
+              <Flex className={styles.LogoTextContent} direction={"column"} justify={"flex-end"} align={"flex-start"}>
+                <a className={styles.LogoRegionNameText} href={`/${regionName ? regionName : ""}`}>
+                  {countryName ? countryName : getRegionName(regionName)}
+                </a>
+                <a href={`/${regionName ? regionName : ""}`} className={styles.LogoSubText}>
+                  {
+                    countryName || getRegionName(regionName) ? (
+                      <small>The WHO Traditional <br/> Medicine Global Library</small>
+                    ) : (
+                      <>The WHO Traditional <br/> Medicine Global Library</>
+                    )
+                  }
+                  
+                </a>
+              </Flex>
+            </Flex>
+            <Flex
+              direction={"column"}
+              justify={"center"}
+              className={styles.BrandContent}
+            >
+              <Flex
+                direction={"row"}
+                justify={"flex-end"}
+                align={"center"}
+                className={`${styles.SuperiorFlex} ${
+                  getRegionName(regionName) ? styles.HasRegion : ""
+                }`}
+              >
+                <div className={styles.ResponsiveMenuButton}>
+                  <button
+                    onClick={() => {
+                      if (responsiveMenuOpen) {
+                        setResponsiveMenuOpen(false);
+                        handleCloseMegaMenu();
+                      } else {
+                        setResponsiveMenuOpen(true);
+                      }
+                    }}
+                    aria-expanded={responsiveMenuOpen}
+                    aria-label="Menu"
+                    aria-controls="responsive-navigation"
+                    type="button"
+                    style={{ 
+                      background: 'none', 
+                      border: 'none', 
+                      cursor: 'pointer', 
+                      padding: 0, 
+                      margin: 0,
+                      display: 'flex', 
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'inherit',
+                      font: 'inherit'
+                    }}
+                  >
+                    {!responsiveMenuOpen ? (
+                      <IconMenu2
+                        size={25}
+                        stroke={1.5}
+                      />
+                    ) : (
+                      <IconX
+                        size={25}
+                        stroke={1.5}
+                      />
+                    )}
+                  </button>
+                </div>
+                <div
+                  id="main-navigation"
+                  className={`${styles.SuperiorLinks} ${
+                    opened || !isScrolled ? styles.Opened : ""
+                  }`}
+                >
+                  {globalMenu?.map((item, key) => {
+                    return (
+                      <a
+                        key={key}
+                        href={item.children?.length > 0 ? "#" : parseWpLink(item.url)}
+                        onClick={(e) => {
+                          if (item.children?.length > 0) {
+                            e.preventDefault();
+                            if (selectedMenuItem?.ID == item.ID) {
+                              handleCloseMegaMenu();
+                              setSelectedMenuItem(undefined);
+                            } else {
+                              setMegaMenuOpen(true);
+                              setOriginalMenuItem(item);
+                              setSelectedMenuItem(item);
+                              setSelectedSubItem(undefined);
+                            }
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            if (item.children?.length > 0) {
+                              if (selectedMenuItem?.ID == item.ID) {
+                                handleCloseMegaMenu();
+                                setSelectedMenuItem(undefined);
+                              } else {
+                                setMegaMenuOpen(true);
+                                setOriginalMenuItem(item);
+                                setSelectedMenuItem(item);
+                                setSelectedSubItem(undefined);
+                              }
+                            }
+                          }
+                        }}
+                        aria-haspopup={item.children?.length > 0 ? "true" : undefined}
+                        aria-expanded={item.children?.length > 0 && selectedMenuItem?.ID == item.ID ? true : undefined}
+                      >
+                        {item.title == "About Us" ? (
+                          <IconInfoCircle size={25} stroke={1} />
+                        ) : (
+                          <IconLifebuoy size={25} stroke={1} />
+                        )}
+                        {item.title}
+                      </a>
+                    );
+                  })}
+                </div>
+              </Flex>
+              <nav>
+                <Flex
+                  mt={0}
+                  className={`${styles.InfoNavContainer} ${
+                    opened ? styles.Opened : ""
+                  }`}
+                  align={"flex-end"}
+                  justify={"flex-end"}
+                >
+                  
+                  <Flex className={styles.InfoNav} justify={"fle-end"} gap={"16px"}>
+                    {regMenu?.map((item, key) => {
+                      return (
+                        <a
+                          href={item.children?.length > 0 ? "#" : parseWpLink(item.url)}
+                          onClick={(e) => {
+                            if (item.children?.length > 0) {
+                              e.preventDefault();
+                              if (selectedMenuItem?.ID == item.ID) {
+                                handleCloseMegaMenu();
+                                setSelectedMenuItem(undefined);
+                              } else {
+                                setMegaMenuOpen(true);
+                                setOriginalMenuItem(item);
+                                setSelectedMenuItem(item);
+                                setSelectedSubItem(undefined);
+                              }
+                            } else {
+                              e.preventDefault();
+                              if (item.url) {
+                                router.push(parseWpLink(item.url));
+                              }
+                            }
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              if (item.children?.length > 0) {
+                                if (selectedMenuItem?.ID == item.ID) {
+                                  handleCloseMegaMenu();
+                                  setSelectedMenuItem(undefined);
+                                } else {
+                                  setMegaMenuOpen(true);
+                                  setOriginalMenuItem(item);
+                                  setSelectedMenuItem(item);
+                                  setSelectedSubItem(undefined);
+                                }
+                              } else {
+                                if (item.url) {
+                                  router.push(parseWpLink(item.url));
+                                }
+                              }
+                            }
+                          }}
+                          key={key}
+                          aria-haspopup={item.children?.length > 0 ? "true" : undefined}
+                          aria-expanded={item.children?.length > 0 && selectedMenuItem?.ID == item.ID ? true : undefined}
+                        >
+                          {decodeHtmlEntities(item.title ? item.title : "")}
+                        </a>
+                      );
+                    })}
+                  </Flex>
+                </Flex>
+              </nav>
+              
+            </Flex>
+          </Flex>
+        </Container>
+        {megaMenuOpen ? (
+          <div
+            className={`${styles.MegaMenuOverlay} ${styles.Main}`}
+            onClick={() => handleCloseMegaMenu()}
+          >
+            <div
+              className={styles.MegaMenu}
+              
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <Grid style={{ flexShrink: 0 }}>
+                <Grid.Col span={{ base: 12, md: 5 }}>
+                  {prevSelectedSubItem ? (
+                    <button
+                      style={{
+                        cursor: "pointer",
+                        display: "flex",
+                        flexDirection: "row",
+                        alignContent: "center",
+                        alignItems: "center",
+                        background: "none",
+                        border: "none",
+                        padding: 0,
+                        margin: 0,
+                        font: "inherit",
+                        color: "inherit",
+                        textAlign: "left",
+                        width: "100%"
+                      }}
+                      onClick={() => {
+                        handlePrevMenuItem();
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          handlePrevMenuItem();
+                        }
+                      }}
+                      aria-label="Go back to previous menu"
+                      type="button"
+                    >
+                      <h2 style={{ display: "flex", alignItems: "center", margin: 0 }}>
+                        <IconChevronsLeft />
+                        {decodeHtmlEntities(
+                          selectedMenuItem?.title ? selectedMenuItem.title : ""
+                        )}
+                      </h2>
+                    </button>
+                  ) : (
+                    <h2>
+                      {decodeHtmlEntities(
+                        selectedMenuItem?.title ? selectedMenuItem.title : ""
+                      )}
+                    </h2>
+                  )}
+                </Grid.Col>
+              </Grid>
+
+              <Grid style={{ flex: 1}}>
+                <Grid.Col span={{ base: 12, md: 4 }} style={{ height: "100%" }}>
+                  <nav>{renderSubItemsNav()}</nav>
+                </Grid.Col>
+                <Grid.Col
+                  span={{ base: 12, md: 8 }}
+                    
+                  className={styles.MegaMenuRightSection}
+                >
+                  <Flex mt={20} style={{ height: "100%" }} direction={"column"}>
+                    {selectedSubItem
+                      ? thirdLevelItems
+                        ? renderMegaMenuWithItems()
+                        : renderMegaMenuItem(selectedSubItem)
+                      : selectedMenuItem?.children[0]
+                      ? renderMegaMenuItem(selectedMenuItem?.children[0])
+                      : ""}
+                  </Flex>
+                </Grid.Col>
+              </Grid>
             </div>
           </div>
         ) : (
           <></>
         )}
-        <Flex
-          gap={"10px"}
-          direction={"row"}
-          align={"center"}
-          justify={"center"}
-          className={styles.LogoContainer}
-        >
-          <Flex direction={"row"} align={"center"} className={styles.LogoContent} gap={"10px"}>
-            <div>
-              <a href={`/`}>
-                <img src={logoSource} alt="brand-logo" id={"BrandLogo"} />
-              </a>
-            </div>
-            <Flex className={styles.LogoTextContent} direction={"column"} justify={"flex-end"} align={"flex-start"}>
-              <a className={styles.LogoRegionNameText} href={`/${regionName ? regionName : ""}`}>
-                {countryName ? countryName : getRegionName(regionName)}
-              </a>
-              <a href={`/${regionName ? regionName : ""}`} className={styles.LogoSubText}>
-                {
-                  countryName || getRegionName(regionName) ? (
-                    <small>The WHO Traditional <br/> Medicine Global Library</small>
-                  ) : (
-                    <>The WHO Traditional <br/> Medicine Global Library</>
-                  )
-                }
-                
-              </a>
-            </Flex>
-          </Flex>
-          <Flex
-            direction={"column"}
-            justify={"center"}
-            className={styles.BrandContent}
+
+        {responsiveMenuOpen ? (
+          <div
+            className={styles.MegaMenuOverlay}
+            onClick={() => {
+              handleCloseMegaMenu();
+              setResponsiveMenuOpen(false);
+            }}
           >
-            <Flex
-              direction={"row"}
-              justify={"flex-end"}
-              align={"center"}
-              className={`${styles.SuperiorFlex} ${
-                getRegionName(regionName) ? styles.HasRegion : ""
-              }`}
-            >
-              <div className={styles.ResponsiveMenuButton}>
-                {!responsiveMenuOpen ? (
-                  <>
-                    <IconMenu2
-                      size={25}
-                      stroke={1.5}
-                      onClick={() => {
-                        setResponsiveMenuOpen(true);
-                      }}
-                    />
-                  </>
-                ) : (
-                  <>
-                    <IconX
-                      size={25}
-                      stroke={1.5}
-                      onClick={() => {
-                        setResponsiveMenuOpen(false);
-                        handleCloseMegaMenu();
-                      }}
-                    />
-                  </>
-                )}
-              </div>
-              <div
-                className={`${styles.SuperiorLinks} ${
-                  opened || !isScrolled ? styles.Opened : ""
-                }`}
-              >
-                {globalMenu?.map((item, key) => {
+            <div id="responsive-navigation" className={styles.ResponsiveMenu}>
+              <nav>
+                {regMenu?.map((item, key) => {
                   return (
                     <a
-                      key={key}
-                      onClick={() => {
-                        if (selectedMenuItem?.ID == item.ID) {
-                          handleCloseMegaMenu();
-                          setSelectedMenuItem(undefined);
-                        } else {
+                      href={item.children?.length > 0 ? "#" : parseWpLink(item.url)}
+                      onClick={(e) => {
+                        if (item.children?.length > 0) {
+                          e.stopPropagation();
+                          e.preventDefault();
                           setMegaMenuOpen(true);
                           setOriginalMenuItem(item);
                           setSelectedMenuItem(item);
                           setSelectedSubItem(undefined);
+                          setResponsiveMenuOpen(false);
+                        } else {
+                          e.preventDefault();
+                          if (item.url) {
+                            router.push(parseWpLink(item.url));
+                          }
                         }
                       }}
-                    >
-                      {item.title == "About Us" ? (
-                        <IconInfoCircle size={25} stroke={1} />
-                      ) : (
-                        <IconLifebuoy size={25} stroke={1} />
-                      )}
-                      {item.title}
-                    </a>
-                  );
-                })}
-              </div>
-            </Flex>
-
-            <Flex
-              mt={0}
-              className={`${styles.InfoNavContainer} ${
-                opened ? styles.Opened : ""
-              }`}
-              align={"flex-end"}
-              justify={"flex-end"}
-            >
-              
-              <Flex className={styles.InfoNav} justify={"fle-end"} gap={"16px"}>
-                {regMenu?.map((item, key) => {
-                  return (
-                    <a
-                      onClick={() => {
-                        if (item.children?.length > 0) {
-                          if (selectedMenuItem?.ID == item.ID) {
-                            handleCloseMegaMenu();
-                            setSelectedMenuItem(undefined);
-                          } else {
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          if (item.children?.length > 0) {
+                            e.stopPropagation();
                             setMegaMenuOpen(true);
                             setOriginalMenuItem(item);
                             setSelectedMenuItem(item);
                             setSelectedSubItem(undefined);
-                          }
-                        } else {
-                          if (item.url) {
-                            router.push(item.url);
+                            setResponsiveMenuOpen(false);
+                          } else {
+                            if (item.url) {
+                              router.push(parseWpLink(item.url));
+                            }
                           }
                         }
                       }}
                       key={key}
+                      aria-haspopup={item.children?.length > 0 ? "true" : undefined}
                     >
+                      {megaMenuOpen ? <></> : <></>}
                       {decodeHtmlEntities(item.title ? item.title : "")}
                     </a>
                   );
                 })}
-              </Flex>
-            </Flex>
-          </Flex>
-        </Flex>
-      </Container>
-      {megaMenuOpen ? (
-        <div
-          className={`${styles.MegaMenuOverlay} ${styles.Main}`}
-          onClick={() => handleCloseMegaMenu()}
-        >
-          <div
-            className={styles.MegaMenu}
-            
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-          >
-            <Grid style={{ flexShrink: 0 }}>
-              <Grid.Col span={{ base: 12, md: 5 }}>
-                <h2
-                  style={{
-                    cursor: prevSelectedSubItem ? "pointer" : "default",
-                    display: "flex",
-                    flexDirection: "row",
-                    alignContent: "center",
-                    alignItems: "center",
-                  }}
-                  onClick={() => {
-                    handlePrevMenuItem();
-                  }}
-                >
-                  {prevSelectedSubItem ? (
-                    <>
-                      <IconChevronsLeft />
-                    </>
-                  ) : (
-                    <></>
-                  )}
-                  {decodeHtmlEntities(
-                    selectedMenuItem?.title ? selectedMenuItem.title : ""
-                  )}
-                </h2>
-              </Grid.Col>
-            </Grid>
-
-            <Grid style={{ flex: 1}}>
-              <Grid.Col span={{ base: 12, md: 4 }} style={{ height: "100%" }}>
-                <nav>{renderSubItemsNav()}</nav>
-              </Grid.Col>
-              <Grid.Col
-                span={{ base: 12, md: 8 }}
-                  
-                className={styles.MegaMenuRightSection}
-              >
-                <Flex mt={20} style={{ height: "100%" }} direction={"column"}>
-                  {selectedSubItem
-                    ? thirdLevelItems
-                      ? renderMegaMenuWithItems()
-                      : renderMegaMenuItem(selectedSubItem)
-                    : selectedMenuItem?.children[0]
-                    ? renderMegaMenuItem(selectedMenuItem?.children[0])
-                    : ""}
-                </Flex>
-              </Grid.Col>
-            </Grid>
-          </div>
-        </div>
-      ) : (
-        <></>
-      )}
-
-      {responsiveMenuOpen ? (
-        <div
-          className={styles.MegaMenuOverlay}
-          onClick={() => {
-            handleCloseMegaMenu();
-            setResponsiveMenuOpen(false);
-          }}
-        >
-          <div className={styles.ResponsiveMenu}>
-            <nav>
-              {regMenu?.map((item, key) => {
-                return (
-                  <a
-                    onClick={(e) => {
-                      if (item.children?.length > 0) {
-                        e.stopPropagation();
-                        setMegaMenuOpen(true);
-                        setOriginalMenuItem(item);
-                        setSelectedMenuItem(item);
-                        setSelectedSubItem(undefined);
-                        setResponsiveMenuOpen(false);
-                      } else {
-                        if (item.url) {
-                          router.push(parseWpLink(item.url));
+                <hr />
+              </nav>
+              <nav className={styles.secondNav}>
+                {globalMenu?.map((item, key) => {
+                  return (
+                    <a
+                      key={key}
+                      href={item.children?.length > 0 ? "#" : parseWpLink(item.url)}
+                      onClick={(e) => {
+                        if (item.children?.length > 0) {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          setMegaMenuOpen(true);
+                          setSelectedMenuItem(item);
+                          setSelectedSubItem(undefined);
+                          setResponsiveMenuOpen(false);
+                        } else {
+                          e.preventDefault();
+                          if (item.url) {
+                            router.push(parseWpLink(item.url));
+                          }
                         }
-                      }
-                    }}
-                    key={key}
-                  >
-                    {megaMenuOpen ? <></> : <></>}
-                    {decodeHtmlEntities(item.title ? item.title : "")}
-                  </a>
-                );
-              })}
-              <hr />
-            </nav>
-            <nav className={styles.secondNav}>
-              {globalMenu?.map((item, key) => {
-                return (
-                  <a
-                    key={key}
-                    onClick={(e) => {
-                      if (item.children?.length > 0) {
-                        e.stopPropagation();
-                        setMegaMenuOpen(true);
-                        setSelectedMenuItem(item);
-                        setSelectedSubItem(undefined);
-                        setResponsiveMenuOpen(false);
-                      } else {
-                        if (item.url) {
-                          router.push(parseWpLink(item.url));
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
+                          if (item.children?.length > 0) {
+                            e.stopPropagation();
+                            setMegaMenuOpen(true);
+                            setSelectedMenuItem(item);
+                            setSelectedSubItem(undefined);
+                            setResponsiveMenuOpen(false);
+                          } else {
+                            if (item.url) {
+                              router.push(parseWpLink(item.url));
+                            }
+                          }
                         }
-                      }
-                    }}
-                  >
-                    {item.title}
-                  </a>
-                );
-              })}
-            </nav>
+                      }}
+                      aria-haspopup={item.children?.length > 0 ? "true" : undefined}
+                    >
+                      {item.title}
+                    </a>
+                  );
+                })}
+              </nav>
+            </div>
           </div>
-        </div>
-      ) : (
-        <></>
-      )}
-    </div>
+        ) : (
+          <></>
+        )}
+      </div>
+    </header>
   );
 };

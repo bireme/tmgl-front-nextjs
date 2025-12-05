@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { JournalItemDto } from "@/services/types/journalsDto";
 import { JournalsService } from "@/services/apiRepositories/JournalsService";
 import { ShareModal } from "@/components/share";
@@ -24,7 +25,7 @@ export default function Journal() {
   const { language } = useContext(GlobalContext);
   const [tags, setTags] = useState<Array<TagItem>>([]);
   const tagColors = {
-    country: "#69A221",
+    country: "#54831B",
     descriptor: "#8B142A",
     region: "#3F6114",
   };
@@ -48,6 +49,9 @@ export default function Journal() {
 
   return (
     <>
+      <Head>
+        <title>{item?.title ? `${item.title} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
           blackColor
@@ -61,12 +65,12 @@ export default function Journal() {
         <br />
         <Grid>
           <Grid.Col pr={{ md: 30 }} span={{ md: 9, xs: 12, base: 12 }}>
-            <h5
-              className={`${styles.TitleWithIcon} ${styles.small}`}
+            <p
+              className={`${styles.CategoryLabel} ${styles.small}`}
               style={{ margin: "5px" }}
             >
               Journals
-            </h5>
+            </p>
             <Grid mt={30} mb={0}>
               {item?.logo ? (
                 <>
@@ -141,9 +145,9 @@ export default function Journal() {
             </Flex>
           </Grid.Col>
           <Grid.Col pt={{ md: 65 }} span={{ md: 3, sm: 12, base: 12 }}>
-            <h4 className={`${styles.BlueTitle} ${styles.small}`}>
+            <h2 className={`${styles.BlueTitle} ${styles.small}`}>
               Journal Details
-            </h4>
+            </h2>
             <Grid className={pageStyles.JournalDetails} mt={-40}>
               <Grid.Col span={{ base: 12, md: 12 }} pr={{ md: 15 }}>
                 <p>

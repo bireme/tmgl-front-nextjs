@@ -14,7 +14,7 @@ import { Carousel } from "@mantine/carousel";
 import { FetchRSSFeed } from "@/services/rss/RssService";
 import { GlobalContext } from "@/contexts/globalContext";
 import { TrendingTopicSection } from "@/components/sections/topics";
-import { decodeHtmlEntities } from "@/helpers/stringhelper";
+import { decodeHtmlEntities, capitalizeFirstLetter } from "@/helpers/stringhelper";
 import styles from "../../../styles/components/slider.module.scss";
 import { useRouter } from "next/router";
 
@@ -152,9 +152,9 @@ export const TrendingCarrocel = ({
   return (
     <div className={styles.CountryRss}>
       <Container py={10} size={"xl"}>
-        <h3 className={styles.TitleWithIcon}>
-          {title ? title : "Recent literature reviews"}
-        </h3>
+        <h2 className={styles.TitleWithIcon}>
+          {capitalizeFirstLetter(title ? title : "Recent literature reviews")}
+        </h2>
         {posts.length > 0 ? (
           <>
             <Carousel
@@ -253,11 +253,16 @@ export const TrendingTopicCard = ({
         <div dangerouslySetInnerHTML={{ __html: excerpt }} />
       </div>
       <div className={styles.TrendingLink}>
-        <a href={href} className={styles.TrendingButton}>
-          <Button p={8} radius={"md"} size={"sm"}>
-            <IconArrowRight size={19} stroke={1.5} />
-          </Button>
-        </a>
+        <Button
+          p={8}
+          radius={"md"}
+          size={"sm"}
+          component="a"
+          href={href}
+          className={styles.TrendingButton}
+        >
+          <IconArrowRight size={19} stroke={1.5} />
+        </Button>
       </div>
     </Flex>
   );

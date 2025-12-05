@@ -1,12 +1,17 @@
 /* eslint-disable react/no-unescaped-entities */
 import { Button, Container, Flex, Grid } from "@mantine/core";
 
+import Head from "next/head";
 import Link from "next/link";
 import styles from "../styles/pages/pages.module.scss";
 
 export default function Subscription() {
   return (
-    <Container size={"xl"} py={150}>
+    <>
+      <Head>
+        <title>Subscription Confirmed - The WHO Traditional Medicine Global Library</title>
+      </Head>
+      <Container size={"xl"} py={150}>
       <Grid className={styles.NotFoundPage}>
         <Grid.Col span={{ base: 12, md: 6.5 }}>
           <img src={"/local/svg/subscription.svg"} />
@@ -30,6 +35,7 @@ export default function Subscription() {
           </Flex>
         </Grid.Col>
       </Grid>
-    </Container>
+      </Container>
+    </>
   );
 }

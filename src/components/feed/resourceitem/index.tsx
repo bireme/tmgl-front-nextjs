@@ -257,7 +257,7 @@ export const ResourceCard = ({
   className,
 }: ResourceCardProps) => {
   const colors = {
-    country: "#69A221",
+    country: "#54831B",
     descriptor: "#8B142A",
     region: "#3F6114",
     type: "#1A4B8C",
@@ -298,7 +298,10 @@ export const ResourceCard = ({
         <div className={styles.CardContent}>
           {image && displayType === "column" ? cardImage() : <></>}
           <small>{type}</small>
-          <h3>{title}</h3>
+          <div className={styles.HeadingWrapper}>
+              <h3>{title}</h3>
+          </div>
+          
           <p style={{minHeight: displayType === "column" ? "100px" : "auto"}}>{excerpt}</p>
         </div>
         <Flex style={{ width: "100%" }} direction="column">

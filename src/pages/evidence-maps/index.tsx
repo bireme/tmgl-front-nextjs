@@ -5,8 +5,10 @@ import { useContext, useState } from "react";
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { EvidenceMapsFeed } from "@/components/feed/evidencemaps";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export default function EvidenceMaps() {
   const { globalConfig } = useContext(GlobalContext);
@@ -15,6 +17,9 @@ export default function EvidenceMaps() {
   const [displayType, setDisplayType] = useState<string>("column");
   return (
     <>
+      <Head>
+        <title>Evidence Maps - The WHO Traditional Medicine Global Library</title>
+      </Head>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
           blackColor
@@ -25,7 +30,7 @@ export default function EvidenceMaps() {
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            Evidence Maps
+            {capitalizeFirstLetter("Evidence maps")}
           </h3>
 
           <div>

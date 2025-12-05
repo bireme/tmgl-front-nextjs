@@ -6,6 +6,7 @@ import {
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { FeaturedStoriesAcf } from "@/services/types/featuredStoriesAcf";
+import Head from "next/head";
 import { HeroHeader } from "@/components/sections/hero";
 import { LoadingOverlay } from "@mantine/core";
 import { Post } from "@/services/types/posts.dto";
@@ -40,6 +41,9 @@ export default function FeaturedStories() {
 
   return (
     <>
+      <Head>
+        <title>{post?.title.rendered ? `${post.title.rendered} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       {post ? (
         <>
           <HeroHeader

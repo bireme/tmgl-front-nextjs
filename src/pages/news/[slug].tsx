@@ -5,6 +5,7 @@ import moment, { lang } from "moment";
 import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
+import Head from "next/head";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { ShareModal } from "@/components/share";
@@ -36,13 +37,16 @@ export default function News() {
   }, [getPost, slug]);
 
   const tagColors = {
-    country: "#69A221",
+    country: "#54831B",
     descriptor: "#8B142A",
     region: "#3F6114",
   };
 
   return (
     <>
+      <Head>
+        <title>{post?.title.rendered ? `${post.title.rendered} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       {post ? (
         <>
           <Container mt={80} size={"xl"}>
@@ -55,7 +59,7 @@ export default function News() {
             />
           </Container>
           <Container mt={40} size={"md"}>
-            <h3 className={styles.TitleWithIcon}>News</h3>
+            <p className={styles.CategoryLabel}>News</p>
             <h1 className={styles.PostTitle}>{post.title.rendered}</h1>
             <div
               className={styles.PostSubtitle}

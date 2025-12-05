@@ -6,6 +6,7 @@ import { DimensionsSection } from "@/components/sections";
 import { EventsSection } from "@/components/sections/events";
 import { FixedRelatedVideosSection } from "@/components/videos";
 import { GlobalContext } from "@/contexts/globalContext";
+import Head from "next/head";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { IconArrowRight } from "@tabler/icons-react";
@@ -20,6 +21,7 @@ import { TrendingSlider } from "@/components/rss/slider";
 import styles from "../../styles/pages/home.module.scss";
 import { url } from "inspector";
 import { useRouter } from "next/router";
+import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export default function RegionHome() {
   const router = useRouter();
@@ -67,6 +69,9 @@ export default function RegionHome() {
 
   return (
     <div style={{ overflowX: "hidden" }}>
+      <Head>
+        <title>{region ? `${region.toString().toUpperCase()} - ` : ''}The WHO Traditional Medicine Global Library</title>
+      </Head>
       <div className={styles.HeroSearch}>
         {sliderImages ? <HeroSlider images={sliderImages} /> : <></>}
         <div className={styles.FullContainer}>
@@ -90,7 +95,7 @@ export default function RegionHome() {
                 >
                   <h2>{acf?.region_resources_title}</h2>
                   <Center m={0} p={0}>
-                    <h4>{acf?.region_resources_subtitle}</h4>
+                    <h3>{acf?.region_resources_subtitle}</h3>
                   </Center>
 
                   <DimensionsSection
@@ -155,7 +160,7 @@ export default function RegionHome() {
                 className={styles.TrandingAndFeaturedContainer}
               >
                 <h2 className={styles.TitleWithIcon}>
-                  Recent literature review
+                  {capitalizeFirstLetter("Recent Literature Review")}
                 </h2>
                 <div className={styles.TrendingText}>
                   <p>{acf?.text_trending_topics}</p>
@@ -164,7 +169,7 @@ export default function RegionHome() {
               </Container>
               <Container size={"xl"}>
                 <StoriesSection region={region ? region.toString() : ""} fetchOptions={{ tagId: globalConfig?.acf.thematic_page_tag, excludeTag: true }}/>
-                <h2 className={styles.TitleWithIcon}> Events</h2>
+                <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Events")}</h2>
               </Container>
             </div>
             {globalConfig?.acf.thematic_page_tag && (
