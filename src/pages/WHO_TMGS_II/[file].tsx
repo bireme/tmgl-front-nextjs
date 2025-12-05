@@ -5,12 +5,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   
   return {
     redirect: {
-      destination: `/public/WHO_TMS_II/${file}`,
+      destination: `/public/WHO_TMGS_II/${file}`,
       permanent: false,
     },
   };
 };
 
-export default function WHO_TMS_II() {
+export default function WHO_TMGS_II() {
   return null;
 }
