@@ -6,6 +6,9 @@
 .pnp.js
 .yarn/install-state.gz
 
+#tms_pdfs
+/public/WHO_TMS_II
+
 .env
 .env.local
 .env.development
