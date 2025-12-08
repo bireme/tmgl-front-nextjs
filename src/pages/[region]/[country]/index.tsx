@@ -159,7 +159,7 @@ export default function CountryHome() {
             <Container size={"xl"} my={40}>
               <Grid>
                 <Grid.Col span={{ md: 9, base: 12 }} px={20}>
-                  
+
                   <h2>{postProps.title.rendered}</h2>
                   <div
                     dangerouslySetInnerHTML={{
@@ -205,6 +205,8 @@ export default function CountryHome() {
               </Grid>
             </Container>
           </div>
+
+
           {properties?.tms_items &&
             Array.isArray(properties?.tms_items) &&
             properties?.tms_items?.length > 0 ? (

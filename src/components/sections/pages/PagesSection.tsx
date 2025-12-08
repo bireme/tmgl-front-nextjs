@@ -39,11 +39,10 @@ export const PagesSection = ({
           undefined,
           undefined,
           undefined,
-          { countryId: [countryId] }
+          { countryId: [countryId], excludeLangFilter: true },
         );
         setPages(resp);
-        console.log(resp);
-      } catch (error: any) {}
+      } catch (error: any) { }
     }
     setLoading(false);
   }, [countryId, region]);
@@ -67,9 +66,8 @@ export const PagesSection = ({
   return (
     <div
       style={{
-        backgroundImage: `url(${
-          pages[0]._embedded?.["wp:featuredmedia"]?.[0]?.source_url || ""
-        })`,
+        backgroundImage: `url(${pages[0]._embedded?.["wp:featuredmedia"]?.[0]?.source_url || ""
+          })`,
       }}
       className={`${styles.PagesSection} ${className || ""}`}
     >

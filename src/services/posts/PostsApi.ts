@@ -20,6 +20,7 @@ export type GetCustomPostOptions = {
   /** ID único ou lista de IDs de país */
   countryId?: number | number[];
   excludeCountry?: boolean;
+  excludeLangFilter?: boolean;
 };
 
 export class PostsApi extends BaseUnauthenticatedApi {
@@ -106,12 +107,11 @@ export class PostsApi extends BaseUnauthenticatedApi {
       `${parent !== undefined && parent >= 0 ? `&parent=${parent}` : ""}` +
       `${region && region.length ? `&region=${region.join(",")}` : ""}` +
       `${tagQuery}${catQuery}${countryQuery}` +
-      `&${
-        this._lang == "en"
-          ? postTypeSlug === "posts" || postTypeSlug === "pages"
-            ? `lang=${this._lang}`
-            : ""
-          : `lang=${this._lang}`
+      `&${this._lang == "en"
+        ? postTypeSlug === "posts" || postTypeSlug === "pages"
+          ? `${options?.excludeLangFilter ? "" : `lang=${this._lang}`}`
+          : ""
+        : `${options?.excludeLangFilter ? "" : `lang=${this._lang}`}`
       }`;
     console.log(url);
     const { data } = await this._api.get(url);
@@ -129,19 +129,19 @@ export class PostsApi extends BaseUnauthenticatedApi {
     if (options?.excludeTag && options?.tagId && Array.isArray(data)) {
       const excludeTagIds = Array.isArray(options.tagId) ? options.tagId : [options.tagId];
       const exclude = new Set(excludeTagIds);
-      
+
       return data.filter((p: any) => {
         // Verificar tags diretas do post
         const postTags: number[] = Array.isArray(p?.tags) ? p.tags : [];
         if (postTags.some((id) => exclude.has(id))) {
           return false;
         }
-        
+
         // Verificar tags via _embedded["wp:term"]
         const embeddedTags = p?._embedded?.["wp:term"]?.flat() || [];
         const wpTags = embeddedTags.filter((term: any) => term.taxonomy === "post_tag");
         const wpTagIds = wpTags.map((tag: any) => tag.id);
-        
+
         return !wpTagIds.some((id: number) => exclude.has(id));
       });
     }
@@ -156,17 +156,13 @@ export class PostsApi extends BaseUnauthenticatedApi {
     queryItems?: Array<queryType>
   ): Promise<ListPostsDto> {
     const response = await this._api.get<Post[]>(
-      `${postTypeSlug}?per_page=${
-        perPage ? perPage : process.env.POSTSPERPAGE
-      }&page=${page}&_embed&orderby=date&order=desc&acf_format=standard${
-        queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
+      `${postTypeSlug}?per_page=${perPage ? perPage : process.env.POSTSPERPAGE
+      }&page=${page}&_embed&orderby=date&order=desc&acf_format=standard${queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
       }`
     );
 
-    console.log(`${postTypeSlug}?per_page=${
-        perPage ? perPage : process.env.POSTSPERPAGE
-      }&page=${page}&_embed=wp:term&orderby=date&order=desc&acf_format=standard${
-        queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
+    console.log(`${postTypeSlug}?per_page=${perPage ? perPage : process.env.POSTSPERPAGE
+      }&page=${page}&_embed=wp:term&orderby=date&order=desc&acf_format=standard${queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
       }`);
 
     if (!this._region) {
@@ -369,15 +365,15 @@ export class PostsApi extends BaseUnauthenticatedApi {
   public async getFeaturedImageById(postId: number, size: string = "medium"): Promise<string> {
     try {
       const { data } = await this._api.get(`media?parent=${postId}&per_page=1`);
-      
+
       if (data && data.length > 0) {
         const media = data[0];
         const sizes = media.media_details?.sizes;
-        
+
         if (sizes) {
           // Ordem de prioridade para fallback
           const order = ["thumbnail", "medium", "large", "full"] as const;
-          
+
           if (size && size !== "full") {
             const url = sizes[size as keyof typeof sizes]?.source_url;
             if (url) return url;
@@ -385,7 +381,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
             const url = sizes.full?.source_url;
             if (url) return url;
           }
-          
+
           // Fallback para qualquer tamanho disponível
           for (const key of order) {
             const candidate = sizes[key]?.source_url;
@@ -394,11 +390,11 @@ export class PostsApi extends BaseUnauthenticatedApi {
             }
           }
         }
-        
+
         // Fallback para source_url original
         return media.source_url || "";
       }
-      
+
       return "";
     } catch (error) {
       console.error("Error while trying to get featured image:", error);
