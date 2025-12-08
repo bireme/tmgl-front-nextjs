@@ -10,7 +10,7 @@ import { GlobalContext } from "@/contexts/globalContext";
 import Head from "next/head";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
-import { IconArrowRight } from "@tabler/icons-react";
+import { IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
 import { ImageSection } from "@/components/video";
 import Link from "next/link";
 import { NewsSection } from "@/components/sections/news";
@@ -22,30 +22,40 @@ import { StoriesSection } from "@/components/sections/stories";
 import { TrendingSlider } from "@/components/rss/slider";
 import styles from "../styles/pages/home.module.scss";
 import { capitalizeFirstLetter } from "@/helpers/stringhelper";
+import { useRouter } from "next/router";
 
 export default function Home() {
   const _api = new PagesApi();
   const _postsApi = new PostsApi();
+  const router = useRouter();
   const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
   const { setRegionName, globalConfig } = useContext(GlobalContext);
   const [showModal, setShowModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [videoStarted, setVideoStarted] = useState(false);
   const cacheRandom = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
 
   const getPageProperties = useCallback(async () => {
     try {
       const resp = await _api.getPageProperties("home-global");
-      
+
 
       setAcf(resp[0].acf);
       setSliderImages(resp[0].acf.search.slider_images);
-    } catch {}
+    } catch { }
   }, []);
 
   useEffect(() => {
     getPageProperties();
     setRegionName("");
   }, [getPageProperties]);
+
+  useEffect(() => {
+    if (router.query.video === "1") {
+      setShowVideoModal(true);
+    }
+  }, [router.query]);
 
   return (
     <>
@@ -57,6 +67,96 @@ export default function Home() {
         onClose={() => setShowModal(false)}
         opened={showModal}
       ></Modal>
+      <Modal
+        opened={showVideoModal}
+        onClose={() => {
+          setShowVideoModal(false);
+          setVideoStarted(false);
+          // Remove a query string da URL ao fechar
+          router.push(router.pathname, undefined, { shallow: true });
+        }}
+        size="95vw"
+        centered
+        withCloseButton
+        title={null}
+        classNames={{
+          close: styles.VideoModalClose,
+        }}
+        styles={{
+          body: { padding: 0 },
+          content: {
+            overflow: "hidden",
+            border: "none",
+            borderRadius: 0,
+            padding: 0,
+          },
+          header: { display: "none" },
+        }}
+      >
+        <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
+          {!videoStarted ? (
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                cursor: "pointer",
+                backgroundImage: "url(/video-thumb-test.jpg)",
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+              onClick={() => setVideoStarted(true)}
+            >
+              <div
+                style={{
+                  width: "80px",
+                  height: "80px",
+                  borderRadius: "50%",
+                  backgroundColor: "rgba(255, 255, 255, 0.9)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  transition: "transform 0.2s",
+                  boxShadow: "0 4px 20px rgba(0, 0, 0, 0.3)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                }}
+              >
+                <IconPlayerPlay
+                  size={40}
+                  style={{ marginLeft: "4px", color: "#006CB0" }}
+                  fill="#006CB0"
+                />
+              </div>
+            </div>
+          ) : (
+            <video
+              controls
+              autoPlay
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "contain",
+              }}
+            >
+              <source src="/video-teste.mp4" type="video/mp4" />
+              Seu navegador não suporta o elemento de vídeo.
+            </video>
+          )}
+        </div>
+      </Modal>
       <div className={styles.HeroSearch}>
         {sliderImages ? <HeroSlider images={sliderImages} /> : <></>}
 
@@ -148,7 +248,7 @@ export default function Home() {
       {globalConfig?.acf.thematic_page_tag && (
         <EventsSection excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]} />
       )}
-      
+
       <div className={styles.NewsContainer}>
         <NewsSection excludedTagIds={[181]} title={"News from WHO"} />
 
@@ -165,46 +265,46 @@ export default function Home() {
         )}
         {acf?.manual_media && acf.manual_media.length >= 3 ? (
           <>
-          <FixedRelatedVideosSection
-            items={[
-              {
-                title: acf?.manual_media[0].title,
-                href: acf?.manual_media[0].url,
-                thumbnail: acf?.manual_media[0].image,
-              },
-              {
-                title: acf?.manual_media[1].title,
-                href: acf?.manual_media[1].url,
-                thumbnail: acf?.manual_media[1].image,
-              },
-              {
-                title: acf?.manual_media[2].title,
-                href: acf?.manual_media[2].url,
-                thumbnail: acf?.manual_media[2].image,
-              },
-            ]}
-          />
-          {acf.more_media_url && (
-            <Container mt={0} pt={0} mb={40} size={"xl"}>
-<Flex
-              mt={25}
-              gap={10}
-              align={"center"}
-              onClick={() => {
-                window.open(acf.more_media_url, "self");
-              }}
-              component="a"
-              style={{ cursor: "pointer" }}
-            >
-               See More
-              <Button size={"xs"} p={5}>
-                <IconArrowRight stroke={1} />
-              </Button>
-            </Flex>
+            <FixedRelatedVideosSection
+              items={[
+                {
+                  title: acf?.manual_media[0].title,
+                  href: acf?.manual_media[0].url,
+                  thumbnail: acf?.manual_media[0].image,
+                },
+                {
+                  title: acf?.manual_media[1].title,
+                  href: acf?.manual_media[1].url,
+                  thumbnail: acf?.manual_media[1].image,
+                },
+                {
+                  title: acf?.manual_media[2].title,
+                  href: acf?.manual_media[2].url,
+                  thumbnail: acf?.manual_media[2].image,
+                },
+              ]}
+            />
+            {acf.more_media_url && (
+              <Container mt={0} pt={0} mb={40} size={"xl"}>
+                <Flex
+                  mt={25}
+                  gap={10}
+                  align={"center"}
+                  onClick={() => {
+                    window.open(acf.more_media_url, "self");
+                  }}
+                  component="a"
+                  style={{ cursor: "pointer" }}
+                >
+                  See More
+                  <Button size={"xs"} p={5}>
+                    <IconArrowRight stroke={1} />
+                  </Button>
+                </Flex>
 
-            </Container>
-            
-          )}
+              </Container>
+
+            )}
 
           </>
         ) : (

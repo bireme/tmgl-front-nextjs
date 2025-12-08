@@ -331,7 +331,7 @@ export default function CountryHome() {
                         return {
                           title: item.title,
                           href: item.url,
-                          thumbnail: item.image.sizes.medium_large,
+                          thumbnail: item.image.sizes?.medium_large ? item.image.sizes?.medium_large : item.image.sizes?.medium ? item.image.sizes?.medium : item.image.sizes?.large ? item.image.sizes?.large : '',
                         };
                       })
                       : []
