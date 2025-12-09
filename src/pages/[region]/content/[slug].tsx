@@ -38,7 +38,7 @@ export default function Content() {
     async (slug: string) => {
       try {
         const _pageApi = new PostsApi(pathSegments[0]);
-        const resp = await _pageApi.getPost("pages", slug);
+        const resp = await _pageApi.getPost("pages", slug, undefined);
         setPost(resp[0]);
         if (resp[0].parent) {
           const parentResp = await _api.getPostById("pages", resp[0].parent);

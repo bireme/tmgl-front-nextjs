@@ -295,23 +295,23 @@ export class PostsApi extends BaseUnauthenticatedApi {
   }
 
   public async getPost(postTypeSlug: string, slug: string, lang?: string) {
-    const targetLang = lang || this._lang;
+    const langParam = lang ? `&lang=${lang}` : "";
     const { data } = await this._api.get(
-      `${postTypeSlug}?slug=${slug}&_embed&acf_format=standard&lang=${targetLang}`
+      `${postTypeSlug}?slug=${slug}&_embed&acf_format=standard${langParam}`
     );
     //Verify if the client is using another language
     const foundPost = data[0];
-    if (foundPost) {
-      if (foundPost?.lang != targetLang) {
+    if (foundPost && lang) {
+      if (foundPost?.lang != lang) {
         //In that case the lang returned is not the same as the user is trying to access, may because de slug is in a diferent language
         //Lets see if there is any translation to this post
         if (foundPost.translations) {
           if (Object.keys(foundPost.translations).length > 0) {
-            if (foundPost.translations[targetLang]) {
+            if (foundPost.translations[lang]) {
               const translated_postId: number =
-                foundPost.translations[targetLang];
+                foundPost.translations[lang];
               const transalated_response = await this._api.get(
-                `${postTypeSlug}/${translated_postId}?_embed&acf_format=standard&lang=${targetLang}`
+                `${postTypeSlug}/${translated_postId}?_embed&acf_format=standard&lang=${lang}`
               );
               return [transalated_response.data];
             }
