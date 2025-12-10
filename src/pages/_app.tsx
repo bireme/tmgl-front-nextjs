@@ -28,7 +28,7 @@ export default function App({ Component, pageProps }: AppProps) {
     const today = new Date().toISOString().split("T")[0]; // yyyy-mm-dd
     const cookieKey = "warningModalShown";
     const cookieValue = Cookies.get(cookieKey);
-    if (cookieValue !== today) {
+    if (cookieValue !== today && process.env.PRODUCTION != "true") {
       setWarningModal(true);
       Cookies.set(cookieKey, today, { expires: 1 }); // expira em 1 dia
     }
