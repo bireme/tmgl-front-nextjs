@@ -195,7 +195,7 @@ export default function Home() {
           className={styles.TrandingAndFeaturedContainer}
         >
           <h2 className={`${styles.TitleWithIcon} ${styles.center}`}>
-            {capitalizeFirstLetter("Recent Literature Reviews")}
+            {capitalizeFirstLetter("Recent literature reviews")}
           </h2>
           <div className={styles.TrendingText}>
             <p>{acf?.text_trending_topics}</p>

@@ -8,6 +8,33 @@ export default function Document() {
   return (
     <Html lang="pt-BR">
       <Head>
+        {/* Meta tags para SEO e compartilhamento em redes sociais */}
+        <meta
+          name="description"
+          content="The WHO Traditional Medicine Global Library (TMGL) is a comprehensive digital resource for traditional medicine information, research, and evidence from around the world."
+        />
+        <meta property="og:type" content="website" />
+        <meta
+          property="og:title"
+          content="The WHO Traditional Medicine Global Library"
+        />
+        <meta
+          property="og:description"
+          content="The WHO Traditional Medicine Global Library (TMGL) is a comprehensive digital resource for traditional medicine information, research, and evidence from around the world."
+        />
+        <meta property="og:image" content="/og-image.png" />
+        <meta property="og:site_name" content="TMGL - WHO" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta
+          name="twitter:title"
+          content="The WHO Traditional Medicine Global Library"
+        />
+        <meta
+          name="twitter:description"
+          content="The WHO Traditional Medicine Global Library (TMGL) is a comprehensive digital resource for traditional medicine information, research, and evidence from around the world."
+        />
+        <meta name="twitter:image" content="/og-image.png" />
+
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />
         <link

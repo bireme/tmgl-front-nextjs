@@ -49,6 +49,10 @@ export default function RegionHome() {
         )
       ) {
         setRegionName("");
+        if(region == "en"){
+          router.push("/");
+          return;
+        }
         router.push("/404");
       } else {
         setRegionName(region ? region.toString() : "");
