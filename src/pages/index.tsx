@@ -150,7 +150,7 @@ export default function Home() {
             </div>
           ) : (
             <iframe
-              src="https://www.youtube.com/embed/ui8f3uoDvA0?autoplay=1&controls=1"
+              src="https://youtu.be/wjLb20BWUvU?si=0Vy9XKWjEzGe_9La"
               style={{
                 position: "absolute",
                 top: 0,
