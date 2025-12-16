@@ -32,7 +32,7 @@ export default function Home() {
   const [acf, setAcf] = useState<HomeAcf>();
   const { setRegionName, globalConfig } = useContext(GlobalContext);
   const [showModal, setShowModal] = useState(false);
-  const [showVideoModal, setShowVideoModal] = useState(false);
+  const [showVideoModal, setShowVideoModal] = useState(true);
   const [videoStarted, setVideoStarted] = useState(false);
   const cacheRandom = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
 
@@ -51,11 +51,6 @@ export default function Home() {
     setRegionName("");
   }, [getPageProperties]);
 
-  useEffect(() => {
-    if (router.query.video === "1") {
-      setShowVideoModal(true);
-    }
-  }, [router.query]);
 
   return (
     <>
