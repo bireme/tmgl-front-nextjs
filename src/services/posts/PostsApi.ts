@@ -113,7 +113,6 @@ export class PostsApi extends BaseUnauthenticatedApi {
           : ""
         : `${options?.excludeLangFilter ? "" : `lang=${this._lang}`}`
       }`;
-    console.log(url);
     const { data } = await this._api.get(url);
 
     if (options?.excludeCat && catIds.length > 0 && Array.isArray(data)) {
@@ -160,10 +159,6 @@ export class PostsApi extends BaseUnauthenticatedApi {
       }&page=${page}&_embed&orderby=date&order=desc&acf_format=standard${queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
       }`
     );
-
-    console.log(`${postTypeSlug}?per_page=${perPage ? perPage : process.env.POSTSPERPAGE
-      }&page=${page}&_embed=wp:term&orderby=date&order=desc&acf_format=standard${queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
-      }`);
 
     if (!this._region) {
       const [regions, tags, dimensions, countries] = await Promise.all([

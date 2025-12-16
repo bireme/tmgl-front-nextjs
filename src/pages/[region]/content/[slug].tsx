@@ -12,6 +12,7 @@ import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
 import Head from "next/head";
 import { Multitabs } from "@/components/multitab";
+import { DisclaimerMultitab } from "@/components/multitab/disclaimer";
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { RelatedArticlesSection } from "@/components/sections/recomended";
@@ -40,6 +41,7 @@ export default function Content() {
         const _pageApi = new PostsApi(pathSegments[0]);
         const resp = await _pageApi.getPost("pages", slug, undefined);
         setPost(resp[0]);
+       
         if (resp[0].parent) {
           const parentResp = await _api.getPostById("pages", resp[0].parent);
           setParent(parentResp[parentResp.length - 1]);
@@ -135,11 +137,15 @@ export default function Content() {
                 ) : (
                   <></>
                 )}
-
-                <div
-                  className={styles.PostContent}
-                  dangerouslySetInnerHTML={{ __html: post.content.rendered }}
-                />
+                {slug == "privacy-policy-terms-and-conditions-of-use" ? (
+                  <><DisclaimerMultitab /></>
+                  
+                ) : (
+                  <div
+                    className={styles.PostContent}
+                    dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+                  />
+                )}
                 {post.acf?.Itens ? (
                   <>
                     <Multitabs props={post.acf?.Itens} />

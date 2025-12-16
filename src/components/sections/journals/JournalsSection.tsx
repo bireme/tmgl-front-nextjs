@@ -92,7 +92,6 @@ export const JournalsSection = ({
                 align={"center"}
               >
                 {items.map((item, key) => {
-                  console.log(item);
                   return (
                     <ResourceCard
                       displayType="column"

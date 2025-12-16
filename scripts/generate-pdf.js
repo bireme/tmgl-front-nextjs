@@ -17,10 +17,7 @@ async function generatePDF(inputFile = 'MAPA_DO_SITE.md', outputFile = null) {
   const markdownPath = path.join(__dirname, '..', inputFile);
   const outputPath = path.join(__dirname, '..', outputFile);
   
-  console.log('📖 Lendo arquivo markdown...');
   const markdown = fs.readFileSync(markdownPath, 'utf-8');
-  
-  console.log('🔄 Convertendo markdown para HTML...');
   // Importar marked dinamicamente (ES Module)
   const { marked } = await import('marked');
   
@@ -254,7 +251,6 @@ async function generatePDF(inputFile = 'MAPA_DO_SITE.md', outputFile = null) {
 </html>
   `;
   
-  console.log('🌐 Iniciando navegador...');
   const browser = await puppeteer.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox']
@@ -262,10 +258,7 @@ async function generatePDF(inputFile = 'MAPA_DO_SITE.md', outputFile = null) {
   
   const page = await browser.newPage();
   
-  console.log('📄 Carregando conteúdo...');
   await page.setContent(html, { waitUntil: 'networkidle0' });
-  
-  console.log('📑 Gerando PDF...');
   await page.pdf({
     path: outputPath,
     format: 'A4',
@@ -280,8 +273,6 @@ async function generatePDF(inputFile = 'MAPA_DO_SITE.md', outputFile = null) {
   });
   
   await browser.close();
-  
-  console.log(`✅ PDF gerado com sucesso: ${outputPath}`);
 }
 
 // Executar - aceita argumentos da linha de comando

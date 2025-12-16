@@ -18,6 +18,7 @@ import { ShareModal } from "@/components/share";
 import moment from "moment";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
+import { DisclaimerMultitab } from "@/components/multitab/disclaimer";
 
 export default function Content() {
   const router = useRouter();
@@ -138,11 +139,15 @@ export default function Content() {
                 ) : (
                   <></>
                 )}
-
-                <div
-                  className={styles.PostContent}
-                  dangerouslySetInnerHTML={{ __html: post.content.rendered }}
-                />
+                {slug == "privacy-policy-terms-and-conditions-of-use" ? (
+                  <><DisclaimerMultitab /></>
+                  
+                ) : (
+                  <div
+                    className={styles.PostContent}
+                    dangerouslySetInnerHTML={{ __html: post.content.rendered }}
+                  />
+                )}
                 {post.acf?.Itens ? (
                   <>
                     <Multitabs props={post.acf?.Itens} />

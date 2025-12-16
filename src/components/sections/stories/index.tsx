@@ -96,7 +96,6 @@ export const StoriesSection = ({
         );
       }
       setPosts(result);
-      console.log(result);
     } catch (error: any) {}
   }, []);
 

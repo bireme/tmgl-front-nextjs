@@ -40,7 +40,6 @@ export const ThematicPagesFeed = ({ displayType }: { displayType: string }) => {
       resetPage ? 1 : page,
       filter
     );
-    console.log(response);
     setTotalPages(Math.ceil(response.totalItems / count));
     setApiResponse(response);
     setItems(response.data.reverse());

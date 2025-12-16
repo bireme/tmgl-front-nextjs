@@ -139,21 +139,19 @@ export default function Home() {
               </div>
             </div>
           ) : (
-            <video
-              controls
-              autoPlay
+            <iframe
+              src="https://www.youtube.com/embed/ui8f3uoDvA0?autoplay=1&controls=1"
               style={{
                 position: "absolute",
                 top: 0,
                 left: 0,
                 width: "100%",
                 height: "100%",
-                objectFit: "contain",
               }}
-            >
-              <source src="/video-teste.mp4" type="video/mp4" />
-              Seu navegador não suporta o elemento de vídeo.
-            </video>
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           )}
         </div>
       </Modal>
