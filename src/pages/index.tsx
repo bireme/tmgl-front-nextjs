@@ -10,7 +10,7 @@ import { GlobalContext } from "@/contexts/globalContext";
 import Head from "next/head";
 import { HeroSlider } from "@/components/slider";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
-import { IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
+import { IconArrowRight, IconPlayerPlay, IconX } from "@tabler/icons-react";
 import { ImageSection } from "@/components/video";
 import Link from "next/link";
 import { NewsSection } from "@/components/sections/news";
@@ -81,6 +81,8 @@ export default function Home() {
         title={null}
         classNames={{
           close: styles.VideoModalClose,
+          overlay: styles.VideoModalOverlay,
+          inner: styles.VideoModalInner,
         }}
         styles={{
           body: { padding: 0 },
@@ -89,10 +91,23 @@ export default function Home() {
             border: "none",
             borderRadius: 0,
             padding: 0,
+            zIndex: 999999,
+            position: "relative",
           },
           header: { display: "none" },
         }}
       >
+        <button
+          onClick={() => {
+            setShowVideoModal(false);
+            setVideoStarted(false);
+            router.push(router.pathname, undefined, { shallow: true });
+          }}
+          className={styles.VideoModalClose}
+          aria-label="Close video"
+        >
+          <IconX size={24} />
+        </button>
         <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
           {!videoStarted ? (
             <div

@@ -1,7 +1,9 @@
 import { Container, Grid, Tabs } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import styles from "../../styles/components/multitab.module.scss";
 
 export const DisclaimerMultitab = () => {
+  const isMobile = useMediaQuery("(max-width: 768px)");
   const sections = [
     {
       title: "General Description of LIBRARY",
@@ -111,7 +113,11 @@ WHO does not guarantee the ongoing availability, accuracy, or functionality of t
       <Container py={40} size={"xl"}>
         <Grid>
           <Grid.Col span={{ base: 12, md: 12 }}>
-            <Tabs defaultValue="index0" orientation="vertical" classNames={styles}>
+            <Tabs 
+              defaultValue="index0" 
+              orientation={isMobile ? "horizontal" : "vertical"}
+              classNames={styles}
+            >
               <Tabs.List className={styles.DisclaimerTabList}>
                 {sections.map((section, k) => (
                   <Tabs.Tab

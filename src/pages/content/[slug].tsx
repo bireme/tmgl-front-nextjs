@@ -139,15 +139,10 @@ export default function Content() {
                 ) : (
                   <></>
                 )}
-                {slug == "privacy-policy-terms-and-conditions-of-use" ? (
-                  <><DisclaimerMultitab /></>
-                  
-                ) : (
                   <div
                     className={styles.PostContent}
                     dangerouslySetInnerHTML={{ __html: post.content.rendered }}
                   />
-                )}
                 {post.acf?.Itens ? (
                   <>
                     <Multitabs props={post.acf?.Itens} />
