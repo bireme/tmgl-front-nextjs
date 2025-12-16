@@ -113,7 +113,7 @@ export default function Home() {
                 width: "100%",
                 height: "100%",
                 cursor: "pointer",
-                backgroundImage: "url(/video-thumb-test.jpg)",
+                backgroundImage: "url(/video-thumb-2.jpg)",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 display: "flex",
@@ -150,7 +150,7 @@ export default function Home() {
             </div>
           ) : (
             <iframe
-              src="https://www.youtube.com/embed/ui8f3uoDvA0?autoplay=1&controls=1"
+              src="https://www.youtube.com/watch?v=wjLb20BWUvU"
               style={{
                 position: "absolute",
                 top: 0,
