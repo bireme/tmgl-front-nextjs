@@ -113,7 +113,7 @@ export default function Home() {
                 width: "100%",
                 height: "100%",
                 cursor: "pointer",
-                backgroundImage: "url(/video-thumb-2.jpg)",
+                backgroundImage: "url(/video-thumb-test.jpg)",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 display: "flex",
@@ -150,7 +150,7 @@ export default function Home() {
             </div>
           ) : (
             <iframe
-              src="https://www.youtube.com/embed/wjLb20BWUvU?autoplay=1&controls=1"
+              src="https://www.youtube.com/embed/6mMdK5kwDgY?si=R-w-7H3PZ9GCzu3A?autoplay=1&controls=1"
               style={{
                 position: "absolute",
                 top: 0,
@@ -262,7 +262,12 @@ export default function Home() {
 
         {acf?.embed_content && (
           <div className={styles.EmbedContent}>
+            
             <Container size={"xl"}>
+            <span>
+              This scientific dashboard presents data for analytical and informational purposes only. The designations employed and the presentation of the material on this dashboard, including maps and the depiction of countries, territories, or areas, and their boundaries or borders, do not imply the expression of any opinion whatsoever on the part of the World Health Organization concerning the legal status of any country, territory, or area, or of its authorities, nor concerning the delimitation of its frontiers or boundaries.
+            </span><br/>
+            <br/>
               <EmbedIframe
                 src={`${acf?.embed_content}?v=${cacheRandom}`}
                 width="100%"
