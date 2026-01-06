@@ -60,6 +60,7 @@ Este projeto é um portal web moderno e responsivo que serve como biblioteca dig
   - [Sections](#sections-componentssections)
 - [Documentação de Páginas e Rotas](#-documentação-de-páginas-e-rotas)
 - [Documentação de Services e APIs](#-documentação-de-services-e-apis)
+- [Documentação de WordPress: Posts, CPTs e Custom Fields](#-documentação-de-wordpress-posts-cpts-e-custom-fields)
 - [Documentação Adicional](#-documentação-adicional)
 
 ## 🛠️ Tecnologias
@@ -1918,6 +1919,485 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 4. **Performance**: Cache e rate limiting no servidor
 5. **Monitoramento**: Logs centralizados
 6. **CORS**: Sem problemas de CORS (requisições server-side)
+
+</details>
+
+---
+
+## 📝 Documentação de WordPress: Posts, CPTs e Custom Fields
+
+<details>
+<summary><b>Ver detalhes sobre WordPress Integration</b></summary>
+
+### Arquitetura Multi-Site WordPress
+
+O projeto utiliza uma arquitetura **WordPress Multi-Site** onde cada região possui seu próprio subsite:
+
+```
+WordPress Multi-Site
+├── Site Global (/) - Conteúdo global
+├── Site AFRO (/afro/) - Conteúdo da região africana
+├── Site AMRO (/amro/) - Conteúdo da região americana
+├── Site EMRO (/emro/) - Conteúdo da região do Mediterrâneo Oriental
+├── Site EURO (/euro/) - Conteúdo da região europeia
+├── Site SEARO (/searo/) - Conteúdo da região do Sudeste Asiático
+└── Site WPRO (/wpro/) - Conteúdo da região do Pacífico Ocidental
+```
+
+### Como Cada Região Acessa seu Subsite
+
+#### 1. **Instanciação do Service com Prefixo Regional**
+
+Quando uma região é detectada na URL, o service é instanciado com o prefixo regional:
+
+```typescript
+// Sem região (global)
+const api = new PostsApi();
+// Base URL: https://wp-site.com/wp-json/wp/v2/
+
+// Com região AFRO
+const api = new PostsApi("afro");
+// Base URL: https://wp-site.com/afro/wp-json/wp/v2/
+```
+
+**Implementação** (`BaseUnauthenticatedApi`):
+```typescript
+public constructor(endpoint: string, region?: string) {
+  const baseUrl = `${process.env.WP_BASE_URL}/${region ? region + "/" : ""}${endpoint}`;
+  this._api = axios.create({ baseURL: baseUrl });
+}
+```
+
+#### 2. **Validação de Região**
+
+Antes de buscar conteúdo, o sistema valida se a região existe:
+
+```typescript
+// src/pages/[region]/index.tsx
+const regionExists = globalConfig?.acf.regionais?.find(
+  (r) => r.rest_api_prefix.toLowerCase() == regionName.toLowerCase()
+);
+
+if (!regionExists) {
+  router.push("/404"); // Região inválida
+}
+```
+
+#### 3. **Configuração de Regiões**
+
+As regiões são configuradas no WordPress via `globalConfig`:
+
+```typescript
+interface RegionalConfig {
+  rest_api_prefix: string;  // "afro", "amro", etc.
+  region_name: string;       // "AFRO", "AMRO", etc.
+  region_filter: string;    // Filtro RSS específico
+}
+```
+
+### Custom Post Types (CPTs)
+
+O projeto utiliza vários **Custom Post Types** do WordPress para organizar diferentes tipos de conteúdo:
+
+#### CPTs Principais
+
+1. **`posts`** - Posts padrão do WordPress (notícias)
+   - Endpoint: `/wp-json/wp/v2/posts`
+   - Regional: `/afro/wp-json/wp/v2/posts`
+
+2. **`pages`** - Páginas estáticas
+   - Endpoint: `/wp-json/wp/v2/pages`
+   - Usado para: Home, About, etc.
+
+3. **`event`** - Eventos
+   - Endpoint: `/wp-json/wp/v2/event`
+   - Customizado para eventos da região
+
+4. **`dimensions`** - Dimensões temáticas
+   - Endpoint: `/wp-json/wp/v2/dimensions`
+   - Organiza temas de medicina tradicional
+
+5. **`thematic-pages`** - Páginas temáticas
+   - Endpoint: `/wp-json/wp/v2/thematic-pages`
+   - Páginas específicas por tema
+
+6. **`country`** - Páginas de países
+   - Endpoint: `/wp-json/wp/v2/country`
+   - Conteúdo específico de cada país
+
+7. **`featured-stories`** - Histórias em destaque
+   - Endpoint: `/wp-json/wp/v2/featured-stories`
+   - Stories destacadas
+
+#### Busca de CPTs
+
+**Método `getCustomPost`**:
+```typescript
+const posts = await api.getCustomPost(
+  "event",        // postTypeSlug: tipo de post
+  10,             // perPage: quantidade por página
+  0,              // parent: ID do post pai (opcional)
+  [regionId],     // region: IDs de região (opcional)
+  "afro",         // regionString: slug da região (opcional)
+  {               // options: opções de filtro
+    tagId: [123],
+    excludeTag: true,
+    countryId: [456]
+  }
+);
+```
+
+**Query Gerada**:
+```
+/afro/wp-json/wp/v2/event?
+  per_page=10&
+  _embed&
+  orderby=date&
+  order=desc&
+  acf_format=standard&
+  region=1&
+  tags_exclude=123&
+  country=456&
+  lang=en
+```
+
+### Custom Fields (ACF - Advanced Custom Fields)
+
+O projeto utiliza extensivamente **ACF (Advanced Custom Fields)** para adicionar campos customizados aos posts.
+
+#### Formato ACF
+
+Todas as requisições incluem `acf_format=standard` para receber campos ACF:
+
+```typescript
+// Query inclui acf_format=standard
+const url = `${postTypeSlug}?slug=${slug}&_embed&acf_format=standard`;
+```
+
+#### Estrutura de Campos ACF
+
+**Exemplo: Post com ACF**:
+```typescript
+interface Post {
+  id: number;
+  title: { rendered: string };
+  content: { rendered: string };
+  acf: {
+    // Campos customizados variam por tipo de post
+    [key: string]: any;
+  };
+}
+```
+
+#### Tipos de Campos ACF por CPT
+
+**1. Home Page (`home-global`, `home`)**:
+```typescript
+interface HomeAcf {
+  search: {
+    title: string;
+    subtitle: string;
+    slider_images: AcfImageArray[];
+  };
+  text_trending_topics: string;
+  events: {
+    title?: string;
+    subtitle?: string;
+    webcast?: string;
+    meeting?: string;
+  };
+  tmd: {
+    title: string;
+    subtitle: string;
+    dimensions?: any;
+    background_image: AcfImageArray;
+  };
+  itens: ItemResource[];  // Recursos/dimensões
+  manual_media: TmsItem[]; // Mídia manual
+  embed_content?: string;  // Conteúdo embed
+  collaboration_network_items: AcfImageArray[];
+}
+```
+
+**2. Country Page (`country`)**:
+```typescript
+interface CountryAcfProps {
+  layout: string;
+  disclaimer?: string;
+  stories_url: string;
+  content: string;
+  slide_images: AcfImageArray[];
+  resources_title: string;
+  resources: CountryAcfResource[];
+  key_resources: KeyResource[];
+  embed_content: string;
+  rss_filter: string;
+  multimedia_filter: string;
+  manual_media: MediaItem[] | false;
+  tms_items: TmsItem[] | false;
+  events_title: string;
+  news_title: string;
+  // ... mais campos
+}
+```
+
+**3. Thematic Page (`thematic-pages`)**:
+```typescript
+interface ThematicPageAcfProps {
+  disclaimer?: string;
+  search: {
+    title: string;
+    subtitle: string;
+    slider_images: AcfImageArray[];
+  };
+  title: string;
+  content: string;
+  comunity_initiatives_title: string;
+  community_iniciatives: CommunityInitiative[];
+  similar_themes: SimilarTheme[];
+  news_tag_filter: string;
+  events_tag_filter: string;
+  multimedia_items: ACFMultimediaItem[];
+  rss_filter: string;
+  resources: ACFMultimediaItem[];
+  // ... mais campos
+}
+```
+
+**4. Dimensions (`dimensions`)**:
+```typescript
+interface DimensionsAcf {
+  content: string;  // HTML com tabs
+  // Outros campos específicos
+}
+```
+
+**5. Events (`event`)**:
+```typescript
+interface EventsAcf {
+  title?: string;
+  subtitle?: string;
+  webcast?: string;
+  meeting?: string;
+  report?: string;
+  background?: AcfImageArray;
+}
+```
+
+### Tratamento de Posts
+
+#### 1. **Embedding de Dados Relacionados**
+
+O WordPress REST API suporta `_embed` para incluir dados relacionados:
+
+```typescript
+// Query com _embed
+const url = `${postTypeSlug}?_embed&acf_format=standard`;
+```
+
+**Dados Embedados**:
+- `wp:featuredmedia`: Imagem destacada
+- `wp:term`: Taxonomias (categorias, tags, países, regiões)
+- `author`: Autor do post
+- `replies`: Comentários
+
+**Exemplo de Uso**:
+```typescript
+// Acessar featured image
+const featuredImage = post._embedded?.["wp:featuredmedia"]?.[0];
+const imageUrl = featuredImage?.media_details?.sizes?.medium?.source_url;
+
+// Acessar taxonomias
+const countries = post._embedded?.["wp:term"]
+  ?.flat()
+  .filter(term => term.taxonomy === "country");
+
+const regions = post._embedded?.["wp:term"]
+  ?.flat()
+  .filter(term => term.taxonomy === "region");
+```
+
+#### 2. **Filtros por Taxonomia**
+
+**Taxonomias Customizadas**:
+- `region`: Regiões da OMS (AFRO, AMRO, EMRO, etc.)
+- `country`: Países
+- `tm-dimension`: Dimensões temáticas
+- `post_tag`: Tags padrão (áreas temáticas)
+- `category`: Categorias padrão
+
+**Filtragem**:
+```typescript
+// Por região
+const posts = await api.getCustomPost("posts", 10, 0, [regionId]);
+
+// Por país
+const posts = await api.getCustomPost("posts", 10, 0, undefined, undefined, {
+  countryId: [countryId]
+});
+
+// Por tag (excluir)
+const posts = await api.getCustomPost("posts", 10, 0, undefined, undefined, {
+  tagId: [demoTagId],
+  excludeTag: true
+});
+```
+
+#### 3. **Suporte a Múltiplos Idiomas**
+
+O WordPress utiliza o plugin **WPML** ou similar para traduções:
+
+**Estrutura de Traduções**:
+```typescript
+interface Post {
+  lang: string;  // "en", "es", "fr", etc.
+  translations: {
+    [lang: string]: number;  // ID do post traduzido
+  };
+}
+```
+
+**Busca com Idioma**:
+```typescript
+// Busca post com idioma específico
+const post = await api.getPost("posts", "slug-example", "en");
+
+// Se post não está no idioma solicitado, busca tradução
+if (post.lang !== "en" && post.translations["en"]) {
+  const translatedId = post.translations["en"];
+  const translated = await api.getPostById("posts", translatedId);
+}
+```
+
+**Parâmetro `lang` na Query**:
+```typescript
+// Query inclui lang quando necessário
+const url = `${postTypeSlug}?slug=${slug}&lang=${lang}&acf_format=standard`;
+```
+
+#### 4. **Featured Media (Imagens Destacadas)**
+
+**Busca de Featured Image**:
+```typescript
+// Método helper
+public findFeaturedMedia(post: Post, size?: string): string {
+  const fm = post?._embedded?.["wp:featuredmedia"]?.[0];
+  const sizes = fm?.media_details?.sizes;
+  
+  // Retorna URL do tamanho solicitado
+  // Fallback: thumbnail → medium → large → full
+  return sizes?.[size]?.source_url || fm?.source_url || "";
+}
+```
+
+**Tamanhos Disponíveis**:
+- `thumbnail`: 150x150px
+- `medium`: 300x300px
+- `large`: 1024x1024px
+- `full`: Tamanho original
+
+**Uso**:
+```typescript
+const imageUrl = api.findFeaturedMedia(post, "medium");
+// Retorna: "https://wp-site.com/wp-content/uploads/image-300x300.webp"
+```
+
+#### 5. **Formatação de Tags e Categorias**
+
+**Extração de Tags**:
+```typescript
+public formatTags(item: Post): TagItem[] {
+  // Extrai países
+  const countries = item._embedded?.["wp:term"]
+    ?.flat()
+    .filter(term => term.taxonomy === "country");
+  
+  // Extrai regiões
+  const regions = item._embedded?.["wp:term"]
+    ?.flat()
+    .filter(term => term.taxonomy === "region");
+  
+  // Extrai dimensões temáticas
+  const dimensions = item._embedded?.["wp:term"]
+    ?.flat()
+    .filter(term => term.taxonomy === "tm-dimension");
+  
+  // Combina todos
+  return [
+    ...countries.map(c => ({ name: c.name, type: "country" })),
+    ...regions.map(r => ({ name: r.name, type: "region" })),
+    ...dimensions.map(d => ({ name: d.name, type: "descriptor" }))
+  ];
+}
+```
+
+### Fluxo Completo: Busca de Posts por Região
+
+#### Exemplo: Buscar Notícias da Região AFRO
+
+```typescript
+// 1. Detectar região da URL
+const region = router.query.region; // "afro"
+
+// 2. Instanciar API com prefixo regional
+const api = new PostsApi(region); // Base URL: /afro/wp-json/wp/v2/
+
+// 3. Buscar term ID da região (se necessário)
+const taxApi = new TaxonomiesApi(region);
+const regionTerms = await taxApi.getTaxonomies("region");
+const afroTerm = regionTerms.find(t => t.slug === "afro");
+const regionId = afroTerm.id; // Ex: 5
+
+// 4. Buscar posts com filtro de região
+const posts = await api.getCustomPost(
+  "posts",      // CPT
+  10,           // perPage
+  0,            // parent
+  [regionId],   // region filter
+  undefined,    // regionString
+  {             // options
+    excludeTag: true,
+    tagId: [demoTagId]
+  }
+);
+
+// 5. Processar posts
+posts.forEach(post => {
+  // Acessar ACF fields
+  const acfData = post.acf;
+  
+  // Acessar featured image
+  const imageUrl = api.findFeaturedMedia(post, "medium");
+  
+  // Extrair tags
+  const tags = api.formatTags(post);
+  
+  // Acessar taxonomias
+  const countries = post._embedded?.["wp:term"]
+    ?.flat()
+    .filter(t => t.taxonomy === "country");
+});
+```
+
+### Resumo: Diferenças entre Regiões
+
+| Aspecto | Global (`/`) | Regional (`/afro/`) |
+|---------|-------------|---------------------|
+| **Base URL** | `/wp-json/wp/v2/` | `/afro/wp-json/wp/v2/` |
+| **Conteúdo** | Todos os posts | Apenas posts da região |
+| **Filtros** | Sempre aplicados | Filtros regionais automáticos |
+| **ACF Fields** | `home-global` | `home` (específico da região) |
+| **RSS Feeds** | Filtro global | Filtro regional específico |
+| **Menus** | `global-menu` | `regional-menu` |
+
+### Boas Práticas
+
+1. **Sempre usar `_embed`** para incluir dados relacionados
+2. **Sempre usar `acf_format=standard`** para campos ACF
+3. **Validar região** antes de buscar conteúdo
+4. **Usar term IDs** ao invés de slugs para filtros
+5. **Tratar traduções** quando suporte multi-idioma estiver ativo
+6. **Fallback de imagens** quando tamanho específico não disponível
 
 </details>
 
