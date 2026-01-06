@@ -61,6 +61,7 @@ Este projeto é um portal web moderno e responsivo que serve como biblioteca dig
 - [Documentação de Páginas e Rotas](#-documentação-de-páginas-e-rotas)
 - [Documentação de Services e APIs](#-documentação-de-services-e-apis)
 - [Documentação de WordPress: Posts, CPTs e Custom Fields](#-documentação-de-wordpress-posts-cpts-e-custom-fields)
+- [Arquitetura do Sistema](#️-arquitetura-do-sistema)
 - [Documentação Adicional](#-documentação-adicional)
 
 ## 🛠️ Tecnologias
@@ -2398,6 +2399,285 @@ posts.forEach(post => {
 4. **Usar term IDs** ao invés de slugs para filtros
 5. **Tratar traduções** quando suporte multi-idioma estiver ativo
 6. **Fallback de imagens** quando tamanho específico não disponível
+
+</details>
+
+---
+
+## 🏗️ Arquitetura do Sistema
+
+<details>
+<summary><b>Ver Diagrama de Arquitetura</b></summary>
+
+### Diagrama de Subsistemas
+
+O diagrama abaixo ilustra a arquitetura completa do sistema, mostrando as relações entre o frontend Next.js, os subsites WordPress e as APIs externas.
+
+```mermaid
+graph TB
+    subgraph "Cliente (Browser)"
+        UI[Interface do Usuário<br/>Next.js Frontend]
+    end
+
+    subgraph "Next.js Application"
+        Pages[Pages Routes<br/>/pages/]
+        API[API Routes<br/>/pages/api/]
+        Services[Services<br/>/services/]
+        Components[Components<br/>/components/]
+    end
+
+    subgraph "WordPress Multi-Site"
+        WP_Global[WordPress Global<br/>/wp-json/wp/v2/]
+        WP_AFRO[WordPress AFRO<br/>/afro/wp-json/wp/v2/]
+        WP_AMRO[WordPress AMRO<br/>/amro/wp-json/wp/v2/]
+        WP_EMRO[WordPress EMRO<br/>/emro/wp-json/wp/v2/]
+        WP_EURO[WordPress EURO<br/>/euro/wp-json/wp/v2/]
+        WP_SEARO[WordPress SEARO<br/>/searo/wp-json/wp/v2/]
+        WP_WPRO[WordPress WPRO<br/>/wpro/wp-json/wp/v2/]
+    end
+
+    subgraph "APIs Externas"
+        DIREV[DIREV API<br/>Eventos Bibliográficos]
+        MULTIMEDIA[Multimedia API<br/>Recursos Multimídia]
+        JOURNALS[Journals API<br/>Periódicos]
+        LIS[LIS API<br/>Literatura em Saúde]
+        EVIDENCE[Evidence Maps API<br/>Mapas de Evidências]
+        REGULATIONS[Regulations API<br/>Legislações]
+        RSS[RSS Feeds<br/>Agregação de Conteúdo]
+    end
+
+    subgraph "Serviços de Terceiros"
+        MAILCHIMP[Mailchimp<br/>Newsletter]
+        HOTJAR[Hotjar<br/>Analytics]
+    end
+
+    %% Fluxo Principal
+    UI --> Pages
+    UI --> Components
+    Pages --> Services
+    Components --> Services
+
+    %% Services para WordPress
+    Services -->|PostsApi| WP_Global
+    Services -->|PostsApi 'afro'| WP_AFRO
+    Services -->|PostsApi 'amro'| WP_AMRO
+    Services -->|PostsApi 'emro'| WP_EMRO
+    Services -->|PostsApi 'euro'| WP_EURO
+    Services -->|PostsApi 'searo'| WP_SEARO
+    Services -->|PostsApi 'wpro'| WP_WPRO
+
+    Services -->|PagesApi| WP_Global
+    Services -->|PagesApi 'afro'| WP_AFRO
+    Services -->|PagesApi 'amro'| WP_AMRO
+    Services -->|PagesApi 'emro'| WP_EMRO
+    Services -->|PagesApi 'euro'| WP_EURO
+    Services -->|PagesApi 'searo'| WP_SEARO
+    Services -->|PagesApi 'wpro'| WP_WPRO
+
+    Services -->|MenusApi| WP_Global
+    Services -->|TaxonomiesApi| WP_Global
+    Services -->|MediaApi| WP_Global
+
+    %% Services para API Routes (Proxy)
+    Services -->|DireveService| API
+    Services -->|MultimediaService| API
+    Services -->|JournalsService| API
+    Services -->|LisService| API
+    Services -->|EvidenceMapsService| API
+    Services -->|RegulationAndPolices| API
+
+    %% API Routes para APIs Externas
+    API -->|/api/direve| DIREV
+    API -->|/api/multimedia| MULTIMEDIA
+    API -->|/api/journals| JOURNALS
+    API -->|/api/lis| LIS
+    API -->|/api/evidencemaps| EVIDENCE
+    API -->|/api/legislations| REGULATIONS
+    API -->|/api/rssfeed| RSS
+
+    %% Serviços de Terceiros
+    Services -->|MailChimpService| MAILCHIMP
+    UI -->|Script| HOTJAR
+
+    %% Estilos
+    classDef wpSite fill:#21759b,stroke:#135e96,stroke-width:2px,color:#fff
+    classDef apiExt fill:#ff6b6b,stroke:#c92a2a,stroke-width:2px,color:#fff
+    classDef nextjs fill:#000,stroke:#0070f3,stroke-width:2px,color:#fff
+    classDef thirdParty fill:#ffd43b,stroke:#fab005,stroke-width:2px,color:#000
+
+    class WP_Global,WP_AFRO,WP_AMRO,WP_EMRO,WP_EURO,WP_SEARO,WP_WPRO wpSite
+    class DIREV,MULTIMEDIA,JOURNALS,LIS,EVIDENCE,REGULATIONS,RSS apiExt
+    class Pages,API,Services,Components,UI nextjs
+    class MAILCHIMP,HOTJAR thirdParty
+```
+
+### Legenda do Diagrama
+
+- **Azul Escuro (WordPress)**: Subsites WordPress por região
+- **Vermelho (APIs Externas)**: APIs externas acessadas via proxy
+- **Preto (Next.js)**: Componentes da aplicação Next.js
+- **Amarelo (Terceiros)**: Serviços de terceiros integrados
+
+### Fluxos de Dados
+
+#### 1. **Fluxo WordPress (Direto)**
+```
+Cliente → Pages/Components → Services → WordPress REST API
+```
+- **Sem proxy**: Conexão direta do cliente ao WordPress
+- **Autenticação**: Não requerida (público)
+- **Uso**: Posts, páginas, menus, taxonomias, mídia
+
+#### 2. **Fluxo APIs Externas (Via Proxy)**
+```
+Cliente → Pages/Components → Services → API Routes → APIs Externas
+```
+- **Com proxy**: API Routes atuam como intermediário
+- **Autenticação**: Credenciais no servidor (API Routes)
+- **Uso**: Eventos, multimídia, periódicos, literatura, etc.
+
+#### 3. **Fluxo Serviços de Terceiros**
+```
+Cliente → Services → Serviços Externos (Mailchimp)
+Cliente → Script Direto → Hotjar
+```
+- **Mailchimp**: Via service e API Route
+- **Hotjar**: Script direto no cliente
+
+### Detalhamento dos Subsistemas
+
+#### Frontend Next.js
+
+**Pages Routes** (`/pages/`):
+- Rotas da aplicação
+- SSR (Server-Side Rendering)
+- Gerenciamento de estado de rota
+
+**API Routes** (`/pages/api/`):
+- Endpoints Next.js server-side
+- Proxy para APIs externas
+- Processamento seguro de credenciais
+
+**Services** (`/services/`):
+- Clientes HTTP para WordPress
+- Clientes HTTP para API Routes
+- Normalização de dados
+
+**Components** (`/components/`):
+- Componentes React reutilizáveis
+- Consomem Services
+- Renderização de UI
+
+#### WordPress Multi-Site
+
+**Estrutura**:
+- 1 site global + 6 sites regionais
+- Cada site tem seu próprio conteúdo
+- Compartilham plugins e temas
+- REST API independente por site
+
+**Acesso**:
+- Global: `/wp-json/wp/v2/`
+- Regional: `/{region}/wp-json/wp/v2/`
+
+#### APIs Externas
+
+**DIREV**:
+- Eventos bibliográficos
+- Base de dados BVSALUD
+- Filtros por região, país, área temática
+
+**Multimedia**:
+- Recursos multimídia
+- Vídeos, imagens, documentos
+- Suporte a múltiplos idiomas
+
+**Journals**:
+- Catálogo de periódicos científicos
+- Metadados de publicações
+
+**LIS**:
+- Literatura em Saúde
+- Artigos científicos
+- Base de dados bibliográfica
+
+**Evidence Maps**:
+- Mapas de evidências científicas
+- Visualizações de dados
+
+**Regulations**:
+- Legislações e políticas
+- Documentos regulatórios
+
+**RSS Feeds**:
+- Agregação de conteúdo externo
+- Feed de notícias e artigos
+
+### Segurança e Proxy
+
+**Por que usar Proxy (API Routes)**:
+
+1. **Credenciais Seguras**:
+   ```
+   Cliente → API Route (servidor) → API Externa
+   ```
+   - API keys nunca expostas no cliente
+   - Armazenadas em variáveis de ambiente no servidor
+
+2. **CORS**:
+   - Requisições server-side não têm restrições CORS
+   - Evita problemas de política de origem cruzada
+
+3. **Transformação de Dados**:
+   - Normalização de formatos diferentes
+   - Validação e sanitização
+
+4. **Cache e Rate Limiting**:
+   - Controle de requisições no servidor
+   - Redução de carga nas APIs externas
+
+### Exemplo de Fluxo Completo
+
+**Cenário**: Usuário acessa `/afro` e visualiza eventos
+
+```
+1. Cliente acessa /afro
+   ↓
+2. Pages/[region]/index.tsx detecta região "afro"
+   ↓
+3. Component EventsSection é renderizado
+   ↓
+4. EventsSection chama DireveService.getResources()
+   ↓
+5. DireveService faz POST para /api/direve
+   ↓
+6. API Route /api/direve.ts recebe requisição
+   ↓
+7. API Route decripta API key (servidor)
+   ↓
+8. API Route faz GET para DIREV API externa
+   ↓
+9. DIREV API retorna dados
+   ↓
+10. API Route transforma e retorna dados
+    ↓
+11. DireveService recebe dados normalizados
+    ↓
+12. EventsSection renderiza eventos na UI
+```
+
+**Paralelamente**:
+```
+3. Component NewsSection também é renderizado
+   ↓
+4. NewsSection chama PostsApi("afro").getCustomPost("posts")
+   ↓
+5. PostsApi faz GET direto para /afro/wp-json/wp/v2/posts
+   ↓
+6. WordPress AFRO retorna posts da região
+   ↓
+7. NewsSection renderiza notícias na UI
+```
 
 </details>
 
