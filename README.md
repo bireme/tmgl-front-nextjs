@@ -58,6 +58,8 @@ Este projeto é um portal web moderno e responsivo que serve como biblioteca dig
   - [GPT](#gpt-componentsgpt)
   - [RSS](#rss-componentsrss)
   - [Sections](#sections-componentssections)
+- [Documentação de Páginas e Rotas](#-documentação-de-páginas-e-rotas)
+- [Documentação de Services e APIs](#-documentação-de-services-e-apis)
 - [Documentação Adicional](#-documentação-adicional)
 
 ## 🛠️ Tecnologias
@@ -793,7 +795,13 @@ npm run start
 
 ### Slider (`components/slider/`)
 
+<details>
+<summary><b>Ver componentes de Slider</b></summary>
+
 #### `HeroSlider`
+<details>
+<summary><b>Ver detalhes do HeroSlider</b></summary>
+
 **Localização**: `src/components/slider/index.tsx`
 
 **Descrição**: Slider de imagens com fade para hero section.
@@ -810,6 +818,8 @@ npm run start
 
 **Dependências**:
 - `react-slideshow-image` (Fade component)
+
+</details>
 
 ---
 
@@ -1173,7 +1183,62 @@ npm run start
 
 ### Feed Components (`components/feed/`)
 
+<details>
+<summary><b>Como Funcionam os Filtros e Busca nos Feeds</b></summary>
+
+#### Sistema de Filtros
+
+Os feeds utilizam um sistema unificado de filtros baseado no tipo `queryType`:
+
+```typescript
+interface queryType {
+  parameter: string;  // Nome do parâmetro de filtro (ex: "region", "country", "tags")
+  query: string;      // Valor do filtro (ex: "AFRO", "Ghana", "123")
+}
+```
+
+#### Fluxo de Filtragem
+
+1. **Inicialização**: Filtros podem vir de:
+   - Parâmetros da URL (`?country=ghana&region=afro`)
+   - Seleção do usuário nos checkboxes
+   - Busca por texto livre
+
+2. **Aplicação de Filtros**:
+   - Filtros são convertidos para `queryType[]`
+   - Passados para o service correspondente
+   - Service aplica filtros na requisição à API
+
+3. **Filtros Dinâmicos**:
+   - Gerados a partir dos resultados da API
+   - Mostram apenas valores que existem nos resultados
+   - Contagem de ocorrências por filtro
+
+#### Tipos de Filtros
+
+**WordPress (NewsFeed, EventsFeed)**:
+- `region`: Filtra por taxonomia "region" (term ID)
+- `country`: Filtra por taxonomia "country" (term ID)
+- `tags`: Filtra por tags (term ID)
+- `after` / `before`: Filtra por data de publicação
+- `search`: Busca textual no título e conteúdo
+
+**APIs Externas (MultimediaFeed, EventsFeed via DIREV)**:
+- `Region`: Filtra por região (string)
+- `country`: Filtra por país (string)
+- `descriptor`: Filtra por área temática (string)
+- `year`: Filtra por ano (string)
+- `resource_type`: Filtra por tipo de recurso (string)
+- `title`: Busca textual no título
+
+</details>
+
+---
+
 #### `NewsFeed`
+<details>
+<summary><b>Ver detalhes do NewsFeed</b></summary>
+
 **Localização**: `src/components/feed/news/index.tsx`
 
 **Descrição**: Feed completo de notícias com filtros e paginação.
@@ -1186,21 +1251,147 @@ npm run start
 
 **Integrações**:
 - **WordPress REST API** (`PostsApi`): Lista posts com paginação
-- **Taxonomias**: Busca tags por slug para filtros iniciais
+- **TaxonomiesApi**: Converte slugs para term IDs
+
+**Como Funciona a Busca**:
+
+1. **Filtros Iniciais da URL**:
+   ```typescript
+   // Se URL contém ?country=ghana&region=afro&thematicArea=herbal-medicine
+   // Componente converte slugs para IDs:
+   const tag = await api.getTagBySlug("herbal-medicine"); // → tag ID: 123
+   const filters = [
+     { parameter: "country", query: "ghana" },
+     { parameter: "region", query: "afro" },
+     { parameter: "tags", query: "123" }
+   ];
+   ```
+
+2. **Busca de Posts**:
+   ```typescript
+   // PostsApi recebe filtros e constrói query WordPress
+   const posts = await api.listPosts("posts", 12, page, filters);
+   // Query gerada: /wp-json/wp/v2/posts?per_page=12&page=1&country=ghana&tags=123
+   ```
+
+3. **Filtros Dinâmicos**:
+   - Busca todos os posts (sem filtros) para gerar lista de filtros
+   - Extrai valores únicos de: regiões, países, tags, anos
+   - Exibe apenas filtros que existem nos resultados
+
+4. **Busca Textual**:
+   ```typescript
+   // Usuário digita "traditional medicine"
+   const filters = [
+     { parameter: "search", query: "traditional medicine" }
+   ];
+   // WordPress busca em título e conteúdo
+   ```
 
 **Funcionalidades**:
-- Paginação (12 itens por página)
-- Filtros dinâmicos: Região, País, Área Temática, Ano de Publicação
-- Filtros iniciais via URL (country, region, thematicArea)
+- Paginação (12 itens por página, baseada em 1 na API, 0 no componente)
+- Filtros dinâmicos gerados dos resultados
+- Filtros iniciais via URL (conversão slug → ID)
 - Grid responsivo (column ou row mode)
-- Loading overlay fixo
-- Contador de resultados
-- Filtros laterais com `ResourceFilters`
+- Loading overlay fixo durante carregamento
+- Contador de resultados: "Showing X of Y results found"
+- Componente `ResourceFilters` com accordions colapsáveis
 
 **Dependências**:
-- `ResourceFilters` (componente de filtros)
+- `ResourceFilters` (componente de filtros com checkboxes)
 - `ResourceCard` (card de recurso)
 - `Pagination` (componente de paginação)
+
+</details>
+
+---
+
+#### `MultimediaFeed`
+<details>
+<summary><b>Ver detalhes do MultimediaFeed</b></summary>
+
+**Localização**: `src/components/feed/multimedia/index.tsx`
+
+**Descrição**: Feed completo de recursos multimídia com filtros.
+
+**Atributos**:
+- `displayType: string` - Tipo de display: "column" ou "row" (obrigatório)
+- `country?: string` - Filtro por país (opcional)
+- `region?: string` - Filtro por região (opcional)
+- `thematicArea?: string` - Filtro por área temática (opcional)
+- `mediaType?: string` - Filtro por tipo de mídia (opcional)
+
+**Integrações**:
+- **Multimedia API** (`MultimediaService`): Busca recursos multimídia
+- **GlobalContext**: Acessa `language` e `globalConfig`
+
+**Como Funciona a Busca**:
+
+1. **Filtros Iniciais**:
+   ```typescript
+   // Função initialFilters converte parâmetros URL para queryType[]
+   initialFilters(applyFilters, setLoading, setInitialFilterDone, 
+     country, thematicArea, region, mediaType);
+   // Gera: [{ parameter: "country", query: "Ghana" }, ...]
+   ```
+
+2. **Busca na API**:
+   ```typescript
+   // MultimediaService recebe filtros
+   const response = await service.getDefaultResources(
+     12,           // count
+     page * 12,    // start (offset)
+     language,     // "en", "es", etc.
+     filters       // queryType[]
+   );
+   // Service faz POST para /api/multimedia com filtros
+   ```
+
+3. **Filtros Dinâmicos da API**:
+   - API retorna filtros disponíveis nos resultados:
+     ```typescript
+     {
+       countryFilter: [{ type: "Ghana", count: 5 }, ...],
+       regionFilter: [{ type: "AFRO", count: 10 }, ...],
+       thematicAreaFilter: [{ type: "Herbal Medicine", count: 3 }, ...],
+       yearFilter: [{ type: "2023", count: 2 }, ...],
+       resourceTypeFilter: [{ type: "Video", count: 8 }, ...]
+     }
+     ```
+   - Componente `DefaultFeedFilterComponent` renderiza filtros
+
+4. **Aplicação de Filtros**:
+   ```typescript
+   // Usuário seleciona filtros nos checkboxes
+   const selectedFilters = {
+     "Region": ["AFRO"],
+     "country": ["Ghana"],
+     "descriptor": ["Herbal Medicine"]
+   };
+   // Converte para queryType[]
+   const queryItems = [
+     { parameter: "Region", query: "AFRO" },
+     { parameter: "country", query: "Ghana" },
+     { parameter: "descriptor", query: "Herbal Medicine" }
+   ];
+   // Aplica filtros e busca novamente
+   ```
+
+**Funcionalidades**:
+- Paginação (12 itens por página, offset-based)
+- Filtros dinâmicos da API (apenas valores existentes)
+- Suporte a múltiplos idiomas (title vs title_translated)
+- Filtros iniciais via URL
+- Grid responsivo
+- Tags: país, região, área temática
+- Links abrem em nova aba (`target="_blank"`)
+
+**Dependências**:
+- `DefaultFeedFilterComponent` (filtros específicos de multimídia)
+- `ResourceCard` (card de recurso)
+- `Pagination` (componente de paginação)
+
+</details>
 
 ---
 
@@ -1236,11 +1427,497 @@ npm run start
 
 </details>
 
+</details>
+
 ---
 
 **Nota**: Outros componentes de sections (`PageHeaderSection`, `ContentSection`, `ResourcesSection`, `NewsEventsSection`, `MultimediaSection`, `JournalsSection`, `FundingOpportunitiesSection`, `PeriodicalsSection`, etc.) seguem padrões similares de integração com WordPress REST API e APIs externas. Consulte os arquivos individuais em `src/components/sections/` para detalhes específicos.
 
 **Nota**: Outros feeds (`EventsFeed`, `StoriesFeed`, `DatabaseAndRepositoriesFeed`, `JournalsFeed`, etc.) seguem padrões similares aos feeds documentados acima, adaptados para seus respectivos tipos de conteúdo e APIs.
+
+</details>
+
+---
+
+## 📄 Documentação de Páginas e Rotas
+
+<details>
+<summary><b>Ver detalhes sobre Rotas e Páginas</b></summary>
+
+### Estrutura de Rotas
+
+O projeto utiliza o sistema de roteamento do Next.js baseado em arquivos na pasta `src/pages/`. Cada arquivo/pasta representa uma rota na aplicação.
+
+### Tipos de Rotas
+
+#### 1. **Rota Global (`/`)**
+**Arquivo**: `src/pages/index.tsx`
+
+**Descrição**: Página inicial global do site.
+
+**Comportamento**:
+- Define `regionName` como vazio no contexto global
+- Busca propriedades da página "home-global" do WordPress
+- Exibe slider de imagens, formulário de busca, dimensões temáticas, notícias, eventos e multimídia
+- Título: `"Home - The WHO Traditional Medicine Global Library"`
+
+**Logo e Título**:
+- Logo padrão sem região/country
+- Título completo: "The WHO Traditional Medicine Global Library"
+
+**Busca de Conteúdo**:
+- Busca posts sem filtro de região
+- Usa `PostsApi` sem parâmetro de região
+- Conteúdo global de todas as regiões
+
+---
+
+#### 2. **Rota Regional (`/[region]`)**
+**Arquivo**: `src/pages/[region]/index.tsx`
+
+**Descrição**: Página inicial de uma região específica (ex: `/afro`, `/amro`, `/emro`).
+
+**Parâmetros**:
+- `region`: Slug da região (ex: "afro", "amro", "emro")
+
+**Comportamento**:
+- Valida se a região existe em `globalConfig.acf.regionais`
+- Se região inválida, redireciona para `/404` (exceto `/en` que redireciona para `/`)
+- Define `regionName` no contexto global
+- Busca propriedades da página "home" do WordPress com prefixo regional
+- Título: `"{REGION} - The WHO Traditional Medicine Global Library"`
+
+**Logo e Título**:
+- Logo exibe nome da região (ex: "AFRO", "AMRO")
+- Título inclui prefixo da região em maiúsculas
+- Subtítulo: "The WHO Traditional Medicine Global Library"
+
+**Busca de Conteúdo**:
+- **WordPress**: `PostsApi` é instanciado com `region` como parâmetro
+  - Base URL muda para: `{region}/wp-json/wp/v2/`
+  - Busca posts específicos da região via taxonomia "region"
+- **RSS Feeds**: Filtro regional aplicado via `globalConfig.acf.region_filters`
+  - Cada região tem um filtro RSS específico configurado
+- **Componentes**: Recebem prop `region` que filtra conteúdo
+
+**Exemplo de URL**: `/afro`, `/amro`, `/emro`
+
+---
+
+#### 3. **Rota de País (`/[region]/[country]/[lang]`)**
+**Arquivo**: `src/pages/[region]/[country]/[lang]/index.tsx`
+
+**Descrição**: Página inicial de um país específico dentro de uma região.
+
+**Parâmetros**:
+- `region`: Slug da região
+- `country`: Slug do país
+- `lang`: Idioma (atualmente não utilizado ativamente)
+
+**Comportamento**:
+- Valida região e país através de taxonomias do WordPress
+- Define `regionName` e `countryName` no contexto global
+- Busca post do tipo "country" com slug correspondente
+- Carrega recursos específicos do país (bibliográficos, eventos, notícias)
+- Título: `"{COUNTRY} - {REGION} - The WHO Traditional Medicine Global Library"`
+
+**Logo e Título**:
+- Logo exibe nome do país
+- Título inclui país e região
+- Subtítulo: "The WHO Traditional Medicine Global Library"
+
+**Busca de Conteúdo**:
+- **WordPress**: 
+  - Busca posts filtrados por taxonomia "country" e "region"
+  - `PostsApi` usa prefixo regional: `{region}/wp-json/wp/v2/`
+- **DIREV API**: 
+  - Filtra recursos bibliográficos por país
+  - Converte país para term ID do WordPress
+- **Componentes**: 
+  - Recebem props `region` e `country`
+  - Filtram conteúdo específico do país
+
+**Exemplo de URL**: `/afro/ghana/en`, `/amro/brazil/en`
+
+---
+
+#### 4. **Rotas de Conteúdo Específico**
+
+##### `/news` e `/news/[slug]`
+**Arquivos**: `src/pages/news/index.tsx`, `src/pages/news/[slug].tsx`
+
+**Comportamento**:
+- Lista e exibe posts do tipo "posts" do WordPress
+- Filtros por região, país e área temática
+- Busca via `PostsApi` com filtros de taxonomia
+
+**Influência da Região**:
+- Se `regionName` presente no contexto, filtra posts por região
+- Componente `NewsFeed` recebe prop `region` e aplica filtro
+
+---
+
+##### `/events` e `/events/[slug]`
+**Arquivos**: `src/pages/events/index.tsx`, `src/pages/events/[slug].tsx`
+
+**Comportamento**:
+- Lista eventos do DIREV API e WordPress (tipo "event")
+- Mescla resultados de ambas as fontes
+- Filtros por região, país, modalidade, área temática
+
+**Influência da Região**:
+- `DireveService` aplica filtros regionais na query
+- Posts do WordPress filtrados por taxonomia "region"
+
+---
+
+##### `/multimedia`
+**Arquivo**: `src/pages/multimedia/index.tsx`
+
+**Comportamento**:
+- Lista recursos multimídia da Multimedia API
+- Filtros por país, região, tipo de mídia, área temática
+
+**Influência da Região**:
+- `MultimediaService` recebe filtros via `queryType[]`
+- Filtros regionais aplicados na API externa
+
+---
+
+##### `/dimensions` e `/dimensions/[slug]`
+**Arquivos**: `src/pages/dimensions/index.tsx`, `src/pages/dimensions/[slug].tsx`
+
+**Comportamento**:
+- Lista e exibe dimensões temáticas do WordPress
+- Tipo de post customizado: "dimensions"
+
+**Influência da Região**:
+- Se região presente, busca dimensões específicas da região
+- `PostsApi` instanciado com prefixo regional
+
+---
+
+##### `/[region]/[...customRoute]`
+**Arquivo**: `src/pages/[region]/[...customRoute]/index.tsx`
+
+**Descrição**: Rota catch-all para páginas customizadas dentro de uma região.
+
+**Comportamento**:
+- Permite rotas dinâmicas como `/[region]/content/[slug]`
+- Busca páginas do WordPress por slug
+- Mantém contexto regional
+
+---
+
+### Como a Região Afeta a Busca de Conteúdo
+
+#### WordPress REST API
+
+1. **Instanciação do Service**:
+   ```typescript
+   // Sem região (global)
+   const api = new PostsApi();
+   // Base URL: /wp-json/wp/v2/
+   
+   // Com região
+   const api = new PostsApi("afro");
+   // Base URL: /afro/wp-json/wp/v2/
+   ```
+
+2. **Filtros por Taxonomia**:
+   - Região: Filtra posts pela taxonomia "region" usando term ID
+   - País: Filtra posts pela taxonomia "country" usando term ID
+   - Conversão: Slug → Term ID via `TaxonomiesApi`
+
+3. **Exemplo de Query**:
+   ```typescript
+   // Busca posts da região AFRO
+   const posts = await api.getCustomPost("posts", 10, 0, [regionTermId]);
+   
+   // Busca posts do país Gana na região AFRO
+   const posts = await api.getCustomPost("posts", 10, 0, [regionTermId], undefined, {
+     countryId: [countryTermId]
+   });
+   ```
+
+#### APIs Externas (DIREV, Multimedia, etc.)
+
+1. **Filtros via Query Parameters**:
+   - Região e país convertidos para strings de filtro
+   - Adicionados ao array `queryType[]`:
+     ```typescript
+     [
+       { parameter: "region", query: "AFRO" },
+       { parameter: "country", query: "Ghana" }
+     ]
+     ```
+
+2. **RSS Feeds**:
+   - Filtros regionais configurados em `globalConfig.acf.region_filters`
+   - Cada região tem um filtro RSS específico
+   - Aplicado automaticamente em componentes como `TrendingSlider`
+
+### Contexto Global e Estado
+
+O `GlobalContext` mantém:
+- `regionName`: Slug da região atual (ex: "afro")
+- `countryName`: Nome do país atual (ex: "Ghana")
+- `globalConfig`: Configurações globais do WordPress
+- `language`: Idioma atual
+
+Componentes acessam o contexto para:
+- Filtrar conteúdo automaticamente
+- Exibir informações regionais no header
+- Aplicar filtros padrão baseados na região
+
+</details>
+
+---
+
+## 🔧 Documentação de Services e APIs
+
+<details>
+<summary><b>Ver detalhes sobre Services e APIs</b></summary>
+
+### Arquitetura: Separação entre Services e API Routes
+
+O projeto utiliza uma arquitetura de **proxy** onde:
+
+1. **Services** (`src/services/`): Clientes que fazem requisições HTTP
+2. **API Routes** (`src/pages/api/`): Endpoints Next.js que atuam como proxy
+
+### Por que Separar Services e APIs?
+
+#### 1. **Segurança de Credenciais**
+
+**Problema**: APIs externas requerem chaves de API que não devem ser expostas no cliente.
+
+**Solução**: API Routes executam no servidor (Node.js), onde credenciais podem ser armazenadas em variáveis de ambiente.
+
+**Exemplo**:
+```typescript
+// ❌ NÃO FAZER (expõe API key no cliente)
+// src/services/DireveService.ts
+const apiKey = "secret-key"; // Exposto no bundle do cliente!
+
+// ✅ CORRETO (API key no servidor)
+// src/pages/api/direve.ts
+const apiKey = decryptFromEnv(process.env.BVSALUD_API_KEY); // Seguro no servidor
+```
+
+#### 2. **CORS e Políticas de Segurança**
+
+**Problema**: APIs externas podem ter restrições CORS que bloqueiam requisições diretas do navegador.
+
+**Solução**: API Routes fazem requisições server-side, evitando problemas de CORS.
+
+#### 3. **Transformação e Normalização de Dados**
+
+**Problema**: APIs externas podem retornar formatos diferentes ou inconsistentes.
+
+**Solução**: API Routes podem transformar dados antes de enviar ao cliente.
+
+**Exemplo**:
+```typescript
+// src/pages/api/direve.ts
+const response = await axios.get(externalApiUrl);
+// Transforma dados aqui
+return res.json({ data: transformData(response.data) });
+```
+
+#### 4. **Cache e Rate Limiting**
+
+**Problema**: Múltiplas requisições do cliente podem sobrecarregar APIs externas.
+
+**Solução**: API Routes podem implementar cache e rate limiting no servidor.
+
+#### 5. **Logging e Monitoramento**
+
+**Problema**: Requisições diretas do cliente dificultam monitoramento.
+
+**Solução**: API Routes centralizam logs e métricas no servidor.
+
+### Fluxo de Dados
+
+```
+Cliente (Browser)
+    ↓
+Service (src/services/apiRepositories/DireveService.ts)
+    ↓ axios.post("/api/direve", ...)
+API Route (src/pages/api/direve.ts)
+    ↓ axios.get(externalApiUrl, { headers: { apiKey } })
+API Externa (BVSALUD, DIREV, etc.)
+    ↓
+API Route (transforma dados)
+    ↓
+Service (recebe dados normalizados)
+    ↓
+Componente (renderiza dados)
+```
+
+### Estrutura de Services
+
+#### Services de WordPress (`src/services/`)
+
+**BaseUnauthenticatedApi**: Classe base para serviços WordPress.
+
+**Services Principais**:
+- `PostsApi`: Gerenciamento de posts, páginas e tipos customizados
+- `PagesApi`: Propriedades de páginas (ACF)
+- `MenusApi`: Menus de navegação
+- `TaxonomiesApi`: Taxonomias (categorias, tags, países, regiões)
+- `MediaApi`: Mídia e imagens
+- `SettingsApi`: Configurações do site
+
+**Características**:
+- Herdam de `BaseUnauthenticatedApi`
+- Suportam prefixo regional: `new PostsApi("afro")`
+- Base URL: `{region}/wp-json/wp/v2/` ou `/wp-json/wp/v2/`
+
+**Exemplo**:
+```typescript
+// Service WordPress
+const api = new PostsApi("afro");
+const posts = await api.getCustomPost("posts", 10, 0, [regionId]);
+// Faz requisição para: /afro/wp-json/wp/v2/posts?per_page=10&region=[id]
+```
+
+#### Services de APIs Externas (`src/services/apiRepositories/`)
+
+**Services Principais**:
+- `DireveService`: Eventos e recursos bibliográficos
+- `MultimediaService`: Recursos multimídia
+- `JournalsService`: Periódicos científicos
+- `LisService`: Literatura em Saúde
+- `EvidenceMapsService`: Mapas de evidências
+- `RegulationAndPolices`: Legislações e políticas
+
+**Características**:
+- Fazem requisições para API Routes Next.js (`/api/*`)
+- Não acessam APIs externas diretamente
+- Normalizam dados para formato comum (`DefaultResourceDto`)
+
+**Exemplo**:
+```typescript
+// Service de API Externa
+const service = new DireveService();
+const resources = await service.getDireveResources(10, 0, "en", filters);
+// Faz requisição POST para: /api/direve
+// API Route faz requisição real para API externa
+```
+
+### Estrutura de API Routes
+
+#### Localização: `src/pages/api/`
+
+**API Routes Principais**:
+- `direve.ts`: Proxy para API DIREV (eventos)
+- `multimedia.ts`: Proxy para API de Multimídia
+- `journals.ts`: Proxy para API de Periódicos
+- `lis.ts`: Proxy para API LIS
+- `evidencemaps.ts`: Proxy para API de Mapas de Evidências
+- `legislations.ts`: Proxy para API de Legislações
+- `bibliographic.ts`: Proxy para API Bibliográfica
+- `rssfeed.ts`: Proxy para feeds RSS
+- `subscribe.ts`: Integração com Mailchimp
+- `proxy-pdf.ts`: Proxy para PDFs externos
+- `pdf-image.ts`: Geração de thumbnails de PDFs
+- `video-thumbnail.ts`: Geração de thumbnails de vídeos
+- `check-thumbnails.ts`: Verificação de thumbnails
+
+#### Padrão de Implementação
+
+**Exemplo: `direve.ts`**:
+```typescript
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // 1. Validação de método HTTP
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not permitted" });
+  }
+
+  // 2. Extração de credenciais (servidor apenas)
+  const apiKey = decryptFromEnv(process.env.BVSALUD_API_KEY);
+
+  // 3. Construção da URL da API externa
+  const url = `${process.env.BVSALUD_URL}event/v1/search/?fq=${query}&count=${count}`;
+
+  // 4. Requisição para API externa (server-side)
+  const response = await axios.get(url, { headers: { apiKey } });
+
+  // 5. Retorno de dados (opcionalmente transformados)
+  return res.status(200).json({ data: response.data, status: true });
+}
+```
+
+**Características Comuns**:
+- Validação de método HTTP
+- Decriptografia de credenciais via `decryptFromEnv`
+- Headers de segurança (`X-Frame-Options`)
+- Tratamento de erros
+- Transformação de dados quando necessário
+
+### Exemplo Completo: Fluxo DireveService → API Route → API Externa
+
+#### 1. Service (`DireveService.ts`)
+```typescript
+public getDireveResources = async (
+  count: number,
+  start: number,
+  lang: string,
+  queryItems?: Array<queryType>
+): Promise<DefaultResourceDto> => {
+  // Constrói query string
+  const query = `thematic_area:"TMGL"&${queryItems.map(...).join("&")}`;
+  
+  // Faz requisição para API Route (não API externa diretamente)
+  const { data } = await axios.post<RepositoryApiResponse>("/api/direve", {
+    query,
+    count,
+    start,
+    q: "*:*",
+    lang,
+  });
+  
+  // Transforma dados da API externa para formato interno
+  return {
+    data: data.data.diaServerResponse[0].response.docs.map(...),
+    totalFound: data.data.diaServerResponse[0].response.numFound,
+    // ... filtros
+  };
+};
+```
+
+#### 2. API Route (`/api/direve.ts`)
+```typescript
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Recebe dados do Service
+  const { query, count, start, q, lang } = req.body;
+  
+  // Decripta API key (seguro no servidor)
+  const apiKey = decryptFromEnv(process.env.BVSALUD_API_KEY);
+  
+  // Faz requisição para API externa (server-side)
+  const url = `${process.env.BVSALUD_URL}event/v1/search/?fq=${query}&count=${count}`;
+  const response = await axios.get(url, { headers: { apiKey } });
+  
+  // Retorna dados para o Service
+  return res.status(200).json({ data: response.data, status: true });
+}
+```
+
+#### 3. API Externa (BVSALUD/DIREV)
+- Recebe requisição do servidor Next.js
+- Retorna dados em formato próprio
+- API key validada no servidor
+
+### Benefícios da Arquitetura
+
+1. **Segurança**: Credenciais nunca expostas no cliente
+2. **Flexibilidade**: Transformação de dados centralizada
+3. **Manutenibilidade**: Mudanças na API externa afetam apenas API Route
+4. **Performance**: Cache e rate limiting no servidor
+5. **Monitoramento**: Logs centralizados
+6. **CORS**: Sem problemas de CORS (requisições server-side)
 
 </details>
 
