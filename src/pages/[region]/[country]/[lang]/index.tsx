@@ -66,37 +66,37 @@ export default function CountryHome() {
     featured_media: 0,
     _embedded: item.thumbnail
       ? {
-          "wp:featuredmedia": [
-            {
-              id: 0,
-              media_details: {
-                sizes: {
-                  thumbnail: {
-                    source_url: item.thumbnail,
-                    width: 150,
-                    height: 150,
-                  },
-                  medium: {
-                    source_url: item.thumbnail,
-                    width: 300,
-                    height: 200,
-                  },
-                  large: {
-                    source_url: item.thumbnail,
-                    width: 600,
-                    height: 400,
-                  },
-                  full: {
-                    source_url: item.thumbnail,
-                    width: 1200,
-                    height: 800,
-                  },
+        "wp:featuredmedia": [
+          {
+            id: 0,
+            media_details: {
+              sizes: {
+                thumbnail: {
+                  source_url: item.thumbnail,
+                  width: 150,
+                  height: 150,
+                },
+                medium: {
+                  source_url: item.thumbnail,
+                  width: 300,
+                  height: 200,
+                },
+                large: {
+                  source_url: item.thumbnail,
+                  width: 600,
+                  height: 400,
+                },
+                full: {
+                  source_url: item.thumbnail,
+                  width: 1200,
+                  height: 800,
                 },
               },
-              source_url: item.thumbnail,
             },
-          ],
-        }
+            source_url: item.thumbnail,
+          },
+        ],
+      }
       : undefined,
   });
 
@@ -261,7 +261,7 @@ export default function CountryHome() {
                   />
                   {
                     properties?.other_version && (
-                      <Alert mt={20} style={{cursor: "pointer"}} onClick={() => router.push(properties?.other_version.link)} color="blue">
+                      <Alert mt={20} style={{ cursor: "pointer" }} onClick={() => router.push(properties?.other_version.link)} color="blue">
                         {properties?.other_version.description}
                       </Alert>
                     )
@@ -294,42 +294,42 @@ export default function CountryHome() {
           {properties?.tms_items &&
             Array.isArray(properties?.tms_items) &&
             properties?.tms_items?.length > 0 ? (
-              <div className={styles.Tms}>
-                <Container size={"xl"}>
-                  <h3 className={styles.TitleWithIcon}>
-                    {capitalizeFirstLetter(properties?.tms_title || "TRADITIONAL MEDICINE SYSTEMS")}
-                  </h3>
-                  <Flex
-                    justify={"center"}
-                    align={"center"}
-                    wrap={"wrap"}
-                    direction={{ base: "column", md: "row" }}
-                    gap={25}
-                  >
-                    {properties?.tms_items?.map((item, index) => {
-                      return (
-                        <div onClick={() => item.url ? router.push(item.url) : undefined} className={styles.TmsItem} key={index}>
-                          <div
-                            className={styles.TmsImage}
-                            style={{ backgroundImage: `url(${item.image})  ` }}
-                          />
-                          <h4>
-                            {item.title
-                              ? item.title.length > 120
-                                ? item.title.substring(0, 120) + "..."
-                                : item.title
-                              : ""}
-                          </h4>
-                          <p>{item.description}</p>
-                        </div>
-                      );
-                    })}
-                  </Flex>
-                </Container>
-              </div>
-            ) : (
-              <></>
-            )}
+            <div className={styles.Tms}>
+              <Container size={"xl"}>
+                <h3 className={styles.TitleWithIcon}>
+                  {capitalizeFirstLetter(properties?.tms_title || "TRADITIONAL MEDICINE SYSTEMS")}
+                </h3>
+                <Flex
+                  justify={"center"}
+                  align={"center"}
+                  wrap={"wrap"}
+                  direction={{ base: "column", md: "row" }}
+                  gap={25}
+                >
+                  {properties?.tms_items?.map((item, index) => {
+                    return (
+                      <div onClick={() => item.url ? router.push(item.url) : undefined} className={styles.TmsItem} key={index}>
+                        <div
+                          className={styles.TmsImage}
+                          style={{ backgroundImage: `url(${item.image})  ` }}
+                        />
+                        <h4>
+                          {item.title
+                            ? item.title.length > 120
+                              ? item.title.substring(0, 120) + "..."
+                              : item.title
+                            : ""}
+                        </h4>
+                        <p>{item.description}</p>
+                      </div>
+                    );
+                  })}
+                </Flex>
+              </Container>
+            </div>
+          ) : (
+            <></>
+          )}
           {properties?.news_title || properties?.events_title ? (
             <NewsEventsSection
               news={news}
@@ -372,7 +372,7 @@ export default function CountryHome() {
           )}
 
           {properties?.embed_content ? (
-            <>
+            <Container size={"xl"} mt={80} mb={80}>
               <div className={styles.EmbedContent}>
                 {properties?.embed_content ? (
                   <iframe
@@ -385,7 +385,7 @@ export default function CountryHome() {
                   <></>
                 )}
               </div>
-            </>
+            </Container>
           ) : (
             <></>
           )}
@@ -414,29 +414,29 @@ export default function CountryHome() {
             properties?.periodicals_heading ||
             properties?.founding_oportunities_items?.length ||
             properties?.periodical_items?.length) && (
-            <FundingAndPeriodicalsSection
-              fundingOpportunities={
-                properties?.founding_oportunities_items || []
-              }
-              periodicals={properties?.periodical_items || []}
-              fundingHeading={properties?.founding_oportunity_heading}
-              otherFundingTitle={
-                properties?.other_funding_title || "Chamadas em aberto"
-              }
-              otherPeriodicalsTitle={properties?.other_periodicals_title || ""}
-              periodicalsHeading={properties?.periodicals_heading}
-              fundingTitle={
-                properties?.founding_oportunity_title ||
-                "Oportunidades de Financiamento"
-              }
-              periodicalsTitle={properties?.periodicals_title || "Periódicos"}
-              exploreAllLabel="Explore all"
-              hideExploreAllPeriodicals={true}
-              hideExploreAllFunding={true}
-              hideSeeMoreButtonFunding={true}
-              hideSeeMoreButtonPeriodicals={true}
-            />
-          )}
+              <FundingAndPeriodicalsSection
+                fundingOpportunities={
+                  properties?.founding_oportunities_items || []
+                }
+                periodicals={properties?.periodical_items || []}
+                fundingHeading={properties?.founding_oportunity_heading}
+                otherFundingTitle={
+                  properties?.other_funding_title || "Chamadas em aberto"
+                }
+                otherPeriodicalsTitle={properties?.other_periodicals_title || ""}
+                periodicalsHeading={properties?.periodicals_heading}
+                fundingTitle={
+                  properties?.founding_oportunity_title ||
+                  "Oportunidades de Financiamento"
+                }
+                periodicalsTitle={properties?.periodicals_title || "Periódicos"}
+                exploreAllLabel="Explore all"
+                hideExploreAllPeriodicals={true}
+                hideExploreAllFunding={true}
+                hideSeeMoreButtonFunding={true}
+                hideSeeMoreButtonPeriodicals={true}
+              />
+            )}
 
           <Container size={"xl"}>
             <Grid>
@@ -536,12 +536,12 @@ export default function CountryHome() {
                   items={
                     properties?.manual_media
                       ? properties?.manual_media?.map((item) => {
-                          return {
-                            title: item.title,
-                            href: item.url,
-                            thumbnail: item.image.sizes.medium_large,
-                          };
-                        })
+                        return {
+                          title: item.title,
+                          href: item.url,
+                          thumbnail: item.image.sizes.medium_large,
+                        };
+                      })
                       : []
                   }
                 />
