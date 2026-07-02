@@ -32,7 +32,7 @@ export default function Home() {
   const [acf, setAcf] = useState<HomeAcf>();
   const { setRegionName, globalConfig } = useContext(GlobalContext);
   const [showModal, setShowModal] = useState(false);
-  const [showVideoModal, setShowVideoModal] = useState(true);
+  const [showVideoModal, setShowVideoModal] = useState(false);
   const [videoStarted, setVideoStarted] = useState(false);
   const cacheRandom = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
 
