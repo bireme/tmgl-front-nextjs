@@ -42,6 +42,7 @@ export const EventsFeed = ({
     setPage(0);
   };
   const getEvents = async () => {
+    
     setLoading(true);
     try {
       const response = await _service.getDefaultResources(
@@ -51,9 +52,11 @@ export const EventsFeed = ({
         filter && filter.length > 0 ? filter : undefined
       );
       setTotalPages(Math.max(1, Math.ceil(response.totalFound / count)));
+      
       setItems(response.data);
       setApiResponse(response);
     } catch (error) {
+      console.log(error);
     }
     setLoading(false);
   };

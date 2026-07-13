@@ -92,15 +92,18 @@ export class DireveService {
     lang: string,
     queryItems?: Array<queryType>
   ): Promise<DefaultResourceDto> => {
+   
     const allResults = await Promise.all([
       this.getDireveResources(10000, 0, lang!),
     ]);
+    
     const _api = new PostsApi();
     const allWpEvents = await _api.getCustomPost("event", 100, 0);
 
     // Converter posts do WordPress para o formato DefaultResourceItemDto
     const convertedWpEvents = this.convertWpPostsToDefaultResource(allWpEvents);
 
+    
     // Juntar dados do Direve com posts convertidos do WordPress
     const mergedData = [
       ...allResults.flatMap((r) => r.data),
@@ -163,7 +166,6 @@ export class DireveService {
   ): Promise<DefaultResourceDto> => {
     let query = undefined;
     let q = undefined;
-
     query = `thematic_area:"TMGL"${and ? "&" : ""}${
       queryItems
         ? queryItems
@@ -183,83 +185,178 @@ export class DireveService {
     });
 
     if (data) {
+      const serverResponse = data?.data?.diaServerResponse?.[0];
+      const response = serverResponse?.response ?? {};
+      const docs = Array.isArray(response?.docs) ? response.docs : [];
+
+      const facetFields = serverResponse?.facet_counts?.facet_fields ?? {};
+
+      const countryFacet = Array.isArray(facetFields?.country)
+        ? facetFields.country
+        : [];
+
+      const descriptorFilter = Array.isArray(facetFields?.descriptor_filter)
+        ? facetFields.descriptor_filter
+        : [];
+
+      const safeParseMultLangValue = (value: unknown): string => {
+        if (typeof value !== "string" || !value.trim()) {
+          return "";
+        }
+
+        try {
+          const parsed = parseMultLangStringAttr(
+            value.split("|").map((item) => item.replace("^", "|"))
+          );
+
+          if (!Array.isArray(parsed)) {
+            return "";
+          }
+
+          return parsed.find((item) => item?.lang === lang)?.content ?? "";
+        } catch {
+          return "";
+        }
+      };
+
+      const countryFilter = (() => {
+        try {
+          const result = mapJoinedMultLangArrayToFilterItem(countryFacet, lang);
+
+          return Array.isArray(result) ? result : [];
+        } catch {
+          return [];
+        }
+      })();
+
+      const mappedDocs = docs.map((document) => {
+        const d = document ?? {};
+
+        const observations = Array.isArray(d?.observations)
+          ? d.observations.filter(Boolean).join(",")
+          : "";
+
+        const link = Array.isArray(d?.link)
+          ? d.link[0] ?? ""
+          : typeof d?.link === "string"
+            ? d.link
+            : "";
+
+        const modality = Array.isArray(d?.event_modality)
+          ? d.event_modality[0] ?? ""
+          : typeof d?.event_modality === "string"
+            ? d.event_modality
+            : "";
+
+        const country = safeParseMultLangValue(d?.country);
+
+        const thematicArea = Array.isArray(d?.thematic_area_display)
+          ? d.thematic_area_display
+              .map((item) => safeParseMultLangValue(item))
+              .filter(Boolean)
+          : [];
+
+        const region = country
+          ? (() => {
+              try {
+                const regions = getRegionByCountry([country]);
+                return Array.isArray(regions) ? regions[0] ?? "" : "";
+              } catch {
+                return "";
+              }
+            })()
+          : "";
+
+        const year =
+          d?.created_date &&
+          moment(d.created_date, "YYYYMMDD", true).isValid()
+            ? moment(d.created_date, "YYYYMMDD").format("YYYY")
+            : "";
+
+        return {
+          excerpt: observations,
+          id: d?.id ?? "",
+          link,
+          title: d?.title ?? "",
+          modality,
+          country,
+          documentType: "Event",
+          thematicArea,
+          region,
+          year,
+        };
+      });
+
+      const regionFilter = (() => {
+        try {
+          const countries = countryFilter
+            .map((country) => country?.type)
+            .filter(Boolean);
+
+          const regions = getRegionByCountry(countries);
+
+          if (!Array.isArray(regions)) {
+            return [];
+          }
+
+          return regions
+            .filter(Boolean)
+            .map((region) => ({
+              type: region,
+              count: 99,
+            }));
+        } catch {
+          return [];
+        }
+      })();
+
       return {
-        data: data.data.diaServerResponse[0].response.docs.map((d) => {
-          return {
-            excerpt: d.observations ? d.observations?.join(",") : "",
-            id: d.id,
-            link: d.link[0],
-            title: d.title,
-            modality: d.event_modality ? d.event_modality[0] : "",
-            country: d.country
-              ? parseMultLangStringAttr(
-                  d.country.split("|").map((i) => i.replace("^", "|"))
-                ).find((i) => i.lang == lang)?.content
-              : "",
-            documentType: "Event",
-            thematicArea: d.thematic_area_display
-              ? d.thematic_area_display.map((t) => {
-                  return (
-                    parseMultLangStringAttr(
-                      t.split("|").map((i) => i.replace("^", "|"))
-                    ).find((i) => i.lang == lang)?.content || ""
-                  );
-                })
-              : [],
-            region: d.country
-              ? getRegionByCountry([
-                  parseMultLangStringAttr(
-                    d.country.split("|").map((i) => i.replace("^", "|"))
-                  ).find((i) => i.lang == lang)?.content || "",
-                ])[0]
-              : "",
-            year: moment(d.created_date, "YYYYMMDD").format("YYYY"),
-          };
-        }),
-        countryFilter: mapJoinedMultLangArrayToFilterItem(
-          data.data.diaServerResponse[0].facet_counts.facet_fields.country,
-          lang
-        ),
-        totalFound: data.data.diaServerResponse[0].response.numFound,
+        data: mappedDocs,
+
+        countryFilter,
+
+        totalFound:
+          typeof response?.numFound === "number"
+            ? response.numFound
+            : docs.length,
+
         documentTypeFilter: [
           {
             type: "Events",
-            count: data.data.diaServerResponse[0].response.numFound,
+            count:
+              typeof response?.numFound === "number"
+                ? response.numFound
+                : docs.length,
           },
         ],
+
         eventFilter: [],
-        regionFilter: getRegionByCountry(
-          mapJoinedMultLangArrayToFilterItem(
-            data.data.diaServerResponse[0].facet_counts.facet_fields.country,
-            lang
-          ).map((c) => c.type)
-        ).map((r) => {
-          return { type: r, count: 99 };
-        }),
-        thematicAreaFilter:
-          data.data.diaServerResponse[0].facet_counts.facet_fields.descriptor_filter.map(
-            (t) => {
-              return {
-                type: t[0],
-                count: parseInt(t[1]),
-              };
-            }
-          ),
-        yearFilter: data.data.diaServerResponse[0].response.docs.map((d) => {
-          return {
-            type: moment(d.created_date, "YYYYMMDD").format("YYYY"),
+
+        regionFilter,
+
+        thematicAreaFilter: descriptorFilter
+          .filter((item) => Array.isArray(item))
+          .map((item) => ({
+            type: item?.[0] ?? "",
+            count: Number.parseInt(String(item?.[1] ?? "0"), 10) || 0,
+          }))
+          .filter((item) => item.type),
+
+        yearFilter: mappedDocs
+          .filter((document) => document.year)
+          .map((document) => ({
+            type: document.year,
             count: 1,
-          };
-        }),
-        resourceTypeFilter: data.data.diaServerResponse[0].response.docs.map(
-          (d) => {
-            return {
-              type: d.event_modality ? d.event_modality[0] : "",
-              count: 1,
-            };
-          }
-        ),
+          })),
+
+        resourceTypeFilter: mappedDocs
+          .filter((document) => document.modality)
+          .map((document) => ({
+            type: document.modality,
+            count: 1,
+          })),
       };
+      
     }
     return {
       data: [],
