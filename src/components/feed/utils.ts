@@ -63,20 +63,26 @@ export function getCountryTags(
 export function getRegionByCountry(countries: string[]): string[] {
   let regions = groupCountriesByRegion(CountriesRegions);
 
+  const countryAliases: Record<string, string> = {
+    "south korea": "korea, republic of",
+    "republic of korea": "korea, republic of",
+    "korea republic of": "korea, republic of",
+  };
+
   const itemRegions = regions.filter((region) =>
     region.countries.some((country) =>
       countries.some((searchCountry) => {
         const searchLower = searchCountry?.toLocaleLowerCase().trim();
         const countryLower = country?.toLocaleLowerCase().trim();
-        
+        const normalizedSearch = countryAliases[searchLower] || searchLower;
+
         // Correspondência exata
-        if (searchLower === countryLower) return true;
-        
+        if (normalizedSearch === countryLower) return true;
+
         // Correspondência parcial mais específica - só para casos conhecidos
-        if (searchLower === "united states" && countryLower.includes("united states")) return true;
-        if (searchLower === "united kingdom" && countryLower.includes("united kingdom")) return true;
-        if (searchLower === "korea, republic of" && (countryLower.includes("korea") || countryLower.includes("republic"))) return true;
-        
+        if (normalizedSearch === "united states" && countryLower.includes("united states")) return true;
+        if (normalizedSearch === "united kingdom" && countryLower.includes("united kingdom")) return true;
+
         return false;
       })
     )

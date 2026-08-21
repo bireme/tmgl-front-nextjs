@@ -13,6 +13,7 @@ import { GlobalConfigLoader } from "@/contexts/GlobalConfigLoader";
 import { GlobalProvider } from "@/contexts/globalContext";
 import { GptWidget } from "@/components/gpt";
 import { HeaderLayout } from "@/components/layout/header";
+import Head from "next/head";
 import { SkipLink } from "@/components/layout/skip-link";
 import { mantineTheme } from "@styles/mantine-theme";
 import { useRouter } from "next/router";
@@ -35,7 +36,41 @@ export default function App({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <MantineProvider theme={mantineTheme}>
+    <>
+      <Head>
+        <title>The WHO Traditional Medicine Global Library</title>
+        <meta
+          key="description"
+          name="description"
+          content="The WHO Traditional Medicine Global Library (TMGL) is a comprehensive digital resource for traditional medicine information, research, and evidence from around the world."
+        />
+        <meta key="og:type" property="og:type" content="website" />
+        <meta
+          key="og:title"
+          property="og:title"
+          content="The WHO Traditional Medicine Global Library"
+        />
+        <meta
+          key="og:description"
+          property="og:description"
+          content="The WHO Traditional Medicine Global Library (TMGL) is a comprehensive digital resource for traditional medicine information, research, and evidence from around the world."
+        />
+        <meta key="og:image" property="og:image" content="/og-image.png" />
+        <meta property="og:site_name" content="TMGL - WHO" />
+        <meta key="twitter:card" name="twitter:card" content="summary_large_image" />
+        <meta
+          key="twitter:title"
+          name="twitter:title"
+          content="The WHO Traditional Medicine Global Library"
+        />
+        <meta
+          key="twitter:description"
+          name="twitter:description"
+          content="The WHO Traditional Medicine Global Library (TMGL) is a comprehensive digital resource for traditional medicine information, research, and evidence from around the world."
+        />
+        <meta key="twitter:image" name="twitter:image" content="/og-image.png" />
+      </Head>
+      <MantineProvider theme={mantineTheme}>
       <GlobalProvider>
         <GlobalConfigLoader />
         <SkipLink />
@@ -80,6 +115,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <GptWidget />
         <FooterLayout />
       </GlobalProvider>
-    </MantineProvider>
+      </MantineProvider>
+    </>
   );
 }

@@ -154,11 +154,17 @@ export class PostsApi extends BaseUnauthenticatedApi {
     page: number,
     queryItems?: Array<queryType>
   ): Promise<ListPostsDto> {
-    const response = await this._api.get<Post[]>(
-      `${postTypeSlug}?per_page=${perPage ? perPage : process.env.POSTSPERPAGE
-      }&page=${page}&_embed&orderby=date&order=desc&acf_format=standard${queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
-      }`
-    );
+    const [response, dates] = await Promise.all([
+      this._api.get<Post[]>(
+        `${postTypeSlug}?per_page=${
+          perPage ? perPage : process.env.POSTSPERPAGE
+        }&page=${page}&_embed&orderby=date&order=desc&acf_format=standard${
+          queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
+        }`
+      ),
+      // eslint-disable-next-line react/no-is-mounted -- false positive on a service method
+      this.fetchPostDates(postTypeSlug),
+    ]);
 
     if (!this._region) {
       const [regions, tags, dimensions, countries] = await Promise.all([
@@ -173,7 +179,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
         totalPages: parseInt(response.headers["x-Wp-totalpages"], 1),
         regions: regions.data,
         tags: tags.data,
-        dates: response.data.map((d) => d.date),
+        dates,
         dimensions: dimensions.data,
         countries: countries.data,
         thematicAreas: tags.data,
@@ -187,13 +193,35 @@ export class PostsApi extends BaseUnauthenticatedApi {
         totalItems: parseInt(response.headers["x-wp-total"], 10),
         totalPages: parseInt(response.headers["x-Wp-totalpages"], 1),
         regions: regions.data,
-        dates: response.data.map((d) => d.date),
+        dates,
         tags: [],
         dimensions: [],
         countries: [],
         thematicAreas: [],
       };
     }
+  }
+
+  private async fetchPostDates(postTypeSlug: string): Promise<string[]> {
+    const perPage = 100;
+    const firstPage = await this._api.get<Array<Pick<Post, "date">>>(
+      `${postTypeSlug}?per_page=${perPage}&page=1&_fields=date&orderby=date&order=desc`
+    );
+    const totalPages = Number(firstPage.headers["x-wp-totalpages"] || 1);
+
+    const remainingPages = await Promise.all(
+      Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) =>
+        this._api.get<Array<Pick<Post, "date">>>(
+          `${postTypeSlug}?per_page=${perPage}&page=${
+            index + 2
+          }&_fields=date&orderby=date&order=desc`
+        )
+      )
+    );
+
+    return [firstPage, ...remainingPages].flatMap(({ data }) =>
+      data.map(({ date }) => date)
+    );
   }
 
   public formatTags(item: Post): TagItem[] {

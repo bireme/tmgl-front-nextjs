@@ -2,6 +2,7 @@ import {
   applyDefaultResourceFilters,
   mapBibliographicTypes,
   mapJoinedMultLangArrayToFilterItem,
+  mapTmglDescriptor,
   mergeFilterItems,
   parseMultLangStringAttr,
 } from "./utils";
@@ -26,7 +27,10 @@ export class RegulationsAndPolicesService {
       this.getLegislations(10000, 0, lang!),
     ]);
 
-    const mergedData = allResults.flatMap((r) => r.data);
+    const mergedData = allResults.flatMap((r) => r.data).map((item) => ({
+      ...item,
+      thematicArea: item.thematicArea?.map(mapTmglDescriptor),
+    }));
 
     // Ordenação determinística: ano desc + id/title
     const orderedData = mergedData.slice().sort((a, b) => {
@@ -81,8 +85,14 @@ export class RegulationsAndPolicesService {
       eventFilter: [],
       regionFilter: mergeFilterItems(allResults[0].regionFilter),
       thematicAreaFilter: mergeFilterItems(
-        allResults[0].thematicAreaFilter,
-        allResults[1].thematicAreaFilter
+        allResults[0].thematicAreaFilter.map((item) => ({
+          ...item,
+          type: mapTmglDescriptor(item.type),
+        })),
+        allResults[1].thematicAreaFilter.map((item) => ({
+          ...item,
+          type: mapTmglDescriptor(item.type),
+        }))
       ).sort((a, b) => a.type.localeCompare(b.type)),
       // corrigido: ordenar numericamente desc
       yearFilter: mergeFilterItems(
@@ -276,17 +286,12 @@ export class RegulationsAndPolicesService {
           return { type: r, count: 99 };
         }),
         thematicAreaFilter:
-          data.data.diaServerResponse[0].facet_counts.facet_fields.thematic_area_display.map(
-            (i) => {
-              let type = i[0]
-                .split("|")
-                .map((i) => i.replace("^", "|"))
-                .find((i) => i[0] == lang);
-              return {
-                type: type ? type : "",
-                count: parseInt(i[1]),
-              };
-            }
+          (data.data.diaServerResponse[0].facet_counts.facet_fields
+            .descriptor_filter as unknown as [string, number][]).map(
+            ([type, count]) => ({
+              type,
+              count,
+            })
           ),
         yearFilter:
           data.data.diaServerResponse[0].facet_counts.facet_fields.publication_year.map(

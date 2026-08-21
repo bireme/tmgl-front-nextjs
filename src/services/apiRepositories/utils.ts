@@ -13,6 +13,21 @@ import { LisDocuments } from "../types/repositoryTypes";
 import { ThematicAreaApiDto } from "../types/evidenceMapsDto";
 import { string } from "zod";
 
+const TMGL_DESCRIPTOR_ALIASES: Record<string, string> = {
+  midwifery: "Traditional Birth Attendance",
+};
+
+export function mapTmglDescriptor(descriptor: string): string {
+  const value = descriptor.trim();
+  const [parent, ...qualifiers] = value.split("/");
+  const mappedParent = TMGL_DESCRIPTOR_ALIASES[parent.toLowerCase()];
+
+  if (!mappedParent) return value;
+  return qualifiers.length > 0
+    ? `${mappedParent}/${qualifiers.join("/")}`
+    : mappedParent;
+}
+
 export function applyDefaultResourceFilters(
   queryItems: queryType[],
   orderedData: DefaultResourceItemDto[]
@@ -99,7 +114,7 @@ export function applyDefaultResourceFilters(
   if (Array.isArray(thematicAreaFilters) && thematicAreaFilters.length) {
     const filters = thematicAreaFilters
       .map((f) =>
-        String(f ?? "")
+        mapTmglDescriptor(String(f ?? ""))
           .trim()
           .toLowerCase()
       )
@@ -112,7 +127,7 @@ export function applyDefaultResourceFilters(
 
       const areas = rawAreas
         .map((a) =>
-          String(a ?? "")
+          mapTmglDescriptor(String(a ?? ""))
             .trim()
             .toLowerCase()
         )

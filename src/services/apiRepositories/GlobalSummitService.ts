@@ -121,7 +121,7 @@ export class GlobalSummitService {
   ): Promise<DefaultResourceDto> => {
     let query = undefined;
     let q = undefined;
-    query = `database:"GTM Summit - The First WHO Tradicional Medicine Global Summit"${
+    query = `database:"GTM Summit - The First WHO Traditional Medicine Global Summit"${
       and ? "&" : ""
     }${
       queryItems

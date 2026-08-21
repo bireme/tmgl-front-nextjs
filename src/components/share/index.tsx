@@ -5,16 +5,28 @@ import {
   IconBrandX,
 } from "@tabler/icons-react";
 
-import { useRouter } from "next/router";
-
 export interface ShareModalProps {
   link: string;
+  title?: string;
+  description?: string;
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-export const ShareModal = ({ link, open, setOpen }: ShareModalProps) => {
-  const router = useRouter();
+export const ShareModal = ({
+  link,
+  title = "",
+  description = "",
+  open,
+  setOpen,
+}: ShareModalProps) => {
+  const openShareWindow = (url: string) => {
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
+  const getCurrentUrl = () =>
+    link || (typeof window !== "undefined" ? window.location.href : "");
+
   return (
     <>
       <Modal
@@ -30,8 +42,10 @@ export const ShareModal = ({ link, open, setOpen }: ShareModalProps) => {
             stroke={1.5}
             size={33}
             onClick={() => {
-              router.push(
-                `https://www.facebook.com/sharer/sharer.php?u=${link}`
+              openShareWindow(
+                `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                  getCurrentUrl()
+                )}`
               );
             }}
             style={{ cursor: "pointer" }}
@@ -41,7 +55,11 @@ export const ShareModal = ({ link, open, setOpen }: ShareModalProps) => {
             size={33}
             style={{ cursor: "pointer" }}
             onClick={() => {
-              router.push(`https://twitter.com/intent/tweet?text=${link}`);
+              openShareWindow(
+                `https://twitter.com/intent/tweet?url=${encodeURIComponent(
+                  getCurrentUrl()
+                )}&text=${encodeURIComponent(title || description)}`
+              );
             }}
           />
 
@@ -50,8 +68,10 @@ export const ShareModal = ({ link, open, setOpen }: ShareModalProps) => {
             size={33}
             style={{ cursor: "pointer" }}
             onClick={() => {
-              router.push(
-                `https://www.linkedin.com/shareArticle?mini=true&url=${link}`
+              openShareWindow(
+                `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+                  getCurrentUrl()
+                )}`
               );
             }}
           />

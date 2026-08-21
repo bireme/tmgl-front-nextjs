@@ -32,6 +32,7 @@ export default function RegionHome() {
   const {
     query: { region },
   } = router;
+  const isEmro = region?.toString().toLowerCase() === "emro";
 
   const getPageProperties = useCallback(async () => {
     const _api = new PagesApi(region ? region.toString() : "");
@@ -157,7 +158,11 @@ export default function RegionHome() {
               </div>
             )}
 
-            <div className={styles.TrandingAndFeatured}>
+            <div
+              className={`${styles.TrandingAndFeatured} ${
+                isEmro ? styles.EmroEventsLayout : ""
+              }`}
+            >
               <Container
                 size={"xl"}
                 mt={80}
@@ -185,10 +190,14 @@ export default function RegionHome() {
                 region={region ? region.toString() : ""}
                 title={"News from WHO"}
               />
-              <NewsletterSection />
+              {!isEmro && <NewsletterSection />}
             </div>
-            <br />
-            <br />
+            {!isEmro && (
+              <>
+                <br />
+                <br />
+              </>
+            )}
             {acf?.manual_media && acf.manual_media.length > 0 ? (
               <div style={{ float: "left", width: "100%" }}>
                 <FixedRelatedVideosSection
@@ -223,6 +232,11 @@ export default function RegionHome() {
               
             ) : (
               <></>
+            )}
+            {isEmro && (
+              <div className={styles.EmroNewsletter}>
+                <NewsletterSection />
+              </div>
             )}
           </>
         ) : (

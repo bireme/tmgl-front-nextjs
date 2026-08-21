@@ -275,6 +275,7 @@ export interface Post {
   };
 }
 
+
 export interface AcfMultTab {
   Itens: MultTabItems[];
 }

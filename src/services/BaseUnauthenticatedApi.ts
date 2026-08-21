@@ -32,13 +32,13 @@ export abstract class BaseUnauthenticatedApi {
     let url: string | undefined;
 
     if (sizes) {
-      // Ordem de prioridade para fallback
-      const order = ["thumbnail", "medium", "large", "full"] as const;
+      // Prefer higher-resolution variants to avoid pixelation in page headers.
+      const order = ["full", "large", "medium", "thumbnail"] as const;
 
       if (size && size !== "full") {
         url = sizes[size as keyof typeof sizes]?.source_url || undefined;
       } else if (size === "full") {
-        url = sizes.full?.source_url || undefined;
+        url = sizes.full?.source_url || fm.source_url || undefined;
       }
       if (!url) {
         for (const key of order) {

@@ -270,10 +270,23 @@
   background-position: center center;
   float: left;
   width: 100%;
+
+  &.EmroEventsLayout {
+    min-height: 0;
+
+    @media (max-width: '750px') {
+      min-height: 0;
+    }
+  }
 }
 
 .NewsContainer {
   float: left;
+  width: 100%;
+}
+
+.EmroNewsletter {
+  clear: both;
   width: 100%;
 }
 

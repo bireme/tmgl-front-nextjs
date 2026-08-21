@@ -21,7 +21,7 @@ export interface ThematicArea {
 
 export interface MultimediaObject {
   authors: string[];
-  content_notes: string;
+  content_notes: string[];
   contributors: string[];
   cooperative_center_code: string;
   created_time: string;
