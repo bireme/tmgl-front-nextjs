@@ -50,8 +50,7 @@ export const DatabaseAndRepositoriesFeed = ({
         page * count,
         language,
         filter && filter.length > 0 ? filter : undefined,
-        "TMGL",
-        "databases_bibliography"
+        "TMGL"
       );
       setTotalPages(Math.max(1, Math.ceil(response.totalFound / count)));
       setItems(response.data);

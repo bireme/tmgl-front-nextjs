@@ -32,7 +32,7 @@ export class LisService {
     let query = undefined;
     let q = undefined;
 
-    query = `thematic_area:"TMGL"source_type:"databases_bibliography"${
+    query = `thematic_area:"TMGL"-thematic_area:"GTMSummit"-thematic_area:"TMGL-EV"${
       queryItems
         ? queryItems
             .map((k) => {
@@ -287,7 +287,9 @@ export class LisService {
     let query = undefined;
     let q = undefined;
 
-    query = `thematic_area:"${baseFilter ? baseFilter : "TMGL"}"${
+    query = `thematic_area:"${
+      baseFilter ? baseFilter : "TMGL"
+    }"-thematic_area:"GTMSummit"-thematic_area:"TMGL-EV"${
       source_type ? `source_type:"${source_type}"` : ""
     }${and ? "&" : ""}${
       queryItems
