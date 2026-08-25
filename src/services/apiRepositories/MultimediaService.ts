@@ -16,6 +16,43 @@ import SparkMD5 from "spark-md5";
 import axios from "axios";
 import { getRegionByCountry } from "@/components/feed/utils";
 
+const resolveDescription = (obj: MultimediaObject, lang: string): string => {
+  const descriptions = Array.isArray(obj.description)
+    ? obj.description
+    : obj.description
+    ? [obj.description]
+    : [];
+  const nonEmptyDescriptions = descriptions
+    .map((description) => String(description).trim())
+    .filter(Boolean);
+
+  const multilingualDescription = nonEmptyDescriptions
+    .flatMap((description) => description.split("|"))
+    .map((description) => {
+      const separatorIndex = description.indexOf("^");
+      return separatorIndex > 0
+        ? {
+            lang: description.slice(0, separatorIndex),
+            content: description.slice(separatorIndex + 1),
+          }
+        : null;
+    })
+    .find((description) => description?.lang === lang)?.content;
+
+  if (multilingualDescription?.trim()) {
+    return multilingualDescription.trim();
+  }
+
+  if (nonEmptyDescriptions[0]) return nonEmptyDescriptions[0];
+
+  const contentNotes = Array.isArray(obj.content_notes)
+    ? obj.content_notes
+    : obj.content_notes
+    ? [obj.content_notes]
+    : [];
+  return contentNotes.map((note) => String(note).trim()).find(Boolean) || "";
+};
+
 export class MultimediaService {
   public getResources = async (
     count: number,
@@ -207,7 +244,7 @@ export class MultimediaService {
       for (const d of docsRaw) {
 
         docs.push({
-          excerpt: this.resolveDescription(d, lang),
+          excerpt: resolveDescription(d, lang),
           id: d.id.toString(),
           link: d.link[0],
           resourceType: d.media_type_display
@@ -437,43 +474,6 @@ export class MultimediaService {
     });
     return response.data;
   };
-
-  private resolveDescription(obj: MultimediaObject, lang: string): string {
-    const descriptions = Array.isArray(obj.description)
-      ? obj.description
-      : obj.description
-      ? [obj.description]
-      : [];
-    const nonEmptyDescriptions = descriptions
-      .map((description) => String(description).trim())
-      .filter(Boolean);
-
-    const multilingualDescription = nonEmptyDescriptions
-      .flatMap((description) => description.split("|"))
-      .map((description) => {
-        const separatorIndex = description.indexOf("^");
-        return separatorIndex > 0
-          ? {
-              lang: description.slice(0, separatorIndex),
-              content: description.slice(separatorIndex + 1),
-            }
-          : null;
-      })
-      .find((description) => description?.lang === lang)?.content;
-
-    if (multilingualDescription?.trim()) {
-      return multilingualDescription.trim();
-    }
-
-    if (nonEmptyDescriptions[0]) return nonEmptyDescriptions[0];
-
-    const contentNotes = Array.isArray(obj.content_notes)
-      ? obj.content_notes
-      : obj.content_notes
-      ? [obj.content_notes]
-      : [];
-    return contentNotes.map((note) => String(note).trim()).find(Boolean) || "";
-  }
 
   public getVideoThumbnail = async (obj: MultimediaObject): Promise<string> => {
     const url = obj.link[0];
