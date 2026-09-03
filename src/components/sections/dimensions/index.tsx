@@ -3,7 +3,6 @@ import { Button, Container, Flex, Grid } from "@mantine/core";
 import Cookies from "js-cookie";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { TraditionalSectionCard } from "..";
-import { cookies } from "next/headers";
 import styles from "../../../styles/components/sections.module.scss";
 import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 

@@ -22,6 +22,7 @@ export interface NewsSectionProps {
   archive?: string;
   includeDemo?: boolean;
   excludedTagIds?: number[];
+  excludedCountrySlugs?: string[];
 }
 export const NewsSection = ({
   region,
@@ -30,6 +31,7 @@ export const NewsSection = ({
   archive,
   includeDemo,
   excludedTagIds,
+  excludedCountrySlugs,
 }: NewsSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
   const [demoTagId, setDemoTagId] = useState<number>();
@@ -74,12 +76,25 @@ export const NewsSection = ({
         setPosts(resp.reverse());
       } else {
         const cat = await _api.getCategoryBySlug("thematic-page");
+        const countryTerms = await Promise.all(
+          (excludedCountrySlugs ?? []).map((slug) =>
+            _api.getCountryBySlug(slug)
+          )
+        );
+        const excludedCountryIds = countryTerms
+          .flat()
+          .map((term) => term.id)
+          .filter((id): id is number => typeof id === "number");
         
         // Preparar opções de exclusão de tags para posts normais
         let tagOptions: any = {};
         if (excludedTagIds && excludedTagIds.length > 0) {
           tagOptions.tagId = excludedTagIds;
           tagOptions.excludeTag = true;
+        }
+        if (excludedCountryIds.length > 0) {
+          tagOptions.countryId = excludedCountryIds;
+          tagOptions.excludeCountry = true;
         }
         
         
@@ -101,7 +116,7 @@ export const NewsSection = ({
       }
     } catch (error: any) {
     }
-  }, [excludedTagIds]);
+  }, [excludedTagIds, excludedCountrySlugs, region]);
   useEffect(() => {
     getNews();
   }, [getNews]);

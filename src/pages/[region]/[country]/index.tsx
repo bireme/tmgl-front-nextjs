@@ -49,42 +49,25 @@ export default function CountryHome() {
 
         // Buscar termo do país para usar como filtro
         try {
-
-          // Usar API regional para buscar o termo de país
-          const countryTerm = await _api.getCountryBySlug(country.toString());
-
-          // Se não encontrou, tentar com primeira letra maiúscula
-          if (!countryTerm || countryTerm.length === 0) {
-            const capitalizedCountry =
-              country.toString().charAt(0).toUpperCase() +
-              country.toString().slice(1);
-            const countryTermCapitalized = await _api.getCountryBySlug(
-              capitalizedCountry
-            );
-
-            if (countryTermCapitalized && countryTermCapitalized.length > 0) {
-              const countryId = countryTermCapitalized[0].id;
-              setCountryTermId(countryId);
-            }
-          } else {
-            const countryId = countryTerm[0].id;
-            setCountryTermId(countryId);
-          }
-
           // Buscar news e events relacionados ao país
           // Buscar news do WP geral (não regional)
           const globalApi = new PostsApi(); // Sem região para acessar WP geral
+          const countrySlug = country.toString().toLowerCase();
+          const countryTerm = await globalApi.getCountryBySlug(countrySlug);
+          const countryId = countryTerm[0]?.id;
 
-          const newsResponse = await globalApi.getCustomPost(
-            "posts",
-            4,
-            undefined,
-            undefined,
-            undefined,
-            {
-              countryId: [countryTermId || 0],
-            }
-          );
+          setCountryTermId(countryId ?? null);
+
+          const newsResponse = countryId
+            ? await globalApi.getCustomPost(
+                "posts",
+                4,
+                undefined,
+                undefined,
+                undefined,
+                { countryId: [countryId] }
+              )
+            : [];
 
           setNews(newsResponse);
 
@@ -96,7 +79,7 @@ export default function CountryHome() {
             undefined,
             undefined,
             {
-              countryId: [countryTermId || 0],
+              countryId: [countryId || 0],
             }
           );
           setEvents(eventsResponse);

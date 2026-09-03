@@ -36,9 +36,6 @@ export default function CountryHome() {
   const [postProps, setPostProps] = useState<Post>();
   const [news, setNews] = useState<Array<NewsEventsItem>>([]);
   const [events, setEvents] = useState<Array<NewsEventsItem>>([]);
-  const [regionalCountryTermId, setRegionalCountryTermId] = useState<
-    number | null
-  >(null);
   const [countryTermId, setCountryTermId] = useState<number | null>(null);
   const {
     query: { country, region, lang },
@@ -124,10 +121,9 @@ export default function CountryHome() {
         // Buscar termo do país para usar como filtro
         try {
           const globalApi = new PostsApi();
-          let countryId = null;
-          // Usar API regional para buscar o termo de país
+          let countryId: number | null = null;
           const countryTerm = await globalApi.getCountryBySlug(
-            country.toString()
+            country.toString().toLowerCase()
           );
 
           // Se não encontrou, tentar com primeira letra maiúscula
@@ -148,39 +144,19 @@ export default function CountryHome() {
             setCountryTermId(countryId);
           }
 
-          const regionalCountryTerm = await _api.getCountryBySlug(
-            country.toString()
-          );
-          if (!regionalCountryTerm || regionalCountryTerm.length === 0) {
-            const capitalizedCountry =
-              country.toString().charAt(0).toUpperCase() +
-              country.toString().slice(1);
-            const countryTermCapitalized = await _api.getCountryBySlug(
-              capitalizedCountry
-            );
-
-            if (countryTermCapitalized && countryTermCapitalized.length > 0) {
-              countryId = countryTermCapitalized[0].id;
-              setRegionalCountryTermId(countryId);
-            }
-          } else {
-            countryId = countryTerm[0].id;
-            setRegionalCountryTermId(countryId);
-          }
-
           // Buscar news e events relacionados ao país
           // Buscar news do WP geral (não regional)
           // Sem região para acessar WP geral
-          const newsResponse = await globalApi.getCustomPost(
-            "posts",
-            4,
-            undefined,
-            undefined,
-            undefined,
-            {
-              countryId: [countryId || 0],
-            }
-          );
+          const newsResponse = countryId
+            ? await globalApi.getCustomPost(
+                "posts",
+                4,
+                undefined,
+                undefined,
+                undefined,
+                { countryId: [countryId] }
+              )
+            : [];
 
           setNews(newsResponse.map(mapPostToNewsEventsItem));
 

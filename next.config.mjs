@@ -2,10 +2,10 @@
 const nextConfig = {
   reactStrictMode: true,
   sassOptions: {
-    prependData: `@import "./_mantine.scss";`,
+    additionalData: `@import "${process.cwd()}/_mantine.scss";`,
   },
   env: {
-    PRODUCTION: process.env.PRODUCTION || false,
+    PRODUCTION: process.env.PRODUCTION || "false",
     NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
     NEXT_PUBLIC_API_BASE_URL: process.env.NEXT_PUBLIC_API_BASE_URL,
     BASE_URL: process.env.BASE_URL,

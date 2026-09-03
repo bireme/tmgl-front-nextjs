@@ -2,7 +2,6 @@ import {
   applyDefaultResourceFilters,
   mapBibliographicTypes,
   mapJoinedMultLangArrayToFilterItem,
-  mapTmglDescriptor,
   mergeFilterItems,
   parseMultLangStringAttr,
 } from "./utils";
@@ -27,10 +26,7 @@ export class RegulationsAndPolicesService {
       this.getLegislations(10000, 0, lang!),
     ]);
 
-    const mergedData = allResults.flatMap((r) => r.data).map((item) => ({
-      ...item,
-      thematicArea: item.thematicArea?.map(mapTmglDescriptor),
-    }));
+    const mergedData = allResults.flatMap((r) => r.data);
 
     // Ordenação determinística: ano desc + id/title
     const orderedData = mergedData.slice().sort((a, b) => {
@@ -85,14 +81,8 @@ export class RegulationsAndPolicesService {
       eventFilter: [],
       regionFilter: mergeFilterItems(allResults[0].regionFilter),
       thematicAreaFilter: mergeFilterItems(
-        allResults[0].thematicAreaFilter.map((item) => ({
-          ...item,
-          type: mapTmglDescriptor(item.type),
-        })),
-        allResults[1].thematicAreaFilter.map((item) => ({
-          ...item,
-          type: mapTmglDescriptor(item.type),
-        }))
+        allResults[0].thematicAreaFilter,
+        allResults[1].thematicAreaFilter
       ).sort((a, b) => a.type.localeCompare(b.type)),
       // corrigido: ordenar numericamente desc
       yearFilter: mergeFilterItems(

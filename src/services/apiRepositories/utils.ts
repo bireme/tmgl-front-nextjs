@@ -11,22 +11,6 @@ import { DefaultResourceItemDto } from "../types/defaultResource";
 import { JournalDescription } from "../types/journalsDto";
 import { LisDocuments } from "../types/repositoryTypes";
 import { ThematicAreaApiDto } from "../types/evidenceMapsDto";
-import { string } from "zod";
-
-const TMGL_DESCRIPTOR_ALIASES: Record<string, string> = {
-  midwifery: "Traditional Birth Attendance",
-};
-
-export function mapTmglDescriptor(descriptor: string): string {
-  const value = descriptor.trim();
-  const [parent, ...qualifiers] = value.split("/");
-  const mappedParent = TMGL_DESCRIPTOR_ALIASES[parent.toLowerCase()];
-
-  if (!mappedParent) return value;
-  return qualifiers.length > 0
-    ? `${mappedParent}/${qualifiers.join("/")}`
-    : mappedParent;
-}
 
 export function applyDefaultResourceFilters(
   queryItems: queryType[],
@@ -114,7 +98,7 @@ export function applyDefaultResourceFilters(
   if (Array.isArray(thematicAreaFilters) && thematicAreaFilters.length) {
     const filters = thematicAreaFilters
       .map((f) =>
-        mapTmglDescriptor(String(f ?? ""))
+        String(f ?? "")
           .trim()
           .toLowerCase()
       )
@@ -127,7 +111,7 @@ export function applyDefaultResourceFilters(
 
       const areas = rawAreas
         .map((a) =>
-          mapTmglDescriptor(String(a ?? ""))
+          String(a ?? "")
             .trim()
             .toLowerCase()
         )
