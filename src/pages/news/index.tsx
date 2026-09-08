@@ -20,7 +20,7 @@ export default function News() {
   return (
     <>
       <Head>
-        <title>News from WHO GTMC - The WHO Traditional Medicine Global Library</title>
+        <title>News</title>
       </Head>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
@@ -32,7 +32,7 @@ export default function News() {
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
           <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
-            {capitalizeFirstLetter("News from WHO GTMC")}
+            {capitalizeFirstLetter("News")}
           </h3>
 
           <div>
