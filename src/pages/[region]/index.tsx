@@ -25,7 +25,7 @@ import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
 export default function RegionHome() {
   const router = useRouter();
-  const { setRegionName, regionName } = useContext(GlobalContext);
+  const { setRegionName } = useContext(GlobalContext);
   const { globalConfig } = useContext(GlobalContext);
   const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
   const [acf, setAcf] = useState<HomeAcf>();
@@ -41,9 +41,9 @@ export default function RegionHome() {
     if (globalConfig) {
       if (
         !globalConfig?.acf.regionais?.find(
-          (region) =>
-            region.rest_api_prefix.toLocaleLowerCase() ==
-            regionName.toLocaleLowerCase()
+          (item) =>
+            item.rest_api_prefix.toLowerCase() ===
+            region?.toString().toLowerCase()
         ) &&
         !globalConfig?.acf.route?.find(
           (r) => r.url === window.location.origin + router.asPath
@@ -55,6 +55,7 @@ export default function RegionHome() {
           return;
         }
         router.push("/404");
+        return;
       } else {
         setRegionName(region ? region.toString() : "");
       }
