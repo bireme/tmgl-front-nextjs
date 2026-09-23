@@ -9,7 +9,7 @@ import { EvidenceMapsService } from "@/services/apiRepositories/EvidenceMapsServ
 import { GlobalContext } from "@/contexts/globalContext";
 import Head from "next/head";
 import { ShareModal } from "@/components/share";
-import { TableauEmbed } from "@stoddabr/react-tableau-embed-live";
+import { TableauEmbed } from "@/components/embed/TableauEmbed";
 import { TagItem } from "@/components/feed/resourceitem";
 import pageStyles from "../../styles/pages/pages.module.scss";
 import styles from "../../styles/pages/home.module.scss";
@@ -27,6 +27,7 @@ export default function EvidenceMap() {
     query: { id },
   } = router;
   const _service = new EvidenceMapsService();
+  const tableauUrl = item?.links ? _service.getTableauVixLink(item.links) : null;
   const tagColors = {
     country: "#54831B",
     descriptor: "#8B142A",
@@ -57,7 +58,7 @@ export default function EvidenceMap() {
   return (
     <>
       <Head>
-        <title>{item?.title ? `${item.title} - ` : ''}The WHO Traditional Medicine Global Library</title>
+        <title>{(item?.title ? `${item.title} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       <LoadingOverlay visible={loading} style={{ position: "fixed" }} />
       <Container size={"xl"} py={40}>
@@ -179,12 +180,12 @@ export default function EvidenceMap() {
               <p>
                 <b>Publication Date</b>
                 <br />
-                {moment(item?.created_at, "YYYYMMDD").format("MMM DD, YYYY")}
+                {item?.created_at ? moment(item.created_at).format("MMM DD, YYYY") : "—"}
               </p>
               <p>
                 <b>Last Update</b>
                 <br />
-                {moment(item?.updated_at, "YYYYMMDD").format("MMM DD, YYYY")}
+                {item?.updated_at ? moment(item.updated_at).format("MMM DD, YYYY") : "—"}
               </p>
             </div>
           </Grid.Col>
@@ -199,13 +200,14 @@ export default function EvidenceMap() {
             flexDirection: "column",
           }}
         >
-          {item?.links && _service.getTableauVixLink(item.links) ? (
-            <TableauEmbed sourceUrl={_service.getTableauVixLink(item.links)} />
+          {tableauUrl ? (
+            <TableauEmbed sourceUrl={tableauUrl} title={item?.title || "Evidence map"} />
           ) : item?.links ? (
             <>
               {item.links.map((link: any, key) => (
                 <iframe
                   src={link}
+                  title={`${item.title} — ${key + 1}`}
                   key={key}
                   style={{ marginBottom: "40px" }}
                   width={"100%"}
@@ -226,4 +228,9 @@ export default function EvidenceMap() {
       />
     </>
   );
+}
+
+// Dynamic routes need request-time rendering so metadata contains the actual URL.
+export async function getServerSideProps() {
+  return { props: {} };
 }

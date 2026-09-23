@@ -1,3 +1,4 @@
+import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import { BreadCrumbs, pathItem } from "@/components/breadcrumbs";
 import { Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare } from "@tabler/icons-react";
@@ -20,12 +21,12 @@ import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 import { DisclaimerMultitab } from "@/components/multitab/disclaimer";
 
-export default function Content() {
+export default function Content({ initialPost, initialChildren }: PostPageProps) {
   const router = useRouter();
   const {
     query: { slug },
   } = router;
-  const [post, setPost] = useState<Post>();
+  const [post, setPost] = useState<Post>(initialPost);
   const _api = new PostsApi();
   const [parent, setParent] = useState<Post>();
   const [openShareModal, setOpenShareModal] = useState(false);
@@ -74,7 +75,7 @@ export default function Content() {
   return (
     <>
       <Head>
-        <title>{post?.title.rendered ? `${post.title.rendered} - ` : ''}The WHO Traditional Medicine Global Library</title>
+        <title>{(post?.title.rendered ? `${post.title.rendered} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       {post ? (
         <>
@@ -173,3 +174,5 @@ export default function Content() {
     </>
   );
 }
+
+export const getServerSideProps = postPageProps("pages");

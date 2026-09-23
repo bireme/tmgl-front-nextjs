@@ -100,7 +100,7 @@ export default function CountryHome() {
   return (
     <>
       <Head>
-        <title>{countryName ? `${countryName} - ` : ''}The WHO Traditional Medicine Global Library</title>
+        <title>{(countryName ? `${countryName} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       {postProps ? (
         <>
@@ -335,4 +335,9 @@ export default function CountryHome() {
       )}
     </>
   );
+}
+
+// Dynamic routes need request-time rendering so metadata contains the actual URL.
+export async function getServerSideProps() {
+  return { props: {} };
 }

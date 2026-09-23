@@ -1,3 +1,4 @@
+import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import { Container, Flex, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare, IconShare3 } from "@tabler/icons-react";
 import { countWords, extimateTime } from "@/helpers/stringhelper";
@@ -15,12 +16,12 @@ import { ShareModal } from "@/components/share";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
-export default function TrendingTopics() {
+export default function TrendingTopics({ initialPost, initialChildren }: PostPageProps) {
   const router = useRouter();
   const {
     query: { slug },
   } = router;
-  const [post, setPost] = useState<Post>();
+  const [post, setPost] = useState<Post>(initialPost);
   const _api = new PostsApi();
   const [openShareModal, setOpenShareModal] = useState(false);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
@@ -40,7 +41,7 @@ export default function TrendingTopics() {
   return (
     <>
       <Head>
-        <title>{post?.title.rendered ? `${post.title.rendered} - ` : ''}The WHO Traditional Medicine Global Library</title>
+        <title>{(post?.title.rendered ? `${post.title.rendered} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       {post ? (
         <>
@@ -115,3 +116,5 @@ export default function TrendingTopics() {
     </>
   );
 }
+
+export const getServerSideProps = postPageProps("trending_topics");

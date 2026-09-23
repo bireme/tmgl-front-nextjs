@@ -1,3 +1,4 @@
+import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import {
   ACFMultimediaItem,
   Post,
@@ -20,10 +21,10 @@ import { TrendingCarrocel } from "@/components/rss/slider";
 import { useRouter } from "next/router";
 import Head from "next/head";
 
-export default function ThematicPage() {
+export default function ThematicPage({ initialPost, initialChildren }: PostPageProps) {
   const router = useRouter();
-  const [properties, setProperties] = useState<ThematicPageAcfProps>();
-  const [postProps, setPostProps] = useState<Post>();
+  const [properties, setProperties] = useState<ThematicPageAcfProps>(initialPost.acf);
+  const [postProps, setPostProps] = useState<Post>(initialPost);
   const [news, setNews] = useState<Array<Post>>([]);
   const [events, setEvents] = useState<Array<Post>>([]);
   const [thematicPageTag, setThematicPageTag] = useState();
@@ -82,7 +83,7 @@ export default function ThematicPage() {
   return (
     <>
       <Head>
-        <title>{postProps?.title.rendered} - The WHO Traditional Medicine Global Library</title>
+        <title>{(postProps?.title.rendered) + ' - The WHO Traditional Medicine Global Library'}</title>
       </Head>
       {postProps ? (
         <>
@@ -90,7 +91,7 @@ export default function ThematicPage() {
             sliderImages={properties?.search.slider_images}
             breadcrumbs={[
               {
-                path: `/home`,
+                path: `/`,
                 name: "Home",
               },
               {
@@ -170,3 +171,5 @@ export default function ThematicPage() {
     </>
   );
 }
+
+export const getServerSideProps = postPageProps("thematic-pages");

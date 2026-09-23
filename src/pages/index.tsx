@@ -1,3 +1,4 @@
+import { publishedPosts } from "@/server/wordpress";
 import { Button, Center, Container, Flex, Modal } from "@mantine/core";
 import { useCallback, useContext, useEffect, useState } from "react";
 
@@ -26,33 +27,19 @@ import { useRouter } from "next/router";
 
 const BRAZIL_COUNTRY_SLUGS = ["brazil", "brasil"];
 
-export default function Home() {
+export default function Home({ initialAcf }: { initialAcf: HomeAcf }) {
   const _api = new PagesApi();
   const _postsApi = new PostsApi();
   const router = useRouter();
-  const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
-  const [acf, setAcf] = useState<HomeAcf>();
+  const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>(initialAcf.search?.slider_images || []);
+  const [acf, setAcf] = useState<HomeAcf>(initialAcf);
   const { setRegionName, globalConfig } = useContext(GlobalContext);
   const [showModal, setShowModal] = useState(false);
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [videoStarted, setVideoStarted] = useState(false);
   const cacheRandom = String(Math.floor(Math.random() * 1000)).padStart(3, '0');
 
-  const getPageProperties = useCallback(async () => {
-    try {
-      const resp = await _api.getPageProperties("home-global");
-
-
-      setAcf(resp[0].acf);
-      setSliderImages(resp[0].acf.search.slider_images);
-    } catch { }
-  }, []);
-
-  useEffect(() => {
-    getPageProperties();
-    setRegionName("");
-  }, [getPageProperties]);
-
+  useEffect(() => { setRegionName(""); }, [setRegionName]);
 
   return (
     <>
@@ -332,4 +319,10 @@ export default function Home() {
       </div>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  const posts = await publishedPosts("pages", undefined, { slug: "home-global" });
+  if (!posts[0]) throw new Error("Global homepage configuration is missing");
+  return { props: { initialAcf: posts[0].acf } };
 }

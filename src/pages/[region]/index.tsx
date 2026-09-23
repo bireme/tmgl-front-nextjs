@@ -1,3 +1,5 @@
+import type { GetServerSideProps } from "next";
+import { publishedPosts, publishedRegions } from "@/server/wordpress";
 import { Button, Center, Container, Flex } from "@mantine/core";
 import { useCallback, useContext, useEffect, useState } from "react";
 
@@ -23,60 +25,23 @@ import { url } from "inspector";
 import { useRouter } from "next/router";
 import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
-export default function RegionHome() {
+export default function RegionHome({ initialAcf }: { initialAcf: HomeAcf }) {
   const router = useRouter();
   const { setRegionName } = useContext(GlobalContext);
   const { globalConfig } = useContext(GlobalContext);
-  const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>();
-  const [acf, setAcf] = useState<HomeAcf>();
+  const [sliderImages, setSliderImages] = useState<Array<AcfImageArray>>(initialAcf.search?.slider_images || []);
+  const [acf, setAcf] = useState<HomeAcf>(initialAcf);
   const {
     query: { region },
   } = router;
   const isEmro = region?.toString().toLowerCase() === "emro";
 
-  const getPageProperties = useCallback(async () => {
-    const _api = new PagesApi(region ? region.toString() : "");
-    setRegionName(region ? region.toString() : "");
-
-    if (globalConfig) {
-      if (
-        !globalConfig?.acf.regionais?.find(
-          (item) =>
-            item.rest_api_prefix.toLowerCase() ===
-            region?.toString().toLowerCase()
-        ) &&
-        !globalConfig?.acf.route?.find(
-          (r) => r.url === window.location.origin + router.asPath
-        )
-      ) {
-        setRegionName("");
-        if(region == "en"){
-          router.push("/");
-          return;
-        }
-        router.push("/404");
-        return;
-      } else {
-        setRegionName(region ? region.toString() : "");
-      }
-    }
-
-    try {
-      const resp = await _api.getPageProperties("home");
-      setAcf(resp[0].acf);
-      setSliderImages(resp[0].acf.search.slider_images);
-    } catch {
-    }
-  }, [region, globalConfig]);
-
-  useEffect(() => {
-    if (region) getPageProperties();
-  }, [getPageProperties]);
+  useEffect(() => { setRegionName(region?.toString() || ""); }, [region, setRegionName]);
 
   return (
     <div style={{ overflowX: "hidden" }}>
       <Head>
-        <title>{region ? `${region.toString().toUpperCase()} - ` : ''}The WHO Traditional Medicine Global Library</title>
+        <title>{(region ? `${region.toString().toUpperCase()} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       <div className={styles.HeroSearch}>
         {sliderImages ? <HeroSlider images={sliderImages} /> : <></>}
@@ -247,3 +212,13 @@ export default function RegionHome() {
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const region = params?.region;
+  if (typeof region !== "string") return { notFound: true };
+  const regions = await publishedRegions();
+  if (!regions.some(({ slug }) => slug === region)) return { notFound: true };
+  const posts = await publishedPosts("pages", region, { slug: "home" });
+  if (!posts[0]) return { notFound: true };
+  return { props: { initialAcf: posts[0].acf } };
+};

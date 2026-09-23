@@ -1,3 +1,4 @@
+import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import {
   FirstSection,
   SecondSection,
@@ -13,10 +14,10 @@ import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { useRouter } from "next/router";
 
-export default function FeaturedStories() {
+export default function FeaturedStories({ initialPost, initialChildren }: PostPageProps) {
   const _api = new PostsApi();
-  const [post, setPost] = useState<Post>();
-  const [acf, setAcf] = useState<FeaturedStoriesAcf>();
+  const [post, setPost] = useState<Post>(initialPost);
+  const [acf, setAcf] = useState<FeaturedStoriesAcf>(initialPost.acf);
   const router = useRouter();
   const {
     query: { slug },
@@ -42,7 +43,7 @@ export default function FeaturedStories() {
   return (
     <>
       <Head>
-        <title>{post?.title.rendered ? `${post.title.rendered} - ` : ''}The WHO Traditional Medicine Global Library</title>
+        <title>{(post?.title.rendered ? `${post.title.rendered} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       {post ? (
         <>
@@ -83,4 +84,4 @@ export default function FeaturedStories() {
       )}
     </>
   );
-}
+}export const getServerSideProps = postPageProps("featured_stories");

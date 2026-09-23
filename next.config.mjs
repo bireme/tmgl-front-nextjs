@@ -1,6 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Normalize aliases and trailing slashes together in middleware (one hop).
+  skipTrailingSlashRedirect: true,
   sassOptions: {
     additionalData: `@import "${process.cwd()}/_mantine.scss";`,
   },

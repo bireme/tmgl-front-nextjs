@@ -1,3 +1,4 @@
+import { normalizeInternalLink } from "@/helpers/seo";
 import { ItemResource, Post } from "@/services/types/posts.dto";
 import { useCallback, useContext, useEffect, useState } from "react";
 
@@ -48,9 +49,10 @@ export const TraditionalSectionCard = ({
     <Flex
       p={sm ? 20 : 40}
       className={`${styles.TraditionalSection} ${sm ? styles.Small : ""}`}
-      onClick={() => {
-        window.open(target ?? "/", "_blank");
-      }}
+      component="a"
+      href={normalizeInternalLink(target ?? "/")}
+      target="_blank"
+      rel="noopener noreferrer"
       justify={"center"}
       align={"center"}
       direction={"column"}
@@ -61,8 +63,8 @@ export const TraditionalSectionCard = ({
   );
 };
 
-export const DimensionsSection = ({ items }: { items?: ItemResource[] }) => {
-  const [posts, setPosts] = useState<Array<Post>>();
+export const DimensionsSection = ({ items, initialPosts }: { items?: ItemResource[]; initialPosts?: Post[] }) => {
+  const [posts, setPosts] = useState<Array<Post>>(initialPosts || []);
   const _api = new PostsApi();
   const getDimensions = useCallback(async () => {
     try {
@@ -73,7 +75,7 @@ export const DimensionsSection = ({ items }: { items?: ItemResource[] }) => {
   }, []);
 
   useEffect(() => {
-    if (!items) getDimensions();
+    if (!items && !initialPosts) getDimensions();
   }, [getDimensions]);
 
   return (

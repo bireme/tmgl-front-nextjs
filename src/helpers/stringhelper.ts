@@ -1,12 +1,10 @@
+import { normalizeInternalLink } from "./seo";
 import * as he from "he";
 
 import { MultLangStringAttr, queryType } from "@/services/types/resources";
 
 export const parseWpLink = (wpLink: string, prefix?: string) => {
-  return wpLink
-    .replace(process.env.WP_BASE_URL ? process.env.WP_BASE_URL : "", "")
-    .replace("/es/", "/")
-    .replace("", "");
+  return normalizeInternalLink(wpLink);
 };
 
 export function createUrlParametersFilter(

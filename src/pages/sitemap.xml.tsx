@@ -1,3 +1,5 @@
+import { publishedRegions } from "@/server/wordpress";
+import { SITE_ORIGIN, canonicalPath, isIndexablePath } from "@/helpers/seo";
 import type { GetServerSideProps } from "next";
 import axios, { AxiosInstance } from "axios";
 
@@ -60,8 +62,6 @@ const escapeXml = (value: string) =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&apos;");
 
-const normalizeOrigin = (origin: string) => origin.replace(/\/$/, "");
-
 const normalizeDate = (value?: string): string | undefined => {
   if (!value) return undefined;
   if (/^\d{8}$/.test(value)) {
@@ -74,7 +74,8 @@ const normalizeDate = (value?: string): string | undefined => {
 
 async function fetchAllWpItems(
   api: AxiosInstance,
-  postType: string
+  postType: string,
+  optionalPostType = false
 ): Promise<WpItem[]> {
   const params = {
     per_page: 100,
@@ -82,7 +83,13 @@ async function fetchAllWpItems(
     status: "publish",
     _fields: "slug,modified",
   };
-  const firstPage = await api.get<WpItem[]>(postType, { params });
+  const firstPage = await api.get<WpItem[]>(postType, { params }).catch((error) => {
+    // Regional WordPress sites do not all register the same custom post types.
+    if (optionalPostType && axios.isAxiosError(error) && error.response?.status === 404 && error.response.data?.code === "rest_no_route") {
+      return { data: [] as WpItem[], headers: {} as Record<string, string> };
+    }
+    throw error;
+  });
   const totalPages = Number(firstPage.headers["x-wp-totalpages"] || 1);
   const remainingPages = await Promise.all(
     Array.from({ length: Math.max(0, totalPages - 1) }, (_, index) =>
@@ -98,22 +105,16 @@ async function fetchAllWpItems(
 async function fetchWpEntries(
   api: AxiosInstance,
   postType: string,
-  route: string
+  route: string,
+  optionalPostType = false
 ): Promise<SitemapEntry[]> {
-  const items = await fetchAllWpItems(api, postType);
+  const items = await fetchAllWpItems(api, postType, optionalPostType);
   return items
     .filter(({ slug }) => Boolean(slug))
     .map(({ slug, modified }) => ({
       path: `${route}/${encodeURIComponent(slug)}`,
       lastModified: normalizeDate(modified),
     }));
-}
-
-async function fetchRegions(api: AxiosInstance): Promise<WpTerm[]> {
-  const { data } = await api.get<WpTerm[]>("region", {
-    params: { per_page: 100, hide_empty: false, _fields: "slug" },
-  });
-  return data.filter(({ slug }) => Boolean(slug));
 }
 
 async function fetchRegionalEntries(
@@ -128,12 +129,13 @@ async function fetchRegionalEntries(
   const results = await Promise.allSettled([
     fetchWpEntries(api, "countries", `/${region.slug}`),
     ...REGIONAL_WP_ROUTES.map(({ postType, route }) =>
-      fetchWpEntries(api, postType, `/${region.slug}/${route}`)
+      fetchWpEntries(api, postType, `/${region.slug}/${route}`, postType !== "pages")
     ),
   ]);
 
   results.forEach((result) => {
-    if (result.status === "fulfilled") entries.push(...result.value);
+    if (result.status === "rejected") throw result.reason;
+    entries.push(...result.value);
   });
   return entries;
 }
@@ -180,6 +182,7 @@ async function fetchBvsEntries(
 function createSitemap(origin: string, entries: SitemapEntry[]): string {
   const uniqueEntries = new Map<string, SitemapEntry>();
   entries.forEach((entry) => {
+    if (!isIndexablePath(entry.path) || canonicalPath(entry.path) !== entry.path) return;
     const existing = uniqueEntries.get(entry.path);
     if (!existing || (!existing.lastModified && entry.lastModified)) {
       uniqueEntries.set(entry.path, entry);
@@ -200,24 +203,15 @@ function createSitemap(origin: string, entries: SitemapEntry[]): string {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ res }) => {
   const wpBaseUrl = process.env.WP_BASE_URL?.replace(/\/$/, "");
-  const forwardedProtocol = req.headers["x-forwarded-proto"];
-  const forwardedHost = req.headers["x-forwarded-host"];
-  const protocol = Array.isArray(forwardedProtocol)
-    ? forwardedProtocol[0]
-    : forwardedProtocol?.split(",")[0] || "http";
-  const host = Array.isArray(forwardedHost)
-    ? forwardedHost[0]
-    : forwardedHost?.split(",")[0] || req.headers.host;
-
-  if (!wpBaseUrl || !host) {
-    res.statusCode = 500;
+  if (!wpBaseUrl) {
+    res.statusCode = 503;
+    res.setHeader("Cache-Control", "no-store");
     res.end("Sitemap configuration is incomplete");
     return { props: {} };
   }
-
-  const origin = normalizeOrigin(`${protocol}://${host}`);
+  const origin = SITE_ORIGIN;
   const entries: SitemapEntry[] = STATIC_ROUTES.map((path) => ({ path }));
   const wpApi = axios.create({
     baseURL: `${wpBaseUrl}/wp-json/wp/v2/`,
@@ -228,10 +222,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     ...GLOBAL_WP_ROUTES.map(({ postType, route }) =>
       fetchWpEntries(wpApi, postType, route)
     ),
-    fetchRegions(wpApi),
+    publishedRegions(),
     fetchBvsEntries("resource", "TMGL-EV", "/evidence-maps"),
     fetchBvsEntries("title", "TMGL", "/journals"),
   ]);
+
+  if (globalResults.some((result) => result.status === "rejected")) {
+    res.statusCode = 503;
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("Retry-After", "300");
+    res.end("Sitemap temporarily unavailable");
+    return { props: {} };
+  }
 
   globalResults.slice(0, GLOBAL_WP_ROUTES.length).forEach((result) => {
     if (result.status === "fulfilled") {
@@ -246,6 +248,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         fetchRegionalEntries(wpBaseUrl, region)
       )
     );
+    if (regionalResults.some((result) => result.status === "rejected")) {
+      res.statusCode = 503;
+      res.setHeader("Cache-Control", "no-store");
+      res.setHeader("Retry-After", "300");
+      res.end("Sitemap temporarily unavailable");
+      return { props: {} };
+    }
     regionalResults.forEach((result) => {
       if (result.status === "fulfilled") entries.push(...result.value);
     });

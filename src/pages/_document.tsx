@@ -1,12 +1,15 @@
 /* eslint-disable @next/next/next-script-for-ga */
 
-import { Head, Html, Main, NextScript } from "next/document";
+import { Head, Html, Main, NextScript, type DocumentProps } from "next/document";
 
 import { ColorSchemeScript } from "@mantine/core";
 
-export default function Document() {
+export default function Document(props: DocumentProps) {
+  const contentLanguage = props.__NEXT_DATA__.props?.pageProps?.initialPost?.lang;
+  const language = typeof contentLanguage === "string" && /^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(contentLanguage)
+    ? contentLanguage : "en";
   return (
-    <Html lang="pt-BR">
+    <Html lang={language}>
       <Head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" />

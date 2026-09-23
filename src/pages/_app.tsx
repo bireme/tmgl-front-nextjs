@@ -14,6 +14,7 @@ import { GlobalProvider } from "@/contexts/globalContext";
 import { GptWidget } from "@/components/gpt";
 import { HeaderLayout } from "@/components/layout/header";
 import Head from "next/head";
+import { canonicalUrl, isIndexablePath } from "@/helpers/seo";
 import { SkipLink } from "@/components/layout/skip-link";
 import { mantineTheme } from "@styles/mantine-theme";
 import { useRouter } from "next/router";
@@ -21,6 +22,7 @@ import { useRouter } from "next/router";
 export default function App({ Component, pageProps }: AppProps) {
   const [warningModal, setWarningModal] = useState(false);
   const router = useRouter();
+  const isErrorPage = ["/404", "/500", "/_error"].includes(router.pathname);
   const handleAgreeWarning = () => {
     setWarningModal(false);
   };
@@ -38,6 +40,11 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
+        {isErrorPage || !isIndexablePath(router.asPath.split(/[?#]/)[0]) ? (
+          <meta key="robots" name="robots" content="noindex" />
+        ) : (
+          <link key="canonical" rel="canonical" href={canonicalUrl(router.asPath)} />
+        )}
         <title>The WHO Traditional Medicine Global Library</title>
         <meta
           key="description"
@@ -110,7 +117,7 @@ export default function App({ Component, pageProps }: AppProps) {
         </Modal>
         <HeaderLayout />
         <main id="main-content">
-          <Component {...pageProps} />
+          <Component key={router.asPath.split(/[?#]/)[0]} {...pageProps} />
         </main>
         <GptWidget />
         <FooterLayout />

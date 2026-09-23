@@ -1,3 +1,5 @@
+import { publishedPosts } from "@/server/wordpress";
+import type { Post } from "@/services/types/posts.dto";
 import { Center, Container, Flex } from "@mantine/core";
 import { IconLayoutGrid, IconLayoutList } from "@tabler/icons-react";
 import { useContext, useState } from "react";
@@ -11,7 +13,7 @@ import { ImageSection } from "@/components/video";
 import styles from "../../styles/pages/home.module.scss";
 import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
-export default function Dimensions() {
+export default function Dimensions({ initialPosts }: { initialPosts: Post[] }) {
   const { globalConfig } = useContext(GlobalContext);
   const [displayType, setDisplayType] = useState<string>("column");
 
@@ -68,9 +70,13 @@ export default function Dimensions() {
             </h3>
           </Center>
 
-          <DimensionsSection />
+          <DimensionsSection initialPosts={initialPosts} />
         </Container>
       </ImageSection>
     </>
   );
+}
+
+export async function getServerSideProps() {
+  return { props: { initialPosts: await publishedPosts("dimensions", undefined, { parent: 0 }) } };
 }

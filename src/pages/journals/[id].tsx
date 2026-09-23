@@ -50,7 +50,7 @@ export default function Journal() {
   return (
     <>
       <Head>
-        <title>{item?.title ? `${item.title} - ` : ''}The WHO Traditional Medicine Global Library</title>
+        <title>{(item?.title ? `${item.title} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
@@ -244,4 +244,9 @@ export default function Journal() {
       />
     </>
   );
+}
+
+// Dynamic routes need request-time rendering so metadata contains the actual URL.
+export async function getServerSideProps() {
+  return { props: {} };
 }

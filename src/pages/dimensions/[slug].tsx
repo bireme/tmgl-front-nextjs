@@ -1,3 +1,4 @@
+import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import {
   Button,
   Center,
@@ -31,41 +32,20 @@ import { decodeHtmlEntities, capitalizeFirstLetter } from "@/helpers/stringhelpe
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
-export default function Dimensions() {
+export default function Dimensions({ initialPost, initialChildren }: PostPageProps) {
   const router = useRouter();
   const {
     query: { slug },
   } = router;
-  const [post, setPost] = useState<Post>();
-  const [children, setChildren] = useState<Array<Post>>([]);
+  const post = initialPost;
+  const children = initialChildren;
   const _mediaApi = new MediaApi();
   const _api = new PostsApi();
-
-  const getArticles = async (fatherId?: number) => {
-    try {
-      const resp = await _api.getCustomPost("dimensions", 10, fatherId);
-      setChildren(resp);
-    } catch (error: any) {
-    }
-  };
-
-  const getPost = useCallback(async (slug: string) => {
-    try {
-      const resp = await _api.getPost("dimensions", slug);
-      setPost(resp[0]);
-      await getArticles(resp[0].id);
-    } catch {
-    }
-  }, []);
-
-  useEffect(() => {
-    if (slug) getPost(slug.toString());
-  }, [getPost, slug]);
 
   return (
     <>
       <Head>
-        <title>{post?.title.rendered ? `${decodeHtmlEntities(post.title.rendered)} - ` : ''}The WHO Traditional Medicine Global Library</title>
+        <title>{(post?.title.rendered ? `${decodeHtmlEntities(post.title.rendered)} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       {post ? (
         <>
@@ -194,3 +174,5 @@ export default function Dimensions() {
     </>
   );
 }
+
+export const getServerSideProps = postPageProps("dimensions", true);

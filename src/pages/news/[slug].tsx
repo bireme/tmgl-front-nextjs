@@ -18,14 +18,14 @@ import { ShareModal } from "@/components/share";
 import { TagItem } from "@/components/feed/resourceitem";
 import styles from "../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
-import axios from "axios";
+import { postPageProps } from "@/server/wordpress";
+import { canonicalUrl as getCanonicalUrl } from "@/helpers/seo";
 
 type NewsPageProps = {
   initialPost: Post;
-  canonicalUrl: string;
 };
 
-export default function News({ initialPost, canonicalUrl }: NewsPageProps) {
+export default function News({ initialPost }: NewsPageProps) {
   const router = useRouter();
   const {
     query: { slug },
@@ -34,7 +34,7 @@ export default function News({ initialPost, canonicalUrl }: NewsPageProps) {
   const [tags, setTags] = useState<Array<TagItem>>([]);
   const _api = new PostsApi();
   const [openShareModal, setOpenShareModal] = useState(false);
-  const [fullUrl, setFullUrl] = useState<string | null>(canonicalUrl);
+  const [fullUrl, setFullUrl] = useState<string | null>(getCanonicalUrl(`/news/${initialPost.slug}`));
   const getPost = useCallback(async (slug: string) => {
     try {
       const resp = await _api.getPost("posts", slug);
@@ -50,7 +50,7 @@ export default function News({ initialPost, canonicalUrl }: NewsPageProps) {
 
   useEffect(() => {
     if (router.isReady) {
-      setFullUrl(new URL(router.asPath, window.location.origin).toString());
+      setFullUrl(getCanonicalUrl(router.asPath));
     }
   }, [router.asPath, router.isReady]);
 
@@ -74,7 +74,7 @@ export default function News({ initialPost, canonicalUrl }: NewsPageProps) {
   return (
     <>
       <Head>
-        <title>{post?.title.rendered ? `${post.title.rendered} - ` : ''}The WHO Traditional Medicine Global Library</title>
+        <title>{(post?.title.rendered ? `${post.title.rendered} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
         {shareDescription ? (
           <meta key="description" name="description" content={shareDescription} />
         ) : null}
@@ -91,7 +91,6 @@ export default function News({ initialPost, canonicalUrl }: NewsPageProps) {
           <meta key="twitter:description" name="twitter:description" content={shareDescription} />
         ) : null}
         {shareImage ? <meta key="twitter:image" name="twitter:image" content={shareImage} /> : null}
-        {fullUrl ? <link rel="canonical" href={fullUrl} /> : null}
       </Head>
       {post ? (
         <>
@@ -231,46 +230,4 @@ export default function News({ initialPost, canonicalUrl }: NewsPageProps) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps<NewsPageProps> = async (
-  context
-) => {
-  const slug = context.params?.slug?.toString();
-  const wpBaseUrl = process.env.WP_BASE_URL;
-
-  if (!slug || !wpBaseUrl) return { notFound: true };
-
-  try {
-    const { data } = await axios.get<Post[]>(
-      `${wpBaseUrl}/wp-json/wp/v2/posts`,
-      {
-        params: {
-          slug,
-          _embed: true,
-          acf_format: "standard",
-        },
-      }
-    );
-
-    if (!data[0]) return { notFound: true };
-
-    const forwardedProtocol = context.req.headers["x-forwarded-proto"];
-    const forwardedHost = context.req.headers["x-forwarded-host"];
-    const protocol = Array.isArray(forwardedProtocol)
-      ? forwardedProtocol[0]
-      : forwardedProtocol?.split(",")[0] || "http";
-    const host = Array.isArray(forwardedHost)
-      ? forwardedHost[0]
-      : forwardedHost?.split(",")[0] || context.req.headers.host;
-
-    if (!host) return { notFound: true };
-
-    return {
-      props: {
-        initialPost: data[0],
-        canonicalUrl: `${protocol}://${host}/news/${encodeURIComponent(slug)}`,
-      },
-    };
-  } catch {
-    return { notFound: true };
-  }
-};
+export const getServerSideProps = postPageProps("posts");

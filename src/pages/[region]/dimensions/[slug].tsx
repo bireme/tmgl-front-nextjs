@@ -1,3 +1,4 @@
+import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import { Container, Grid, LoadingOverlay } from "@mantine/core";
 import {
   RecomendedArticlesSection,
@@ -15,44 +16,31 @@ import { decodeHtmlEntities } from "@/helpers/stringhelper";
 import styles from "../../../styles/pages/pages.module.scss";
 import { useRouter } from "next/router";
 
-export default function Dimensions() {
+export default function Dimensions({ initialPost, initialChildren }: PostPageProps) {
   const router = useRouter();
   const {
-    query: { slug },
+    query: { slug, region },
   } = router;
-  const [post, setPost] = useState<Post>();
+  const post = initialPost;
 
   const { globalConfig } = useContext(GlobalContext);
   const [releatedNumber, setReleatedNumber] = useState(0);
 
   const _api = new PostsApi();
-  const getPost = useCallback(async (slug: string) => {
-    try {
-      const resp = await _api.getPost("dimensions", slug);
-
-      setPost(resp[0]);
-    } catch {
-    }
-  }, []);
-
-  useEffect(() => {
-    if (slug) getPost(slug.toString());
-  }, [getPost, slug]);
-
   return (
     <>
       <Head>
-        <title>{post?.title.rendered ? `${decodeHtmlEntities(post.title.rendered)} - ` : ''}The WHO Traditional Medicine Global Library</title>
+        <title>{(post?.title.rendered ? `${decodeHtmlEntities(post.title.rendered)} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       {post ? (
         <>
           <HeroHeader
             post={post}
             path={[
-              { path: "/", name: "HOME" },
+              { path: `/${region}`, name: "HOME" },
               { path: "/dimensions", name: "TM Dimensions" },
               {
-                path: `/dimensions/${post.slug}`,
+                path: `/${region}/dimensions/${post.slug}`,
                 name: decodeHtmlEntities(post.title.rendered),
               },
             ]}
@@ -96,3 +84,5 @@ export default function Dimensions() {
     </>
   );
 }
+
+export const getServerSideProps = postPageProps("dimensions");

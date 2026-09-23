@@ -31,7 +31,7 @@ export default function FeaturedStories() {
   return (
     <>
       <Head>
-        <title>{region ? `Featured Stories - ${region.toString().toUpperCase()} - ` : 'Featured Stories - '}The WHO Traditional Medicine Global Library</title>
+        <title>{(region ? `Featured Stories - ${region.toString().toUpperCase()} - ` : 'Featured Stories - ') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       <Container size={"xl"} py={40}>
         <BreadCrumbs
@@ -102,4 +102,9 @@ export default function FeaturedStories() {
       </Container>
     </>
   );
+}
+
+// Dynamic routes need request-time rendering so metadata contains the actual URL.
+export async function getServerSideProps() {
+  return { props: {} };
 }

@@ -6,10 +6,14 @@ export interface DimensionMultitabProps {
   content: string;
 }
 export const DimensionMultitab = ({ content }: DimensionMultitabProps) => {
-  const sections = content.split(/<h3 class="wp-block-heading">/).slice(1);
+  const [introduction, ...sections] = content.split(/<h3 class="wp-block-heading">/);
+  if (!sections.length) {
+    return <Container py={40} size="xl"><div dangerouslySetInnerHTML={{ __html: content }} /></Container>;
+  }
   return (
     <div className={styles.DimensionsMultitabContainer}>
       <Container py={40} size={"xl"}>
+        {introduction.trim() && <div dangerouslySetInnerHTML={{ __html: introduction }} />}
         <Grid>
           <Grid.Col span={{ base: 12, md: 12 }}>
             <Tabs defaultValue="index0">
