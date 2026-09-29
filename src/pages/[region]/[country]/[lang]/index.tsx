@@ -1,3 +1,4 @@
+import { NewsSection } from "@/components/sections/news";
 import { Alert, Button, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { CountryAcfProps, Post } from "@/services/types/posts.dto";
 import {
@@ -34,23 +35,15 @@ export default function CountryHome() {
     useContext(GlobalContext);
   const _service = new DireveService();
   const [postProps, setPostProps] = useState<Post>();
-  const [news, setNews] = useState<Array<NewsEventsItem>>([]);
+  const [news, setNews] = useState<Array<Post>>([]);
   const [events, setEvents] = useState<Array<NewsEventsItem>>([]);
   const [countryTermId, setCountryTermId] = useState<number | null>(null);
   const {
     query: { country, region, lang },
   } = router;
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const horizontalNews = ["brazil", "brasil"].includes(country?.toString().toLowerCase() || "") && lang?.toString().toLowerCase() === "en";
 
-  // Função para mapear Post para NewsEventsItem
-  const mapPostToNewsEventsItem = (post: Post): NewsEventsItem => ({
-    id: post.id,
-    slug: post.slug,
-    title: post.title,
-    excerpt: post.excerpt,
-    featured_media: post.featured_media,
-    _embedded: post._embedded,
-  });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Função para mapear DefaultResourceItemDto para NewsEventsItem
   const mapDireveToNewsEventsItem = (
@@ -158,7 +151,7 @@ export default function CountryHome() {
               )
             : [];
 
-          setNews(newsResponse.map(mapPostToNewsEventsItem));
+          setNews(newsResponse);
 
           //Buscando events no FIAdmin
           const eventsResponse = await _service.getDefaultResources(
@@ -306,9 +299,10 @@ export default function CountryHome() {
           ) : (
             <></>
           )}
+          {horizontalNews && <NewsSection items={news} title="News from WHO" />}
           {properties?.news_title || properties?.events_title ? (
             <NewsEventsSection
-              news={news}
+              news={horizontalNews ? [] : news}
               events={events}
               newsTitle={properties?.news_title || "News from WHO"}
               otherNewsTitle={

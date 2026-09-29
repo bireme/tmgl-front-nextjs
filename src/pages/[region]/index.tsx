@@ -143,7 +143,12 @@ export default function RegionHome({ initialAcf }: { initialAcf: HomeAcf }) {
                 <TrendingSlider />
               </Container>
               <Container size={"xl"}>
-                <StoriesSection region={region ? region.toString() : ""} fetchOptions={{ tagId: globalConfig?.acf.thematic_page_tag, excludeTag: true }}/>
+                {globalConfig && region && (
+                  <StoriesSection
+                    region={region.toString()}
+                    fetchOptions={{ tagId: globalConfig.acf.thematic_page_tag, excludeTag: true }}
+                  />
+                )}
                 <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Events")}</h2>
               </Container>
             </div>
@@ -151,11 +156,13 @@ export default function RegionHome({ initialAcf }: { initialAcf: HomeAcf }) {
               <EventsSection excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]} />
             )}
             <div className={styles.NewsContainer}>
-              <NewsSection
-                excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]}
-                region={region ? region.toString() : ""}
-                title={"News from WHO"}
-              />
+              {globalConfig && region && (
+                <NewsSection
+                  excludedTagIds={[globalConfig.acf.thematic_page_tag || 0]}
+                  region={region.toString()}
+                  title={"News from WHO"}
+                />
+              )}
               {!isEmro && <NewsletterSection />}
             </div>
             {!isEmro && (

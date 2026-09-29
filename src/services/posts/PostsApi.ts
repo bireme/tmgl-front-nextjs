@@ -115,21 +115,23 @@ export class PostsApi extends BaseUnauthenticatedApi {
       }`;
     const { data } = await this._api.get(url);
 
-    if (options?.excludeCat && catIds.length > 0 && Array.isArray(data)) {
+    let filteredData = data;
+
+    if (options?.excludeCat && catIds.length > 0 && Array.isArray(filteredData)) {
       const exclude = new Set(catIds);
       // WP expõe 'categories' para posts e para CPTs que suportam 'category'
-      return data.filter((p: any) => {
+      filteredData = filteredData.filter((p: any) => {
         const cats: number[] = Array.isArray(p?.categories) ? p.categories : [];
         return cats.every((id) => !exclude.has(id));
       });
     }
 
     // Filtragem adicional para tags (caso o WordPress não respeite tags_exclude)
-    if (options?.excludeTag && options?.tagId && Array.isArray(data)) {
+    if (options?.excludeTag && options?.tagId && Array.isArray(filteredData)) {
       const excludeTagIds = Array.isArray(options.tagId) ? options.tagId : [options.tagId];
       const exclude = new Set(excludeTagIds);
 
-      return data.filter((p: any) => {
+      filteredData = filteredData.filter((p: any) => {
         // Verificar tags diretas do post
         const postTags: number[] = Array.isArray(p?.tags) ? p.tags : [];
         if (postTags.some((id) => exclude.has(id))) {
@@ -145,7 +147,7 @@ export class PostsApi extends BaseUnauthenticatedApi {
       });
     }
 
-    return data;
+    return filteredData;
   }
 
   public async listPosts(

@@ -1,3 +1,4 @@
+import { NewsSection } from "@/components/sections/news";
 import { Alert, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { CountryAcfProps, Post } from "@/services/types/posts.dto";
 import { HeroImage, HeroSlider } from "@/components/slider";
@@ -35,6 +36,7 @@ export default function CountryHome() {
   const {
     query: { country, region },
   } = router;
+  const horizontalNews = ["brazil", "brasil"].includes(country?.toString().toLowerCase() || "");
 
   const getPageProperties = useCallback(async () => {
     setRegionName(region ? region.toString() : "");
@@ -229,8 +231,9 @@ export default function CountryHome() {
           ) : (
             <></>
           )}
+          {horizontalNews && <NewsSection items={news} title="News from WHO" />}
           <NewsEventsSection
-            news={news}
+            news={horizontalNews ? [] : news}
             events={events}
             newsTitle="News from WHO"
             otherNewsTitle="Other News"

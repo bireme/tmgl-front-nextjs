@@ -16,27 +16,29 @@ import styles from "../../../styles/components/sections.module.scss";
 import { useRouter } from "next/router";
 
 export interface NewsSectionProps {
+  items?: Post[];
   region?: string;
   title?: string;
   posType?: string;
   archive?: string;
   includeDemo?: boolean;
   excludedTagIds?: number[];
-  excludedCountrySlugs?: string[];
 }
 export const NewsSection = ({
+  items,
   region,
   title,
   posType,
   archive,
   includeDemo,
   excludedTagIds,
-  excludedCountrySlugs,
 }: NewsSectionProps) => {
-  const [posts, setPosts] = useState<Array<Post>>([]);
+  const [fetchedPosts, setPosts] = useState<Array<Post>>([]);
+  const posts = items ?? fetchedPosts;
   const [demoTagId, setDemoTagId] = useState<number>();
   const _api = new PostsApi();
   const getNews = useCallback(async () => {
+    if (items !== undefined) return;
     try {
       const demoTag = await _api.getTagBySlug("demo");
       if (posType) {
@@ -76,25 +78,12 @@ export const NewsSection = ({
         setPosts(resp.reverse());
       } else {
         const cat = await _api.getCategoryBySlug("thematic-page");
-        const countryTerms = await Promise.all(
-          (excludedCountrySlugs ?? []).map((slug) =>
-            _api.getCountryBySlug(slug)
-          )
-        );
-        const excludedCountryIds = countryTerms
-          .flat()
-          .map((term) => term.id)
-          .filter((id): id is number => typeof id === "number");
         
         // Preparar opções de exclusão de tags para posts normais
         let tagOptions: any = {};
         if (excludedTagIds && excludedTagIds.length > 0) {
           tagOptions.tagId = excludedTagIds;
           tagOptions.excludeTag = true;
-        }
-        if (excludedCountryIds.length > 0) {
-          tagOptions.countryId = excludedCountryIds;
-          tagOptions.excludeCountry = true;
         }
         
         
@@ -116,7 +105,7 @@ export const NewsSection = ({
       }
     } catch (error: any) {
     }
-  }, [excludedTagIds, excludedCountrySlugs, region]);
+  }, [excludedTagIds, region, items]);
   useEffect(() => {
     getNews();
   }, [getNews]);

@@ -25,8 +25,6 @@ import styles from "../styles/pages/home.module.scss";
 import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 import { useRouter } from "next/router";
 
-const BRAZIL_COUNTRY_SLUGS = ["brazil", "brasil"];
-
 export default function Home({ initialAcf }: { initialAcf: HomeAcf }) {
   const _api = new PagesApi();
   const _postsApi = new PostsApi();
@@ -247,10 +245,12 @@ export default function Home({ initialAcf }: { initialAcf: HomeAcf }) {
       )}
 
       <div className={styles.NewsContainer}>
-        <NewsSection
-          excludedCountrySlugs={BRAZIL_COUNTRY_SLUGS}
-          title={"News from WHO"}
-        />
+        {globalConfig && (
+          <NewsSection
+            excludedTagIds={[globalConfig.acf.thematic_page_tag || 181]}
+            title={"News from WHO"}
+          />
+        )}
 
         {acf?.embed_content && (
           <div className={styles.EmbedContent}>

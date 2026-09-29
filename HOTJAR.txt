@@ -1,0 +1,31 @@
+# Widget de feedback do Hotjar
+
+Adicione o bloco abaixo dentro de `<head>`, uma única vez por página. É o `<head>` do HTML, não o `<header>` visual do site.
+
+Não é necessário adicionar um `<link>` nem outro script com o endereço do Hotjar: este código já cria o script externo e o carrega de forma assíncrona.
+
+```html
+<script>
+  (function (h, o, t, j, a, r) {
+    h.hj = h.hj || function () {
+      (h.hj.q = h.hj.q || []).push(arguments);
+    };
+    h._hjSettings = { hjid: 5146983, hjsv: 6 };
+    a = o.getElementsByTagName('head')[0];
+    r = o.createElement('script');
+    r.async = true;
+    r.src = t + h._hjSettings.hjid + j + h._hjSettings.hjsv;
+    a.appendChild(r);
+  })(window, document, 'https://static.hotjar.com/c/hotjar-', '.js?sv=');
+</script>
+```
+
+Para usar em um arquivo `.js`, copie apenas o conteúdo entre `<script>` e `</script>` e carregue esse arquivo na página.
+
+## Como funciona neste projeto
+
+- A integração já está em `src/pages/_document.tsx`, no `<Head>` global. Não adicione o bloco novamente.
+- `5146983` é o ID do site configurado no Hotjar. Para outro site, use o ID correspondente.
+- O endereço carregado é `https://static.hotjar.com/c/hotjar-5146983.js?sv=6`.
+- A ativação e as regras de exibição do widget devem ser verificadas no painel do Hotjar; carregar o script não garante que o feedback apareça em toda visita.
+- O trecho atual não tem condição de ambiente: também é incluído em desenvolvimento.
