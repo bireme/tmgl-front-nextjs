@@ -2689,3 +2689,15 @@ Cliente → Script Direto → Hotjar
 - [Mantine UI Documentation](https://mantine.dev/)
 - [WordPress REST API](https://developer.wordpress.org/rest-api/)
 
+
+### Indexação por ambiente
+
+Configure `PRODUCTION=true` no build de produção. Na staging, use
+`PRODUCTION=false` (também é o padrão quando a variável não está definida).
+É necessário rebuildar e reiniciar a aplicação ao alterar essa variável.
+
+Fora de produção, `/sitemap.xml` retorna 404 antes de consultar as APIs,
+todas as respostas recebem `X-Robots-Tag: noindex, nofollow` e as páginas
+recebem a meta tag `robots` com `noindex`. O `robots.txt` não anuncia sitemap
+e permite rastreamento para que os buscadores possam ler o `noindex`;
+`Disallow: /` impediria essa leitura e não garante a remoção de URLs do índice.

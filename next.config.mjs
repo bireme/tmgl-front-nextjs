@@ -1,6 +1,12 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  async headers() {
+    return process.env.PRODUCTION === "true" ? [] : [{
+      source: "/:path*",
+      headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+    }];
+  },
   // Normalize aliases and trailing slashes together in middleware (one hop).
   skipTrailingSlashRedirect: true,
   sassOptions: {

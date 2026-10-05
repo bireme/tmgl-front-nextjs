@@ -1,5 +1,5 @@
 import { publishedRegions } from "@/server/wordpress";
-import { SITE_ORIGIN, canonicalPath, isIndexablePath } from "@/helpers/seo";
+import { IS_PRODUCTION, SITE_ORIGIN, canonicalPath, isIndexablePath } from "@/helpers/seo";
 import type { GetServerSideProps } from "next";
 import axios, { AxiosInstance } from "axios";
 
@@ -204,6 +204,14 @@ function createSitemap(origin: string, entries: SitemapEntry[]): string {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+  if (!IS_PRODUCTION) {
+    res.statusCode = 404;
+    res.setHeader("Cache-Control", "no-store");
+    res.setHeader("X-Robots-Tag", "noindex, nofollow");
+    res.end("Not found");
+    return { props: {} };
+  }
+
   const wpBaseUrl = process.env.WP_BASE_URL?.replace(/\/$/, "");
   if (!wpBaseUrl) {
     res.statusCode = 503;

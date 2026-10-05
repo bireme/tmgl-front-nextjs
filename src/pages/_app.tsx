@@ -14,7 +14,7 @@ import { GlobalProvider } from "@/contexts/globalContext";
 import { GptWidget } from "@/components/gpt";
 import { HeaderLayout } from "@/components/layout/header";
 import Head from "next/head";
-import { canonicalUrl, isIndexablePath } from "@/helpers/seo";
+import { IS_PRODUCTION, canonicalUrl, isIndexablePath } from "@/helpers/seo";
 import { SkipLink } from "@/components/layout/skip-link";
 import { mantineTheme } from "@styles/mantine-theme";
 import { useRouter } from "next/router";
@@ -40,7 +40,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
-        {isErrorPage || !isIndexablePath(router.asPath.split(/[?#]/)[0]) ? (
+        {!IS_PRODUCTION || isErrorPage || !isIndexablePath(router.asPath.split(/[?#]/)[0]) ? (
           <meta key="robots" name="robots" content="noindex" />
         ) : (
           <link key="canonical" rel="canonical" href={canonicalUrl(router.asPath)} />

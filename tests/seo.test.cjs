@@ -14,7 +14,7 @@ function load(file, mocks = {}) {
   new Function('require', 'module', 'exports', code)(localRequire, loadedModule, loadedModule.exports);
   return loadedModule.exports;
 }
-const seo = load('src/helpers/seo.ts');
+const seo = { ...load('src/helpers/seo.ts'), IS_PRODUCTION: true };
 
 test('canonical and links consolidate home aliases, slash, tracking, and preserve external links', () => {
   assert.equal(seo.canonicalUrl('/dimensions/research-evidence/?utm_source=test#tab'), `${seo.SITE_ORIGIN}/dimensions/research-evidence`);
@@ -115,4 +115,43 @@ test('published regions come from site configuration rather than arbitrary filte
     { rest_api_prefix: 'Americas' }, { rest_api_prefix: '/afro/' }, { rest_api_prefix: 'afro' },
   ] } } }));
   assert.deepEqual(await wp.publishedRegions(), [{ slug: 'americas' }, { slug: 'afro' }]);
+});
+
+ test('nonproduction sitemap skips all upstream work and robots omits sitemap', async () => {
+  const stagingSeo = { ...seo, IS_PRODUCTION: false };
+  const fail = () => { throw new Error('staging must not fetch sitemap sources'); };
+  const sitemap = load('src/pages/sitemap.xml.tsx', {
+    axios: { create: fail }, '@/helpers/crypto': {}, '@/helpers/seo': stagingSeo,
+    '@/server/wordpress': { publishedRegions: fail },
+  });
+  const res = response();
+  await sitemap.getServerSideProps({ res });
+  assert.equal(res.statusCode, 404);
+  assert.equal(res.headers['Cache-Control'], 'no-store');
+  assert.equal(res.headers['X-Robots-Tag'], 'noindex, nofollow');
+  assert.ok(!res.body.includes('<urlset'));
+  const robots = load('src/pages/robots.txt.tsx', { '@/helpers/seo': stagingSeo });
+  const robotsRes = response();
+  await robots.getServerSideProps({ res: robotsRes });
+  assert.equal(robotsRes.body, 'User-agent: *\nAllow: /\n');
+  assert.equal(robotsRes.headers['Cache-Control'], 'no-store');
+});
+
+test('only explicit production enables indexing and removes global noindex headers', async () => {
+  const previous = process.env.PRODUCTION;
+  try {
+    for (const value of [undefined, 'false', 'true']) {
+      if (value === undefined) delete process.env.PRODUCTION;
+      else process.env.PRODUCTION = value;
+      assert.equal(load('src/helpers/seo.ts').IS_PRODUCTION, value === 'true');
+      const { default: config } = await import('../next.config.mjs');
+      const headers = await config.headers();
+      assert.deepEqual(headers, value === 'true' ? [] : [{
+        source: '/:path*', headers: [{ key: 'X-Robots-Tag', value: 'noindex, nofollow' }],
+      }]);
+    }
+  } finally {
+    if (previous === undefined) delete process.env.PRODUCTION;
+    else process.env.PRODUCTION = previous;
+  }
 });

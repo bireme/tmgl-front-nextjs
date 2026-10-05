@@ -1,3 +1,5 @@
+export const IS_PRODUCTION = process.env.PRODUCTION === "true";
+
 /** Shared by HTML metadata, internal links, robots and the sitemap. */
 export const SITE_ORIGIN = new URL(
   process.env.NEXT_PUBLIC_SITE_URL || "https://tmgl.org"
