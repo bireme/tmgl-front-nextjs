@@ -1,21 +1,24 @@
-import { Modal } from "@mantine/core";
+import { IconMessageChatbot, IconShieldCheck } from "@tabler/icons-react";
 import styles from "../../styles/components/gpt.module.scss";
-import { useState } from "react";
 
-export const GptWidget = () => {
-  return (
-    <>
-      <div
-        onClick={() => {
-          window.open(
-            "https://chatgpt.com/g/g-2rwZEsuEj-tmgl-gpt-the-integrative-public-health-model",
-            "_blank"
-          );
-        }}
-        className={styles.GptWidget}
-      >
-        Chat with our assistant
-      </div>
-    </>
-  );
-};
+export const GptWidget = () => (
+  <nav className={styles.SideLinks} aria-label="Help and policies">
+    <a
+      className={`${styles.SideLink} ${styles.Assistant}`}
+      href="https://chatgpt.com/g/g-2rwZEsuEj-tmgl-gpt-the-integrative-public-health-model"
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Chat with our assistant (opens in a new tab)"
+    >
+      <IconMessageChatbot size={18} aria-hidden="true" />
+      <span>Chat with our assistant</span>
+    </a>
+    <a
+      className={`${styles.SideLink} ${styles.Privacy}`}
+      href="https://tmgl.org/content/privacy-policy-terms-and-conditions-of-use"
+    >
+      <IconShieldCheck size={18} aria-hidden="true" />
+      <span>Privacy policy, terms and conditions of use</span>
+    </a>
+  </nav>
+);

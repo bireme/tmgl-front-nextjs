@@ -16,7 +16,7 @@ import { ImageSection } from "@/components/video";
 import { NewsSection } from "@/components/sections/news";
 import { NewsletterSection } from "@/components/sections/newsletter";
 import { PagesApi } from "@/services/pages/PagesApi";
-import { RegionalDimensions } from "@/components/sections/dimensions";
+import { RegionalCountries } from "@/components/sections/countries";
 import { SearchForm } from "@/components/forms/search";
 import { StoriesSection } from "@/components/sections/stories";
 import { TrendingSlider } from "@/components/rss/slider";
@@ -35,6 +35,7 @@ export default function RegionHome({ initialAcf }: { initialAcf: HomeAcf }) {
     query: { region },
   } = router;
   const isEmro = region?.toString().toLowerCase() === "emro";
+  const [hasEvents, setHasEvents] = useState(false);
 
   useEffect(() => { setRegionName(region?.toString() || ""); }, [region, setRegionName]);
 
@@ -86,7 +87,7 @@ export default function RegionHome({ initialAcf }: { initialAcf: HomeAcf }) {
             ) : (
               <></>
             )}
-            <RegionalDimensions acf={acf} region={""} />
+            <RegionalCountries acf={acf} region={region?.toString() || ""} />
             {acf.collaboration_network_items?.length > 0 && (
               <div className={styles.CollaborationNetworkContainer}>
                 <Container size={"xl"} py={20}>
@@ -149,11 +150,11 @@ export default function RegionHome({ initialAcf }: { initialAcf: HomeAcf }) {
                     fetchOptions={{ tagId: globalConfig.acf.thematic_page_tag, excludeTag: true }}
                   />
                 )}
-                <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Events")}</h2>
+                {hasEvents && <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Events")}</h2>}
               </Container>
             </div>
             {globalConfig?.acf.thematic_page_tag && (
-              <EventsSection excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]} />
+              <EventsSection onAvailabilityChange={setHasEvents} excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]} />
             )}
             <div className={styles.NewsContainer}>
               {globalConfig && region && (

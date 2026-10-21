@@ -31,7 +31,7 @@ export function ContentSection({
         <Grid>
           <Grid.Col span={{ md: 9, base: 12 }} px={20}>
             
-            <h2>{title}</h2>
+            <h1>{decodeHtmlEntities(title)}</h1>
             <div
               dangerouslySetInnerHTML={{
                 __html: content || "",

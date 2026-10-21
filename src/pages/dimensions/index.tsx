@@ -59,9 +59,9 @@ export default function Dimensions({ initialPosts }: { initialPosts: Post[] }) {
         <DimensionsFeed displayType={displayType} /> */}
       <ImageSection>
         <Container size={"xl"} py={"5%"} className={styles.TraditionalMedicine}>
-          <h2>
+          <h1>
             Traditional Medicine Dimensions
-          </h2>
+          </h1>
           <Center m={0} p={0}>
             <h3>
               The Traditional Medicine Dimensions, derived from the Gujarat

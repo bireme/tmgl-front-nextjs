@@ -1,3 +1,4 @@
+import { resourcePageProps, type ResourcePageProps } from "@/server/resources";
 import { Badge, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare } from "@tabler/icons-react";
 import moment, { lang } from "moment";
@@ -15,13 +16,13 @@ import pageStyles from "../../styles/pages/pages.module.scss";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
-export default function EvidenceMap() {
+export default function EvidenceMap({ initialItem }: ResourcePageProps<EvidenceMapItemDto>) {
   const router = useRouter();
-  const [item, setItem] = useState<EvidenceMapItemDto>();
+  const [item, setItem] = useState<EvidenceMapItemDto>(initialItem);
   const [openShareModal, setOpenShareModal] = useState(false);
   const [tags, setTags] = useState<Array<TagItem>>([]);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { language } = useContext(GlobalContext);
   const {
     query: { id },
@@ -230,7 +231,4 @@ export default function EvidenceMap() {
   );
 }
 
-// Dynamic routes need request-time rendering so metadata contains the actual URL.
-export async function getServerSideProps() {
-  return { props: {} };
-}
+export const getServerSideProps = resourcePageProps("resource");

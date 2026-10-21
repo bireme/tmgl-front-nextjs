@@ -18,16 +18,21 @@ import styles from "../../../styles/components/sections.module.scss";
 import { useRouter } from "next/router";
 
 interface EventsSectionProps {
+  onAvailabilityChange?: (available: boolean) => void;
   region?: string;
   excludedTagIds?: number[];
 }
 
-export const EventsSection = ({ region, excludedTagIds }: EventsSectionProps) => {
+export const EventsSection = ({ region, excludedTagIds, onAvailabilityChange }: EventsSectionProps) => {
   //DefaultImage if event has no image
   const eventImage = "/local/png/img-events.png";
   const router = useRouter();
   const [event, setEvent] = useState<Post>();
   const _api = new PostsApi(region);
+
+  useEffect(() => {
+    onAvailabilityChange?.(Boolean(event));
+  }, [event, onAvailabilityChange]);
 
   const getEvents = useCallback(async () => {
     let api = new PostsApi();
@@ -50,10 +55,10 @@ export const EventsSection = ({ region, excludedTagIds }: EventsSectionProps) =>
         region,
         Object.keys(tagOptions).length > 0 ? tagOptions : undefined
       );
-      if (resp.length > 0) {
-        setEvent(resp[0]);
-      }
-    } catch (error) {}
+      setEvent(resp[0]);
+    } catch (error) {
+      setEvent(undefined);
+    }
   }, [region, excludedTagIds]);
 
   useEffect(() => {

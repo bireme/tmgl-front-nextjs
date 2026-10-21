@@ -27,6 +27,24 @@ test('canonical and links consolidate home aliases, slash, tracking, and preserv
   assert.equal(seo.isIndexablePath('/content/about-us'), true);
 });
 
+test('middleware redirects trailing slashes and aliases once, preserving query parameters', async () => {
+  const { NextRequest } = require('next/server');
+  const { middleware } = load('src/middleware.ts', { './helpers/seo': seo });
+  for (const [source, destination] of [
+    ['/content/privacy-policy-terms-and-conditions-of-use/', '/content/privacy-policy-terms-and-conditions-of-use'],
+    ['/content/privacy-policy-terms-and-conditions-of-use/?lang=pt', '/content/privacy-policy-terms-and-conditions-of-use?lang=pt'],
+    ['/afro/content/home/', '/afro'],
+    ['/en/', '/'],
+  ]) {
+    const response = await middleware(new NextRequest(`https://tmgl.org${source}`));
+    assert.equal(response.status, 308);
+    assert.equal(response.headers.get('location'), `https://tmgl.org${destination}`);
+    const final = await middleware(new NextRequest(response.headers.get('location')));
+    assert.equal(final.status, 200);
+    assert.equal(final.headers.get('location'), null);
+  }
+});
+
 function loader(get) {
   process.env.WP_BASE_URL = 'https://cms.example';
   const axios = { create: () => ({ get }), isAxiosError: (e) => e.isAxiosError === true };
@@ -154,4 +172,54 @@ test('only explicit production enables indexing and removes global noindex heade
     if (previous === undefined) delete process.env.PRODUCTION;
     else process.env.PRODUCTION = previous;
   }
+});
+
+test('resource details render upstream data in serializable server props; confirmed missing records are 404s', async () => {
+  const previous = [process.env.BVSALUD_URL, process.env.BVSALUD_API_KEY];
+  process.env.BVSALUD_URL = 'https://bvs.example/';
+  process.env.BVSALUD_API_KEY = 'encrypted-test-key';
+  const utils = load('src/services/apiRepositories/utils.ts');
+  const resources = (get) => load('src/server/resources.ts', {
+    axios: { create: () => ({ get }), isAxiosError: (e) => e.isAxiosError === true },
+    '@/helpers/crypto': { decryptFromEnv: () => 'test-key' },
+    '@/services/apiRepositories/utils': utils,
+  });
+  try {
+    const resource = resources(async () => ({ data: {
+      id: 123, title: 'Evidence map title', abstract: 'Visible abstract', link: ['https://example.org'],
+      descriptors: [], thematic_areas: [], publication_country: [],
+    } }));
+    const result = await resource.resourcePageProps('resource')({ params: { id: '123' } });
+    assert.equal(result.props.initialItem.title, 'Evidence map title');
+    assert.equal(result.props.initialItem.excerpt, 'Visible abstract');
+    assert.deepEqual(JSON.parse(JSON.stringify(result.props)), result.props);
+    assert.deepEqual(await resource.resourcePageProps('resource')({ params: { id: 'invalid' } }), { notFound: true });
+    const journal = resources(async (url) => ({ data: url === 'search/' ? {
+      diaServerResponse: [{ response: { docs: [{ abstract: 'Journal abstract', description: ['en|Description'], link: ['https://journal.example'] }] } }],
+    } : { id_number: '456', title: 'Journal title', issn: '1234-5678' } }));
+    const journalResult = await journal.resourcePageProps('title')({ params: { id: '456' } });
+    assert.equal(journalResult.props.initialItem.title, 'Journal title');
+    assert.equal(journalResult.props.initialItem.description[0].content, 'Description');
+    const missing = resources(async () => { throw { isAxiosError: true, response: { status: 404 } }; });
+    assert.deepEqual(await missing.resourcePageProps('resource')({ params: { id: '123' } }), { notFound: true });
+    const outage = resources(async () => { throw new Error('upstream outage'); });
+    await assert.rejects(outage.resourcePageProps('resource')({ params: { id: '123' } }), /upstream outage/);
+  } finally {
+    for (const [i, key] of ['BVSALUD_URL', 'BVSALUD_API_KEY'].entries()) {
+      if (previous[i] === undefined) delete process.env[key];
+      else process.env[key] = previous[i];
+    }
+  }
+});
+
+test('country landing pages render published content and reject unknown countries or regions', async () => {
+  const wp = loader(async (url, { params } = {}) => ({
+    data: url.includes('options') ? { acf: { regionais: [{ rest_api_prefix: 'americas' }] } }
+      : params.slug === 'brazil' ? [{ id: 1, title: { rendered: 'Brazil' }, acf: { content: 'Country content' } }] : [],
+    headers: {},
+  }));
+  const result = await wp.countryPageProps({ params: { region: 'americas', country: 'brazil' } });
+  assert.equal(result.props.initialPost.title.rendered, 'Brazil');
+  assert.deepEqual(await wp.countryPageProps({ params: { region: 'americas', country: 'missing' } }), { notFound: true });
+  assert.deepEqual(await wp.countryPageProps({ params: { region: 'unknown', country: 'brazil' } }), { notFound: true });
 });

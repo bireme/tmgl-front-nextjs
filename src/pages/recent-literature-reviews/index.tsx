@@ -13,19 +13,8 @@ export default function TrendingTopics() {
   const { globalConfig } = useContext(GlobalContext);
   const router = useRouter();
   const { filter } = router.query;
-  const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
-  if (!isClient || !router.isReady) {
-    return (
-      <Container size={"xl"} py={60}>
-        <div>Loading...</div>
-      </Container>
-    );
-  }
   return (
     <>
       <Head>
@@ -35,11 +24,11 @@ export default function TrendingTopics() {
         <BreadCrumbs
           path={[
             { path: "/", name: "HOME" },
-            { path: "/recent-literature-", name: "Recent literature review" },
+            { path: "/recent-literature-reviews", name: "Recent literature review" },
           ]}
           blackColor={true}
         />
-        <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Recent Literature Review")}</h2>
+        <h1 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Recent Literature Review")}</h1>
         <p>{globalConfig?.acf.trending_description}</p>
         <TrendingTopicsFeedSection
           filter={filter ? filter.toString() : undefined}

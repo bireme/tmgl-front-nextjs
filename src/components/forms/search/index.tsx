@@ -30,7 +30,7 @@ export const SearchForm = ({ title, subtitle, small }: AcfSearch) => {
       align={{ base: "flex-end", md: "center" }}
     >
       <form>
-        <h2>{title}</h2>
+        <h1>{title}</h1>
         <h3>{subtitle}</h3>
         <Flex gap={10}>
           <Input

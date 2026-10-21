@@ -1,3 +1,4 @@
+import { resourcePageProps, type ResourcePageProps } from "@/server/resources";
 import { Badge, Container, Divider, Flex, Grid } from "@mantine/core";
 import { IconPrinter, IconShare } from "@tabler/icons-react";
 import { useContext, useEffect, useState } from "react";
@@ -13,9 +14,9 @@ import pageStyles from "../../styles/pages/pages.module.scss";
 import styles from "../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
-export default function Journal() {
+export default function Journal({ initialItem }: ResourcePageProps<JournalItemDto>) {
   const router = useRouter();
-  const [item, setItem] = useState<JournalItemDto>();
+  const [item, setItem] = useState<JournalItemDto>(initialItem);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
   const {
     query: { id },
@@ -75,7 +76,7 @@ export default function Journal() {
               {item?.logo ? (
                 <>
                   <Grid.Col span={{ base: 12, md: 3.5 }} pr={{ md: 15 }}>
-                    <img src={"/local/jpeg/journal.jpeg"} width={"100%"} />
+                    <img src={"/local/jpeg/journal.jpeg"} width={"100%"} alt={`${item.title} logo`} />
                   </Grid.Col>
                 </>
               ) : (
@@ -246,7 +247,4 @@ export default function Journal() {
   );
 }
 
-// Dynamic routes need request-time rendering so metadata contains the actual URL.
-export async function getServerSideProps() {
-  return { props: {} };
-}
+export const getServerSideProps = resourcePageProps("title");

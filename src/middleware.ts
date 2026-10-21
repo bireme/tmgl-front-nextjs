@@ -6,7 +6,9 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const targetPath = canonicalPath(pathname);
   if (pathname !== targetPath) {
-    const target = request.nextUrl.clone();
+    // NextURL retains the incoming trailingSlash flag and can restore the slash,
+    // redirecting to the same URL. Use a native URL for the canonical target.
+    const target = new URL(request.url);
     target.pathname = targetPath;
     return NextResponse.redirect(target, 308);
   }

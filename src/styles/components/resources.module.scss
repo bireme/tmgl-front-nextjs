@@ -121,6 +121,9 @@
 }
 
 .ResourceCard{
+  &, a, a:hover, a:focus-visible, a:visited {
+    text-decoration: none;
+  }
   width: 31%;
   height: 100%;
   

@@ -1,4 +1,7 @@
 .IconCard{
+  &, a, a:hover, a:focus-visible, a:visited {
+    text-decoration: none;
+  }
   min-width: 22%;
   @media (max-width: '750px') {
     min-width: 40%;

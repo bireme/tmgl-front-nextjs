@@ -39,7 +39,7 @@ export default function Document(props: DocumentProps) {
         {/* Script Google Tag (gtag.js) */}
         <script
           async
-          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.PRODUCTION ? 'G-KVDQKKTNBY' : 'G-EQQV5PQT16'}`}
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.PRODUCTION === "true" ? 'G-KVDQKKTNBY' : 'G-EQQV5PQT16'}`}
         ></script>
         <script
           dangerouslySetInnerHTML={{
@@ -47,7 +47,7 @@ export default function Document(props: DocumentProps) {
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
               gtag('js', new Date());
-              gtag('config', '${process.env.PRODUCTION ? 'G-KVDQKKTNBY' : 'G-EQQV5PQT16'}');
+              gtag('config', '${process.env.PRODUCTION === "true" ? 'G-KVDQKKTNBY' : 'G-EQQV5PQT16'}');
             `,
           }}
         />

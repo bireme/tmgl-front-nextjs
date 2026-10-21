@@ -14,19 +14,8 @@ export default function FeaturedStories() {
   const [displayType, setDisplayType] = useState<string>("column");
   const router = useRouter();
   const { country, region, thematicArea } = router.query;
-  const [isClient, setIsClient] = useState(false);
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
-  if (!isClient || !router.isReady) {
-    return (
-      <Container size={"xl"} py={40}>
-        <div>Loading...</div>
-      </Container>
-    );
-  }
 
   return (
     <>
@@ -42,9 +31,9 @@ export default function FeaturedStories() {
           blackColor={true}
         />
         <Flex justify={"space-between"} align={"center"} px={15} mt={30}>
-          <h3 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
+          <h1 className={styles.TitleWithIcon} style={{ margin: "5px" }}>
             {capitalizeFirstLetter("Featured stories")}
-          </h3>
+          </h1>
 
           <div>
             <IconLayoutGrid

@@ -8,8 +8,27 @@ export interface PostPageProps {
   initialChildren: Post[];
 }
 
+let regionsCache: { baseUrl: string; expiresAt: number; value: { slug: string }[] } | undefined;
+let pendingRegions: { baseUrl: string; promise: Promise<{ slug: string }[]> } | undefined;
+
 /** Region taxonomy also includes filters (e.g. 'global') that are not sites. */
 export async function publishedRegions(): Promise<{ slug: string }[]> {
+  const baseUrl = process.env.WP_BASE_URL || "";
+  if (regionsCache?.baseUrl === baseUrl && regionsCache.expiresAt > Date.now()) return regionsCache.value;
+  if (pendingRegions?.baseUrl === baseUrl) return pendingRegions.promise;
+  const promise = fetchPublishedRegions().then((value) => {
+    regionsCache = { baseUrl, expiresAt: Date.now() + 300000, value };
+    return value;
+  });
+  pendingRegions = { baseUrl, promise };
+  try {
+    return await promise;
+  } finally {
+    if (pendingRegions?.promise === promise) pendingRegions = undefined;
+  }
+}
+
+async function fetchPublishedRegions(): Promise<{ slug: string }[]> {
   const { data } = await wordpressApi().get("../../acf/v3/options/options");
   if (!Array.isArray(data?.acf?.regionais)) throw new Error("Regional site configuration is missing");
   const slugs = data.acf.regionais.map((region: { rest_api_prefix: string }) =>
@@ -71,3 +90,19 @@ export function postPageProps(postType: string, children = false): GetServerSide
     return { props: { initialPost: posts[0], initialChildren } };
   };
 }
+
+/** Country landing pages must render their published content and return real 404s. */
+export const countryPageProps: GetServerSideProps = async ({ params }) => {
+  const region = params?.region;
+  const country = params?.country;
+  const lang = params?.lang;
+  if (typeof region !== "string" || typeof country !== "string"
+    || (lang !== undefined && (typeof lang !== "string" || !/^[a-z]{2,3}$/.test(lang)))) {
+    return { notFound: true };
+  }
+  const regions = await publishedRegions();
+  if (!regions.some(({ slug }) => slug === region)) return { notFound: true };
+  const posts = await publishedPosts("countries", region, { slug: country });
+  if (!posts[0]) return { notFound: true };
+  return { props: { initialPost: posts[0] } };
+};

@@ -256,9 +256,6 @@ export default function Home({ initialAcf }: { initialAcf: HomeAcf }) {
           <div className={styles.EmbedContent}>
             
             <Container size={"xl"}>
-            <span>
-              This scientific dashboard presents data for analytical and informational purposes only. The designations employed and the presentation of the material on this dashboard, including maps and the depiction of countries, territories, or areas, and their boundaries or borders, do not imply the expression of any opinion whatsoever on the part of the World Health Organization concerning the legal status of any country, territory, or area, or of its authorities, nor concerning the delimitation of its frontiers or boundaries.
-            </span><br/>
             <br/>
               <EmbedIframe
                 src={`${acf?.embed_content}?v=${cacheRandom}`}

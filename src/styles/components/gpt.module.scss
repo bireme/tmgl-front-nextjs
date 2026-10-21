@@ -1,20 +1,88 @@
-.GptWidget{
-  background-color: #0C2B64;
-  color:white;
-  font-size: 0.8rem;
+// Hotjar owns the feedback tab at the middle of the edge. Keep these links
+// together at the bottom so they do not compete for that space.
+.SideLinks {
   position: fixed;
-  bottom: 20vh;
-  right: -55px;
-  z-index: 9999;
-  padding: 10px;
-  cursor: pointer;
-  transition: 0.3s;
-  transform: rotate(-90deg);
-  box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.35);
-  border-radius: 4px 4px 0px 0px;
-  &:hover{
-    font-size: 0.85rem;
-    padding: 12px;
-    right: -55px;
+  right: env(safe-area-inset-right, 0px);
+  bottom: max(12px, env(safe-area-inset-bottom));
+  z-index: 200;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 4px;
+  max-height: calc(100dvh - 24px);
+  overflow-y: auto;
+}
+
+.SideLink {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+  width: 32px;
+  flex-shrink: 0;
+  padding: 10px 6px;
+  border-radius: 5px 0 0 5px;
+  color: white;
+  font-size: 11px;
+  line-height: 1.35;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgb(0 28 41 / 16%);
+  transition: background-color 150ms ease;
+
+  span {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    white-space: nowrap;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  &:focus-visible {
+    outline: 3px solid #007eb6;
+    outline-offset: 3px;
+  }
+}
+
+.Assistant {
+  background: #0c2b64;
+
+  &:hover {
+    background: #0a2352;
+  }
+}
+
+.Privacy {
+  background: #005780;
+
+  &:hover {
+    background: #003b57;
+  }
+}
+
+@media (max-width: 48em) {
+  .SideLinks {
+    gap: 3px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+  }
+
+  .SideLink {
+    width: 28px;
+    padding: 8px 4px;
+    font-size: 10px;
+    gap: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .SideLink {
+    transition: none;
+  }
+}
+
+@media print {
+  .SideLinks {
+    display: none;
   }
 }

@@ -1,4 +1,3 @@
-import { NewsSection } from "@/components/sections/news";
 import { Alert, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { CountryAcfProps, Post } from "@/services/types/posts.dto";
 import { HeroImage, HeroSlider } from "@/components/slider";
@@ -36,7 +35,6 @@ export default function CountryHome() {
   const {
     query: { country, region },
   } = router;
-  const horizontalNews = ["brazil", "brasil"].includes(country?.toString().toLowerCase() || "");
 
   const getPageProperties = useCallback(async () => {
     setRegionName(region ? region.toString() : "");
@@ -51,25 +49,42 @@ export default function CountryHome() {
 
         // Buscar termo do país para usar como filtro
         try {
+
+          // Usar API regional para buscar o termo de país
+          const countryTerm = await _api.getCountryBySlug(country.toString());
+
+          // Se não encontrou, tentar com primeira letra maiúscula
+          if (!countryTerm || countryTerm.length === 0) {
+            const capitalizedCountry =
+              country.toString().charAt(0).toUpperCase() +
+              country.toString().slice(1);
+            const countryTermCapitalized = await _api.getCountryBySlug(
+              capitalizedCountry
+            );
+
+            if (countryTermCapitalized && countryTermCapitalized.length > 0) {
+              const countryId = countryTermCapitalized[0].id;
+              setCountryTermId(countryId);
+            }
+          } else {
+            const countryId = countryTerm[0].id;
+            setCountryTermId(countryId);
+          }
+
           // Buscar news e events relacionados ao país
           // Buscar news do WP geral (não regional)
           const globalApi = new PostsApi(); // Sem região para acessar WP geral
-          const countrySlug = country.toString().toLowerCase();
-          const countryTerm = await globalApi.getCountryBySlug(countrySlug);
-          const countryId = countryTerm[0]?.id;
 
-          setCountryTermId(countryId ?? null);
-
-          const newsResponse = countryId
-            ? await globalApi.getCustomPost(
-                "posts",
-                4,
-                undefined,
-                undefined,
-                undefined,
-                { countryId: [countryId] }
-              )
-            : [];
+          const newsResponse = await globalApi.getCustomPost(
+            "posts",
+            4,
+            undefined,
+            undefined,
+            undefined,
+            {
+              countryId: [countryTermId || 0],
+            }
+          );
 
           setNews(newsResponse);
 
@@ -81,7 +96,7 @@ export default function CountryHome() {
             undefined,
             undefined,
             {
-              countryId: [countryId || 0],
+              countryId: [countryTermId || 0],
             }
           );
           setEvents(eventsResponse);
@@ -102,7 +117,7 @@ export default function CountryHome() {
   return (
     <>
       <Head>
-        <title>{(countryName ? `${countryName} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
+        <title>{countryName ? `${countryName} - ` : ''}The WHO Traditional Medicine Global Library</title>
       </Head>
       {postProps ? (
         <>
@@ -231,9 +246,8 @@ export default function CountryHome() {
           ) : (
             <></>
           )}
-          {horizontalNews && <NewsSection items={news} title="News from WHO" />}
           <NewsEventsSection
-            news={horizontalNews ? [] : news}
+            news={news}
             events={events}
             newsTitle="News from WHO"
             otherNewsTitle="Other News"
@@ -338,9 +352,4 @@ export default function CountryHome() {
       )}
     </>
   );
-}
-
-// Dynamic routes need request-time rendering so metadata contains the actual URL.
-export async function getServerSideProps() {
-  return { props: {} };
 }

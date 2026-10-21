@@ -1,6 +1,7 @@
 import { Button, Container, Flex, Grid } from "@mantine/core";
 
 import Cookies from "js-cookie";
+import type { ReactNode } from "react";
 import { HomeAcf } from "@/services/types/homeAcf.dto";
 import { TraditionalSectionCard } from "..";
 import styles from "../../../styles/components/sections.module.scss";
@@ -9,11 +10,13 @@ import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 export interface RegionalDimensionsProps {
   region: string;
   acf: HomeAcf;
+  children?: ReactNode;
 }
 
 export const RegionalDimensions = ({
   region,
   acf,
+  children,
 }: RegionalDimensionsProps) => {
   const _lang = Cookies.get("lang");
   return (
@@ -42,16 +45,16 @@ export const RegionalDimensions = ({
               <> </>
             )} */}
           </Grid.Col>
-          <Grid.Col span={{ base: 12, md: 7.5 }} px={20}>
+          <Grid.Col span={{ base: 12, md: 7.5 }} px={20} className={children ? styles.CountriesColumn : undefined}>
             <Flex
               direction={"row"}
               wrap={"wrap"}
-              gap={20}
-              justify={"space-evenly"}
+              gap={children ? 12 : 20}
+              justify={children ? "center" : "space-evenly"}
               align={"center"}
-              mt={60}
+              mt={children ? 0 : 60}
             >
-              {acf.tmd?.dimensions?.map((dimension: any, key: number) => {
+              {children ?? acf.tmd?.dimensions?.map((dimension: any, key: number) => {
                 return (
                   <TraditionalSectionCard
                     key={key}

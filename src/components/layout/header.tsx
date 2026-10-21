@@ -24,13 +24,14 @@ import { getRegionName } from "@/helpers/regions";
 import styles from "../../styles/components/layout.module.scss";
 import { useMediaQuery } from "@mantine/hooks";
 import { useRouter } from "next/router";
+import { useRegionalMenu } from "@/hooks/useRegionalMenu";
 
 export const HeaderLayout = () => {
   const logoSource = "/local/svg/logo.svg";
   const [isScrolled, setIsScrolled] = useState(false);
   const [opened, setOpened] = useState(false);
   const [globalMenu, setGlobalMenu] = useState<MenuItemDTO[]>();
-  const [regMenu, setRegMenu] = useState<MenuItemDTO[]>();
+  const { data: regMenu } = useRegionalMenu();
   const [originalMenuItem, setOriginalMenuItem] = useState<MenuItemDTO>();
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
   const [responsiveMenuOpen, setResponsiveMenuOpen] = useState(false);
@@ -45,8 +46,6 @@ export const HeaderLayout = () => {
 
   const getMenus = async () => {
     const retMenu = await menuApi.getMenu("global-menu");
-    const regRetMenu = await menuApi.getMenu("regional-menu");
-    setRegMenu(regRetMenu);
     setGlobalMenu(retMenu);
   };
 

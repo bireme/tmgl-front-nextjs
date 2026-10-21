@@ -44,8 +44,8 @@ async function audit(input) {
     if (!/<title\b[^>]*>[^<]+<\/title>/i.test(head)) issues.push('Missing title in server HTML');
     // Inspect visible HTML only; serialized Next.js props are not rendered content.
     const visible = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').replace(/<style\b[^>]*>[\s\S]*?<\/style>/gi, '');
-    const headings = [...visible.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)].map((m) => m[1].replace(/<[^>]+>/g, '').trim());
-    if (/\/(dimensions|content|news|events|featured-stories|recent-literature-reviews)\/[^/]+$/.test(expected.pathname) && !headings.length) issues.push('Missing rendered h1');
+    const headings = [...visible.matchAll(/<h1\b[^>]*>([\s\S]*?)<\/h1>/gi)].map((m) => m[1].replace(/<[^>]+>/g, '').trim()).filter(Boolean);
+    if (!headings.length) issues.push('Missing rendered h1');
     return { url: expected.href, status: response.status, location: response.headers.get('location'), canonicals, headings, issues };
   } catch (error) { return { url: expected.href, issues: [error.message] }; }
 }

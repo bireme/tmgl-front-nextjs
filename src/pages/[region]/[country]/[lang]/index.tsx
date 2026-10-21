@@ -1,3 +1,4 @@
+import { countryPageProps } from "@/server/wordpress";
 import { NewsSection } from "@/components/sections/news";
 import { Alert, Button, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { CountryAcfProps, Post } from "@/services/types/posts.dto";
@@ -27,14 +28,14 @@ import { decodeHtmlEntities, capitalizeFirstLetter } from "@/helpers/stringhelpe
 import styles from "../../../../styles/pages/home.module.scss";
 import { useRouter } from "next/router";
 
-export default function CountryHome() {
+export default function CountryHome({ initialPost }: { initialPost: Post }) {
   const router = useRouter();
   const _postApiHelper = new PostsApi();
-  const [properties, setProperties] = useState<CountryAcfProps>();
+  const [properties, setProperties] = useState<CountryAcfProps>(initialPost.acf);
   const { setRegionName, setCountryName, globalConfig, countryName } =
     useContext(GlobalContext);
   const _service = new DireveService();
-  const [postProps, setPostProps] = useState<Post>();
+  const [postProps, setPostProps] = useState<Post>(initialPost);
   const [news, setNews] = useState<Array<Post>>([]);
   const [events, setEvents] = useState<Array<NewsEventsItem>>([]);
   const [countryTermId, setCountryTermId] = useState<number | null>(null);
@@ -180,7 +181,7 @@ export default function CountryHome() {
   return (
     <>
       <Head>
-        <title>{(countryName ? `${countryName} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
+        <title>{(postProps?.title.rendered ? `${decodeHtmlEntities(postProps.title.rendered)} - ` : '') + 'The WHO Traditional Medicine Global Library'}</title>
       </Head>
       {postProps ? (
         <>
@@ -222,7 +223,7 @@ export default function CountryHome() {
             <Container size={"xl"} my={40}>
               <Grid>
                 <Grid.Col span={{ md: 9, base: 12 }} px={20}>
-                  <h2>{postProps.title.rendered}</h2>
+                  <h1>{decodeHtmlEntities(postProps.title.rendered)}</h1>
                   <div
                     dangerouslySetInnerHTML={{
                       __html: properties?.content ? properties?.content : "",
@@ -550,7 +551,4 @@ export default function CountryHome() {
   );
 }
 
-// Dynamic routes need request-time rendering so metadata contains the actual URL.
-export async function getServerSideProps() {
-  return { props: {} };
-}
+export const getServerSideProps = countryPageProps;

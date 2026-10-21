@@ -73,7 +73,7 @@ export const JournalsSection = ({
 
   return (
     <>
-      {items.length > 0 ? (
+      {items.length >= (country ? 3 : 1) ? (
         <Container size={"xl"} py={80} className={className}>
           {title && items.length > 0 ? (
             <>
