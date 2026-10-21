@@ -18,7 +18,7 @@ export const GptWidget = () => (
       href="https://tmgl.org/content/privacy-policy-terms-and-conditions-of-use"
     >
       <IconShieldCheck size={18} aria-hidden="true" />
-      <span>Privacy policy, terms and conditions of use</span>
+      <span>Disclaimer</span>
     </a>
   </nav>
 );
