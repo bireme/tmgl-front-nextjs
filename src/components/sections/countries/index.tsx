@@ -9,8 +9,9 @@ import styles from "../../../styles/components/sections.module.scss";
 export function RegionalCountries({ region, acf }: { region: string; acf: HomeAcf }) {
   const { data: menu } = useRegionalMenu();
   const countries = menu ? regionalCountries(menu, region) : [];
+  const isTestWordPress = (process.env.WP_BASE_URL || "").toLowerCase().includes("teste");
 
-  if (acf.tmd?.dimensions?.length) {
+  if (!isTestWordPress && acf.tmd?.dimensions?.length) {
     return <RegionalDimensions acf={acf} region={region} />;
   }
 
