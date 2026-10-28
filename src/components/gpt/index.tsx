@@ -1,6 +1,5 @@
 import { IconMessageChatbot, IconShieldCheck } from "@tabler/icons-react";
 import styles from "../../styles/components/gpt.module.scss";
-import pageStyles from "../../styles/pages/pages.module.scss";
 import { Modal } from "@mantine/core";
 import { useContext, useState } from "react";
 import { GlobalContext } from "@/contexts/globalContext";
@@ -39,7 +38,8 @@ export const GptWidget = () => {
       <Modal
         opened={opened}
         onClose={() => setOpened(false)}
-        title="Read me first — Disclaimer"
+        title={<h2 className={styles.ModalTitle}>Read me first</h2>}
+        classNames={{ header: styles.ModalHeader }}
         size="xl"
         centered
         withCloseButton
@@ -47,16 +47,16 @@ export const GptWidget = () => {
         closeOnEscape
         closeButtonProps={{ "aria-label": "Close disclaimer", style: { color: "#172b4d", backgroundColor: "#f1f3f5" } }}
       >
-        <div className={pageStyles.PostContent}>
+        <article className={styles.DisclaimerContent}>
+          <h3>About TMGL</h3>
           <p>TMGL is a collaborative digital library and global knowledge platform for traditional, complementary and integrative medicine, continuously evolving through contributions from its partners and ongoing curation.</p>
+          <h3>Independent content</h3>
           <p>The inclusion of content in TMGL does not constitute endorsement or recommendation by the World Health Organization (WHO) or its partners. The views and conclusions expressed in the included materials are those of the original authors and do not necessarily reflect the policies or positions of WHO.</p>
+          <h3>Quality and continuous improvement</h3>
           <p>While every effort is made to ensure the accuracy and quality of the information presented, occasional inconsistencies may occur. We welcome your feedback to help us continuously improve TMGL.</p>
-          <p>For more information, please refer to the Privacy Policy, Terms and Conditions of Use available in the footer of the homepage.</p>
-        </div>
+          <p className={styles.TermsNote}>For more information, please refer to the <a href={disclaimerUrl} target="_blank" rel="noopener noreferrer">Privacy Policy, Terms and Conditions of Use</a>.</p>
+        </article>
         <nav aria-label="Terms and institutional pages" className={styles.InstitutionalLinks}>
-          <a href={globalConfig?.acf?.terms_and_conditions_url || disclaimerUrl} target="_blank" rel="noopener noreferrer">
-            Privacy Policy, Terms, and Conditions of Use
-          </a>
           {globalConfig?.acf?.privacy_policy_url && (
             <a href={globalConfig.acf.privacy_policy_url} target="_blank" rel="noopener noreferrer">Privacy Policy</a>
           )}
