@@ -1,9 +1,8 @@
 import { IconMessageChatbot, IconShieldCheck } from "@tabler/icons-react";
 import styles from "../../styles/components/gpt.module.scss";
 import pageStyles from "../../styles/pages/pages.module.scss";
-import { Alert, Button, Loader, Modal } from "@mantine/core";
+import { Modal } from "@mantine/core";
 import { useContext, useState } from "react";
-import { PostsApi } from "@/services/posts/PostsApi";
 import { GlobalContext } from "@/contexts/globalContext";
 
 const disclaimerUrl = process.env.NEXT_PUBLIC_DISCLAIMER_CONTENT?.trim() ||
@@ -12,32 +11,6 @@ const disclaimerUrl = process.env.NEXT_PUBLIC_DISCLAIMER_CONTENT?.trim() ||
 export const GptWidget = () => {
   const { globalConfig } = useContext(GlobalContext);
   const [opened, setOpened] = useState(false);
-  const [content, setContent] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
-
-  const openDisclaimer = async () => {
-    setOpened(true);
-    if (content !== null || loading) return;
-    setLoading(true);
-    setError(false);
-    try {
-      const url = new URL(disclaimerUrl, window.location.origin);
-      const segments = url.pathname.split("/").filter(Boolean);
-      const slug = segments.at(-1);
-      if (!slug) throw new Error("Missing disclaimer slug");
-      const contentIndex = segments.indexOf("content");
-      const region = contentIndex > 0 ? segments.slice(0, contentIndex).join("/") : undefined;
-      const posts = await new PostsApi(region).getPost("pages", encodeURIComponent(slug));
-      const html = posts[0]?.content?.rendered;
-      if (!html?.trim()) throw new Error("Disclaimer content unavailable");
-      setContent(html);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <>
@@ -55,7 +28,7 @@ export const GptWidget = () => {
         <button
           type="button"
           className={`${styles.SideLink} ${styles.Privacy}`}
-          onClick={openDisclaimer}
+          onClick={() => setOpened(true)}
           aria-haspopup="dialog"
           aria-expanded={opened}
         >
@@ -74,14 +47,12 @@ export const GptWidget = () => {
         closeOnEscape
         closeButtonProps={{ "aria-label": "Close disclaimer", style: { color: "#172b4d", backgroundColor: "#f1f3f5" } }}
       >
-        {loading && <div role="status" aria-label="Loading disclaimer"><Loader /></div>}
-        {error && (
-          <Alert color="red" title="Unable to load disclaimer">
-            <p>Please try again or <a href={disclaimerUrl} target="_blank" rel="noopener noreferrer">open the page</a>.</p>
-            <Button onClick={openDisclaimer}>Try again</Button>
-          </Alert>
-        )}
-        {content !== null && <div className={pageStyles.PostContent} dangerouslySetInnerHTML={{ __html: content }} />}
+        <div className={pageStyles.PostContent}>
+          <p>TMGL is a collaborative digital library and global knowledge platform for traditional, complementary and integrative medicine, continuously evolving through contributions from its partners and ongoing curation.</p>
+          <p>The inclusion of content in TMGL does not constitute endorsement or recommendation by the World Health Organization (WHO) or its partners. The views and conclusions expressed in the included materials are those of the original authors and do not necessarily reflect the policies or positions of WHO.</p>
+          <p>While every effort is made to ensure the accuracy and quality of the information presented, occasional inconsistencies may occur. We welcome your feedback to help us continuously improve TMGL.</p>
+          <p>For more information, please refer to the Privacy Policy, Terms and Conditions of Use available in the footer of the homepage.</p>
+        </div>
         <nav aria-label="Terms and institutional pages" className={styles.InstitutionalLinks}>
           <a href={globalConfig?.acf?.terms_and_conditions_url || disclaimerUrl} target="_blank" rel="noopener noreferrer">
             Privacy Policy, Terms, and Conditions of Use
