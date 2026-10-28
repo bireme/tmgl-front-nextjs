@@ -236,6 +236,7 @@ NEXT_PUBLIC_BASE_URL=
 NEXT_PUBLIC_API_BASE_URL=
 BASE_URL=
 WP_BASE_URL=
+NEXT_PUBLIC_DISCLAIMER_CONTENT=https://tmgl.org/content/privacy-policy-terms-and-conditions-of-use
 
 # APIs Externas
 DIREV_API_KEY=
