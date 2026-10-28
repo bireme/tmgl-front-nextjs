@@ -57,10 +57,26 @@
 }
 
 .Privacy {
-  background: #005780;
+  background: #ffc247;
+  color: #172b4d;
+  font-weight: 600;
 
   &:hover {
-    background: #003b57;
+    background: #ffb524;
+  }
+}
+
+.InstitutionalLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid #dee2e6;
+
+  a {
+    color: #005780;
+    text-decoration: underline;
   }
 }
 
