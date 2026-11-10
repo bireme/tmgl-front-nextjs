@@ -57,7 +57,8 @@ export class PostsApi extends BaseUnauthenticatedApi {
     options?: GetCustomPostOptions
   ): Promise<Post[]> {
     if (regionString) {
-      const _taxApi = new TaxonomiesApi();
+      // Taxonomy IDs belong to the WordPress instance serving the posts.
+      const _taxApi = new TaxonomiesApi(this._region);
       const taxonomies = await _taxApi.getTaxonomies("region");
       const hit = taxonomies?.find(
         (t) => t?.name == regionString || t?.slug == regionString

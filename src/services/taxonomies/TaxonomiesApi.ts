@@ -4,7 +4,7 @@ import { BaseUnauthenticatedApi } from "../BaseUnauthenticatedApi";
 
 export class TaxonomiesApi extends BaseUnauthenticatedApi {
   public constructor(region?: string) {
-    super(`wp-json/wp/v2/`);
+    super(`${region ? region + "/" : ""}wp-json/wp/v2/`, region);
   }
 
   public async getTaxonomies(taxSlug?: string): Promise<TaxonomieObjDto[]> {

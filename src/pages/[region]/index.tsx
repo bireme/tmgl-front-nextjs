@@ -153,8 +153,8 @@ export default function RegionHome({ initialAcf }: { initialAcf: HomeAcf }) {
                 {hasEvents && <h2 className={styles.TitleWithIcon}>{capitalizeFirstLetter("Events")}</h2>}
               </Container>
             </div>
-            {globalConfig?.acf.thematic_page_tag && (
-              <EventsSection onAvailabilityChange={setHasEvents} excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]} />
+            {globalConfig?.acf.thematic_page_tag && region && (
+              <EventsSection region={region.toString()} onAvailabilityChange={setHasEvents} excludedTagIds={[globalConfig?.acf.thematic_page_tag ? globalConfig?.acf.thematic_page_tag : 0]} />
             )}
             <div className={styles.NewsContainer}>
               {globalConfig && region && (

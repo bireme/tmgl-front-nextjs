@@ -1,6 +1,5 @@
 import { removeHTMLTagsAndLimit } from "@/helpers/stringhelper";
 import styles from "../../styles/components/breadcrumbs.module.scss";
-import { useRouter } from "next/router";
 
 export interface pathItem {
   name: string;
@@ -13,12 +12,19 @@ interface BreadCrumbsProps {
 }
 
 export const BreadCrumbs = ({ path, blackColor }: BreadCrumbsProps) => {
-  const router = useRouter();
   return (
     <div
       className={`${styles.BreadCrumbs} ${blackColor ? styles.blackColor : ""}`}
     >
       {path.map((item, key) => {
+        if (key === path.length - 1) {
+          return (
+            <span key={key} className={styles.current} aria-current="page">
+              {removeHTMLTagsAndLimit(item.name, 40).replace("-", " ")}
+              {item.name.length > 40 ? "..." : ""}
+            </span>
+          );
+        }
         return (
           <a key={key} href={`${item.path}`}>
             <span>
