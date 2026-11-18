@@ -1,67 +1,19 @@
-import type { NextApiRequest, NextApiResponse } from "next";
+import { apiHandler, ApiError, rateLimit } from "@/server/api";
+import { downloadPdf } from "@/server/remotePdf";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  const { url, type } = req.query;
-
-  if (!url || typeof url !== "string") {
-    return fallback(res);
-  }
-
+let active = 0;
+export default apiHandler(["GET"], async (req, res) => {
+  rateLimit(req, res, "pdf-proxy", 60);
+  if (active >= 4) throw new ApiError(503, "PDF_BUSY", "We couldn't open this document right now. Please try again in a moment.");
+  active++;
   try {
-    const response = await fetch(url, {
-      headers: {
-        "User-Agent": "Mozilla/5.0",
-        Accept: "application/pdf",
-      },
-      redirect: "follow",
-    });
-
-    if (!response.ok) {
-      console.error(`Erro ao buscar PDF: ${response.status}`);
-      return fallback(res);
-    }
-
-    const buffer = await response.arrayBuffer();
+    const buffer = await downloadPdf(req.query.url);
     res.setHeader("Content-Type", "application/pdf");
-    res.setHeader("Content-Disposition", 'inline; filename="proxy.pdf"');
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
-    res.send(Buffer.from(buffer));
-  } catch (err) {
-    console.error(`Erro no proxy PDF: ${err}`);
-    return fallback(res, type?.toString());
-  }
-}
+    res.setHeader("Content-Disposition", 'inline; filename="document.pdf"');
+    res.setHeader("Content-Security-Policy", "sandbox");
+    res.setHeader("Cache-Control", "private, max-age=300");
+    return res.status(200).send(buffer);
+  } finally { active--; }
+});
 
-// HTML com imagem fallback:
-function fallback(res: NextApiResponse, type?: string) {
-  res.setHeader("Content-Type", "text/html");
-  res.setHeader("X-Frame-Options", "SAMEORIGIN");
-  res.status(200).send(`
-    <html>
-      <head>
-        <style>
-          body {
-            margin: 0;
-            padding: 0;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-          }
-          img {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-          }
-        </style>
-      </head>
-      <body>
-        <img src="/local/png/${type || "pdf"}.png" alt="PDF indisponível">
-      </body>
-    </html>
-  `);
-}
+export const config = { api: { responseLimit: "20mb" } };

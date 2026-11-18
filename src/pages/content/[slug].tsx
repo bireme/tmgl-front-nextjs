@@ -1,3 +1,4 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import { BreadCrumbs, pathItem } from "@/components/breadcrumbs";
 import { Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
@@ -7,7 +8,6 @@ import {
   decodeHtmlEntities,
   extimateTime,
 } from "@/helpers/stringhelper";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import Head from "next/head";
@@ -27,7 +27,7 @@ export default function Content({ initialPost, initialChildren }: PostPageProps)
     query: { slug },
   } = router;
   const [post, setPost] = useState<Post>(initialPost);
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
   const [parent, setParent] = useState<Post>();
   const [openShareModal, setOpenShareModal] = useState(false);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
@@ -57,7 +57,7 @@ export default function Content({ initialPost, initialChildren }: PostPageProps)
       }
     } catch {
     }
-  }, []);
+  }, [_api]);
 
   useEffect(() => {
     if (slug) {

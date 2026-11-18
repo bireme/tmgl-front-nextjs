@@ -1,7 +1,8 @@
 export interface MailChimpResponse {
   message?: string;
   status?: boolean;
-  data?: any;
+  data?: unknown;
+  error?: { code: string; message: string };
 }
 
 export class MailChimpService {
@@ -23,7 +24,7 @@ export class MailChimpService {
       }
 
       if (response.ok) {
-        if (data.status == true) {
+        if (data?.status === true) {
           return {
             status: true,
           };

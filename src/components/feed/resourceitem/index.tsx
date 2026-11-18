@@ -1,9 +1,11 @@
+import { HTMLAttributes, useEffect, useState, useRef, PropsWithChildren } from "react";
+import { useRouter } from "next/router";
 import { Badge, Flex, LoadingOverlay } from "@mantine/core";
-import { HTMLAttributes, useEffect, useState, useRef } from "react";
+
 import { IconArrowRight, IconPlayerPlay } from "@tabler/icons-react";
 
 import { IframeThumbNail } from "../multimedia/pdf_thumbnail";
-import { PropsWithChildren } from "react";
+
 import moment from "moment";
 import styles from "../../../styles/components/resources.module.scss";
 
@@ -263,8 +265,9 @@ export const ResourceCard = ({
     type: "#1A4B8C",
   };
 
+  const router = useRouter();
   const applyTag = (tagType: string, tagName: string) => {
-    window.location.href = `${window.location.pathname}?${tagType}=${tagName}`;
+    void router.push({ pathname: router.pathname, query: { ...router.query, [tagType]: tagName } });
   };
 
   const cardImage = () => {

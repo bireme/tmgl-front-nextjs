@@ -1,10 +1,10 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import {
   FirstSection,
   SecondSection,
   ThirdSection,
 } from "@/components/sections/stories/page";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { FeaturedStoriesAcf } from "@/services/types/featuredStoriesAcf";
 import Head from "next/head";
@@ -15,7 +15,7 @@ import { PostsApi } from "@/services/posts/PostsApi";
 import { useRouter } from "next/router";
 
 export default function FeaturedStories({ initialPost, initialChildren }: PostPageProps) {
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
   const [post, setPost] = useState<Post>(initialPost);
   const [acf, setAcf] = useState<FeaturedStoriesAcf>(initialPost.acf);
   const router = useRouter();
@@ -32,7 +32,7 @@ export default function FeaturedStories({ initialPost, initialChildren }: PostPa
     } catch {
       router.push("/404");
     }
-  }, []);
+  }, [_api, router]);
 
   useEffect(() => {
     if (slug && router.isReady) {

@@ -49,7 +49,6 @@ export const SecondSection = ({ acf }: SectionProps) => {
               <Image
                 alt={acf.second_session.imagem.alt}
                 src={acf.second_session.imagem.url}
-                aria-description={acf.second_session.imagem.description}
                 aria-label={acf.second_session.imagem.description}
                 radius={"md"}
                 width={"100%"}

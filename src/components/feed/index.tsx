@@ -1,10 +1,10 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
 import { Button, Center, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { FiltersForm, TrendingTopicsFiltersForm } from "../forms/filters";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
-import { useContext, useEffect, useState } from "react";
 
 import { ArticleDTO } from "@/services/types/rssFeedTypes";
 import { DireveService } from "@/services/apiRepositories/DireveService";
@@ -30,9 +30,9 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [regionsFilter, setRegionsFilter] = useState<number[]>([]);
   const {} = useContext(GlobalContext);
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
 
-  const getPosts = async (regions?: number[]) => {
+  const getPosts = useCallback(async (regions?: number[]) => {
     if (regions) setRegionsFilter(regions);
     const data = await _api.getCustomPost(
       postType == "news" ? "posts" : postType,
@@ -41,12 +41,11 @@ export const FeedSection = ({ postType }: FeedSectionProps) => {
       regionsFilter
     );
     setPosts(data);
-    setPosts(data);
-  };
+  }, [_api, postType, regionsFilter]);
 
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [getPosts]);
 
   return (
     <div className={styles.FeedSection}>
@@ -94,7 +93,7 @@ export const TrendingTopicsFeedSection = ({ filter }: { filter?: string }) => {
   const [queryString, setQueryString] = useState<string>("");
   const { globalConfig } = useContext(GlobalContext);
   const [count, setCount] = useState<number>(9);
-  const getPosts = async (qs?: string, ct?: number) => {
+  const getPosts = useCallback(async (qs?: string, ct?: number) => {
     try {
       const data = await FetchRSSFeed(
         0,
@@ -106,7 +105,7 @@ export const TrendingTopicsFeedSection = ({ filter }: { filter?: string }) => {
       setPosts(data);
     } catch {
     }
-  };
+  }, [count, filter, globalConfig]);
 
   const applyQueryString = async (qs: string) => {
     setQueryString(qs);
@@ -116,7 +115,7 @@ export const TrendingTopicsFeedSection = ({ filter }: { filter?: string }) => {
 
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [getPosts]);
 
   return (
     <div className={styles.FeedSection}>

@@ -7,9 +7,9 @@ function load(file, mocks = {}) {
   const code = ts.transpileModule(fs.readFileSync(file, 'utf8'), {
     compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2020 },
   }).outputText;
-  const module = { exports: {} };
-  new Function('require', 'module', 'exports', code)((name) => mocks[name] || require(name), module, module.exports);
-  return module.exports;
+  const loadedModule = { exports: {} };
+  new Function('require', 'module', 'exports', code)((name) => mocks[name] || require(name), loadedModule, loadedModule.exports);
+  return loadedModule.exports;
 }
 const seo = load('src/helpers/seo.ts');
 const { regionalCountries } = load('src/helpers/regionalCountries.ts', { './seo': seo });

@@ -1,3 +1,4 @@
+import { useMemo, useCallback, useEffect, useState } from "react";
 import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import {
   ACFMultimediaItem,
@@ -14,7 +15,6 @@ import {
   ResourcesSection,
 } from "@/components/sections";
 import { ManualStoriesSection, StoriesSection } from "@/components/sections/stories";
-import { useCallback, useEffect, useState } from "react";
 
 import { PostsApi } from "@/services/posts/PostsApi";
 import { TrendingCarrocel } from "@/components/rss/slider";
@@ -29,7 +29,7 @@ export default function ThematicPage({ initialPost, initialChildren }: PostPageP
   const [events, setEvents] = useState<Array<Post>>([]);
   const [thematicPageTag, setThematicPageTag] = useState();
   const [newsTag, setNewsTag] = useState();
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
   const {
     query: { slug },
   } = router;
@@ -74,11 +74,11 @@ export default function ThematicPage({ initialPost, initialChildren }: PostPageP
         }
       }
     }
-  }, [slug]);
+  }, [_api, slug]);
 
   useEffect(() => {
     getPageProperties();
-  }, [slug]);
+  }, [getPageProperties, slug]);
 
   return (
     <>
@@ -104,7 +104,6 @@ export default function ThematicPage({ initialPost, initialChildren }: PostPageP
             small={true}
             blackColor={false}
           />
-
 
           <ContentSection
             disclaimer={properties?.disclaimer}
@@ -154,7 +153,6 @@ export default function ThematicPage({ initialPost, initialChildren }: PostPageP
               />
             </Container>
           ) : null}
-
 
           <MultimediaSection
             multimediaItems={properties?.multimedia_items}

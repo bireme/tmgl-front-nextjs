@@ -1,67 +1,28 @@
-// pages/api/subscribe.ts
-
-import type { NextApiRequest, NextApiResponse } from "next";
-
 import axios from "axios";
+import { z } from "zod";
+import { decryptFromEnv } from "@/helpers/crypto";
+import { apiHandler, ApiError, rateLimit, requiredEnv } from "@/server/api";
 
-type Data = {
-  message: string;
-  status?: boolean;
-  data?: any;
-};
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<Data>
-) {
-  if (req.method !== "POST") {
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
-    return res.status(405).json({ message: "Method not permited" });
-  }
-  var CryptoJS = require("crypto-js");
-  const { email } = req.body;
-
-  if (!email || typeof email !== "string") {
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
-    return res.status(400).json({ message: "Email is a required field" });
-  }
-
-  if (process.env.MAILCHIMP_API_KEY && process.env.SECRET) {
-    var bytesToKey = CryptoJS.AES.decrypt(
-      process.env.MAILCHIMP_API_KEY,
-      process.env.SECRET
-    );
-    var originalKey = bytesToKey.toString(CryptoJS.enc.Utf8);
-  } else {
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
-    return res.status(500).json({ message: "MailChimp Config not found" });
-  }
-
-  const API_KEY = originalKey;
-  const LIST_ID = process.env.MAILCHIMP_LIST_ID;
-  const DATA_CENTER = process.env.MAILCHIMP_DATA_CENTER;
-  if (!API_KEY || !LIST_ID || !DATA_CENTER) {
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
-    return res.status(500).json({ message: "MailChimp Config not found" });
-  }
-  const url = `https://${DATA_CENTER}.api.mailchimp.com/3.0/lists/${LIST_ID}/members`;
+const input = z.object({ email: z.email().max(254) });
+export default apiHandler(["POST"], async (req, res) => {
+  rateLimit(req, res, "subscribe", 10);
+  const { email } = input.parse(req.body);
+  const apiKey = decryptFromEnv(requiredEnv("MAILCHIMP_API_KEY"));
+  const list = requiredEnv("MAILCHIMP_LIST_ID");
+  const dataCenter = requiredEnv("MAILCHIMP_DATA_CENTER");
+  if (!apiKey || !/^[a-z]{2}\d+$/.test(dataCenter)) throw new ApiError(500, "CONFIGURATION_ERROR", "Newsletter sign-up isn't available right now. Please try again later.");
   try {
-    const response = await axios.post(
-      url,
+    await axios.post(`https://${dataCenter}.api.mailchimp.com/3.0/lists/${encodeURIComponent(list)}/members`,
       { email_address: email, status: "pending" },
-      { headers: { Authorization: `apikey ${API_KEY}` } }
-    );
-
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
-    return res.status(200).json({
-      message: "Subscribed successfully",
-      status: true,
-      data: response.data,
-    });
-  } catch (error: any) {
-    const errorMessage =
-      error.response?.data?.detail || "Erro while subscribing";
-    res.setHeader("X-Frame-Options", "SAMEORIGIN");
-    return res.status(200).json({ message: errorMessage, status: false });
+      { headers: { Authorization: `apikey ${apiKey}` }, timeout: 15000, maxRedirects: 0 });
+    return res.status(200).json({ message: "Check your inbox to confirm your subscription.", status: true });
+  } catch (error) {
+    if (axios.isAxiosError(error) && error.response?.data?.title === "Member Exists") {
+      throw new ApiError(409, "ALREADY_SUBSCRIBED", "You're already subscribed with this email address.");
+    }
+    if (axios.isAxiosError(error) && error.response?.status === 400) {
+      throw new ApiError(400, "INVALID_EMAIL", "We couldn't sign you up. Please check your email address and try again.");
+    }
+    throw error;
   }
-}
+});

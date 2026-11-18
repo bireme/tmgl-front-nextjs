@@ -165,7 +165,6 @@ export class PostsApi extends BaseUnauthenticatedApi {
           queryItems ? `${createUrlParametersFilter(queryItems)}` : ""
         }`
       ),
-      // eslint-disable-next-line react/no-is-mounted -- false positive on a service method
       this.fetchPostDates(postTypeSlug),
     ]);
 

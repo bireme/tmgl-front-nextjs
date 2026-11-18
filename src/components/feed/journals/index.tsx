@@ -1,10 +1,10 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
 import { Center, Flex, Grid, LoadingOverlay, Title } from "@mantine/core";
 import { DefaultFeedFilterComponent, ResourceFilters } from "../filters";
 import {
   DefaultResourceDto,
   DefaultResourceItemDto,
 } from "@/services/types/defaultResource";
-import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { JournalsService } from "@/services/apiRepositories/JournalsService";
@@ -28,7 +28,7 @@ export const JournalsFeed = ({
   thematicArea?: string;
 }) => {
   const [loading, setLoading] = useState(false);
-  const _service = new JournalsService();
+  const _service = useMemo(() => new JournalsService(), []);
   const count = 12;
   const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -39,16 +39,12 @@ export const JournalsFeed = ({
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
   const { language } = useContext(GlobalContext);
 
-  const applyFilters = async (queryList?: queryType[]) => {
+  const applyFilters = useCallback(async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(0);
-  };
+  }, []);
 
-  useEffect(() => {
-    getJournals();
-  }, [country, region, thematicArea, page, filter]);
-
-  const getJournals = async () => {
+  const getJournals = useCallback(async () => {
     setLoading(true);
     try {
       const response = await _service.getDefaultResources(
@@ -77,7 +73,11 @@ export const JournalsFeed = ({
     } catch (error) {
     }
     setLoading(false);
-  };
+  }, [_service, apiResponse, applyFilters, country, filter, initialFilterDone, language, page, region, thematicArea]);
+
+  useEffect(() => {
+    getJournals();
+  }, [country, region, thematicArea, page, filter, getJournals]);
 
   return (
     <>

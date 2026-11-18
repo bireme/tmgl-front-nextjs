@@ -1,10 +1,10 @@
+import { useCallback, useMemo, useEffect, useState, useContext } from "react";
 import { Center, Grid, LoadingOverlay, Title } from "@mantine/core";
 import { ListPostsDto, Post } from "@/services/types/posts.dto";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
-import { useEffect, useState, useContext } from "react";
 
 import { Pagination } from "../pagination";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -39,15 +39,15 @@ export const StoriesFeed = ({
   const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
   const { language } = useContext(GlobalContext);
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
 
-  const applyFilters = async (queryList?: queryType[]) => {
+  const applyFilters = useCallback(async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(0);
-  };
+  }, []);
 
   // Converter Post para DefaultResourceItemDto
-  const convertPostToResourceItem = (post: Post): DefaultResourceItemDto => {
+  const convertPostToResourceItem = useCallback((post: Post): DefaultResourceItemDto => {
     const country = post._embedded?.["wp:term"]?.flat()?.find(term => term.taxonomy === "country")?.name || "";
     const region = post._embedded?.["wp:term"]?.flat()?.find(term => term.taxonomy === "region")?.name || "";
     const thematicAreas = post._embedded?.["wp:term"]?.flat()?.filter(term => term.taxonomy === "post_tag").map(t => t.name) || [];
@@ -66,10 +66,10 @@ export const StoriesFeed = ({
       thematicArea: thematicAreas,
       modality: undefined,
     };
-  };
+  }, [_api]);
 
   // Gerar filtros a partir dos dados
-  const generateFiltersFromData = (items: DefaultResourceItemDto[]): DefaultResourceDto => {
+  const generateFiltersFromData = useCallback((items: DefaultResourceItemDto[]): DefaultResourceDto => {
     const countries = [...new Set(items.map(item => item.country).filter(Boolean))] as string[];
     const regions = [...new Set(items.map(item => item.region).filter(Boolean))] as string[];
     const years = [...new Set(items.map(item => item.year).filter(Boolean))] as string[];
@@ -90,10 +90,10 @@ export const StoriesFeed = ({
       thematicAreaFilter: uniqueThematicAreas.map(area => ({ type: area, count: 0 })),
       eventFilter: [],
     };
-  };
+  }, []);
 
   // Buscar todos os posts
-  const getAllPosts = async () => {
+  const getAllPosts = useCallback(async () => {
     setLoading(true);
     try {
       const response = await _api.listPosts("featured_stories", 100, 1); // Buscar muitos posts
@@ -106,10 +106,10 @@ export const StoriesFeed = ({
       console.error("Error fetching featured stories:", error);
     }
     setLoading(false);
-  };
+  }, [_api, convertPostToResourceItem, generateFiltersFromData]);
 
   // Aplicar filtros e paginação
-  const applyFiltersAndPagination = () => {
+  const applyFiltersAndPagination = useCallback(() => {
     let filtered = allItems;
 
     // Aplicar filtros se existirem
@@ -127,12 +127,12 @@ export const StoriesFeed = ({
 
     // Atualizar total de páginas
     setTotalPages(Math.max(1, Math.ceil(filtered.length / count)));
-  };
+  }, [allItems, filter, page]);
 
   // Effect para buscar todos os posts
   useEffect(() => {
     getAllPosts();
-  }, []);
+  }, [getAllPosts]);
 
   // Effect para aplicar filtros iniciais da URL
   useEffect(() => {
@@ -146,14 +146,14 @@ export const StoriesFeed = ({
         region
       );
     }
-  }, [country, region, thematicArea, initialFilterDone]);
+  }, [country, region, thematicArea, initialFilterDone, applyFilters]);
 
   // Effect para aplicar filtros e paginação quando necessário
   useEffect(() => {
     if (allItems.length > 0) {
       applyFiltersAndPagination();
     }
-  }, [allItems, filter, page]);
+  }, [allItems, applyFiltersAndPagination, filter, page]);
 
   return (
     <>

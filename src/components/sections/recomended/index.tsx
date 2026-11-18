@@ -1,9 +1,9 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { Button, Container, Flex } from "@mantine/core";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { IconArrowRight } from "@tabler/icons-react";
@@ -63,7 +63,7 @@ export const RecomendedArticlesSection = ({
   tags,
 }: RecomendedArticlesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
   const getArticles = useCallback(async () => {
     try {
       let posttype = postTypeSlug ? postTypeSlug : "posts";
@@ -75,7 +75,7 @@ export const RecomendedArticlesSection = ({
       setPosts(resp);
     } catch (error: any) {
     }
-  }, []);
+  }, [_api, limit, parent, postTypeSlug]);
 
   useEffect(() => {
     getArticles();
@@ -116,7 +116,7 @@ export const RelatedArticlesSection = ({
   callBack,
 }: RecomendedArticlesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>([]);
-  const _api = new PostsApi(region ? region : undefined);
+  const _api = useMemo(() => new PostsApi(region ? region : undefined), [region]);
   const getArticles = useCallback(async () => {
     try {
       let posttype = postTypeSlug ? postTypeSlug : "posts";
@@ -131,7 +131,7 @@ export const RelatedArticlesSection = ({
       }
     } catch (error: any) {
     }
-  }, []);
+  }, [_api, callBack, limit, parent, postTypeSlug]);
 
   useEffect(() => {
     getArticles();

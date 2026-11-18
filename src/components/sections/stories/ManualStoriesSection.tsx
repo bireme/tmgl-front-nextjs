@@ -1,8 +1,9 @@
+import { useMemo, useEffect, useState } from "react";
 import { Grid } from "@mantine/core";
 import { ResumedPost } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
 import { StoriesItem } from "./index";
-import { useEffect, useState } from "react";
+
 import styles from "../../../styles/components/sections.module.scss";
 import { capitalizeFirstLetter } from "@/helpers/stringhelper";
 
@@ -18,7 +19,7 @@ export const ManualStoriesSection = ({
   buttonLabel,
 }: ManualStoriesSectionProps) => {
   const [images, setImages] = useState<{ [key: number]: string }>({});
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
 
   useEffect(() => {
     const fetchImages = async () => {
@@ -41,7 +42,7 @@ export const ManualStoriesSection = ({
     if (posts && posts.length >= 3) {
       fetchImages();
     }
-  }, [posts]);
+  }, [_api, posts]);
 
   return (
     <>

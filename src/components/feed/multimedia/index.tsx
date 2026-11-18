@@ -30,7 +30,7 @@ export const MultimediaFeed = ({
 }) => {
   const { globalConfig } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
-  const _service = new MultimediaService();
+  const _service = useMemo(() => new MultimediaService(), []);
   const count = 12;
   const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -78,7 +78,7 @@ export const MultimediaFeed = ({
       console.error("Error loading multimedia:", error);
     }
     setLoading(false);
-  }, [page, filter, language, country, region, thematicArea, mediaType, initialFilterDone, applyFilters]);
+  }, [_service, page, language, filter, country, region, thematicArea, mediaType, initialFilterDone, applyFilters]);
 
   useEffect(() => {
     if (globalConfig) getMedias();

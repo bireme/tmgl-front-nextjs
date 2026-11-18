@@ -1,3 +1,4 @@
+import Image from "next/image";
 /* eslint-disable react/no-unescaped-entities */
 
 import { Button, Container, Flex, Grid } from "@mantine/core";
@@ -19,7 +20,7 @@ export default function Custom404() {
       <Container size={"xl"} py={150}>
       <Grid className={styles.NotFoundPage}>
         <Grid.Col span={{ base: 12, md: 6.5 }}>
-          <img src={"/local/svg/404.svg"} width={"100%"} />
+          <Image src={"/local/svg/404.svg"}  alt="Page not found" width={640} height={480} style={{ height: "auto", width: "100%" }} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 5.5 }}>
           <p>

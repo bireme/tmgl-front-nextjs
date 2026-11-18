@@ -1,3 +1,4 @@
+import { useMemo, useCallback, useContext, useEffect, useRef, useState } from "react";
 import { countryPageProps } from "@/server/wordpress";
 import { NewsSection } from "@/components/sections/news";
 import { Alert, Button, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
@@ -8,7 +9,6 @@ import {
   PagesSection,
 } from "@/components/sections";
 import { HeroImage, HeroSlider } from "@/components/slider";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { CountryResourceSection } from "@/components/sections/countryResourceSection";
@@ -30,11 +30,11 @@ import { useRouter } from "next/router";
 
 export default function CountryHome({ initialPost }: { initialPost: Post }) {
   const router = useRouter();
-  const _postApiHelper = new PostsApi();
+  const _postApiHelper = useMemo(() => new PostsApi(), []);
   const [properties, setProperties] = useState<CountryAcfProps>(initialPost.acf);
   const { setRegionName, setCountryName, globalConfig, countryName } =
     useContext(GlobalContext);
-  const _service = new DireveService();
+  const _service = useMemo(() => new DireveService(), []);
   const [postProps, setPostProps] = useState<Post>(initialPost);
   const [news, setNews] = useState<Array<Post>>([]);
   const [events, setEvents] = useState<Array<NewsEventsItem>>([]);
@@ -172,11 +172,11 @@ export default function CountryHome({ initialPost }: { initialPost: Post }) {
         }
       }
     }
-  }, [region, country]);
+  }, [setRegionName, region, setCountryName, country, _service]);
 
   useEffect(() => {
     getPageProperties();
-  }, [region, country]);
+  }, [region, country, getPageProperties]);
 
   return (
     <>

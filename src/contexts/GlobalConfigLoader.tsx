@@ -1,9 +1,9 @@
+import { useContext, useEffect } from "react";
 import { GlobalConfigAcf } from "@/services/types/globalAcf";
 import { GlobalConfigAcfSchema } from "@/services/globalConfig/GlobalConfigZodSchema";
 import { GlobalConfigApi } from "@/services/globalConfig/GlobalConfigApi";
 import { GlobalContext } from "./globalContext";
-import { useContext } from "react";
-import { useEffect } from "react";
+
 import useSWR from "swr";
 
 const fetchGlobalConfig = async (): Promise<GlobalConfigAcf> => {
@@ -38,7 +38,7 @@ export const GlobalConfigLoader = () => {
     if (data) {
       setGlobalConfig(data);
     }
-  }, [data]);
+  }, [data, setGlobalConfig]);
 
   return null; // esse componente não renderiza nada visível
 };

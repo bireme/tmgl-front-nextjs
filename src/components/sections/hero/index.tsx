@@ -1,6 +1,6 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { Badge, Container, Flex } from "@mantine/core";
 import { BreadCrumbs, pathItem } from "@/components/breadcrumbs";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { CustomTaxBadge } from "@/components/categories";
 import { DimensionsAcf } from "@/services/types/dimensionsAcf";
@@ -21,8 +21,8 @@ export interface HeroHeaderProps {
 export const HeroHeader = ({ post, path, type }: HeroHeaderProps) => {
   const [background, setBackground] = useState<string>();
   const [acfs, setAcfs] = useState<DimensionsAcf>();
-  const _mediaApi = new MediaApi();
-  const _postApi = new PostsApi();
+  const _mediaApi = useMemo(() => new MediaApi(), []);
+  const _postApi = useMemo(() => new PostsApi(), []);
   const categories = _postApi.getPostCategories(post);
 
   const getBackground = useCallback(async () => {
@@ -33,7 +33,7 @@ export const HeroHeader = ({ post, path, type }: HeroHeaderProps) => {
     } else {
       setBackground(_mediaApi.findFeaturedMedia(post, "full"));
     }
-  }, []);
+  }, [_mediaApi, post, type]);
   useEffect(() => {
     getBackground();
   }, [getBackground]);

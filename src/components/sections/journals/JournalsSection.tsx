@@ -1,10 +1,10 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { Button, Container, Flex } from "@mantine/core";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
   capitalizeFirstLetter,
 } from "@/helpers/stringhelper";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
@@ -31,7 +31,7 @@ export const JournalsSection = ({
 }: JournalsSectionProps) => {
   const [items, setItems] = useState<DefaultResourceItemDto[]>([]);
   const [loading, setLoading] = useState(false);
-  const _service = new JournalsService();
+  const _service = useMemo(() => new JournalsService(), []);
   const { language } = useContext(GlobalContext);
   
   const getJournals = useCallback(async () => {
@@ -65,7 +65,7 @@ export const JournalsSection = ({
     } catch (error: any) {
     }
     setLoading(false);
-  }, [country, region, language]);
+  }, [country, region, _service, language]);
 
   useEffect(() => {
     getJournals();

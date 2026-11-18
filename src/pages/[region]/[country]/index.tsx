@@ -1,3 +1,4 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { Alert, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { CountryAcfProps, Post } from "@/services/types/posts.dto";
 import { HeroImage, HeroSlider } from "@/components/slider";
@@ -6,7 +7,7 @@ import {
   NewsEventsSection,
   PagesSection,
 } from "@/components/sections";
-import { useCallback, useContext, useEffect, useState } from "react";
+
 import { EmbedIframe } from "@/components/embed/EmbedIframe";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
@@ -24,14 +25,13 @@ import { IconAlertCircleFilled, IconInfoCircle } from "@tabler/icons-react";
 
 export default function CountryHome() {
   const router = useRouter();
-  const _postApiHelper = new PostsApi();
+  const _postApiHelper = useMemo(() => new PostsApi(), []);
   const [properties, setProperties] = useState<CountryAcfProps>();
   const { setRegionName, setCountryName, globalConfig, countryName } =
     useContext(GlobalContext);
   const [postProps, setPostProps] = useState<Post>();
   const [news, setNews] = useState<Array<Post>>([]);
   const [events, setEvents] = useState<Array<Post>>([]);
-  const [countryTermId, setCountryTermId] = useState<number | null>(null);
   const {
     query: { country, region },
   } = router;
@@ -51,6 +51,7 @@ export default function CountryHome() {
         try {
 
           // Usar API regional para buscar o termo de país
+          let countryTermId = 0;
           const countryTerm = await _api.getCountryBySlug(country.toString());
 
           // Se não encontrou, tentar com primeira letra maiúscula
@@ -64,11 +65,11 @@ export default function CountryHome() {
 
             if (countryTermCapitalized && countryTermCapitalized.length > 0) {
               const countryId = countryTermCapitalized[0].id;
-              setCountryTermId(countryId);
+              countryTermId = countryId;
             }
           } else {
             const countryId = countryTerm[0].id;
-            setCountryTermId(countryId);
+            countryTermId = countryId;
           }
 
           // Buscar news e events relacionados ao país
@@ -108,11 +109,11 @@ export default function CountryHome() {
         }
       }
     }
-  }, [region, country]);
+  }, [setRegionName, region, setCountryName, country]);
 
   useEffect(() => {
     getPageProperties();
-  }, [region, country]);
+  }, [region, country, getPageProperties]);
 
   return (
     <>
@@ -205,7 +206,6 @@ export default function CountryHome() {
               </Grid>
             </Container>
           </div>
-
 
           {properties?.tms_items &&
             Array.isArray(properties?.tms_items) &&

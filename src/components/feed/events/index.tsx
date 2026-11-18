@@ -1,10 +1,10 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
 import { Center, Flex, Grid, LoadingOverlay, Title } from "@mantine/core";
 import { DefaultFeedFilterComponent, ResourceFilters } from "../filters";
 import {
   DefaultResourceDto,
   DefaultResourceItemDto,
 } from "@/services/types/defaultResource";
-import { useContext, useEffect, useState } from "react";
 
 import { DireveService } from "@/services/apiRepositories/DireveService";
 import { GlobalContext } from "@/contexts/globalContext";
@@ -27,7 +27,7 @@ export const EventsFeed = ({
   thematicArea?: string;
 }) => {
   const [loading, setLoading] = useState(false);
-  const _service = new DireveService();
+  const _service = useMemo(() => new DireveService(), []);
   const count = 12;
   const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -37,11 +37,11 @@ export const EventsFeed = ({
   const { language } = useContext(GlobalContext);
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
 
-  const applyFilters = async (queryList?: queryType[]) => {
+  const applyFilters = useCallback(async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(0);
-  };
-  const getEvents = async () => {
+  }, []);
+  const getEvents = useCallback(async () => {
     
     setLoading(true);
     try {
@@ -59,7 +59,7 @@ export const EventsFeed = ({
       console.log(error);
     }
     setLoading(false);
-  };
+  }, [_service, filter, language, page]);
 
   // Effect para aplicar filtros iniciais da URL
   useEffect(() => {
@@ -73,12 +73,12 @@ export const EventsFeed = ({
         region
       );
     }
-  }, [country, region, thematicArea, initialFilterDone]);
+  }, [country, region, thematicArea, initialFilterDone, applyFilters]);
 
   // Effect para buscar dados quando filtros ou página mudam
   useEffect(() => {
     getEvents();
-  }, [page, filter, thematicArea, region, country]);
+  }, [page, filter, thematicArea, region, country, getEvents]);
 
   return (
     <>

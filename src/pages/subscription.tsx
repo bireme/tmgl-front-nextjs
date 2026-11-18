@@ -1,3 +1,4 @@
+import Image from "next/image";
 /* eslint-disable react/no-unescaped-entities */
 import { Button, Container, Flex, Grid } from "@mantine/core";
 
@@ -14,7 +15,7 @@ export default function Subscription() {
       <Container size={"xl"} py={150}>
       <Grid className={styles.NotFoundPage}>
         <Grid.Col span={{ base: 12, md: 6.5 }}>
-          <img src={"/local/svg/subscription.svg"} />
+          <Image src={"/local/svg/subscription.svg"} alt="Newsletter subscription" width={640} height={480} style={{ height: "auto" }} />
         </Grid.Col>
         <Grid.Col span={{ base: 12, md: 5.5 }}>
           <p>

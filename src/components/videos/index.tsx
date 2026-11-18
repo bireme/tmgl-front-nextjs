@@ -1,5 +1,5 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
 import { Container, Flex } from "@mantine/core";
-import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { IframeThumbNail } from "../feed/multimedia/pdf_thumbnail";
@@ -132,21 +132,21 @@ export interface RelatedVideosSectionProps {
 }
 
 export const RelatedVideosSection = ({ filter }: RelatedVideosSectionProps) => {
-  const _service = new MultimediaService();
+  const _service = useMemo(() => new MultimediaService(), []);
   const [items, setItems] = useState<MultimediaObject[]>([]);
   const { language } = useContext(GlobalContext);
 
-  const getItems = async () => {
+  const getItems = useCallback(async () => {
     try {
       const response = await _service.getResources(3, 0, [], language);
       if (response) setItems(response.data);
     } catch {
     }
-  };
+  }, [_service, language]);
 
   useEffect(() => {
     getItems();
-  }, []);
+  }, [getItems]);
 
   return (
     <div className={styles.RelatedVideosSection}>
@@ -209,11 +209,11 @@ export interface RecentMultimediaItemsSectionProps {
 export const RecentMultimediaItems = ({
   filter,
 }: RecentMultimediaItemsSectionProps) => {
-  const _service = new MultimediaService();
+  const _service = useMemo(() => new MultimediaService(), []);
   const [items, setItems] = useState<MultimediaObject[]>([]);
   const { language } = useContext(GlobalContext);
 
-  const getItems = async () => {
+  const getItems = useCallback(async () => {
     try {
       const response = await _service.getResources(
         3,
@@ -224,11 +224,11 @@ export const RecentMultimediaItems = ({
       if (response) setItems(response.data);
     } catch {
     }
-  };
+  }, [_service, filter, language]);
 
   useEffect(() => {
     getItems();
-  }, []);
+  }, [getItems]);
 
   return (
     <div className={styles.RelatedVideosSection}>

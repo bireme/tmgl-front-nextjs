@@ -37,9 +37,7 @@ export const NewsletterSection = () => {
     if (response.status == true) {
       router.push("/subscription");
     } else {
-      if (response.message?.includes("is already a list member. Use PUT"))
-        setError("Your email has already been registered previously");
-      else setError("Something went wrong");
+      setError(response.message || "Something went wrong");
     }
     setLoading(false);
   };

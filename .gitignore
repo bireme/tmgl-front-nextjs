@@ -57,3 +57,6 @@ next-env.d.ts
 
 #PM2 ecosystem
 ecosystem.config.js
+
+# Generated PDF thumbnail cache
+/.cache/pdf-thumbnails/

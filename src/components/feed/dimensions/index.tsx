@@ -1,10 +1,10 @@
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { ListPostsDto, Post } from "@/services/types/posts.dto";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
-import { useEffect, useState } from "react";
 
 import { Pagination } from "../pagination";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -20,30 +20,30 @@ export const DimensionsFeed = ({ displayType }: { displayType: string }) => {
   const [totalPages, setTotalPages] = useState<number>(1);
   const [items, setItems] = useState<Post[]>([]);
   const [apiResponse, setApiResponse] = useState<ListPostsDto>();
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
 
-  const applyFilters = async (queryList?: queryType[]) => {
-    getPosts(queryList, true);
+  const [filter, setFilter] = useState<queryType[]>([]);
+  const applyFilters = (queryList?: queryType[]) => {
+    setFilter(queryList || []);
+    setPage(1);
   };
-  const getPosts = async (filter?: queryType[], resetPage?: boolean) => {
-    if (resetPage) setPage(1);
-
+  const getPosts = useCallback(async () => {
     setLoading(true);
     const response = await _api.listPosts(
       "dimensions",
       count,
-      resetPage ? 1 : page,
+      page,
       filter
     );
     setTotalPages(response.totalItems / count);
     setApiResponse(response);
     setItems(response.data);
     setLoading(false);
-  };
+  }, [_api, filter, page]);
 
   useEffect(() => {
     getPosts();
-  }, []);
+  }, [getPosts]);
 
   return (
     <>

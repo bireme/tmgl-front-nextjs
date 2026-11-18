@@ -1,5 +1,5 @@
+import { useMemo, useCallback, useEffect, useState } from "react";
 import { Button, Container, LoadingOverlay } from "@mantine/core";
-import { useCallback, useEffect, useState } from "react";
 
 import { Post } from "@/services/types/posts.dto";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -22,7 +22,7 @@ export const PagesSection = ({
   const [pages, setPages] = useState<Post[]>([]);
   const [loading, setLoading] = useState(false);
   const [countryId, setCountryId] = useState<number | undefined>(undefined);
-  const _api = new PostsApi(region); // Usar API regional
+  const _api = useMemo(() => new PostsApi(region), [region]); // Usar API regional
 
   const getPages = useCallback(async () => {
     if (!countryId && countrySlug) {
@@ -45,7 +45,7 @@ export const PagesSection = ({
       } catch (error: any) { }
     }
     setLoading(false);
-  }, [countryId, region]);
+  }, [_api, countryId, countrySlug]);
 
   useEffect(() => {
     getPages();

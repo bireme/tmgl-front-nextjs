@@ -1,6 +1,8 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
+import Image from "next/image";
+
 import { Container, Divider, Flex, Grid } from "@mantine/core";
 import { decodeHtmlEntities, parseWpLink } from "@/helpers/stringhelper";
-import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { MenuItemDTO } from "@/services/types/menus.dto";
@@ -13,10 +15,10 @@ export const FooterLayout = () => {
   const [footerLeft, setFooterLeft] = useState<MenuItemDTO[]>();
   const [footerRight, setFooterRight] = useState<MenuItemDTO[]>();
   const [footerCenter, setFooterCenter] = useState<MenuItemDTO[]>();
-  const menuApi = new MenusApi();
+  const menuApi = useMemo(() => new MenusApi(), []);
   const router = useRouter();
 
-  const getFooterMenus = async () => {
+  const getFooterMenus = useCallback(async () => {
     try {
       const footerLeftResp = await menuApi.getMenu("footer-left");
       const footerRightResp = await menuApi.getMenu("footer-right");
@@ -29,7 +31,7 @@ export const FooterLayout = () => {
       //TODO: FooterRight Bottom
     } catch (err: any) {
     }
-  };
+  }, [menuApi]);
 
   const renderMenuItem = (item: MenuItemDTO, index: number) => {
     if (item.children.length > 0) {
@@ -60,7 +62,7 @@ export const FooterLayout = () => {
 
   useEffect(() => {
     getFooterMenus();
-  }, []);
+  }, [getFooterMenus]);
 
   return (
     <footer>
@@ -79,7 +81,7 @@ export const FooterLayout = () => {
                 return (
                   <a href={item.url} key={index}>
                     <Flex direction={"column"} justify={"center"} gap={"15px"} align={"flex-start"} className={styles.FooterImageItem}>
-                      <img src={item.image + ".webp"} key={index} width={"50%"} />
+                      <Image src={item.image + ".webp"} key={index}  alt="The WHO Traditional Medicine Global Library" width={320} height={160} style={{ height: "auto", width: "50%" }} unoptimized />
                       
                       <span>The WHO Traditional <br/> Medicine Global Library</span>
                     </Flex>
@@ -117,7 +119,7 @@ export const FooterLayout = () => {
             justify={"center"}
             align={"center"}
           >
-            <img src={"/local/png/powered-by-bireme.png"} width={"160px"} />
+            <Image src={"/local/png/powered-by-bireme.png"}  alt="Powered by BIREME" width={160} height={60} style={{ height: "auto", width: 160 }} />
             <p className={styles.Copy}>CC BY-NC-SA 3.0 IGO</p>
           </Flex>
         </Container>

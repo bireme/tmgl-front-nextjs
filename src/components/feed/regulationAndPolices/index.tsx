@@ -1,3 +1,4 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
 import {} from "@/services/types/regulationsAndPolices";
 
 import { Center, Flex, Grid, LoadingOverlay, Title } from "@mantine/core";
@@ -6,7 +7,6 @@ import {
   DefaultResourceDto,
   DefaultResourceItemDto,
 } from "@/services/types/defaultResource";
-import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { Pagination } from "../pagination";
@@ -30,7 +30,7 @@ export const RegulationsAndPolicesFeed = ({
 }) => {
   const { globalConfig, language } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
-  const _service = new RegulationsAndPolicesService();
+  const _service = useMemo(() => new RegulationsAndPolicesService(), []);
   const count = 12;
   const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -39,11 +39,11 @@ export const RegulationsAndPolicesFeed = ({
   const [apiResponse, setApiResponse] = useState<DefaultResourceDto>();
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
 
-  const applyFilters = async (queryList?: queryType[]) => {
+  const applyFilters = useCallback(async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(0);
-  };
-  const getRegulationsAndPolicies = async () => {
+  }, []);
+  const getRegulationsAndPolicies = useCallback(async () => {
     setLoading(true);
     try {
       const response = await _service.getResources(
@@ -69,11 +69,11 @@ export const RegulationsAndPolicesFeed = ({
     } catch (error) {
     }
     setLoading(false);
-  };
+  }, [_service, applyFilters, country, filter, initialFilterDone, language, page, region, thematicArea]);
 
   useEffect(() => {
     if (globalConfig) getRegulationsAndPolicies();
-  }, [page, filter, thematicArea, region, country, globalConfig]);
+  }, [page, filter, thematicArea, region, country, globalConfig, getRegulationsAndPolicies]);
 
   return (
     <>

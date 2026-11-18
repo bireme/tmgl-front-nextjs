@@ -41,7 +41,7 @@ export const TrendingSlider = () => {
       const articlesResponse = await FetchRSSFeed(0, 10, 1, undefined, filter);
       setPosts(articlesResponse);
     }
-  }, [globalConfig]);
+  }, [globalConfig?.acf.filter_rss, globalConfig?.acf.region_filters, regionName]);
 
   useEffect(() => {
     getTrendingTopics();
@@ -143,7 +143,7 @@ export const TrendingCarrocel = ({
       const articlesResponse = await FetchRSSFeed(0, 10, 1, undefined, filter);
       setPosts(articlesResponse);
     }
-  }, [globalConfig]);
+  }, [globalConfig?.acf.filter_rss, globalConfig?.acf.region_filters, regionName, rssString]);
 
   useEffect(() => {
     getTrendingTopics();

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import {
   Button,
@@ -80,10 +81,8 @@ export default function Dimensions({ initialPost, initialChildren }: PostPagePro
                         />
                       </Grid.Col>
                       <Grid.Col span={{ base: 12, md: 3 }} px={20} py={60}>
-                        <img
-                          src={_mediaApi.findFeaturedMedia(child, "full")}
-                          width={"100%"}
-                        />
+                        <Image src={_mediaApi.findFeaturedMedia(child, "full")}
+                           alt={child.title.rendered} width={400} height={300} style={{ height: "auto", width: "100%" }} unoptimized />
                         {child.acf?.related_resources?.length > 0 && (
                           <Flex
                             mt={50}
@@ -104,7 +103,7 @@ export default function Dimensions({ initialPost, initialChildren }: PostPagePro
                                     icon={
                                       <>
                                         <Center mb={5}>
-                                          <img src={resource.icon} />
+                                          <Image src={resource.icon} alt="" width={96} height={96} style={{ height: "auto" }} unoptimized />
                                         </Center>
                                       </>
                                     }
@@ -140,7 +139,7 @@ export default function Dimensions({ initialPost, initialChildren }: PostPagePro
                           title={resource.title}
                           icon={
                             <>
-                              <img src={resource.icon} />
+                              <Image src={resource.icon} alt="" width={96} height={96} style={{ height: "auto" }} unoptimized />
                             </>
                           }
                           callBack={() =>

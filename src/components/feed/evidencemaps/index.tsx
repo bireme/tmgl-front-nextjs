@@ -1,3 +1,4 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
 import { Center, Flex, Grid, LoadingOverlay, Title } from "@mantine/core";
 import {
   EvidenceMapItemDto,
@@ -7,7 +8,6 @@ import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
-import { useContext, useEffect, useState } from "react";
 
 import { EvidenceMapsService } from "@/services/apiRepositories/EvidenceMapsService";
 import { GlobalContext } from "@/contexts/globalContext";
@@ -50,7 +50,7 @@ export const EvidenceMapsFeed = ({
 }) => {
   const { globalConfig } = useContext(GlobalContext);
   const [loading, setLoading] = useState(false);
-  const _service = new EvidenceMapsService();
+  const _service = useMemo(() => new EvidenceMapsService(), []);
   const count = 12;
   const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -58,84 +58,13 @@ export const EvidenceMapsFeed = ({
   const [items, setItems] = useState<EvidenceMapItemDto[]>([]);
   const [apiResponse, setApiResponse] = useState<EvidenceMapsServiceDto>();
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
-  const [priorityItems, setPriorityItems] = useState<EvidenceMapItemDto[]>([]);
   const { language } = useContext(GlobalContext);
 
-  const applyFilters = async (queryList?: queryType[]) => {
+  const applyFilters = useCallback(async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(0);
-  };
-  const getEvidencemaps = async () => {
-    setLoading(true);
-    try {
-      const response = await _service.getResources(
-        count,
-        page * count,
-        filter && filter.length > 0 ? filter : undefined
-      );
-
-      setTotalPages(Math.max(1, Math.ceil(response.totalFound / count)));
-      setItems(response.data);
-      setApiResponse(response);
-      const priority = globalConfig?.acf.evidence_maps_priority;
-      let priorityResult;
-      let orderedItems;
-
-      if (!filter || filter.length === 0) {
-        if (page === 0 && priority != null && priority.length > 0) {
-          let q: queryType = {
-            parameter: "django_id",
-            query: priority.join(","),
-          };
-          priorityResult = await _service.getResources(
-            priority.length,
-            0,
-            [q],
-            true
-          );
-          const idPosition = new Map(priority.map((id, index) => [id, index]));
-          orderedItems = priorityResult.data.sort(
-            (a, b) =>
-              (idPosition.get(a.id) ?? Infinity) -
-              (idPosition.get(b.id) ?? Infinity)
-          );
-          setPriorityItems(orderedItems);
-        }
-
-        if (orderedItems || priorityItems.length > 0) {
-          let inOrderItems =
-            priorityItems.length > 0 ? priorityItems : orderedItems;
-          let chunkedItems = chunkArray(
-            inOrderItems as EvidenceMapItemDto[],
-            count
-          );
-          let auxOriginalItems = response.data;
-          // Remove duplicados (que já estão na prioridade daquela página)
-          const priorityIdsSet = new Set(inOrderItems?.map((item) => item.id));
-          auxOriginalItems = auxOriginalItems.filter(
-            (item) => !priorityIdsSet.has(item.id)
-          );
-          inOrderItems = chunkedItems[page];
-
-          // Junta os itens priorizados primeiro e os restantes da API depois
-          const finalItems = [...inOrderItems, ...auxOriginalItems].slice(
-            0,
-            count
-          ); // Garante o limite
-
-          setItems(finalItems);
-        }
-      }
-
-      if ((country || region || thematicArea) && !initialFilterDone) {
-        initialFilters(response);
-      }
-    } catch (error) {
-    }
-    setLoading(false);
-  };
-
-  const initialFilters = (apiResponse: EvidenceMapsServiceDto) => {
+  }, []);
+  const initialFilters = useCallback((apiResponse: EvidenceMapsServiceDto) => {
     if (country) {
       const countryToFilter =
         apiResponse?.countryFilters?.filter((c) => c.lang === language) || [];
@@ -170,11 +99,79 @@ export const EvidenceMapsFeed = ({
     }
     setLoading(false);
     setInitialFilterDone(true);
-  };
+  }, [applyFilters, country, language, region, thematicArea]);
+
+  const getEvidencemaps = useCallback(async () => {
+    setLoading(true);
+    try {
+      const response = await _service.getResources(
+        count,
+        page * count,
+        filter && filter.length > 0 ? filter : undefined
+      );
+
+      setTotalPages(Math.max(1, Math.ceil(response.totalFound / count)));
+      setItems(response.data);
+      setApiResponse(response);
+      const priority = globalConfig?.acf.evidence_maps_priority;
+      let priorityResult;
+      let orderedItems: EvidenceMapItemDto[] = [];
+
+      if (!filter || filter.length === 0) {
+        if (priority != null && priority.length > 0) {
+          let q: queryType = {
+            parameter: "django_id",
+            query: priority.join(","),
+          };
+          priorityResult = await _service.getResources(
+            priority.length,
+            0,
+            [q],
+            true
+          );
+          const idPosition = new Map(priority.map((id, index) => [id, index]));
+          orderedItems = priorityResult.data.sort(
+            (a, b) =>
+              (idPosition.get(a.id) ?? Infinity) -
+              (idPosition.get(b.id) ?? Infinity)
+          );
+        }
+
+        if (orderedItems?.length) {
+          let inOrderItems = orderedItems;
+          let chunkedItems = chunkArray(
+            inOrderItems as EvidenceMapItemDto[],
+            count
+          );
+          let auxOriginalItems = response.data;
+          // Remove duplicados (que já estão na prioridade daquela página)
+          const priorityIdsSet = new Set(inOrderItems?.map((item) => item.id));
+          auxOriginalItems = auxOriginalItems.filter(
+            (item) => !priorityIdsSet.has(item.id)
+          );
+          inOrderItems = chunkedItems[page] || [];
+
+          // Junta os itens priorizados primeiro e os restantes da API depois
+          const finalItems = [...inOrderItems, ...auxOriginalItems].slice(
+            0,
+            count
+          ); // Garante o limite
+
+          setItems(finalItems);
+        }
+      }
+
+      if ((country || region || thematicArea) && !initialFilterDone) {
+        initialFilters(response);
+      }
+    } catch (error) {
+    }
+    setLoading(false);
+  }, [_service, country, filter, globalConfig, initialFilterDone, initialFilters, page, region, thematicArea]);
 
   useEffect(() => {
     if (globalConfig) getEvidencemaps();
-  }, [page, filter, thematicArea, region, country, globalConfig]);
+  }, [page, filter, thematicArea, region, country, globalConfig, getEvidencemaps]);
 
   return (
     <>

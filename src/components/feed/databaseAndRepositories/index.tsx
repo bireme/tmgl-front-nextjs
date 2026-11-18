@@ -1,3 +1,4 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
 import { Center, Flex, Grid, LoadingOverlay, Title } from "@mantine/core";
 import { DefaultFeedFilterComponent, ResourceFilters } from "../filters";
 import {
@@ -5,7 +6,6 @@ import {
   DefaultResourceItemDto,
 } from "@/services/types/defaultResource";
 import { groupOccurrencesByRegion, initialFilters } from "../utils";
-import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { LisService } from "@/services/apiRepositories/LisService";
@@ -27,7 +27,7 @@ export const DatabaseAndRepositoriesFeed = ({
   thematicArea?: string;
 }) => {
   const [loading, setLoading] = useState(false);
-  const _service = new LisService();
+  const _service = useMemo(() => new LisService(), []);
   const count = 12;
   const [page, setPage] = useState<number>(0);
   const [totalPages, setTotalPages] = useState<number>(1);
@@ -37,12 +37,12 @@ export const DatabaseAndRepositoriesFeed = ({
   const { language } = useContext(GlobalContext);
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
 
-  const applyFilters = async (queryList?: queryType[]) => {
+  const applyFilters = useCallback(async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(0);
-  };
+  }, []);
 
-  const getLisResources = async () => {
+  const getLisResources = useCallback(async () => {
     setLoading(true);
     try {
       const response = await _service.getDefaultResources(
@@ -68,11 +68,11 @@ export const DatabaseAndRepositoriesFeed = ({
     } catch (error) {
     }
     setLoading(false);
-  };
+  }, [_service, applyFilters, country, filter, initialFilterDone, language, page, region, thematicArea]);
 
   useEffect(() => {
     getLisResources();
-  }, [country, region, thematicArea, page, filter]);
+  }, [country, region, thematicArea, page, filter, getLisResources]);
 
   return (
     <>

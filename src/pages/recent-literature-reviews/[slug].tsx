@@ -1,9 +1,9 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import { Container, Flex, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare, IconShare3 } from "@tabler/icons-react";
 import { countWords, extimateTime } from "@/helpers/stringhelper";
 import moment, { lang } from "moment";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
@@ -22,7 +22,7 @@ export default function TrendingTopics({ initialPost, initialChildren }: PostPag
     query: { slug },
   } = router;
   const [post, setPost] = useState<Post>(initialPost);
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
   const [openShareModal, setOpenShareModal] = useState(false);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
 
@@ -32,7 +32,7 @@ export default function TrendingTopics({ initialPost, initialChildren }: PostPag
       setPost(resp[0]);
     } catch {
     }
-  }, []);
+  }, [_api]);
 
   useEffect(() => {
     if (slug) getPost(slug.toString());

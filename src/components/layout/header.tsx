@@ -1,3 +1,4 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
 /* eslint-disable @next/next/no-img-element */
 
 import { Button, Container, Flex, Grid, stylesToString } from "@mantine/core";
@@ -15,7 +16,6 @@ import {
   parseWpLink,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
-import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { MenuItemDTO } from "@/services/types/menus.dto";
@@ -40,14 +40,14 @@ export const HeaderLayout = () => {
   const [thirdLevelItems, setThirdLevelItems] = useState<MenuItemDTO[]>();
   const [prevSelectedSubItem, setPrevSelectedSubItem] = useState<MenuItemDTO>();
   const router = useRouter();
-  const menuApi = new MenusApi();
+  const menuApi = useMemo(() => new MenusApi(), []);
   const { regionName, countryName } = useContext(GlobalContext);
   const mediaQueryMatches = useMediaQuery("(max-width: 750px)");
 
-  const getMenus = async () => {
+  const getMenus = useCallback(async () => {
     const retMenu = await menuApi.getMenu("global-menu");
     setGlobalMenu(retMenu);
-  };
+  }, [menuApi]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -94,7 +94,7 @@ export const HeaderLayout = () => {
 
   useEffect(() => {
     getMenus();
-  }, []);
+  }, [getMenus]);
 
   // Impede scroll do body quando menu responsivo estiver aberto
   useEffect(() => {

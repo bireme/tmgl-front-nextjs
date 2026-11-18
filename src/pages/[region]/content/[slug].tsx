@@ -1,3 +1,4 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import { Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare } from "@tabler/icons-react";
@@ -7,7 +8,6 @@ import {
   extimateTime,
 } from "@/helpers/stringhelper";
 import moment, { lang } from "moment";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
@@ -29,8 +29,8 @@ export default function Content({ initialPost, initialChildren }: PostPageProps)
   const { asPath } = router;
   const [post, setPost] = useState<Post>(initialPost);
   const { regionName, setRegionName } = useContext(GlobalContext);
-  const pathSegments = asPath.split("/").filter(Boolean);
-  const _api = new PostsApi();
+  const pathSegments = useMemo(() => asPath.split("/").filter(Boolean), [asPath]);
+  const _api = useMemo(() => new PostsApi(), []);
   const [parent, setParent] = useState<Post>();
   const [openShareModal, setOpenShareModal] = useState(false);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
@@ -50,13 +50,13 @@ export default function Content({ initialPost, initialChildren }: PostPageProps)
       } catch (error) {
       }
     },
-    [pathSegments]
+    [_api, pathSegments]
   );
 
   useEffect(() => {
     setRegionName(pathSegments[0]);
     if (slug) getPost(slug.toString());
-  }, [slug]);
+  }, [getPost, pathSegments, setRegionName, slug]);
 
   return (
     <>

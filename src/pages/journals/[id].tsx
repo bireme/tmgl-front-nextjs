@@ -1,7 +1,9 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
+import Image from "next/image";
+
 import { resourcePageProps, type ResourcePageProps } from "@/server/resources";
 import { Badge, Container, Divider, Flex, Grid } from "@mantine/core";
 import { IconPrinter, IconShare } from "@tabler/icons-react";
-import { useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { GlobalContext } from "@/contexts/globalContext";
@@ -22,7 +24,7 @@ export default function Journal({ initialItem }: ResourcePageProps<JournalItemDt
     query: { id },
   } = router;
   const [openShareModal, setOpenShareModal] = useState(false);
-  const _service = new JournalsService();
+  const _service = useMemo(() => new JournalsService(), []);
   const { language } = useContext(GlobalContext);
   const [tags, setTags] = useState<Array<TagItem>>([]);
   const tagColors = {
@@ -30,7 +32,7 @@ export default function Journal({ initialItem }: ResourcePageProps<JournalItemDt
     descriptor: "#8B142A",
     region: "#3F6114",
   };
-  const getItem = async () => {
+  const getItem = useCallback(async () => {
     try {
       if (id) {
         const response = await _service.getItem(id.toString());
@@ -39,14 +41,14 @@ export default function Journal({ initialItem }: ResourcePageProps<JournalItemDt
       }
     } catch (e) {
     }
-  };
+  }, [_service, id, language]);
 
   useEffect(() => {
     if (window) {
       setFullUrl(window.location.href);
     }
     getItem();
-  }, [id]);
+  }, [getItem, id]);
 
   return (
     <>
@@ -76,7 +78,7 @@ export default function Journal({ initialItem }: ResourcePageProps<JournalItemDt
               {item?.logo ? (
                 <>
                   <Grid.Col span={{ base: 12, md: 3.5 }} pr={{ md: 15 }}>
-                    <img src={"/local/jpeg/journal.jpeg"} width={"100%"} alt={`${item.title} logo`} />
+                    <Image src={"/local/jpeg/journal.jpeg"}  alt={`${item.title} logo`} width={400} height={300} style={{ height: "auto", width: "100%" }} />
                   </Grid.Col>
                 </>
               ) : (

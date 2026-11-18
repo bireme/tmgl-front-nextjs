@@ -1,6 +1,6 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
 import { Button, Checkbox, Input } from "@mantine/core";
 import { IconArrowUp, IconChevronCompactUp } from "@tabler/icons-react";
-import { useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -26,12 +26,12 @@ export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
   });
 
   //TODO: fix to use region
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
   const [dimensions, setDimensions] = useState<TaxonomyTermDTO[]>();
   const [countries, setCountries] = useState<TaxonomyTermDTO[]>();
   const [regions, setRegions] = useState<TaxonomyTermDTO[]>();
 
-  const getTaxonomies = async () => {
+  const getTaxonomies = useCallback(async () => {
     const taxData = await _api.getTaxonomiesBySlug("tm-dimension");
     const countrieData = await _api.getTaxonomiesBySlug("country");
     const regionData = await _api.getTaxonomiesBySlug("region");
@@ -39,11 +39,11 @@ export const FiltersForm = ({ onSubmit }: FiltersFormProps) => {
     setCountries(countrieData);
     setRegions(regionData);
     setDimensions(taxData);
-  };
+  }, [_api]);
 
   useEffect(() => {
     getTaxonomies();
-  }, []);
+  }, [getTaxonomies]);
 
   return (
     <div className={styles.Filters}>

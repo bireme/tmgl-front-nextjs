@@ -1,10 +1,10 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { Button, Container, Flex } from "@mantine/core";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
   capitalizeFirstLetter,
 } from "@/helpers/stringhelper";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { IconArrowRight } from "@tabler/icons-react";
 import Link from "next/link";
@@ -36,7 +36,7 @@ export const NewsSection = ({
   const [fetchedPosts, setPosts] = useState<Array<Post>>([]);
   const posts = items ?? fetchedPosts;
   const [demoTagId, setDemoTagId] = useState<number>();
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
   const getNews = useCallback(async () => {
     if (items !== undefined) return;
     try {
@@ -105,7 +105,7 @@ export const NewsSection = ({
       }
     } catch (error: any) {
     }
-  }, [excludedTagIds, region, items]);
+  }, [items, _api, posType, includeDemo, excludedTagIds, region]);
   useEffect(() => {
     getNews();
   }, [getNews]);

@@ -1,6 +1,6 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { BackgroundImage, Button, Flex, Grid } from "@mantine/core";
 import { GetCustomPostOptions, PostsApi } from "@/services/posts/PostsApi";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { GlobalContext } from "@/contexts/globalContext";
 import { Post } from "@/services/types/posts.dto";
@@ -71,7 +71,7 @@ export const StoriesSection = ({
   buttonLabel,
 }: StoriesSectionProps) => {
   const [posts, setPosts] = useState<Array<Post>>();
-  const _api = new PostsApi(regionApi ? regionApi : undefined);
+  const _api = useMemo(() => new PostsApi(regionApi ? regionApi : undefined), [regionApi]);
 
   //Realizar a Filtragem a partir do region
   const getFeaturedStories = useCallback(async () => {
@@ -97,7 +97,7 @@ export const StoriesSection = ({
       }
       setPosts(result);
     } catch (error: any) {}
-  }, []);
+  }, [_api, fetchOptions, region, regionApi]);
 
   useEffect(() => {
     getFeaturedStories();

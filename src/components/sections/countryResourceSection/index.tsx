@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Container } from "@mantine/core";
 
 import { CountryAcfResource } from "@/services/types/posts.dto";
@@ -32,11 +33,9 @@ export function CountryResourceSection({
                   }
                 >
                   <div className={styles.ResourceIcon}>
-                    <img
-                      src={resource.icon}
+                    <Image src={resource.icon}
                       alt={resource.title}
-                      className={styles.ResourceIconImage}
-                    />
+                      className={styles.ResourceIconImage} width={96} height={96} style={{ height: "auto" }} unoptimized />
                   </div>
                   <h4 className={styles.ResourceTitle}>
                     {resource.title}

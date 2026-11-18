@@ -1,4 +1,4 @@
-/* eslint-disable react/no-is-mounted */
+
 
 import axios, { AxiosInstance } from "axios";
 

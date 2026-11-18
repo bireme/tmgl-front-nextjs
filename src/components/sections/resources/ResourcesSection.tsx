@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Container, Flex } from "@mantine/core";
 import { IconCard, ImageCard } from "@/components/cards";
 
@@ -90,7 +91,7 @@ export function ResourcesSection({
                   title={resource.title}
                   icon={
                     <>
-                      <img src={resource.image} alt={resource.title} />
+                      <Image src={resource.image} alt={resource.title} width={96} height={96} style={{ height: "auto" }} unoptimized />
                     </>
                   }
                   callBack={() =>

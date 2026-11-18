@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { LoadingOverlay } from "@mantine/core";
 import styles from "../../../styles/components/resources.module.scss";
 import { useState } from "react";
@@ -20,13 +21,15 @@ export const IframeThumbNail = ({
       style={{ height: height ? height : "auto" }}
     >
       {loadFailed ? (
-        <img src={"/local/png/pdf.png"} />
+        <Image src={"/local/png/pdf.png"} alt="PDF preview unavailable" width={400} height={300} style={{ height: "auto" }} />
       ) : (
         <iframe
-          onError={() => setLoadFailed(true)}
+          title="PDF preview"
+          loading="lazy"
+          onError={() => { setLoadFailed(true); setLoading(false); }}
           onLoad={() => setLoading(false)}
           src={`/api/proxy-pdf?url=${encodeURIComponent(url)}${
-            type ? `&type=${type}` : ""
+            type ? `&type=${encodeURIComponent(type)}` : ""
           }`}
         />
       )}

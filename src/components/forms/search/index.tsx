@@ -4,22 +4,19 @@ import { AcfSearch } from "@/services/types/homeAcf.dto";
 import styles from "../../../styles/components/forms.module.scss";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { searchUrl } from "@/helpers/search";
 
 export const SearchForm = ({ title, subtitle, small }: AcfSearch) => {
   const router = useRouter();
   const [searchString, setSearchString] = useState<string | null>(null);
 
-  const handleSearch = () => {
+  const [error, setError] = useState("");
+  const handleSearch = async () => {
+    setError("");
     try {
-      if (!process.env.BASE_SEARCH_URL) {
-        throw new Error("Error: BaseSearchURL not defined");
-      }
-      if (searchString) {
-        router.push(process.env.BASE_SEARCH_URL + `/?q=${searchString}`);
-      } else {
-        router.push(process.env.BASE_SEARCH_URL);
-      }
-    } catch (error) {
+      await router.push(searchUrl(process.env.BASE_SEARCH_URL, searchString || ""));
+    } catch {
+      setError("Search is temporarily unavailable. Please try again later.");
     }
   };
 
@@ -29,7 +26,7 @@ export const SearchForm = ({ title, subtitle, small }: AcfSearch) => {
       py={{ base: small ? 120 : 40, md: 0 }}
       align={{ base: "flex-end", md: "center" }}
     >
-      <form>
+      <form onSubmit={(event) => { event.preventDefault(); void handleSearch(); }}>
         <h1>{title}</h1>
         <h3>{subtitle}</h3>
         <Flex gap={10}>
@@ -40,24 +37,17 @@ export const SearchForm = ({ title, subtitle, small }: AcfSearch) => {
             onChange={(e) => {
               setSearchString(e.target.value);
             }}
-            onKeyDown={(event) => {
-              if (event.key === "Enter") {
-                event.preventDefault(); // Evita que o formulário seja submetido automaticamente
-                handleSearch(); // Função para submeter o formulário
-              }
-            }}
             value={searchString ? searchString : ""}
           />
           <Button
-            onClick={() => {
-              handleSearch();
-            }}
+            type="submit"
             className={styles.FormButton}
             size={"md"}
           >
             Search
           </Button>
         </Flex>
+        {error && <p role="alert">{error}</p>}
         <Flex gap={20} mt={18}>
           <a href={"https://pesquisa.bvsalud.org/tmgl/advanced/?lang=en"}>
             Advanced search

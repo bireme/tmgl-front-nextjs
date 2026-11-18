@@ -1,10 +1,10 @@
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { Center, Flex, Grid, LoadingOverlay, Title } from "@mantine/core";
 import { ListPostsDto, Post } from "@/services/types/posts.dto";
 import {
   decodeHtmlEntities,
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
-import { useEffect, useState } from "react";
 
 import { Pagination } from "../pagination";
 import { PostsApi } from "@/services/posts/PostsApi";
@@ -33,14 +33,14 @@ export const NewsFeed = ({
   const [items, setItems] = useState<Post[]>([]);
   const [apiResponse, setApiResponse] = useState<ListPostsDto>();
   const [initialFilterDone, setInitialFilterDone] = useState<boolean>(false);
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
 
-  const applyFilters = async (queryList?: queryType[]) => {
+  const applyFilters = useCallback(async (queryList?: queryType[]) => {
     setFilter(queryList ? queryList : []);
     setPage(0);
-  };
+  }, []);
   
-  const getPosts = async () => {
+  const getPosts = useCallback(async () => {
     setLoading(true);
     const response = await _api.listPosts(
       "posts",
@@ -52,10 +52,10 @@ export const NewsFeed = ({
     setApiResponse(response);
     setItems(response.data);
     setLoading(false);
-  };
+  }, [_api, filter, page]);
 
   // Função específica para inicializar filtros de posts do WordPress
-  const initialWordPressFilters = async () => {
+  const initialWordPressFilters = useCallback(async () => {
     if (!(country || region || thematicArea) || initialFilterDone) {
       return;
     }
@@ -101,12 +101,12 @@ export const NewsFeed = ({
 
     setLoading(false);
     setInitialFilterDone(true);
-  };
+  }, [_api, applyFilters, country, initialFilterDone, region, thematicArea]);
 
   // Effect para aplicar filtros iniciais da URL
   useEffect(() => {
     initialWordPressFilters();
-  }, [country, region, thematicArea, initialFilterDone]);
+  }, [country, region, thematicArea, initialFilterDone, initialWordPressFilters]);
 
   // Effect para buscar dados quando filtros ou página mudam
   useEffect(() => {
@@ -114,7 +114,7 @@ export const NewsFeed = ({
     if (initialFilterDone || (!country && !region && !thematicArea)) {
       getPosts();
     }
-  }, [page, filter, initialFilterDone]);
+  }, [page, filter, initialFilterDone, country, region, thematicArea, getPosts]);
 
   return (
     <>

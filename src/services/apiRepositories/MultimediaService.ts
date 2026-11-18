@@ -217,7 +217,7 @@ export class MultimediaService {
         }
 
         // Process images with batch check results
-        const imagePromises = imageItems.map(async (d) => {
+        const imagePromises = mapConcurrent(imageItems, 2, async (d) => {
           d.thumbnail = d.link[0];
           const checkResult = thumbnailCheckResults[d.thumbnail];
           
@@ -238,7 +238,7 @@ export class MultimediaService {
         });
 
         // Wait for all thumbnails to be processed in parallel
-        await Promise.all([...videoPromises, ...imagePromises]);
+        await Promise.all([...videoPromises, imagePromises]);
       }
 
       for (const d of docsRaw) {
@@ -494,4 +494,14 @@ export class MultimediaService {
     const hash = SparkMD5.hash(url);
     return `/pdfs/${hash}.png`;
   }
+}
+
+async function mapConcurrent<T>(items: T[], limit: number, task: (item: T) => Promise<unknown>) {
+  let next = 0;
+  await Promise.all(Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (next < items.length) {
+      const item = items[next++];
+      await task(item);
+    }
+  }));
 }

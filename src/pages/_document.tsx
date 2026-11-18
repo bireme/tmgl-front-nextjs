@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/next-script-for-ga */
+
 
 import { Head, Html, Main, NextScript, type DocumentProps } from "next/document";
 

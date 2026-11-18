@@ -1,8 +1,8 @@
+import { useCallback, useMemo, useContext, useEffect, useState } from "react";
 import { resourcePageProps, type ResourcePageProps } from "@/server/resources";
 import { Badge, Container, Flex, Grid, LoadingOverlay } from "@mantine/core";
 import { IconPrinter, IconShare } from "@tabler/icons-react";
 import moment, { lang } from "moment";
-import { useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import { EvidenceMapItemDto } from "@/services/types/evidenceMapsDto";
@@ -27,7 +27,7 @@ export default function EvidenceMap({ initialItem }: ResourcePageProps<EvidenceM
   const {
     query: { id },
   } = router;
-  const _service = new EvidenceMapsService();
+  const _service = useMemo(() => new EvidenceMapsService(), []);
   const tableauUrl = item?.links ? _service.getTableauVixLink(item.links) : null;
   const tagColors = {
     country: "#54831B",
@@ -35,7 +35,7 @@ export default function EvidenceMap({ initialItem }: ResourcePageProps<EvidenceM
     region: "#3F6114",
   };
 
-  const getItem = async () => {
+  const getItem = useCallback(async () => {
     setLoading(true);
     try {
       if (id) {
@@ -47,14 +47,14 @@ export default function EvidenceMap({ initialItem }: ResourcePageProps<EvidenceM
     } finally {
       setLoading(false);
     }
-  };
+  }, [_service, id, language]);
 
   useEffect(() => {
     if (window) {
       setFullUrl(window.location.href);
     }
     getItem();
-  }, [id]);
+  }, [getItem, id]);
 
   return (
     <>

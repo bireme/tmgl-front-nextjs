@@ -1,3 +1,4 @@
+import { useMemo, useCallback, useEffect, useState } from "react";
 import { postPageProps, type PostPageProps } from "@/server/wordpress";
 import {
   Badge,
@@ -8,7 +9,6 @@ import {
   LoadingOverlay,
 } from "@mantine/core";
 import { IconPrinter, IconShare, } from "@tabler/icons-react";
-import { useCallback, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import Head from "next/head";
@@ -27,7 +27,7 @@ export default function Events({ initialPost, initialChildren }: PostPageProps) 
   } = router;
   const [post, setPost] = useState<Post>(initialPost);
   const [tags, setTags] = useState<Array<TagItem>>([]);
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
   const [openShareModal, setOpenShareModal] = useState(false);
   const [fullUrl, setFullUrl] = useState<string | null>(null);
   const getPost = useCallback(async (slug: string) => {
@@ -37,7 +37,7 @@ export default function Events({ initialPost, initialChildren }: PostPageProps) 
       setPost(resp[0]);
     } catch {
     }
-  }, []);
+  }, [_api]);
 
   useEffect(() => {
     if (slug) getPost(slug.toString());

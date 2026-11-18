@@ -1,6 +1,8 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
+import Image from "next/image";
+
 import { normalizeInternalLink } from "@/helpers/seo";
 import { ItemResource, Post } from "@/services/types/posts.dto";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { Flex } from "@mantine/core";
 import { GlobalContext } from "@/contexts/globalContext";
@@ -57,7 +59,7 @@ export const TraditionalSectionCard = ({
       align={"center"}
       direction={"column"}
     >
-      <img src={iconPath} />
+      <Image src={iconPath} alt="" width={96} height={96} style={{ height: "auto" }} unoptimized />
       <p>{decodeHtmlEntities(title)}</p>
     </Flex>
   );
@@ -65,18 +67,18 @@ export const TraditionalSectionCard = ({
 
 export const DimensionsSection = ({ items, initialPosts }: { items?: ItemResource[]; initialPosts?: Post[] }) => {
   const [posts, setPosts] = useState<Array<Post>>(initialPosts || []);
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
   const getDimensions = useCallback(async () => {
     try {
       const result = await _api.getCustomPost("dimensions", 20, 0);
       setPosts(result);
     } catch (error: any) {
     }
-  }, []);
+  }, [_api]);
 
   useEffect(() => {
     if (!items && !initialPosts) getDimensions();
-  }, [getDimensions]);
+  }, [getDimensions, initialPosts, items]);
 
   return (
     <>

@@ -28,7 +28,7 @@ export const DefaultFeedFilterComponent = ({
   applyFilters,
   apiResponse,
 }: {
-  applyFilters: (q?: queryType[] | undefined) => {};
+  applyFilters: (q?: queryType[]) => void | Promise<void>;
   apiResponse: DefaultResourceDto;
 }) => {
   return (
@@ -115,7 +115,7 @@ export interface FilterOption {
   id?: string;
 }
 export interface FiltersFormProps {
-  callBack: (q?: queryType[]) => {};
+  callBack: (q?: queryType[]) => void | Promise<void>;
   filters?: FilterType[];
   stringParameter?: string;
 }

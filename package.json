@@ -6,7 +6,9 @@
     "dev": "WATCHPACK_POLLING=1000 next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings=0",
+    "test": "node --test tests/*.test.cjs",
+    "typecheck": "tsc --noEmit --incremental false",
     "generate-pdf": "node scripts/generate-pdf.js",
     "generate-pdf:manual": "node scripts/generate-pdf.js TECHNICAL_MANUAL.md",
     "generate-pdf:sitemap": "node scripts/generate-pdf.js MAPA_DO_SITE.md"

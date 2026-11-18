@@ -2702,3 +2702,14 @@ todas as respostas recebem `X-Robots-Tag: noindex, nofollow` e as páginas
 recebem a meta tag `robots` com `noindex`. O `robots.txt` não anuncia sitemap
 e permite rastreamento para que os buscadores possam ler o `noindex`;
 `Disallow: /` impediria essa leitura e não garante a remoção de URLs do índice.
+
+
+## APIs e miniaturas de PDF
+
+- Execute `npm run lint`, `npm run typecheck`, `npm test` e `npm run build` para verificar alterações. O lint rejeita avisos.
+- Instale **Poppler** (`poppler-utils` em Debian/Ubuntu) no servidor. A geração utiliza o executável `pdftoppm`, sem shell, para renderizar somente a primeira página, com timeout de 15 segundos e saída de 400×300 pixels.
+- Configure `PDF_THUMBNAIL_DIR` com um diretório gravável e persistente. O padrão é `.cache/pdf-thumbnails` no diretório do projeto. Em múltiplas instâncias, monte esse diretório em um volume compartilhado para que todas possam servir as mesmas miniaturas. O cache expira em sete dias; a limpeza durante novas gerações remove arquivos antigos e limita o armazenamento a aproximadamente 256 MB/1.000 miniaturas. Arquivos temporários são removidos ao concluir ou falhar a conversão.
+- `POST /api/pdf-image` recebe `{ "url": "https://.../arquivo.pdf" }` e retorna `{ "status": true, "file": "/api/pdf-image?key=..." }`. A URL retornada serve a imagem; não é necessário gravar em `public`. Requisições simultâneas ao mesmo PDF compartilham a geração na mesma instância. O cliente limita a geração de miniaturas a duas por vez.
+- O proxy e a geração aceitam somente HTTP/HTTPS nas portas padrão, sem credenciais. Bloqueiam IPs privados, locais e reservados, validam DNS e cada redirecionamento e fixam o IP validado na conexão. Downloads têm limite de 20 MB, 15 segundos, três redirecionamentos e validação do tipo e assinatura do PDF.
+- Limites de concorrência e frequência são locais a cada processo. A frequência utiliza o endereço do socket; atrás de um proxy, os clientes desse proxy compartilham a cota. Para controle distribuído ou por usuário, configure também limites no proxy de entrada.
+- As APIs preservam seus formatos de sucesso. Falhas retornam `{ "status": false, "data": {}, "message": "...", "error": { "code": "...", "message": "..." } }`, sem detalhes internos nem credenciais: `400` para entrada inválida, `404` para recurso ausente, `405` para método não permitido, `413` para PDF grande, `415` para formato inválido, `422` para PDF não renderizável, `429` para excesso de requisições, `502` para falha externa, `503` para capacidade esgotada e `504` para timeout. Configuração incompleta e falhas internas retornam `500`; inscrições repetidas retornam `409`.

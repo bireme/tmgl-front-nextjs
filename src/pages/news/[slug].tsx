@@ -1,3 +1,4 @@
+import { useMemo, useCallback, useContext, useEffect, useState } from "react";
 import { Badge, Container, Flex, LoadingOverlay } from "@mantine/core";
 import { GetServerSideProps } from "next";
 import { IconPrinter, IconShare, IconShare3 } from "@tabler/icons-react";
@@ -8,7 +9,6 @@ import {
   removeHTMLTagsAndLimit,
 } from "@/helpers/stringhelper";
 import moment, { lang } from "moment";
-import { useCallback, useContext, useEffect, useState } from "react";
 
 import { BreadCrumbs } from "@/components/breadcrumbs";
 import Head from "next/head";
@@ -32,7 +32,7 @@ export default function News({ initialPost }: NewsPageProps) {
   } = router;
   const [post, setPost] = useState<Post>(initialPost);
   const [tags, setTags] = useState<Array<TagItem>>([]);
-  const _api = new PostsApi();
+  const _api = useMemo(() => new PostsApi(), []);
   const [openShareModal, setOpenShareModal] = useState(false);
   const [fullUrl, setFullUrl] = useState<string | null>(getCanonicalUrl(`/news/${initialPost.slug}`));
   const getPost = useCallback(async (slug: string) => {
@@ -42,7 +42,7 @@ export default function News({ initialPost }: NewsPageProps) {
       setPost(resp[0]);
     } catch {
     }
-  }, []);
+  }, [_api]);
 
   useEffect(() => {
     if (slug) getPost(slug.toString());
