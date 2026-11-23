@@ -48,13 +48,7 @@ export const GptWidget = () => {
         closeButtonProps={{ "aria-label": "Close disclaimer", style: { color: "#172b4d", backgroundColor: "#f1f3f5" } }}
       >
         <article className={styles.DisclaimerContent}>
-          <h3>About TMGL</h3>
-          <p>TMGL is a collaborative digital library and global knowledge platform for traditional, complementary and integrative medicine, continuously evolving through contributions from its partners and ongoing curation.</p>
-          <h3>Independent content</h3>
-          <p>The inclusion of content in TMGL does not constitute endorsement or recommendation by the World Health Organization (WHO) or its partners. The views and conclusions expressed in the included materials are those of the original authors and do not necessarily reflect the policies or positions of WHO.</p>
-          <h3>Quality and continuous improvement</h3>
-          <p>While every effort is made to ensure the accuracy and quality of the information presented, occasional inconsistencies may occur. We welcome your feedback to help us continuously improve TMGL.</p>
-          <p className={styles.TermsNote}>For more information, please refer to the <a href={disclaimerUrl} target="_blank" rel="noopener noreferrer">Privacy Policy, Terms and Conditions of Use</a>.</p>
+          <p>TMGL includes content contributed by third parties and users. Before using TMGL or relying on any content made available through the platform, please read the <a href={disclaimerUrl} target="_blank" rel="noopener noreferrer">Terms and Conditions of Use</a>, which govern access to and use of TMGL and its content.</p>
         </article>
         <nav aria-label="Terms and institutional pages" className={styles.InstitutionalLinks}>
           {globalConfig?.acf?.privacy_policy_url && (
